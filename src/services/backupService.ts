@@ -205,7 +205,10 @@ class BackupService {
   } {
     const sucesso = this.backups.filter(b => b.status === 'sucesso').length;
     const erro = this.backups.filter(b => b.status === 'erro').length;
-    const tamanhoTotal = this.backups.reduce((sum: any, b: any) => sum + b.tamanho, 0);
+    const tamanhoTotal = this.backups.reduce(
+      (sum: any, b: any) => sum + b.tamanho,
+      0
+    );
 
     return {
       total: this.backups.length,

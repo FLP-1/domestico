@@ -63,22 +63,24 @@ export default async function handler(
         })),
       }));
 
-      return res.status(200).json({ success: true, data: documentosFormatados });
+      return res
+        .status(200)
+        .json({ success: true, data: documentosFormatados });
     } catch (error) {
       console.error('Erro ao buscar documentos:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao buscar documentos' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao buscar documentos',
       });
     }
   }
 
   if (req.method === 'POST') {
     try {
-      const { 
-        nome, 
-        descricao, 
-        categoria, 
+      const {
+        nome,
+        descricao,
+        categoria,
         tipo,
         tamanho,
         caminhoArquivo,
@@ -86,7 +88,7 @@ export default async function handler(
         tags,
         permissao,
       } = req.body;
-      
+
       const novoDocumento = await prisma.documento.create({
         data: {
           nome,
@@ -97,7 +99,13 @@ export default async function handler(
           caminhoArquivo,
           usuarioId,
           tags: tags || [],
-          permissao: permissao || await dynamicConfig.getConfig('documento.permissao_padrao', 'string', 'PRIVADO'),
+          permissao:
+            permissao ||
+            (await dynamicConfig.getConfig(
+              'documento.permissao_padrao',
+              'string',
+              'PRIVADO'
+            )),
           validado: false,
           alertaVencimento: false,
           esocialPronto: false,
@@ -108,13 +116,12 @@ export default async function handler(
       return res.status(201).json({ success: true, data: novoDocumento });
     } catch (error) {
       console.error('Erro ao criar documento:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao criar documento' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao criar documento',
       });
     }
   }
 
   return res.status(405).json({ error: 'Method not allowed' });
 }
-

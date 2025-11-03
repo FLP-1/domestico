@@ -27,8 +27,13 @@ export interface UseGeolocationReturn {
   location: GeolocationData | null;
   error: GeolocationError | null;
   loading: boolean;
-  getCurrentPosition: (options?: GeolocationOptions) => Promise<GeolocationData>;
-  watchPosition: (callback: (location: GeolocationData) => void, options?: GeolocationOptions) => number;
+  getCurrentPosition: (
+    options?: GeolocationOptions
+  ) => Promise<GeolocationData>;
+  watchPosition: (
+    callback: (location: GeolocationData) => void,
+    options?: GeolocationOptions
+  ) => number;
   clearWatch: (watchId: number) => void;
 }
 
@@ -37,92 +42,98 @@ export const useGeolocation = (): UseGeolocationReturn => {
   const [error, setError] = useState<GeolocationError | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const getCurrentPosition = useCallback(async (options: GeolocationOptions = {}): Promise<GeolocationData> => {
-    const defaultOptions = {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 300000, // 5 minutos
-      ...options
-    };
+  const getCurrentPosition = useCallback(
+    async (options: GeolocationOptions = {}): Promise<GeolocationData> => {
+      const defaultOptions = {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000, // 5 minutos
+        ...options,
+      };
 
-    return new Promise((resolve: any, reject: any) => {
+      return new Promise((resolve: any, reject: any) => {
+        if (!navigator.geolocation) {
+          const error: GeolocationError = {
+            code: 0,
+            message: 'Geolocalização não é suportada por este navegador',
+          };
+          setError(error);
+          reject(error);
+          return;
+        }
+
+        setLoading(true);
+        setError(null);
+
+        navigator.geolocation.getCurrentPosition(
+          (position: any) => {
+            const locationData: GeolocationData = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              accuracy: position.coords.accuracy,
+              timestamp: new Date(position.timestamp),
+            };
+
+            setLocation(locationData);
+            setLoading(false);
+            resolve(locationData);
+          },
+          (err: any) => {
+            const error: GeolocationError = {
+              code: err.code,
+              message: getErrorMessage(err.code),
+            };
+            setError(error);
+            setLoading(false);
+            reject(error);
+          },
+          defaultOptions
+        );
+      });
+    },
+    []
+  );
+
+  const watchPosition = useCallback(
+    (
+      callback: (location: GeolocationData) => void,
+      options: GeolocationOptions = {}
+    ): number => {
+      const defaultOptions = {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000,
+        ...options,
+      };
+
       if (!navigator.geolocation) {
-        const error: GeolocationError = {
-          code: 0,
-          message: 'Geolocalização não é suportada por este navegador'
-        };
-        setError(error);
-        reject(error);
-        return;
+        throw new Error('Geolocalização não é suportada por este navegador');
       }
 
-      setLoading(true);
-      setError(null);
-
-      navigator.geolocation.getCurrentPosition(
+      return navigator.geolocation.watchPosition(
         (position: any) => {
           const locationData: GeolocationData = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
             accuracy: position.coords.accuracy,
-            timestamp: new Date(position.timestamp)
+            timestamp: new Date(position.timestamp),
           };
 
           setLocation(locationData);
-          setLoading(false);
-          resolve(locationData);
+          callback(locationData);
         },
         (err: any) => {
           const error: GeolocationError = {
             code: err.code,
-            message: getErrorMessage(err.code)
+            message: getErrorMessage(err.code),
           };
           setError(error);
-          setLoading(false);
-          reject(error);
         },
         defaultOptions
       );
-    });
-  }, []);
-
-  const watchPosition = useCallback((
-    callback: (location: GeolocationData) => void,
-    options: GeolocationOptions = {}
-  ): number => {
-    const defaultOptions = {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 300000,
-      ...options
-    };
-
-    if (!navigator.geolocation) {
-      throw new Error('Geolocalização não é suportada por este navegador');
-    }
-
-    return navigator.geolocation.watchPosition(
-      (position: any) => {
-        const locationData: GeolocationData = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy,
-          timestamp: new Date(position.timestamp)
-        };
-
-        setLocation(locationData);
-        callback(locationData);
-      },
-      (err: any) => {
-        const error: GeolocationError = {
-          code: err.code,
-          message: getErrorMessage(err.code)
-        };
-        setError(error);
-      },
-      defaultOptions
-    );
-  }, []);
+    },
+    []
+  );
 
   const clearWatch = useCallback((watchId: number) => {
     navigator.geolocation.clearWatch(watchId);
@@ -134,7 +145,7 @@ export const useGeolocation = (): UseGeolocationReturn => {
     loading,
     getCurrentPosition,
     watchPosition,
-    clearWatch
+    clearWatch,
   };
 };
 

@@ -1,11 +1,17 @@
 // src/pages/api/antifraude/network-analysis.ts
 import { NextApiRequest, NextApiResponse } from 'next';
-import { networkFingerprintingService, NetworkFingerprint } from '../../../services/antifraude/network-fingerprinting';
+import {
+  networkFingerprintingService,
+  NetworkFingerprint,
+} from '../../../services/antifraude/network-fingerprinting';
 import prisma from '../../../lib/prisma';
 import { getCurrentUserId } from '../../../lib/configService';
 import { logger } from '../../../utils/logger';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -19,43 +25,53 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { fingerprint }: { fingerprint: NetworkFingerprint } = req.body;
 
     if (!fingerprint) {
-      return res.status(400).json({ error: 'Fingerprint de rede é obrigatório' });
+      return res
+        .status(400)
+        .json({ error: 'Fingerprint de rede é obrigatório' });
     }
 
     // Buscar dados históricos do usuário
     const historicalFingerprints = await prisma.networkFingerprint.findMany({
       where: { usuarioId: userId },
       orderBy: { timestamp: 'desc' },
-      take: 10
+      take: 10,
     });
 
     // Converter para formato esperado
-    const historicalData: NetworkFingerprint[] = historicalFingerprints.map((h: any) => ({
-      connectionType: h.connectionType,
-      effectiveType: h.effectiveType,
-      downlink: h.downlink,
-      rtt: h.rtt,
-      ipAddress: h.ipAddress,
-      timezone: h.timezone,
-      language: h.language,
-      userAgent: h.userAgent,
-      platform: h.platform,
-      screenResolution: h.screenResolution,
-      networkFingerprint: {
-        connectionSpeed: h.connectionSpeed,
-        connectionQuality: h.connectionQuality,
-        networkLatency: h.networkLatency,
-        bandwidthEstimate: h.bandwidthEstimate
-      },
-      timestamp: h.timestamp.toISOString(),
-      sessionId: h.sessionId
-    }));
+    const historicalData: NetworkFingerprint[] = historicalFingerprints.map(
+      (h: any) => ({
+        connectionType: h.connectionType,
+        effectiveType: h.effectiveType,
+        downlink: h.downlink,
+        rtt: h.rtt,
+        ipAddress: h.ipAddress,
+        timezone: h.timezone,
+        language: h.language,
+        userAgent: h.userAgent,
+        platform: h.platform,
+        screenResolution: h.screenResolution,
+        networkFingerprint: {
+          connectionSpeed: h.connectionSpeed,
+          connectionQuality: h.connectionQuality,
+          networkLatency: h.networkLatency,
+          bandwidthEstimate: h.bandwidthEstimate,
+        },
+        timestamp: h.timestamp.toISOString(),
+        sessionId: h.sessionId,
+      })
+    );
 
     // Realizar análise de rede
-    const analysis = await networkFingerprintingService.analyzeNetwork(fingerprint, historicalData);
+    const analysis = await networkFingerprintingService.analyzeNetwork(
+      fingerprint,
+      historicalData
+    );
 
     // Detectar possíveis fraudes
-    const fraudDetection = networkFingerprintingService.detectNetworkFraud(fingerprint, historicalData);
+    const fraudDetection = networkFingerprintingService.detectNetworkFraud(
+      fingerprint,
+      historicalData
+    );
 
     // Salvar fingerprint atual no banco
     await prisma.networkFingerprint.create({
@@ -82,8 +98,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         anomalies: JSON.stringify(analysis.anomalies),
         isFraud: fraudDetection.isFraud,
         fraudReasons: JSON.stringify(fraudDetection.reasons),
-        fraudConfidence: fraudDetection.confidence
-      }
+        fraudConfidence: fraudDetection.confidence,
+      },
     });
 
     // Log da análise
@@ -94,7 +110,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       isFraud: fraudDetection.isFraud,
       fraudConfidence: fraudDetection.confidence,
       anomalies: analysis.anomalies.length,
-      reasons: fraudDetection.reasons.length
+      reasons: fraudDetection.reasons.length,
     });
 
     // Retornar resultado da análise
@@ -108,17 +124,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         fraudDetection: {
           isFraud: fraudDetection.isFraud,
           reasons: fraudDetection.reasons,
-          confidence: fraudDetection.confidence
+          confidence: fraudDetection.confidence,
         },
-        recommendations: generateRecommendations(analysis, fraudDetection)
-      }
+        recommendations: generateRecommendations(analysis, fraudDetection),
+      },
     });
-
   } catch (error) {
     logger.log('❌ Erro na análise de rede antifraude:', error);
     res.status(500).json({
       success: false,
-      error: 'Erro interno do servidor'
+      error: 'Erro interno do servidor',
     });
   }
 }
@@ -135,7 +150,9 @@ function generateRecommendations(analysis: any, fraudDetection: any): string[] {
   }
 
   if (fraudDetection.isFraud) {
-    recommendations.push('Possível fraude detectada - bloquear temporariamente');
+    recommendations.push(
+      'Possível fraude detectada - bloquear temporariamente'
+    );
   }
 
   if (analysis.anomalies.length > 3) {
@@ -143,7 +160,9 @@ function generateRecommendations(analysis: any, fraudDetection: any): string[] {
   }
 
   if (analysis.networkProfile.type === 'unknown') {
-    recommendations.push('Tipo de rede não identificado - solicitar informações adicionais');
+    recommendations.push(
+      'Tipo de rede não identificado - solicitar informações adicionais'
+    );
   }
 
   return recommendations;

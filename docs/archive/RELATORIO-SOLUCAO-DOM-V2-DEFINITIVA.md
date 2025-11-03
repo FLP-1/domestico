@@ -13,7 +13,7 @@
 
 ### **Fontes Investigadas e Descartadas:**
 
-1. ✅ **Arquivos .env***
+1. ✅ **Arquivos .env\***
    - `.env`: NÃO EXISTE
    - `.env.development`: NÃO EXISTE
    - `.env.local`: ✅ CORRETO (contém `dom`)
@@ -45,20 +45,25 @@
 ## 🎯 DESCOBERTA CRÍTICA
 
 ### **Evidência do `next.config.js`:**
+
 ```bash
 🔍 [next.config.js] DATABASE_URL ANTES: postgresql://userdom:***@localhost:5433/dom?schema=public
 ```
+
 ✅ **O Next.js CARREGAVA `dom` CORRETAMENTE do `.env.local`**
 
 ### **Mas a API mostrava:**
+
 ```json
 {
   "dbUrlPreview": "postgresql://userdom:***@localhost:5433/dom_v2?schema=public"
 }
 ```
+
 ❌ **A API via `dom_v2`**
 
 ### **Conclusão:**
+
 O problema NÃO era de carregamento de variáveis, mas de **CACHE PERSISTENTE** do Next.js na pasta `.next/`.
 
 ---
@@ -68,11 +73,13 @@ O problema NÃO era de carregamento de variáveis, mas de **CACHE PERSISTENTE** 
 ### **Passos Executados:**
 
 1. **Parar todos os processos Node.js:**
+
    ```powershell
    Get-Process -Name node -ErrorAction SilentlyContinue | Stop-Process -Force
    ```
 
 2. **Limpar cache do Next.js:**
+
    ```powershell
    Remove-Item -Recurse -Force .next
    ```
@@ -83,6 +90,7 @@ O problema NÃO era de carregamento de variáveis, mas de **CACHE PERSISTENTE** 
    ```
 
 ### **Resultado:**
+
 ```json
 {
   "hasDbUrl": true,
@@ -90,6 +98,7 @@ O problema NÃO era de carregamento de variáveis, mas de **CACHE PERSISTENTE** 
   "nodeEnv": "development"
 }
 ```
+
 ✅ **DATABASE_URL agora mostra `dom` (correto)**
 
 ---
@@ -97,11 +106,13 @@ O problema NÃO era de carregamento de variáveis, mas de **CACHE PERSISTENTE** 
 ## ✅ VALIDAÇÃO COMPLETA
 
 ### **1. Variável de Ambiente:**
+
 ```bash
 DATABASE_URL: postgresql://userdom:***@localhost:5433/dom?schema=public ✅
 ```
 
 ### **2. Conexão com Banco:**
+
 ```json
 {
   "success": true,
@@ -110,9 +121,11 @@ DATABASE_URL: postgresql://userdom:***@localhost:5433/dom?schema=public ✅
   "message": "Conexão com banco OK!"
 }
 ```
+
 ✅ **Prisma conecta ao banco `dom` corretamente**
 
 ### **3. Código Limpo:**
+
 - ✅ Gambiarra removida de `src/lib/prisma.ts`
 - ✅ Singleton pattern restaurado
 - ✅ Logs de debug removidos
@@ -122,36 +135,40 @@ DATABASE_URL: postgresql://userdom:***@localhost:5433/dom?schema=public ✅
 ## 📊 ANTES vs DEPOIS
 
 ### **ANTES (com gambiarra):**
+
 ```typescript
 // src/lib/prisma.ts
 function getPrismaClient(): PrismaClient {
   // SOLUÇÃO: Forçar URL correta (dom_v2 está sendo carregado...)
-  const correctUrl = 'postgresql://userdom:FLP*2025@localhost:5433/dom?schema=public'
-  
+  const correctUrl =
+    'postgresql://userdom:FLP*2025@localhost:5433/dom?schema=public';
+
   globalThis.__prisma = new PrismaClient({
     datasources: {
-      db: { url: correctUrl } // URL HARDCODED ❌
-    }
-  })
+      db: { url: correctUrl }, // URL HARDCODED ❌
+    },
+  });
 }
 ```
 
 ### **DEPOIS (código limpo):**
+
 ```typescript
 // src/lib/prisma.ts
-let prisma: PrismaClient
+let prisma: PrismaClient;
 
 if (process.env.NODE_ENV === 'production') {
-  prisma = new PrismaClient()
+  prisma = new PrismaClient();
 } else {
   if (!globalThis.__prisma) {
     globalThis.__prisma = new PrismaClient({
-      log: ['error']
-    })
+      log: ['error'],
+    });
   }
-  prisma = globalThis.__prisma
+  prisma = globalThis.__prisma;
 }
 ```
+
 ✅ **Usa `process.env.DATABASE_URL` automaticamente do `.env.local`**
 
 ---
@@ -159,20 +176,24 @@ if (process.env.NODE_ENV === 'production') {
 ## 🎓 LIÇÕES APRENDIDAS
 
 ### **1. Cache do Next.js é Persistente:**
+
 - A pasta `.next/` pode conter valores antigos de variáveis de ambiente
 - Sempre limpar cache ao alterar variáveis críticas
 
 ### **2. Next.js Carrega `.env.local` Corretamente:**
+
 - O Next.js 15.5.4 carrega `.env.local` automaticamente
 - Não precisa de `dotenv.config()` manual
 - Não precisa de configuração em `next.config.js`
 
 ### **3. Processo de Debug Sistemático:**
+
 - Investigar do mais simples ao mais complexo
 - Descartar hipóteses com evidências
 - Usar logs estratégicos para identificar QUANDO o problema ocorre
 
 ### **4. Cursor IDE e Histórico:**
+
 - O Cursor mantém histórico de projetos antigos
 - MAS: Não injeta variáveis de ambiente automaticamente
 - O histórico de `C:\dom-v2` era apenas referência antiga
@@ -184,6 +205,7 @@ if (process.env.NODE_ENV === 'production') {
 ### **Para Evitar o Problema no Futuro:**
 
 1. **Sempre limpar cache ao mudar variáveis:**
+
    ```powershell
    Remove-Item -Recurse -Force .next
    npm run dev
@@ -202,11 +224,13 @@ if (process.env.NODE_ENV === 'production') {
 ## 📚 ARQUIVOS MODIFICADOS
 
 ### **Corrigidos (gambiarra removida):**
+
 - ✅ `src/lib/prisma.ts` - Singleton pattern limpo
 - ✅ `next.config.js` - Logs de debug removidos
 - ✅ `src/pages/api/debug/env.ts` - Logs de debug removidos
 
 ### **Mantidos (corretos):**
+
 - ✅ `.env.local` - DATABASE_URL com `dom`
 - ✅ `prisma/schema.prisma` - `url = env("DATABASE_URL")`
 - ✅ `.cursorrules` - Regras do projeto
@@ -249,4 +273,3 @@ Invoke-RestMethod http://localhost:3000/api/debug/db | ConvertTo-Json
 **Autor:** AI Assistant  
 **Status:** ✅ CONCLUÍDO  
 **Qualidade:** 🌟🌟🌟🌟🌟 (5/5) - Solução profissional sem gambiarras
-

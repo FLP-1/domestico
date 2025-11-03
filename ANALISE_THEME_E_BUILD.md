@@ -18,10 +18,10 @@ Este relatório detalha os erros encontrados, a causa raiz do problema e apresen
 
 Uma busca no código-fonte (`.ts`, `.tsx`) revelou a seguinte distribuição:
 
-| Padrão | Ocorrências | Análise |
-| :--- | :--- | :--- |
-| `$theme` | **2.674** | Usado como uma *transient prop* em `styled-components` para evitar que o objeto do tema seja passado para o DOM. Este é o padrão predominante no código legado. |
-| `theme` | (não quantificado) | Usado pelo `ThemeProvider` para injetar o tema. É o padrão do `styled-components` e do novo sistema de design. |
+| Padrão   | Ocorrências        | Análise                                                                                                                                                         |
+| :------- | :----------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `$theme` | **2.674**          | Usado como uma _transient prop_ em `styled-components` para evitar que o objeto do tema seja passado para o DOM. Este é o padrão predominante no código legado. |
+| `theme`  | (não quantificado) | Usado pelo `ThemeProvider` para injetar o tema. É o padrão do `styled-components` e do novo sistema de design.                                                  |
 
 O problema fundamental é que o `ThemeProvider` injeta o tema como `props.theme`, mas a grande maioria dos componentes espera recebê-lo como `props.$theme`. Isso causa erros de tipo porque `props.$theme` é frequentemente `undefined`.
 
@@ -33,7 +33,8 @@ Durante as tentativas de build, vários arquivos foram temporariamente movidos p
 
 Este é o erro mais comum, causado por uma função de interpolação aninhada em `styled-components` que não recebe `props` corretamente.
 
-**Exemplo (`DataList.tsx`):
+\*\*Exemplo (`DataList.tsx`):
+
 ```typescript
 const DataListBody = styled.div<{ $theme: any; ... }>`
   ${props => props.$striped && `
@@ -51,7 +52,8 @@ const DataListBody = styled.div<{ $theme: any; ... }>`
 
 Este erro ocorre quando uma variável que pode ser `undefined` é usada para acessar a chave de um objeto.
 
-**Exemplo (`ActionIcon/index.tsx`):
+\*\*Exemplo (`ActionIcon/index.tsx`):
+
 ```typescript
 interface ActionIconProps {
   size?: 'small' | 'medium' | 'large';
@@ -70,7 +72,8 @@ const getSizeStyles = (size: ActionIconProps['size']) => {
 
 O TypeScript exige que todos os parâmetros de função tenham um tipo explícito, a menos que a inferência seja possível.
 
-**Exemplo (`MultiStepForm/index.tsx`):
+\*\*Exemplo (`MultiStepForm/index.tsx`):
+
 ```typescript
 const updateFormData = (stepData: any) => {
   // Erro aqui! 'prev' não tem tipo.
@@ -84,7 +87,8 @@ const updateFormData = (stepData: any) => {
 
 Embora não quebrem o build, esses avisos indicam possíveis bugs em hooks como `useEffect`, `useMemo` e `useCallback` por não declararem todas as suas dependências.
 
-**Exemplo (`TutorialComponent.tsx`):
+\*\*Exemplo (`TutorialComponent.tsx`):
+
 ```typescript
 useMemo(() => {
   // ... lógica que usa theme.colors.primary
@@ -102,10 +106,11 @@ Para resolver esses problemas e garantir que o projeto compile com sucesso, prop
 **Objetivo:** Substituir todas as ocorrências de `$theme` por `theme` para alinhar com o `ThemeProvider`.
 
 **Ação:**
+
 1.  Executar um script de `find-and-replace` em toda a base de código (`.ts`, `.tsx`) para realizar as seguintes substituições:
-    -   `props.$theme` -> `props.theme`
-    -   `$theme?: any` -> `theme?: any` (em definições de tipo)
-    -   `$theme: any` -> `theme: any`
+    - `props.$theme` -> `props.theme`
+    - `$theme?: any` -> `theme?: any` (em definições de tipo)
+    - `$theme: any` -> `theme: any`
 2.  Esta ação irá corrigir a causa raiz da maioria dos erros relacionados ao tema.
 
 ### Fase 2: Correção de Erros de Tipo Explícitos
@@ -113,18 +118,20 @@ Para resolver esses problemas e garantir que o projeto compile com sucesso, prop
 **Objetivo:** Corrigir os erros de tipo que impedem o build.
 
 **Ações:**
+
 1.  **`MultiStepForm/index.tsx`**: Adicionar tipo explícito ao parâmetro `prev` na função `setFormData`.
-    -   **Correção:** `setFormData((prev: any) => ({ ...prev, ...stepData }));`
+    - **Correção:** `setFormData((prev: any) => ({ ...prev, ...stepData }));`
 2.  **`ActionIcon/index.tsx`**: Corrigir o tipo do parâmetro `size` na função `getSizeStyles`.
-    -   **Correção:** `const getSizeStyles = (size: 'small' | 'medium' | 'large') => { ... }`
+    - **Correção:** `const getSizeStyles = (size: 'small' | 'medium' | 'large') => { ... }`
 3.  **`DataList.tsx`**: Corrigir o acesso aninhado a `props`.
-    -   **Correção:** Alterar `props.theme` para `props.$theme` (ou, após a Fase 1, garantir que a referência seja ao `props` externo).
+    - **Correção:** Alterar `props.theme` para `props.$theme` (ou, após a Fase 1, garantir que a referência seja ao `props` externo).
 
 ### Fase 3: Correção dos Warnings de ESLint
 
 **Objetivo:** Eliminar os warnings de `exhaustive-deps` para melhorar a estabilidade do código.
 
 **Ação:**
+
 1.  Revisar cada um dos 7 warnings de `exhaustive-deps` apontados pelo build.
 2.  Adicionar as dependências ausentes aos arrays de dependência dos hooks (`useEffect`, `useMemo`, `useCallback`).
 
@@ -133,6 +140,7 @@ Para resolver esses problemas e garantir que o projeto compile com sucesso, prop
 **Objetivo:** Garantir que o projeto compila sem erros ou warnings críticos.
 
 **Ações:**
+
 1.  Restaurar todos os arquivos temporariamente movidos (`cypress`, `prisma/seed-completo.ts`, etc.) e aplicar as correções necessárias neles também.
 2.  Executar o comando `npm run build`.
 3.  Verificar se a compilação é concluída com sucesso.
@@ -142,10 +150,10 @@ Para resolver esses problemas e garantir que o projeto compile com sucesso, prop
 
 Esta correção é de **prioridade crítica**, pois impede qualquer novo deploy. As fases devem ser executadas sequencialmente.
 
--   **Fase 1 (Padronização):** 2-3 horas (devido ao alto número de arquivos)
--   **Fase 2 (Erros de Tipo):** 1 hora
--   **Fase 3 (ESLint):** 1 hora
--   **Fase 4 (Validação):** 1-2 horas
+- **Fase 1 (Padronização):** 2-3 horas (devido ao alto número de arquivos)
+- **Fase 2 (Erros de Tipo):** 1 hora
+- **Fase 3 (ESLint):** 1 hora
+- **Fase 4 (Validação):** 1-2 horas
 
 **Tempo Total Estimado:** 4 a 7 horas.
 

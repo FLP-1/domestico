@@ -1,54 +1,54 @@
 /**
  * 🌱 Seed do Banco de Dados - Sistema DOM
- * 
+ *
  * Este arquivo popula o banco com dados iniciais
  */
 
-import { PrismaClient } from '@prisma/client'
-import * as bcrypt from 'bcryptjs'
+import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 // ============================================
 // 🔢 FUNÇÃO PARA GERAR CPF VÁLIDO
 // ============================================
 function gerarCPFValido(): string {
   // Gera 9 primeiros dígitos aleatórios
-  const base = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10))
-  
+  const base = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10));
+
   // Calcula primeiro dígito verificador
-  let soma = 0
+  let soma = 0;
   for (let i = 0; i < 9; i++) {
-    soma += base[i] * (10 - i)
+    soma += base[i] * (10 - i);
   }
-  let digito1 = 11 - (soma % 11)
-  digito1 = digito1 >= 10 ? 0 : digito1
-  
+  let digito1 = 11 - (soma % 11);
+  digito1 = digito1 >= 10 ? 0 : digito1;
+
   // Calcula segundo dígito verificador
-  soma = 0
+  soma = 0;
   for (let i = 0; i < 9; i++) {
-    soma += base[i] * (11 - i)
+    soma += base[i] * (11 - i);
   }
-  soma += digito1 * 2
-  let digito2 = 11 - (soma % 11)
-  digito2 = digito2 >= 10 ? 0 : digito2
-  
-  return [...base, digito1, digito2].join('')
+  soma += digito1 * 2;
+  let digito2 = 11 - (soma % 11);
+  digito2 = digito2 >= 10 ? 0 : digito2;
+
+  return [...base, digito1, digito2].join('');
 }
 
 // CPFs válidos pré-gerados para os usuários principais
-const CPF_FRANCISCO = '59876913700' // CPF real do empregador
-const CPF_MARIA = '38645446880' // CPF válido gerado
-const CPF_ADMIN = gerarCPFValido()
+const CPF_FRANCISCO = '59876913700'; // CPF real do empregador
+const CPF_MARIA = '38645446880'; // CPF válido gerado
+const CPF_ADMIN = gerarCPFValido();
 
 async function main() {
-  console.log('🌱 Iniciando seed do banco de dados...')
+  console.log('🌱 Iniciando seed do banco de dados...');
 
   // ==========================================
   // 0️⃣ CONFIGURAÇÕES DO SISTEMA
   // ==========================================
-  console.log('⚙️ Criando configurações do sistema...')
-  
+  console.log('⚙️ Criando configurações do sistema...');
+
   // Configurações básicas do sistema
   const configuracoesSistema = [
     {
@@ -58,7 +58,7 @@ async function main() {
       categoria: 'empresa',
       tipo: 'string',
       obrigatorio: true,
-      validacao: '^[0-9]{11}$'
+      validacao: '^[0-9]{11}$',
     },
     {
       chave: 'empresa_nome',
@@ -66,7 +66,7 @@ async function main() {
       descricao: 'Nome da empresa',
       categoria: 'empresa',
       tipo: 'string',
-      obrigatorio: true
+      obrigatorio: true,
     },
     {
       chave: 'empresa_email',
@@ -75,7 +75,7 @@ async function main() {
       categoria: 'empresa',
       tipo: 'string',
       obrigatorio: true,
-      validacao: '^[^@]+@[^@]+\\.[^@]+$'
+      validacao: '^[^@]+@[^@]+\\.[^@]+$',
     },
     {
       chave: 'empresa_telefone',
@@ -83,7 +83,7 @@ async function main() {
       descricao: 'Telefone principal da empresa',
       categoria: 'empresa',
       tipo: 'string',
-      obrigatorio: true
+      obrigatorio: true,
     },
     {
       chave: 'sistema_url_base',
@@ -91,7 +91,7 @@ async function main() {
       descricao: 'URL base do sistema',
       categoria: 'sistema',
       tipo: 'string',
-      obrigatorio: true
+      obrigatorio: true,
     },
     {
       chave: 'esocial_ambiente_padrao',
@@ -100,78 +100,78 @@ async function main() {
       categoria: 'integracao',
       tipo: 'string',
       obrigatorio: true,
-      valoresPermitidos: JSON.stringify(['homologacao', 'producao'])
+      valoresPermitidos: JSON.stringify(['homologacao', 'producao']),
     },
-          {
-            chave: 'geocoding_precisao_casas',
-            valor: '11',
-            descricao: 'Número de casas decimais para precisão de geolocalização',
-            categoria: 'sistema',
-            tipo: 'number',
-            obrigatorio: true
-          },
-          {
-            chave: 'geolocalizacao_precisao_maxima',
-            valor: '10',
-            descricao: 'Precisão máxima aceitável em metros para geolocalização',
-            categoria: 'sistema',
-            tipo: 'number',
-            obrigatorio: true
-          },
-          {
-            chave: 'geolocalizacao_timeout',
-            valor: '30000',
-            descricao: 'Timeout em milissegundos para captura de geolocalização',
-            categoria: 'sistema',
-            tipo: 'number',
-            obrigatorio: true
-          },
-          {
-            chave: 'autenticacao_tempo_sessao',
-            valor: '86400',
-            descricao: 'Tempo de sessão em segundos (24 horas)',
-            categoria: 'sistema',
-            tipo: 'number',
-            obrigatorio: true
-          },
-          {
-            chave: 'sistema_senha_padrao',
-            valor: 'senha123',
-            descricao: 'Senha padrão do sistema para desenvolvimento',
-            categoria: 'sistema',
-            tipo: 'string',
-            obrigatorio: false
-          },
-          {
-            chave: 'empresa_razao_social',
-            valor: 'FLP Business Strategy',
-            descricao: 'Razão social da empresa',
-            categoria: 'empresa',
-            tipo: 'string',
-            obrigatorio: true
-          },
-          {
-            chave: 'empresa_cnpj',
-            valor: '',
-            descricao: 'CNPJ da empresa (vazio para pessoa física)',
-            categoria: 'empresa',
-            tipo: 'string',
-            obrigatorio: false
-          }
+    {
+      chave: 'geocoding_precisao_casas',
+      valor: '11',
+      descricao: 'Número de casas decimais para precisão de geolocalização',
+      categoria: 'sistema',
+      tipo: 'number',
+      obrigatorio: true,
+    },
+    {
+      chave: 'geolocalizacao_precisao_maxima',
+      valor: '10',
+      descricao: 'Precisão máxima aceitável em metros para geolocalização',
+      categoria: 'sistema',
+      tipo: 'number',
+      obrigatorio: true,
+    },
+    {
+      chave: 'geolocalizacao_timeout',
+      valor: '30000',
+      descricao: 'Timeout em milissegundos para captura de geolocalização',
+      categoria: 'sistema',
+      tipo: 'number',
+      obrigatorio: true,
+    },
+    {
+      chave: 'autenticacao_tempo_sessao',
+      valor: '86400',
+      descricao: 'Tempo de sessão em segundos (24 horas)',
+      categoria: 'sistema',
+      tipo: 'number',
+      obrigatorio: true,
+    },
+    {
+      chave: 'sistema_senha_padrao',
+      valor: 'senha123',
+      descricao: 'Senha padrão do sistema para desenvolvimento',
+      categoria: 'sistema',
+      tipo: 'string',
+      obrigatorio: false,
+    },
+    {
+      chave: 'empresa_razao_social',
+      valor: 'FLP Business Strategy',
+      descricao: 'Razão social da empresa',
+      categoria: 'empresa',
+      tipo: 'string',
+      obrigatorio: true,
+    },
+    {
+      chave: 'empresa_cnpj',
+      valor: '',
+      descricao: 'CNPJ da empresa (vazio para pessoa física)',
+      categoria: 'empresa',
+      tipo: 'string',
+      obrigatorio: false,
+    },
   ];
 
   for (const config of configuracoesSistema) {
     await prisma.configuracaoSistema.upsert({
       where: { chave: config.chave },
       update: config,
-      create: config
+      create: config,
     });
   }
 
   // ==========================================
   // 1️⃣ PERFIS
   // ==========================================
-  console.log('📋 Criando perfis...')
+  console.log('📋 Criando perfis...');
 
   const perfilEmpregado = await prisma.perfil.upsert({
     where: { codigo: 'EMPREGADO' },
@@ -184,7 +184,7 @@ async function main() {
       icone: 'worker',
       ativo: true,
     },
-  })
+  });
 
   const perfilEmpregador = await prisma.perfil.upsert({
     where: { codigo: 'EMPREGADOR' },
@@ -197,7 +197,7 @@ async function main() {
       icone: 'business',
       ativo: true,
     },
-  })
+  });
 
   const perfilFamilia = await prisma.perfil.upsert({
     where: { codigo: 'FAMILIA' },
@@ -210,7 +210,7 @@ async function main() {
       icone: 'family',
       ativo: true,
     },
-  })
+  });
 
   const perfilAdmin = await prisma.perfil.upsert({
     where: { codigo: 'ADMIN' },
@@ -223,7 +223,7 @@ async function main() {
       icone: 'admin',
       ativo: true,
     },
-  })
+  });
 
   const perfilFuncionario = await prisma.perfil.upsert({
     where: { codigo: 'FUNCIONARIO' },
@@ -236,7 +236,7 @@ async function main() {
       icone: 'worker',
       ativo: true,
     },
-  })
+  });
 
   const perfilFinanceiro = await prisma.perfil.upsert({
     where: { codigo: 'FINANCEIRO' },
@@ -249,7 +249,7 @@ async function main() {
       icone: 'money',
       ativo: true,
     },
-  })
+  });
 
   const perfilAdministrador = await prisma.perfil.upsert({
     where: { codigo: 'ADMINISTRADOR' },
@@ -262,14 +262,14 @@ async function main() {
       icone: 'owner',
       ativo: true,
     },
-  })
+  });
 
-  console.log('✅ Perfis criados!')
+  console.log('✅ Perfis criados!');
 
   // ==========================================
   // 2️⃣ FUNCIONALIDADES
   // ==========================================
-  console.log('⚙️ Criando funcionalidades...')
+  console.log('⚙️ Criando funcionalidades...');
 
   const funcionalidades = [
     {
@@ -360,24 +360,24 @@ async function main() {
       rota: '/monitoring-dashboard',
       ordem: 11,
     },
-  ]
+  ];
 
-  const funcionalidadesCriadas = []
+  const funcionalidadesCriadas = [];
   for (const func of funcionalidades) {
     const funcionalidade = await prisma.funcionalidade.upsert({
       where: { codigo: func.codigo },
       update: {},
       create: func,
-    })
-    funcionalidadesCriadas.push(funcionalidade)
+    });
+    funcionalidadesCriadas.push(funcionalidade);
   }
 
-  console.log('✅ Funcionalidades criadas!')
+  console.log('✅ Funcionalidades criadas!');
 
   // ==========================================
   // 3️⃣ PERMISSÕES (Perfil x Funcionalidade)
   // ==========================================
-  console.log('🔐 Configurando permissões...')
+  console.log('🔐 Configurando permissões...');
 
   // EMPREGADO - Acesso limitado
   const permissoesEmpregado = [
@@ -386,10 +386,12 @@ async function main() {
     { funcCodigo: 'task-management', leitura: true, escrita: true },
     { funcCodigo: 'document-management', leitura: true, escrita: true },
     { funcCodigo: 'communication', leitura: true, escrita: true },
-  ]
+  ];
 
   for (const perm of permissoesEmpregado) {
-    const func = funcionalidadesCriadas.find((f: any) => f.codigo === perm.funcCodigo)
+    const func = funcionalidadesCriadas.find(
+      (f: any) => f.codigo === perm.funcCodigo
+    );
     if (func) {
       await prisma.perfilFuncionalidade.upsert({
         where: {
@@ -407,7 +409,7 @@ async function main() {
           permissaoExclusao: false,
           permissaoAdmin: false,
         },
-      })
+      });
     }
   }
 
@@ -424,10 +426,12 @@ async function main() {
     { funcCodigo: 'loan-management', leitura: true, escrita: true },
     { funcCodigo: 'esocial', leitura: true, escrita: true },
     { funcCodigo: 'monitoring', leitura: true, escrita: false },
-  ]
+  ];
 
   for (const perm of permissoesEmpregador) {
-    const func = funcionalidadesCriadas.find((f: any) => f.codigo === perm.funcCodigo)
+    const func = funcionalidadesCriadas.find(
+      (f: any) => f.codigo === perm.funcCodigo
+    );
     if (func) {
       await prisma.perfilFuncionalidade.upsert({
         where: {
@@ -445,7 +449,7 @@ async function main() {
           permissaoExclusao: true, // Empregador pode excluir
           permissaoAdmin: false,
         },
-      })
+      });
     }
   }
 
@@ -456,10 +460,12 @@ async function main() {
     { funcCodigo: 'shopping-management', leitura: true, escrita: true },
     { funcCodigo: 'communication', leitura: true, escrita: true },
     { funcCodigo: 'alert-management', leitura: true, escrita: true },
-  ]
+  ];
 
   for (const perm of permissoesFamilia) {
-    const func = funcionalidadesCriadas.find((f: any) => f.codigo === perm.funcCodigo)
+    const func = funcionalidadesCriadas.find(
+      (f: any) => f.codigo === perm.funcCodigo
+    );
     if (func) {
       await prisma.perfilFuncionalidade.upsert({
         where: {
@@ -477,7 +483,7 @@ async function main() {
           permissaoExclusao: false,
           permissaoAdmin: false,
         },
-      })
+      });
     }
   }
 
@@ -499,17 +505,17 @@ async function main() {
         permissaoExclusao: true,
         permissaoAdmin: true,
       },
-    })
+    });
   }
 
-  console.log('✅ Permissões configuradas!')
+  console.log('✅ Permissões configuradas!');
 
   // ==========================================
   // 4️⃣ USUÁRIOS DE EXEMPLO
   // ==========================================
-  console.log('👤 Criando usuários de exemplo...')
+  console.log('👤 Criando usuários de exemplo...');
 
-  const senhaPadrao = await bcrypt.hash('senha123', 10)
+  const senhaPadrao = await bcrypt.hash('senha123', 10);
 
   // Usuário 1: Empregador
   const empregador = await prisma.usuario.upsert({
@@ -539,7 +545,7 @@ async function main() {
       versaoTermos: 'v2.1.0',
       ativo: true,
     },
-  })
+  });
 
   // Associar perfil de empregador
   await prisma.usuarioPerfil.upsert({
@@ -558,7 +564,7 @@ async function main() {
       ativo: true,
       principal: true,
     },
-  })
+  });
 
   // Adicionar perfil de família para o Francisco (para testar modal)
   await prisma.usuarioPerfil.upsert({
@@ -577,7 +583,7 @@ async function main() {
       ativo: true,
       principal: false,
     },
-  })
+  });
 
   // Usuário 2: Empregado
   const empregado = await prisma.usuario.upsert({
@@ -606,7 +612,7 @@ async function main() {
       versaoTermos: 'v2.1.0',
       ativo: true,
     },
-  })
+  });
 
   // Associar perfil de empregado
   await prisma.usuarioPerfil.upsert({
@@ -625,14 +631,14 @@ async function main() {
       ativo: true,
       principal: true,
     },
-  })
+  });
 
-  console.log('✅ Usuários criados!')
+  console.log('✅ Usuários criados!');
 
   // ==========================================
   // 5️⃣ TERMOS E POLÍTICAS
   // ==========================================
-  console.log('📜 Criando termos...')
+  console.log('📜 Criando termos...');
 
   await prisma.termo.upsert({
     where: { versao: 'v2.1.0' },
@@ -650,14 +656,14 @@ async function main() {
         'Política de privacidade atualizada',
       ],
     },
-  })
+  });
 
-  console.log('✅ Termos criados!')
+  console.log('✅ Termos criados!');
 
   // ==========================================
   // 6️⃣ CONFIGURAÇÕES INICIAIS
   // ==========================================
-  console.log('⚙️ Criando configurações...')
+  console.log('⚙️ Criando configurações...');
 
   const configuracoes = [
     {
@@ -702,31 +708,31 @@ async function main() {
       descricao: 'Backup automático habilitado',
       categoria: 'SISTEMA',
     },
-  ]
+  ];
 
   for (const config of configuracoes) {
     await prisma.configuracao.upsert({
       where: { chave: config.chave },
       update: {},
       create: config,
-    })
+    });
   }
 
-  console.log('✅ Configurações criadas!')
+  console.log('✅ Configurações criadas!');
 
   // ==========================================
   // 7️⃣ MAIS USUÁRIOS DE TESTE (CPFs VÁLIDOS)
   // ==========================================
-  console.log('👥 Criando mais usuários de teste...')
-  
-  const usuariosExtras = []
-  const nomes = ['João', 'Ana', 'Pedro', 'Julia', 'Carlos', 'Fernanda']
-  const sobrenomes = ['Silva', 'Santos', 'Oliveira', 'Costa', 'Souza', 'Lima']
-  
+  console.log('👥 Criando mais usuários de teste...');
+
+  const usuariosExtras = [];
+  const nomes = ['João', 'Ana', 'Pedro', 'Julia', 'Carlos', 'Fernanda'];
+  const sobrenomes = ['Silva', 'Santos', 'Oliveira', 'Costa', 'Souza', 'Lima'];
+
   for (let i = 0; i < 6; i++) {
-    const cpfValido = gerarCPFValido()
-    const nome = `${nomes[i]} ${sobrenomes[i]}`
-    
+    const cpfValido = gerarCPFValido();
+    const nome = `${nomes[i]} ${sobrenomes[i]}`;
+
     const usuario = await prisma.usuario.create({
       data: {
         cpf: cpfValido,
@@ -742,7 +748,10 @@ async function main() {
         bairro: 'Jardim América',
         cidade: 'São Paulo',
         uf: 'SP',
-        cep: String(Math.floor(Math.random() * 90000000) + 10000000).substring(0, 8),
+        cep: String(Math.floor(Math.random() * 90000000) + 10000000).substring(
+          0,
+          8
+        ),
         senhaHash: senhaPadrao,
         salt: `salt${i}`,
         consentimentoLGPD: true,
@@ -751,11 +760,16 @@ async function main() {
         versaoTermos: 'v2.1.0',
         ativo: true,
       },
-    })
-    
+    });
+
     // Alternar perfis
-    const perfil = i % 3 === 0 ? perfilEmpregador : i % 3 === 1 ? perfilEmpregado : perfilFamilia
-    
+    const perfil =
+      i % 3 === 0
+        ? perfilEmpregador
+        : i % 3 === 1
+          ? perfilEmpregado
+          : perfilFamilia;
+
     await prisma.usuarioPerfil.create({
       data: {
         usuarioId: usuario.id,
@@ -765,18 +779,18 @@ async function main() {
         ativo: true,
         principal: true,
       },
-    })
-    
-    usuariosExtras.push(usuario)
+    });
+
+    usuariosExtras.push(usuario);
   }
-  
-  console.log(`✅ ${usuariosExtras.length} usuários extras criados!`)
+
+  console.log(`✅ ${usuariosExtras.length} usuários extras criados!`);
 
   // ==========================================
   // 8️⃣ GRUPOS E MEMBROS
   // ==========================================
-  console.log('👥 Criando grupos...')
-  
+  console.log('👥 Criando grupos...');
+
   const grupoFamilia = await prisma.grupo.create({
     data: {
       nome: 'Família Papaleo',
@@ -786,8 +800,8 @@ async function main() {
       tipo: 'FAMILIAR',
       privado: false,
     },
-  })
-  
+  });
+
   // Adicionar membros ao grupo
   await prisma.usuarioGrupo.create({
     data: {
@@ -795,8 +809,8 @@ async function main() {
       grupoId: grupoFamilia.id,
       papel: 'ADMIN',
     },
-  })
-  
+  });
+
   for (let i = 0; i < 3; i++) {
     await prisma.usuarioGrupo.create({
       data: {
@@ -804,46 +818,50 @@ async function main() {
         grupoId: grupoFamilia.id,
         papel: i === 0 ? 'MODERADOR' : 'MEMBRO',
       },
-    })
+    });
   }
-  
-  console.log('✅ Grupos criados!')
+
+  console.log('✅ Grupos criados!');
 
   // ==========================================
   // 9️⃣ DISPOSITIVOS
   // ==========================================
-  console.log('📱 Criando dispositivos...')
-  
-  const todosUsuarios = [empregador, empregado, ...usuariosExtras]
-  
+  console.log('📱 Criando dispositivos...');
+
+  const todosUsuarios = [empregador, empregado, ...usuariosExtras];
+
   for (const usuario of todosUsuarios.slice(0, 5)) {
     await prisma.dispositivo.create({
       data: {
         usuarioId: usuario.id,
         dispositivoId: `device_${Math.random().toString(36).substring(7)}`,
         nome: `${usuario.apelido} - Smartphone`,
-        modelo: ['iPhone 14', 'Samsung Galaxy S23', 'Xiaomi 13'][Math.floor(Math.random() * 3)],
-        versaoSO: ['iOS 17', 'Android 14', 'Android 13'][Math.floor(Math.random() * 3)],
+        modelo: ['iPhone 14', 'Samsung Galaxy S23', 'Xiaomi 13'][
+          Math.floor(Math.random() * 3)
+        ],
+        versaoSO: ['iOS 17', 'Android 14', 'Android 13'][
+          Math.floor(Math.random() * 3)
+        ],
         tipo: 'MOBILE',
         nomeRedeWiFi: 'Casa',
         enderecoIP: `192.168.1.${Math.floor(Math.random() * 254) + 1}`,
-        latitude: -23.55052 + (Math.random() * 0.1),
-        longitude: -46.633308 + (Math.random() * 0.1),
+        latitude: -23.55052 + Math.random() * 0.1,
+        longitude: -46.633308 + Math.random() * 0.1,
         precisao: 10.5,
         confiavel: true,
       },
-    })
+    });
   }
-  
-  console.log('✅ Dispositivos criados!')
+
+  console.log('✅ Dispositivos criados!');
 
   // ==========================================
   // 🔟 DOCUMENTOS
   // ==========================================
-  console.log('📄 Criando documentos de exemplo...')
-  
-  const categorias = ['RG', 'CPF', 'CNH', 'COMPROVANTE_RESIDENCIA', 'CTPS']
-  
+  console.log('📄 Criando documentos de exemplo...');
+
+  const categorias = ['RG', 'CPF', 'CNH', 'COMPROVANTE_RESIDENCIA', 'CTPS'];
+
   for (let i = 0; i < 15; i++) {
     await prisma.documento.create({
       data: {
@@ -858,19 +876,19 @@ async function main() {
         permissao: i % 2 === 0 ? 'PRIVADO' : 'COMPARTILHADO',
         tags: ['importante', 'pessoal'],
       },
-    })
+    });
   }
-  
-  console.log('✅ Documentos criados!')
+
+  console.log('✅ Documentos criados!');
 
   // ==========================================
   // 1️⃣1️⃣ TAREFAS
   // ==========================================
-  console.log('✅ Criando tarefas...')
-  
-  const prioridades = ['BAIXA', 'MEDIA', 'ALTA', 'URGENTE']
-  const statusTarefa = ['PENDENTE', 'EM_ANDAMENTO', 'CONCLUIDA']
-  
+  console.log('✅ Criando tarefas...');
+
+  const prioridades = ['BAIXA', 'MEDIA', 'ALTA', 'URGENTE'];
+  const statusTarefa = ['PENDENTE', 'EM_ANDAMENTO', 'CONCLUIDA'];
+
   for (let i = 0; i < 20; i++) {
     await prisma.tarefa.create({
       data: {
@@ -884,16 +902,16 @@ async function main() {
         tags: ['trabalho', 'importante'],
         corLabel: ['#FF6B6B', '#4ECDC4', '#45B7D1'][i % 3],
       },
-    })
+    });
   }
-  
-  console.log('✅ Tarefas criadas!')
+
+  console.log('✅ Tarefas criadas!');
 
   // ==========================================
   // 1️⃣2️⃣ PLANOS E ASSINATURAS
   // ==========================================
-  console.log('💳 Criando planos de assinatura...')
-  
+  console.log('💳 Criando planos de assinatura...');
+
   const planoFree = await prisma.planoAssinatura.create({
     data: {
       codigo: 'FREE',
@@ -906,38 +924,42 @@ async function main() {
       gratuito: true,
       ordem: 1,
     },
-  })
-  
+  });
+
   const planoBasico = await prisma.planoAssinatura.create({
     data: {
       codigo: 'BASIC',
       nome: 'Plano Básico',
       tagline: 'Para famílias pequenas',
       descricao: 'Recursos completos para uso familiar',
-      precoMensal: 29.90,
-      precoAnual: 299.00,
+      precoMensal: 29.9,
+      precoAnual: 299.0,
       descontoAnual: '17%',
-      recursos: ['Até 5 usuários', 'Documentos ilimitados', 'Suporte prioritário'],
+      recursos: [
+        'Até 5 usuários',
+        'Documentos ilimitados',
+        'Suporte prioritário',
+      ],
       popular: true,
       ordem: 2,
     },
-  })
-  
+  });
+
   await prisma.planoAssinatura.create({
     data: {
       codigo: 'PREMIUM',
       nome: 'Plano Premium',
       tagline: 'Para empresas',
       descricao: 'Todos os recursos + eSocial',
-      precoMensal: 99.90,
-      precoAnual: 999.00,
+      precoMensal: 99.9,
+      precoAnual: 999.0,
       descontoAnual: '17%',
       recursos: ['Usuários ilimitados', 'eSocial completo', 'Suporte 24/7'],
       recomendado: true,
       ordem: 3,
     },
-  })
-  
+  });
+
   // Criar assinaturas
   await prisma.assinatura.create({
     data: {
@@ -947,17 +969,17 @@ async function main() {
       status: 'ATIVA',
       inicioEm: new Date(),
       proximaCobrancaEm: new Date(Date.now() + 30 * 86400000),
-      valorAtual: 29.90,
+      valorAtual: 29.9,
     },
-  })
-  
-  console.log('✅ Planos e assinaturas criados!')
+  });
+
+  console.log('✅ Planos e assinaturas criados!');
 
   // ==========================================
   // 1️⃣3️⃣ LISTAS DE COMPRAS
   // ==========================================
-  console.log('🛒 Criando listas de compras...')
-  
+  console.log('🛒 Criando listas de compras...');
+
   const lista = await prisma.listaCompras.create({
     data: {
       usuarioId: empregador.id,
@@ -965,20 +987,30 @@ async function main() {
       categoria: 'SUPERMERCADO',
       totalItens: 10,
       itensComprados: 3,
-      valorEstimado: 500.00,
+      valorEstimado: 500.0,
       ativa: true,
     },
-  })
-  
+  });
+
   const itens = [
-    { nome: 'Arroz', quantidade: '2 kg', preco: 15.90, categoria: 'ALIMENTOS' },
-    { nome: 'Feijão', quantidade: '1 kg', preco: 8.50, categoria: 'ALIMENTOS' },
-    { nome: 'Macarrão', quantidade: '500g', preco: 4.90, categoria: 'ALIMENTOS' },
-    { nome: 'Leite', quantidade: '2L', preco: 6.50, categoria: 'BEBIDAS' },
-    { nome: 'Sabonete', quantidade: '4 un', preco: 8.00, categoria: 'HIGIENE' },
-    { nome: 'Detergente', quantidade: '3 un', preco: 6.90, categoria: 'LIMPEZA' },
-  ]
-  
+    { nome: 'Arroz', quantidade: '2 kg', preco: 15.9, categoria: 'ALIMENTOS' },
+    { nome: 'Feijão', quantidade: '1 kg', preco: 8.5, categoria: 'ALIMENTOS' },
+    {
+      nome: 'Macarrão',
+      quantidade: '500g',
+      preco: 4.9,
+      categoria: 'ALIMENTOS',
+    },
+    { nome: 'Leite', quantidade: '2L', preco: 6.5, categoria: 'BEBIDAS' },
+    { nome: 'Sabonete', quantidade: '4 un', preco: 8.0, categoria: 'HIGIENE' },
+    {
+      nome: 'Detergente',
+      quantidade: '3 un',
+      preco: 6.9,
+      categoria: 'LIMPEZA',
+    },
+  ];
+
   for (let i = 0; i < itens.length; i++) {
     await prisma.itemCompra.create({
       data: {
@@ -987,16 +1019,16 @@ async function main() {
         comprado: i < 3,
         ordem: i,
       },
-    })
+    });
   }
-  
-  console.log('✅ Listas de compras criadas!')
+
+  console.log('✅ Listas de compras criadas!');
 
   // ==========================================
   // 1️⃣4️⃣ ALERTAS
   // ==========================================
-  console.log('🔔 Criando alertas...')
-  
+  console.log('🔔 Criando alertas...');
+
   for (let i = 0; i < 5; i++) {
     await prisma.alerta.create({
       data: {
@@ -1012,15 +1044,15 @@ async function main() {
         notificarEmail: i % 2 === 0,
         notificarPush: true,
       },
-    })
+    });
   }
-  
-  console.log('✅ Alertas criados!')
+
+  console.log('✅ Alertas criados!');
 
   // ==========================================
   // 🏢 EMPREGADORES
   // ==========================================
-  console.log('🏢 Criando empregadores...')
+  console.log('🏢 Criando empregadores...');
 
   const empregadorPrincipal = await prisma.empregador.upsert({
     where: { cpfCnpj: '59876913700' },
@@ -1042,27 +1074,34 @@ async function main() {
       ambienteESocial: 'HOMOLOGACAO',
       ativo: true,
     },
-  })
+  });
 
-  console.log('✅ Empregadores criados!')
+  console.log('✅ Empregadores criados!');
 
   // ==========================================
   // 🔐 CERTIFICADOS DIGITAIS
   // ==========================================
-  console.log('🔐 Criando certificados digitais...')
+  console.log('🔐 Criando certificados digitais...');
 
   // Importa funções de criptografia (simuladas para o seed)
-  const crypto = await import('crypto')
-  
+  const crypto = await import('crypto');
+
   // Função para criptografar senha (simulada - no sistema real usa o serviço)
   function encryptPasswordForSeed(password: string) {
-    const salt = crypto.randomBytes(64).toString('hex')
-    const iv = crypto.randomBytes(16).toString('hex')
-    const hash = crypto.createHash('sha256').update(password + salt).digest('hex')
-    return { hash, salt, iv }
+    const salt = crypto.randomBytes(64).toString('hex');
+    const iv = crypto.randomBytes(16).toString('hex');
+    const hash = crypto
+      .createHash('sha256')
+      .update(password + salt)
+      .digest('hex');
+    return { hash, salt, iv };
   }
 
-  const { hash: senhaHash, salt: senhaSalt, iv: criptografiaIV } = encryptPasswordForSeed('456587')
+  const {
+    hash: senhaHash,
+    salt: senhaSalt,
+    iv: criptografiaIV,
+  } = encryptPasswordForSeed('456587');
 
   const certificadoPrincipal = await prisma.certificadoDigital.upsert({
     where: { numeroSerial: 'ECPF-A1-24940271-2024' },
@@ -1070,7 +1109,8 @@ async function main() {
     create: {
       empregadorId: empregadorPrincipal.id,
       nome: 'Certificado eCPF A1 - FLP Business Strategy',
-      descricao: 'Certificado digital e-CPF A1 para assinatura de documentos eSocial',
+      descricao:
+        'Certificado digital e-CPF A1 para assinatura de documentos eSocial',
       tipo: 'E_CPF_A1',
       tipoDocumento: 'CERTIFICADO_DIGITAL',
       cpfCnpjTitular: '24940271000',
@@ -1081,11 +1121,18 @@ async function main() {
       dataValidade: new Date('2025-12-31'),
       algoritmo: 'RSA',
       tamanhoChave: 2048,
-      thumbprint: crypto.createHash('sha1').update('certificado-flp-2024').digest('hex').toUpperCase(),
+      thumbprint: crypto
+        .createHash('sha1')
+        .update('certificado-flp-2024')
+        .digest('hex')
+        .toUpperCase(),
       caminhoArquivo: './certificados/eCPF A1 24940271 (senha 456587).pfx',
       nomeArquivoOriginal: 'eCPF A1 24940271 (senha 456587).pfx',
       tamanhoArquivo: 5120,
-      hashArquivo: crypto.createHash('sha256').update('certificado-flp-2024').digest('hex'),
+      hashArquivo: crypto
+        .createHash('sha256')
+        .update('certificado-flp-2024')
+        .digest('hex'),
       senhaHash,
       senhaSalt,
       senhaAlgoritmo: 'AES-256-GCM',
@@ -1100,7 +1147,7 @@ async function main() {
       usuarioCadastro: 'SISTEMA_SEED',
       observacoes: 'Certificado cadastrado automaticamente no seed inicial',
     },
-  })
+  });
 
   // Registra o histórico de criação
   await prisma.certificadoHistorico.create({
@@ -1112,16 +1159,18 @@ async function main() {
       userAgent: 'Sistema/Seed',
       sucesso: true,
     },
-  })
+  });
 
-  console.log('✅ Certificados digitais criados!')
-  console.log('   ⚠️  IMPORTANTE: A senha do certificado está CRIPTOGRAFADA no banco!')
+  console.log('✅ Certificados digitais criados!');
+  console.log(
+    '   ⚠️  IMPORTANTE: A senha do certificado está CRIPTOGRAFADA no banco!'
+  );
 
   // ==========================================
   // 15️⃣ ESTATÍSTICAS DO SISTEMA
   // ==========================================
-  console.log('📊 Criando estatísticas do sistema...')
-  
+  console.log('📊 Criando estatísticas do sistema...');
+
   await prisma.estatisticaSistema.upsert({
     where: { chave: 'total_usuarios' },
     update: {},
@@ -1132,7 +1181,7 @@ async function main() {
       categoria: 'usuarios',
       tipoDado: 'numero',
     },
-  })
+  });
 
   await prisma.estatisticaSistema.upsert({
     where: { chave: 'usuarios_ativos' },
@@ -1144,7 +1193,7 @@ async function main() {
       categoria: 'usuarios',
       tipoDado: 'numero',
     },
-  })
+  });
 
   await prisma.estatisticaSistema.upsert({
     where: { chave: 'taxa_aceite_termos' },
@@ -1156,7 +1205,7 @@ async function main() {
       categoria: 'compliance',
       tipoDado: 'porcentagem',
     },
-  })
+  });
 
   await prisma.estatisticaSistema.upsert({
     where: { chave: 'total_tarefas_concluidas' },
@@ -1168,75 +1217,75 @@ async function main() {
       categoria: 'produtividade',
       tipoDado: 'numero',
     },
-  })
+  });
 
-  console.log('✅ Estatísticas do sistema criadas!')
+  console.log('✅ Estatísticas do sistema criadas!');
 
   // ==========================================
   // 16️⃣ MEMBROS DA FAMÍLIA
   // ==========================================
-  console.log('👨‍👩‍👧‍👦 Criando membros da família...')
-  
+  console.log('👨‍👩‍👧‍👦 Criando membros da família...');
+
   const francisco = await prisma.usuario.findUnique({
-    where: { cpf: CPF_FRANCISCO }
-  })
+    where: { cpf: CPF_FRANCISCO },
+  });
 
   if (francisco) {
     // Cônjuge
     await prisma.membroFamilia.create({
       data: {
         usuarioId: francisco.id,
-      nome: 'Maria Silva Lima',
-      parentesco: 'CONJUGE',
-      cpf: CPF_MARIA,
-      dataNascimento: new Date('1985-03-15'),
-      telefone: '11987654321',
-      email: 'maria.silva@email.com',
-      endereco: {
-        logradouro: 'Rua das Flores',
-        numero: '123',
-        complemento: 'Sala 45',
-        bairro: 'Centro',
-        cidade: 'São Paulo',
-        uf: 'SP',
-        cep: '01234567',
+        nome: 'Maria Silva Lima',
+        parentesco: 'CONJUGE',
+        cpf: CPF_MARIA,
+        dataNascimento: new Date('1985-03-15'),
+        telefone: '11987654321',
+        email: 'maria.silva@email.com',
+        endereco: {
+          logradouro: 'Rua das Flores',
+          numero: '123',
+          complemento: 'Sala 45',
+          bairro: 'Centro',
+          cidade: 'São Paulo',
+          uf: 'SP',
+          cep: '01234567',
+        },
+        contatoEmergencia: true,
+        responsavelFinanceiro: false,
       },
-      contatoEmergencia: true,
-      responsavelFinanceiro: false,
-      }
-    })
+    });
 
     // Filho
     await prisma.membroFamilia.create({
       data: {
         usuarioId: francisco.id,
-      nome: 'João Pedro Lima',
-      parentesco: 'FILHO',
-      dataNascimento: new Date('2010-07-20'),
-      telefone: '11987654322',
-      email: 'joao.pedro@email.com',
-      endereco: {
-        logradouro: 'Rua das Flores',
-        numero: '123',
-        complemento: 'Sala 45',
-        bairro: 'Centro',
-        cidade: 'São Paulo',
-        uf: 'SP',
-        cep: '01234567',
+        nome: 'João Pedro Lima',
+        parentesco: 'FILHO',
+        dataNascimento: new Date('2010-07-20'),
+        telefone: '11987654322',
+        email: 'joao.pedro@email.com',
+        endereco: {
+          logradouro: 'Rua das Flores',
+          numero: '123',
+          complemento: 'Sala 45',
+          bairro: 'Centro',
+          cidade: 'São Paulo',
+          uf: 'SP',
+          cep: '01234567',
+        },
+        contatoEmergencia: false,
+        responsavelFinanceiro: false,
       },
-      contatoEmergencia: false,
-      responsavelFinanceiro: false,
-      }
-    })
+    });
   }
 
-  console.log('✅ Membros da família criados!')
+  console.log('✅ Membros da família criados!');
 
   // ==========================================
   // 17️⃣ DADOS DE PÁGINAS
   // ==========================================
-  console.log('📄 Criando dados de páginas...')
-  
+  console.log('📄 Criando dados de páginas...');
+
   await prisma.dadosPagina.upsert({
     where: { slug: 'home-dashboard' },
     update: {},
@@ -1251,7 +1300,7 @@ async function main() {
       publica: false,
       versao: '1.0',
     },
-  })
+  });
 
   await prisma.dadosPagina.upsert({
     where: { slug: 'sobre-sistema' },
@@ -1259,7 +1308,8 @@ async function main() {
     create: {
       slug: 'sobre-sistema',
       titulo: 'Sobre o Sistema DOM',
-      conteudo: 'O Sistema DOM é uma plataforma completa para gestão doméstica, incluindo tarefas, documentos, finanças e muito mais.',
+      conteudo:
+        'O Sistema DOM é uma plataforma completa para gestão doméstica, incluindo tarefas, documentos, finanças e muito mais.',
       tipoPagina: 'INFORMATIVO',
       categoria: 'SOBRE',
       tags: ['sobre', 'sistema', 'informacoes'],
@@ -1267,49 +1317,51 @@ async function main() {
       publica: true,
       versao: '1.0',
     },
-  })
+  });
 
-  console.log('✅ Dados de páginas criados!')
+  console.log('✅ Dados de páginas criados!');
 
   // ==========================================
   // 18️⃣ NOTIFICAÇÕES INICIAIS
   // ==========================================
-  console.log('🔔 Criando notificações iniciais...')
-  
+  console.log('🔔 Criando notificações iniciais...');
+
   if (francisco) {
     await prisma.notificacao.create({
       data: {
         usuarioId: francisco.id,
         tipo: 'INFO',
         titulo: 'Bem-vindo ao Sistema DOM!',
-        mensagem: 'Seu acesso foi configurado com sucesso. Explore todas as funcionalidades disponíveis.',
+        mensagem:
+          'Seu acesso foi configurado com sucesso. Explore todas as funcionalidades disponíveis.',
         categoria: 'SISTEMA',
         prioridade: 'MEDIA',
         lida: false,
         enviada: true,
         dataEnvio: new Date(),
       },
-    })
+    });
 
     await prisma.notificacao.create({
       data: {
         usuarioId: francisco.id,
         tipo: 'SUCCESS',
         titulo: 'Certificado Digital Configurado',
-        mensagem: 'Seu certificado digital foi configurado e está pronto para uso nas integrações eSocial.',
+        mensagem:
+          'Seu certificado digital foi configurado e está pronto para uso nas integrações eSocial.',
         categoria: 'ESOCIAL',
         prioridade: 'ALTA',
         lida: false,
         enviada: true,
         dataEnvio: new Date(),
       },
-    })
+    });
   }
 
-  console.log('✅ Notificações iniciais criadas!')
+  console.log('✅ Notificações iniciais criadas!');
 
   // Criar dados de folha de pagamento
-  console.log('💰 Criando dados de folha de pagamento...')
+  console.log('💰 Criando dados de folha de pagamento...');
   await prisma.folhaPagamento.create({
     data: {
       usuarioId: empregador.id,
@@ -1327,7 +1379,7 @@ async function main() {
       status: 'PROCESSADO',
       observacoes: 'Folha de pagamento de janeiro/2024',
     },
-  })
+  });
 
   await prisma.folhaPagamento.create({
     data: {
@@ -1346,11 +1398,11 @@ async function main() {
       status: 'PROCESSADO',
       observacoes: 'Folha de pagamento de fevereiro/2024',
     },
-  })
-  console.log('✅ Dados de folha de pagamento criados!')
+  });
+  console.log('✅ Dados de folha de pagamento criados!');
 
   // Criar guias de impostos
-  console.log('📋 Criando guias de impostos...')
+  console.log('📋 Criando guias de impostos...');
   await prisma.guiaImposto.create({
     data: {
       usuarioId: empregador.id,
@@ -1362,7 +1414,7 @@ async function main() {
       status: 'PAGO',
       observacoes: 'INSS janeiro/2024',
     },
-  })
+  });
 
   await prisma.guiaImposto.create({
     data: {
@@ -1375,7 +1427,7 @@ async function main() {
       status: 'PAGO',
       observacoes: 'FGTS janeiro/2024',
     },
-  })
+  });
 
   await prisma.guiaImposto.create({
     data: {
@@ -1388,11 +1440,11 @@ async function main() {
       status: 'PENDENTE',
       observacoes: 'INSS fevereiro/2024',
     },
-  })
-  console.log('✅ Guias de impostos criadas!')
+  });
+  console.log('✅ Guias de impostos criadas!');
 
   // Criar métricas do sistema
-  console.log('📊 Criando métricas do sistema...')
+  console.log('📊 Criando métricas do sistema...');
   await prisma.metricaSistema.upsert({
     where: { chave: 'eventos_enviados' },
     update: {},
@@ -1402,7 +1454,7 @@ async function main() {
       descricao: 'Total de eventos eSocial enviados',
       categoria: 'esocial',
     },
-  })
+  });
 
   await prisma.metricaSistema.upsert({
     where: { chave: 'eventos_processados' },
@@ -1413,7 +1465,7 @@ async function main() {
       descricao: 'Total de eventos eSocial processados',
       categoria: 'esocial',
     },
-  })
+  });
 
   await prisma.metricaSistema.upsert({
     where: { chave: 'eventos_com_erro' },
@@ -1424,7 +1476,7 @@ async function main() {
       descricao: 'Total de eventos eSocial com erro',
       categoria: 'esocial',
     },
-  })
+  });
 
   await prisma.metricaSistema.upsert({
     where: { chave: 'webhooks_ativos' },
@@ -1435,7 +1487,7 @@ async function main() {
       descricao: 'Total de webhooks ativos',
       categoria: 'webhook',
     },
-  })
+  });
 
   await prisma.metricaSistema.upsert({
     where: { chave: 'backups_realizados' },
@@ -1446,7 +1498,7 @@ async function main() {
       descricao: 'Total de backups realizados',
       categoria: 'backup',
     },
-  })
+  });
 
   await prisma.metricaSistema.upsert({
     where: { chave: 'logs_auditoria' },
@@ -1457,11 +1509,11 @@ async function main() {
       descricao: 'Total de logs de auditoria',
       categoria: 'auditoria',
     },
-  })
-  console.log('✅ Métricas do sistema criadas!')
+  });
+  console.log('✅ Métricas do sistema criadas!');
 
   // Criar atividade recente
-  console.log('📈 Criando atividade recente...')
+  console.log('📈 Criando atividade recente...');
   await prisma.atividadeRecente.create({
     data: {
       tipo: 'success',
@@ -1474,7 +1526,7 @@ async function main() {
         status: 'processado',
       },
     },
-  })
+  });
 
   await prisma.atividadeRecente.create({
     data: {
@@ -1488,7 +1540,7 @@ async function main() {
         ultimoErro: 'Connection timeout',
       },
     },
-  })
+  });
 
   await prisma.atividadeRecente.create({
     data: {
@@ -1502,7 +1554,7 @@ async function main() {
         duracao: '15 minutos',
       },
     },
-  })
+  });
 
   await prisma.atividadeRecente.create({
     data: {
@@ -1516,63 +1568,93 @@ async function main() {
         diasRestantes: -5,
       },
     },
-  })
-  console.log('✅ Atividade recente criada!')
+  });
+  console.log('✅ Atividade recente criada!');
 
   // ==========================================
   // 🕐 DADOS DE TESTE PARA TIME-CLOCK
   // ==========================================
-  console.log('🕐 Criando dados de teste para Time-Clock...')
+  console.log('🕐 Criando dados de teste para Time-Clock...');
 
   // Buscar usuários existentes
   const franciscoTimeClock = await prisma.usuario.findUnique({
-    where: { email: 'francisco@flpbusiness.com' }
-  })
+    where: { email: 'francisco@flpbusiness.com' },
+  });
   const mariaTimeClock = await prisma.usuario.findUnique({
-    where: { email: 'maria@flpbusiness.com' }
-  })
+    where: { email: 'maria@flpbusiness.com' },
+  });
 
   if (franciscoTimeClock && mariaTimeClock) {
     // 1. Horários Oficiais
     const horariosOficiais = [
-      { diaSemana: 1, entrada: '08:00', saida: '17:00', intervaloInicio: '12:00', intervaloFim: '13:00' }, // Segunda
-      { diaSemana: 2, entrada: '08:00', saida: '17:00', intervaloInicio: '12:00', intervaloFim: '13:00' }, // Terça
-      { diaSemana: 3, entrada: '08:00', saida: '17:00', intervaloInicio: '12:00', intervaloFim: '13:00' }, // Quarta
-      { diaSemana: 4, entrada: '08:00', saida: '17:00', intervaloInicio: '12:00', intervaloFim: '13:00' }, // Quinta
-      { diaSemana: 5, entrada: '08:00', saida: '17:00', intervaloInicio: '12:00', intervaloFim: '13:00' }, // Sexta
-    ]
+      {
+        diaSemana: 1,
+        entrada: '08:00',
+        saida: '17:00',
+        intervaloInicio: '12:00',
+        intervaloFim: '13:00',
+      }, // Segunda
+      {
+        diaSemana: 2,
+        entrada: '08:00',
+        saida: '17:00',
+        intervaloInicio: '12:00',
+        intervaloFim: '13:00',
+      }, // Terça
+      {
+        diaSemana: 3,
+        entrada: '08:00',
+        saida: '17:00',
+        intervaloInicio: '12:00',
+        intervaloFim: '13:00',
+      }, // Quarta
+      {
+        diaSemana: 4,
+        entrada: '08:00',
+        saida: '17:00',
+        intervaloInicio: '12:00',
+        intervaloFim: '13:00',
+      }, // Quinta
+      {
+        diaSemana: 5,
+        entrada: '08:00',
+        saida: '17:00',
+        intervaloInicio: '12:00',
+        intervaloFim: '13:00',
+      }, // Sexta
+    ];
 
     for (const horario of horariosOficiais) {
       await prisma.horarioOficial.upsert({
-        where: { 
-          usuarioId_diaSemana: { 
-            usuarioId: franciscoTimeClock.id, 
-            diaSemana: horario.diaSemana 
-          } 
+        where: {
+          usuarioId_diaSemana: {
+            usuarioId: franciscoTimeClock.id,
+            diaSemana: horario.diaSemana,
+          },
         },
         update: horario,
         create: {
           ...horario,
           usuarioId: franciscoTimeClock.id,
-        }
-      })
+        },
+      });
     }
 
     // 2. Registros de Ponto de Exemplo (últimos 7 dias)
-    const hoje = new Date()
-    const registrosExemplo = []
-    
+    const hoje = new Date();
+    const registrosExemplo = [];
+
     for (let i = 0; i < 7; i++) {
-      const data = new Date(hoje)
-      data.setDate(data.getDate() - i)
-      
+      const data = new Date(hoje);
+      data.setDate(data.getDate() - i);
+
       // Pular fins de semana
-      if (data.getDay() === 0 || data.getDay() === 6) continue
-      
-      const diaSemana = data.getDay()
-      const baseTime = new Date(data)
-      baseTime.setHours(8, 0, 0, 0) // 08:00
-      
+      if (data.getDay() === 0 || data.getDay() === 6) continue;
+
+      const diaSemana = data.getDay();
+      const baseTime = new Date(data);
+      baseTime.setHours(8, 0, 0, 0); // 08:00
+
       registrosExemplo.push(
         {
           usuarioId: franciscoTimeClock.id,
@@ -1580,7 +1662,8 @@ async function main() {
           tipo: 'entrada',
           latitude: -23.5505 + (Math.random() - 0.5) * 0.01,
           longitude: -46.6333 + (Math.random() - 0.5) * 0.01,
-          enderecoCompleto: 'Rua das Flores, 123 - Vila Mariana, São Paulo - SP',
+          enderecoCompleto:
+            'Rua das Flores, 123 - Vila Mariana, São Paulo - SP',
           nomeRedeWiFi: 'Empresa_WiFi_5G',
           enderecoIP: '192.168.1.100',
           aprovado: true,
@@ -1589,11 +1672,14 @@ async function main() {
         },
         {
           usuarioId: franciscoTimeClock.id,
-          dataHora: new Date(baseTime.getTime() + 4 * 3600000 + Math.random() * 300000), // 12:00 ±5 min
+          dataHora: new Date(
+            baseTime.getTime() + 4 * 3600000 + Math.random() * 300000
+          ), // 12:00 ±5 min
           tipo: 'saida_almoco',
           latitude: -23.5505 + (Math.random() - 0.5) * 0.01,
           longitude: -46.6333 + (Math.random() - 0.5) * 0.01,
-          enderecoCompleto: 'Rua das Flores, 123 - Vila Mariana, São Paulo - SP',
+          enderecoCompleto:
+            'Rua das Flores, 123 - Vila Mariana, São Paulo - SP',
           nomeRedeWiFi: 'Empresa_WiFi_5G',
           enderecoIP: '192.168.1.100',
           aprovado: true,
@@ -1602,11 +1688,14 @@ async function main() {
         },
         {
           usuarioId: franciscoTimeClock.id,
-          dataHora: new Date(baseTime.getTime() + 5 * 3600000 + Math.random() * 300000), // 13:00 ±5 min
+          dataHora: new Date(
+            baseTime.getTime() + 5 * 3600000 + Math.random() * 300000
+          ), // 13:00 ±5 min
           tipo: 'retorno_almoco',
           latitude: -23.5505 + (Math.random() - 0.5) * 0.01,
           longitude: -46.6333 + (Math.random() - 0.5) * 0.01,
-          enderecoCompleto: 'Rua das Flores, 123 - Vila Mariana, São Paulo - SP',
+          enderecoCompleto:
+            'Rua das Flores, 123 - Vila Mariana, São Paulo - SP',
           nomeRedeWiFi: 'Empresa_WiFi_5G',
           enderecoIP: '192.168.1.100',
           aprovado: true,
@@ -1615,25 +1704,28 @@ async function main() {
         },
         {
           usuarioId: franciscoTimeClock.id,
-          dataHora: new Date(baseTime.getTime() + 9 * 3600000 + Math.random() * 1800000), // 17:00 ±15 min
+          dataHora: new Date(
+            baseTime.getTime() + 9 * 3600000 + Math.random() * 1800000
+          ), // 17:00 ±15 min
           tipo: 'saida',
           latitude: -23.5505 + (Math.random() - 0.5) * 0.01,
           longitude: -46.6333 + (Math.random() - 0.5) * 0.01,
-          enderecoCompleto: 'Rua das Flores, 123 - Vila Mariana, São Paulo - SP',
+          enderecoCompleto:
+            'Rua das Flores, 123 - Vila Mariana, São Paulo - SP',
           nomeRedeWiFi: 'Empresa_WiFi_5G',
           enderecoIP: '192.168.1.100',
           aprovado: true,
           aprovadoPor: 'Sistema',
           aprovadoEm: new Date(),
         }
-      )
+      );
     }
 
     // Inserir registros de ponto
     for (const registro of registrosExemplo) {
       await prisma.registroPontoNovo.create({
-        data: registro
-      })
+        data: registro,
+      });
     }
 
     // 3. Solicitações de Hora Extra de Exemplo
@@ -1648,37 +1740,38 @@ async function main() {
         aprovadoEm: new Date(hoje.getTime() - 20 * 3600000),
         observacoesAprovacao: 'Aprovado para finalizar as pendências',
         horasAprovadas: 2.0,
-        valorHoraExtra: 25.50,
+        valorHoraExtra: 25.5,
       },
       {
         usuarioId: francisco.id,
         dataHoraInicio: new Date(hoje.getTime() + 2 * 3600000), // Hoje + 2h
         dataHoraFim: new Date(hoje.getTime() + 4 * 3600000), // Hoje + 4h
-        justificativa: 'Reunião importante com cliente que só pode ser feita após o horário normal',
+        justificativa:
+          'Reunião importante com cliente que só pode ser feita após o horário normal',
         status: 'PENDENTE',
       },
-    ]
+    ];
 
     for (const solicitacao of solicitacoesHoraExtra) {
       await prisma.solicitacaoHoraExtra.create({
-        data: solicitacao
-      })
+        data: solicitacao,
+      });
     }
 
     // 4. Resumos de Horas Trabalhadas (últimos 30 dias)
     for (let i = 0; i < 30; i++) {
-      const data = new Date(hoje)
-      data.setDate(data.getDate() - i)
-      
-      if (data.getDay() === 0 || data.getDay() === 6) continue // Pular fins de semana
-      
+      const data = new Date(hoje);
+      data.setDate(data.getDate() - i);
+
+      if (data.getDay() === 0 || data.getDay() === 6) continue; // Pular fins de semana
+
       await prisma.resumoHorasTrabalhadas.upsert({
         where: {
           usuarioId_dataReferencia_periodo: {
             usuarioId: franciscoTimeClock.id,
             dataReferencia: data,
-            periodo: 'DIA'
-          }
+            periodo: 'DIA',
+          },
         },
         update: {},
         create: {
@@ -1694,15 +1787,17 @@ async function main() {
           registrosPonto: 4,
           faltas: Math.random() > 0.95 ? 1 : 0,
           atrasos: Math.random() > 0.9 ? 1 : 0,
-        }
-      })
+        },
+      });
     }
 
-    console.log('✅ Dados de teste para Time-Clock criados com sucesso!')
-    console.log(`   📅 Horários oficiais: ${horariosOficiais.length}`)
-    console.log(`   📝 Registros de ponto: ${registrosExemplo.length}`)
-    console.log(`   ⏰ Solicitações hora extra: ${solicitacoesHoraExtra.length}`)
-    console.log(`   📊 Resumos de horas: 30 dias`)
+    console.log('✅ Dados de teste para Time-Clock criados com sucesso!');
+    console.log(`   📅 Horários oficiais: ${horariosOficiais.length}`);
+    console.log(`   📝 Registros de ponto: ${registrosExemplo.length}`);
+    console.log(
+      `   ⏰ Solicitações hora extra: ${solicitacoesHoraExtra.length}`
+    );
+    console.log(`   📊 Resumos de horas: 30 dias`);
   }
 
   // ==========================================
@@ -1738,59 +1833,62 @@ async function main() {
     solicitacoesHoraExtra: await prisma.solicitacaoHoraExtra.count(),
     resumosHorasTrabalhadas: await prisma.resumoHorasTrabalhadas.count(),
     transferenciasFolha: await prisma.transferenciaFolha.count(),
-  }
+  };
 
-  console.log('\n╔════════════════════════════════════════════════╗')
-  console.log('║        🎉 SEED CONCLUÍDO COM SUCESSO!         ║')
-  console.log('╚════════════════════════════════════════════════╝\n')
-  
-  console.log('📊 ESTATÍSTICAS:')
-  console.log(`   👤 Usuários: ${stats.usuarios}`)
-  console.log(`   👔 Perfis: ${stats.perfis}`)
-  console.log(`   ⚙️  Funcionalidades: ${stats.funcionalidades}`)
-  console.log(`   👥 Grupos: ${stats.grupos}`)
-  console.log(`   📱 Dispositivos: ${stats.dispositivos}`)
-  console.log(`   📄 Documentos: ${stats.documentos}`)
-  console.log(`   ✅ Tarefas: ${stats.tarefas}`)
-  console.log(`   💳 Planos: ${stats.planos}`)
-  console.log(`   📋 Assinaturas: ${stats.assinaturas}`)
-  console.log(`   🛒 Listas de Compras: ${stats.listas}`)
-  console.log(`   📦 Itens de Compra: ${stats.itens}`)
-  console.log(`   🔔 Alertas: ${stats.alertas}`)
-  console.log(`   🏢 Empregadores: ${stats.empregadores}`)
-  console.log(`   🔐 Certificados Digitais: ${stats.certificados}`)
-  console.log(`   📜 Histórico de Certificados: ${stats.historicoCertificados}`)
-  console.log(`   ⚙️  Configurações: ${stats.configuracoes}`)
-  console.log(`   📊 Estatísticas do Sistema: ${stats.estatisticas}`)
-  console.log(`   👨‍👩‍👧‍👦 Membros da Família: ${stats.membrosFamilia}`)
-  console.log(`   📄 Dados de Páginas: ${stats.dadosPaginas}`)
-  console.log(`   🔔 Notificações: ${stats.notificacoes}`)
-  console.log(`   💰 Folha de Pagamento: ${stats.folhaPagamento}`)
-  console.log(`   📋 Guias de Impostos: ${stats.guiasImpostos}`)
-  console.log(`   📊 Métricas do Sistema: ${stats.metricasSistema}`)
-  console.log(`   📈 Atividade Recente: ${stats.atividadeRecente}`)
-  console.log(`   🕐 Horários Oficiais: ${stats.horariosOficiais}`)
-  console.log(`   📝 Registros de Ponto Novos: ${stats.registrosPontoNovos}`)
-  console.log(`   ⏰ Solicitações Hora Extra: ${stats.solicitacoesHoraExtra}`)
-  console.log(`   📊 Resumos Horas Trabalhadas: ${stats.resumosHorasTrabalhadas}`)
-  console.log(`   💰 Transferências Folha: ${stats.transferenciasFolha}\n`)
-  
-  console.log('🔑 CREDENCIAIS DE ACESSO:')
-  console.log('   📧 Email: francisco@flpbusiness.com')
-  console.log('   🔒 Senha: senha123')
-  console.log(`   👤 CPF: ${CPF_FRANCISCO}\n`)
-  
-  console.log('💡 TODOS OS USUÁRIOS:')
-  console.log('   🔒 Senha padrão: senha123')
-  console.log('   ✅ CPFs gerados com VALIDAÇÃO CORRETA\n')
+  console.log('\n╔════════════════════════════════════════════════╗');
+  console.log('║        🎉 SEED CONCLUÍDO COM SUCESSO!         ║');
+  console.log('╚════════════════════════════════════════════════╝\n');
+
+  console.log('📊 ESTATÍSTICAS:');
+  console.log(`   👤 Usuários: ${stats.usuarios}`);
+  console.log(`   👔 Perfis: ${stats.perfis}`);
+  console.log(`   ⚙️  Funcionalidades: ${stats.funcionalidades}`);
+  console.log(`   👥 Grupos: ${stats.grupos}`);
+  console.log(`   📱 Dispositivos: ${stats.dispositivos}`);
+  console.log(`   📄 Documentos: ${stats.documentos}`);
+  console.log(`   ✅ Tarefas: ${stats.tarefas}`);
+  console.log(`   💳 Planos: ${stats.planos}`);
+  console.log(`   📋 Assinaturas: ${stats.assinaturas}`);
+  console.log(`   🛒 Listas de Compras: ${stats.listas}`);
+  console.log(`   📦 Itens de Compra: ${stats.itens}`);
+  console.log(`   🔔 Alertas: ${stats.alertas}`);
+  console.log(`   🏢 Empregadores: ${stats.empregadores}`);
+  console.log(`   🔐 Certificados Digitais: ${stats.certificados}`);
+  console.log(
+    `   📜 Histórico de Certificados: ${stats.historicoCertificados}`
+  );
+  console.log(`   ⚙️  Configurações: ${stats.configuracoes}`);
+  console.log(`   📊 Estatísticas do Sistema: ${stats.estatisticas}`);
+  console.log(`   👨‍👩‍👧‍👦 Membros da Família: ${stats.membrosFamilia}`);
+  console.log(`   📄 Dados de Páginas: ${stats.dadosPaginas}`);
+  console.log(`   🔔 Notificações: ${stats.notificacoes}`);
+  console.log(`   💰 Folha de Pagamento: ${stats.folhaPagamento}`);
+  console.log(`   📋 Guias de Impostos: ${stats.guiasImpostos}`);
+  console.log(`   📊 Métricas do Sistema: ${stats.metricasSistema}`);
+  console.log(`   📈 Atividade Recente: ${stats.atividadeRecente}`);
+  console.log(`   🕐 Horários Oficiais: ${stats.horariosOficiais}`);
+  console.log(`   📝 Registros de Ponto Novos: ${stats.registrosPontoNovos}`);
+  console.log(`   ⏰ Solicitações Hora Extra: ${stats.solicitacoesHoraExtra}`);
+  console.log(
+    `   📊 Resumos Horas Trabalhadas: ${stats.resumosHorasTrabalhadas}`
+  );
+  console.log(`   💰 Transferências Folha: ${stats.transferenciasFolha}\n`);
+
+  console.log('🔑 CREDENCIAIS DE ACESSO:');
+  console.log('   📧 Email: francisco@flpbusiness.com');
+  console.log('   🔒 Senha: senha123');
+  console.log(`   👤 CPF: ${CPF_FRANCISCO}\n`);
+
+  console.log('💡 TODOS OS USUÁRIOS:');
+  console.log('   🔒 Senha padrão: senha123');
+  console.log('   ✅ CPFs gerados com VALIDAÇÃO CORRETA\n');
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ Erro no seed:', e)
-    process.exit(1)
+  .catch(e => {
+    console.error('❌ Erro no seed:', e);
+    process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect()
-  })
-
+    await prisma.$disconnect();
+  });

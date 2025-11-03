@@ -4,31 +4,33 @@
 
 ### **🔍 PERFIS IDENTIFICADOS NA DOCUMENTAÇÃO:**
 
-| **#** | **Perfil** | **Código** | **Descrição** | **Cor Atual** | **Cor Otimizada** |
-|-------|------------|------------|---------------|---------------|-------------------|
-| 1 | **EMPREGADO** | `EMPREGADO` | Trabalhador principal | `#29ABE2` | `#29ABE2` ✅ |
-| 2 | **EMPREGADOR** | `EMPREGADOR` | Patrão responsável | `#2E8B57` | `#1E3A8A` 🔄 |
-| 3 | **FAMILIA** | `FAMILIA` | Membros da família | `#FF6B6B` | `#F59E0B` 🔄 |
-| 4 | **ADMIN** | `ADMIN` | Administrador técnico | `#9B59B6` | `#6B7280` 🔄 |
-| 5 | **FUNCIONARIO** | `FUNCIONARIO` | Colaborador da empresa | `#4682B4` | `#4682B4` ✅ |
-| 6 | **FINANCEIRO** | `FINANCEIRO` | Responsável financeiro | `#FF6347` | `#FF6347` ✅ |
-| 7 | **ADMINISTRADOR** | `ADMINISTRADOR` | **VOCÊ - Dono do projeto** | `#8B008B` | `#8B008B` ✅ |
+| **#** | **Perfil**        | **Código**      | **Descrição**              | **Cor Atual** | **Cor Otimizada** |
+| ----- | ----------------- | --------------- | -------------------------- | ------------- | ----------------- |
+| 1     | **EMPREGADO**     | `EMPREGADO`     | Trabalhador principal      | `#29ABE2`     | `#29ABE2` ✅      |
+| 2     | **EMPREGADOR**    | `EMPREGADOR`    | Patrão responsável         | `#2E8B57`     | `#1E3A8A` 🔄      |
+| 3     | **FAMILIA**       | `FAMILIA`       | Membros da família         | `#FF6B6B`     | `#F59E0B` 🔄      |
+| 4     | **ADMIN**         | `ADMIN`         | Administrador técnico      | `#9B59B6`     | `#6B7280` 🔄      |
+| 5     | **FUNCIONARIO**   | `FUNCIONARIO`   | Colaborador da empresa     | `#4682B4`     | `#4682B4` ✅      |
+| 6     | **FINANCEIRO**    | `FINANCEIRO`    | Responsável financeiro     | `#FF6347`     | `#FF6347` ✅      |
+| 7     | **ADMINISTRADOR** | `ADMINISTRADOR` | **VOCÊ - Dono do projeto** | `#8B008B`     | `#8B008B` ✅      |
 
 ---
 
 ## 🎨 **PALETA OTIMIZADA FINAL**
 
 ### **🌈 CORES SEMÂNTICAS (SEM CONFLITOS):**
+
 ```typescript
 semantic: {
   success: '#10B981',    // Verde - sucesso
-  warning: '#F59E0B',    // Amarelo - alertas  
+  warning: '#F59E0B',    // Amarelo - alertas
   error: '#EF4444',      // Vermelho - erros
   info: '#3B82F6',       // Azul - informações
 }
 ```
 
 ### **👥 CORES DE PERFIL (OTIMIZADAS PARA UX):**
+
 ```typescript
 profiles: {
   empregado: {
@@ -74,12 +76,14 @@ profiles: {
 ## 🎯 **JUSTIFICATIVAS UX/UI POR PERFIL**
 
 ### **✅ PERFIS QUE MANTÊM AS CORES:**
+
 - **EMPREGADO** (`#29ABE2`): Azul confiável, não conflita
 - **FUNCIONARIO** (`#4682B4`): Azul acinzentado distintivo
 - **FINANCEIRO** (`#FF6347`): Laranja único, não conflita
 - **ADMINISTRADOR** (`#8B008B`): Roxo escuro distintivo (VOCÊ)
 
 ### **🔄 PERFIS QUE PRECISAM AJUSTE:**
+
 - **EMPREGADOR**: `#2E8B57` → `#1E3A8A` (azul escuro mais profissional)
 - **FAMILIA**: `#FF6B6B` → `#F59E0B` (laranja acolhedor, distintivo)
 - **ADMIN**: `#9B59B6` → `#6B7280` (cinza neutro, não conflita)
@@ -89,6 +93,7 @@ profiles: {
 ## 🚀 **IMPLEMENTAÇÃO FASE 1 - COMANDOS SQL**
 
 ### **📝 SCRIPT DE ATUALIZAÇÃO DO BANCO:**
+
 ```sql
 -- Atualizar cores dos perfis no banco de dados
 UPDATE perfis SET cor = '#1E3A8A' WHERE codigo = 'EMPREGADOR';
@@ -100,6 +105,7 @@ SELECT codigo, nome, cor FROM perfis ORDER BY codigo;
 ```
 
 ### **🔧 SCRIPT DE SINCRONIZAÇÃO DOS ARQUIVOS:**
+
 ```typescript
 // src/config/default-colors.ts
 profiles: {
@@ -118,11 +124,13 @@ profiles: {
 ## 📊 **MATRIZ DE CONFLITOS RESOLVIDA**
 
 ### **❌ ANTES (CONFLITOS):**
+
 - Empregador verde vs sucesso verde
 - Familia vermelho vs erro vermelho
 - Admin roxo vs administrador roxo
 
 ### **✅ DEPOIS (SEM CONFLITOS):**
+
 - Empregador azul escuro (profissional)
 - Familia laranja (acolhedor)
 - Admin cinza (neutro)
@@ -133,6 +141,7 @@ profiles: {
 ## 🎯 **RESULTADO ESPERADO**
 
 ### **✅ BENEFÍCIOS DA PALETA OTIMIZADA:**
+
 - **7 perfis únicos** com cores distintas
 - **Zero conflitos** com cores semânticas
 - **Hierarquia visual** clara e profissional
@@ -140,6 +149,7 @@ profiles: {
 - **UX consistente** em todo o sistema
 
 ### **🚀 PRÓXIMOS PASSOS:**
+
 1. **Executar Fase 1** - Atualizar banco e arquivos
 2. **Testar sistema** com todas as cores
 3. **Validar consistência** visual

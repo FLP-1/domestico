@@ -9,9 +9,10 @@ A API agora aceita CPF **COM** ou **SEM** máscara!
 ## 🔧 Correção Implementada
 
 ### API `/api/auth/profiles` Atualizada
+
 ```typescript
 // Remove máscara do CPF automaticamente
-const cpfLimpo = cpf.replace(/[.\-\s]/g, '')
+const cpfLimpo = cpf.replace(/[.\-\s]/g, '');
 
 // Aceita qualquer formato:
 // "598.769.137-00" → "59876913700"
@@ -24,6 +25,7 @@ const cpfLimpo = cpf.replace(/[.\-\s]/g, '')
 ## 🔑 Credenciais de Acesso
 
 ### CPF do Empregador Principal
+
 ```
 CPF: 59876913700 (sem máscara)
 CPF: 598.769.137-00 (com máscara)
@@ -31,6 +33,7 @@ Senha: senha123
 ```
 
 ### Outros CPFs Disponíveis
+
 Após executar o seed, você terá vários usuários. Use qualquer um dos CPFs gerados com a senha `senha123`.
 
 ---
@@ -38,22 +41,26 @@ Após executar o seed, você terá vários usuários. Use qualquer um dos CPFs g
 ## 🧪 Como Testar
 
 ### 1. Iniciar Servidor
+
 ```powershell
 npm run dev
 ```
 
 ### 2. Acessar Login
+
 ```
 http://localhost:3000/login
 ```
 
 ### 3. Fazer Login
+
 ```
 CPF: 598.769.137-00 (ou 59876913700)
 Senha: senha123
 ```
 
 ### 4. Verificar Dados Reais
+
 - WelcomeSection mostrará: "Bem-vindo, Francisco Lima!"
 - Perfil: "Empregador"
 - Dados vêm do banco PostgreSQL
@@ -63,17 +70,19 @@ Senha: senha123
 ## 📊 Dados do Usuário Principal
 
 ### Banco de Dados
+
 ```sql
-SELECT 
+SELECT
   cpf,
   "nomeCompleto",
   email,
   telefone
-FROM usuarios 
+FROM usuarios
 WHERE cpf = '59876913700';
 ```
 
 **Resultado Esperado:**
+
 ```
 cpf           | nomeCompleto        | email                    | telefone
 --------------|---------------------|--------------------------|----------
@@ -81,6 +90,7 @@ cpf           | nomeCompleto        | email                    | telefone
 ```
 
 ### Perfis Disponíveis
+
 ```
 1. Empregador (Cor: #E74C3C)
 2. [Outros perfis conforme seed]
@@ -107,15 +117,18 @@ cpf           | nomeCompleto        | email                    | telefone
 ## ⚠️ Observações
 
 ### ✅ Aceita Qualquer Formato
+
 - `598.769.137-00` ✅
 - `59876913700` ✅
 - `598 769 137 00` ✅
 
 ### 🔒 Senha
+
 - **TODOS** os usuários do seed têm a senha: `senha123`
 - Senhas estão hasheadas no banco com bcrypt
 
 ### 📝 Validação
+
 - API valida se CPF tem 11 dígitos
 - Verifica se usuário existe e está ativo
 - Retorna erro se CPF inválido ou usuário não encontrado
@@ -149,10 +162,10 @@ curl "http://localhost:3000/api/auth/profiles?cpf=598.769.137-00"
 
 ## 📚 Arquivos Modificados
 
-| Arquivo | Alteração |
-|---------|-----------|
+| Arquivo                          | Alteração                |
+| -------------------------------- | ------------------------ |
 | `src/pages/api/auth/profiles.ts` | ✅ Remove máscara do CPF |
-| `INFORMACOES_LOGIN.md` | ✅ Este documento |
+| `INFORMACOES_LOGIN.md`           | ✅ Este documento        |
 
 ---
 

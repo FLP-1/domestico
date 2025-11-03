@@ -22,10 +22,7 @@ import WelcomeSection from '../components/WelcomeSection';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
 import { defaultColors, addOpacity } from '../utils/themeHelpers';
-import {
-  UnifiedModal,
-  UnifiedCard,
-} from '../components/unified';
+import { UnifiedModal, UnifiedCard } from '../components/unified';
 import {
   OptimizedFormRow,
   OptimizedLabel,
@@ -124,7 +121,8 @@ const SummarySection = styled.section<{ $theme: any }>`
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 8px 32px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+  box-shadow: 0 8px 32px
+    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
 `;
 
 const SummaryTitle = styled.h2`
@@ -180,7 +178,8 @@ const SummaryCard = styled.div<{
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+    box-shadow: 0 4px 16px
+      ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
   }
 `;
 
@@ -213,7 +212,8 @@ const RequestSection = styled.section<{ $theme: any }>`
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 8px 32px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+  box-shadow: 0 8px 32px
+    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
 `;
 
 const RequestSectionTitle = styled.h2`
@@ -293,7 +293,8 @@ const RequestsSection = styled.section<{ $theme: any }>`
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 8px 32px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+  box-shadow: 0 8px 32px
+    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
 `;
 
 const RequestsTitle = styled.h2`
@@ -336,7 +337,8 @@ const RequestCard = styled.div<{
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+    box-shadow: 0 4px 16px
+      ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
   }
 `;
 
@@ -468,7 +470,8 @@ const ApprovalSection = styled.section<{ $theme: any }>`
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 8px 32px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+  box-shadow: 0 8px 32px
+    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
 `;
 
 const ApprovalTitle = styled.h2`
@@ -507,7 +510,8 @@ const TermsSection = styled.section<{ $theme: any }>`
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 8px 32px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+  box-shadow: 0 8px 32px
+    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
 `;
 
 const TermsTitle = styled.h2`
@@ -888,8 +892,8 @@ export default function LoanManagement() {
               <Select
                 $theme={theme}
                 value={newRequest.type}
-                aria-label="Tipo de Operação"
-                title="Tipo de Operação"
+                aria-label='Tipo de Operação'
+                title='Tipo de Operação'
                 onChange={e =>
                   setNewRequest(prev => ({
                     ...prev,
@@ -1016,8 +1020,8 @@ export default function LoanManagement() {
             <Select
               $theme={theme}
               value={filters.status}
-              aria-label="Status do Empréstimo"
-              title="Status do Empréstimo"
+              aria-label='Status do Empréstimo'
+              title='Status do Empréstimo'
               onChange={e =>
                 setFilters(prev => ({ ...prev, status: e.target.value }))
               }
@@ -1034,8 +1038,8 @@ export default function LoanManagement() {
             <Select
               $theme={theme}
               value={filters.type}
-              aria-label="Tipo de Empréstimo"
-              title="Tipo de Empréstimo"
+              aria-label='Tipo de Empréstimo'
+              title='Tipo de Empréstimo'
               onChange={e =>
                 setFilters(prev => ({ ...prev, type: e.target.value }))
               }

@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+  useCallback,
+} from 'react';
 import { useGeolocation } from '../hooks/useGeolocation';
 
 export interface GeolocationData {
@@ -62,31 +69,39 @@ const GeolocationContext = createContext<GeolocationContextType>({
 export const useGeolocationContext = () => useContext(GeolocationContext);
 
 export const GeolocationProvider = ({ children }: { children: ReactNode }) => {
-  const [lastLocation, setLastLocation] = useState<GeolocationData | null>(null);
-  const [lastCaptureLocation, setLastCaptureLocation] = useState<GeolocationData | null>(null);
-  const [lastCaptureStatus, setLastCaptureStatus] = useState<CaptureStatusMeta | null>(null);
-  
+  const [lastLocation, setLastLocation] = useState<GeolocationData | null>(
+    null
+  );
+  const [lastCaptureLocation, setLastCaptureLocation] =
+    useState<GeolocationData | null>(null);
+  const [lastCaptureStatus, setLastCaptureStatus] =
+    useState<CaptureStatusMeta | null>(null);
+
   // ✅ Usar o novo hook de geolocalização
   const { getCurrentPosition, location: currentLocation } = useGeolocation();
 
-  const updateLastLocationIfBetter = useCallback((location: GeolocationData) => {
-    // Não substituir se a nova precisão for pior que a atual
-    if (lastLocation) {
-      const isNewer = location.timestamp.getTime() >= lastLocation.timestamp.getTime();
-      const isMoreAccurate = location.accuracy <= lastLocation.accuracy;
+  const updateLastLocationIfBetter = useCallback(
+    (location: GeolocationData) => {
+      // Não substituir se a nova precisão for pior que a atual
+      if (lastLocation) {
+        const isNewer =
+          location.timestamp.getTime() >= lastLocation.timestamp.getTime();
+        const isMoreAccurate = location.accuracy <= lastLocation.accuracy;
 
-      if (!isNewer && !isMoreAccurate) {
-        return; // evitar regressão por leituras antigas e imprecisas
+        if (!isNewer && !isMoreAccurate) {
+          return; // evitar regressão por leituras antigas e imprecisas
+        }
+
+        if (!isMoreAccurate && isNewer) {
+          // Nova leitura é mais recente porém menos precisa: manter a melhor
+          return;
+        }
       }
 
-      if (!isMoreAccurate && isNewer) {
-        // Nova leitura é mais recente porém menos precisa: manter a melhor
-        return;
-      }
-    }
-
-    setLastLocation(location);
-  }, [lastLocation]);
+      setLastLocation(location);
+    },
+    [lastLocation]
+  );
 
   // ✅ Geolocalização automática desabilitada - será solicitada apenas quando necessário
   // useEffect(() => {
@@ -113,9 +128,18 @@ export const GeolocationProvider = ({ children }: { children: ReactNode }) => {
   }, [currentLocation, updateLastLocationIfBetter]);
 
   return (
-    <GeolocationContext.Provider value={{ lastLocation, setLastLocation, updateLastLocationIfBetter, lastCaptureLocation, setLastCaptureLocation, lastCaptureStatus, setLastCaptureStatus }}>
+    <GeolocationContext.Provider
+      value={{
+        lastLocation,
+        setLastLocation,
+        updateLastLocationIfBetter,
+        lastCaptureLocation,
+        setLastCaptureLocation,
+        lastCaptureStatus,
+        setLastCaptureStatus,
+      }}
+    >
       {children}
     </GeolocationContext.Provider>
   );
 };
-

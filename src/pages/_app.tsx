@@ -9,19 +9,16 @@ import {
   useUserProfile,
 } from '../contexts/UserProfileContext';
 import { GroupProvider } from '../contexts/GroupContext';
+import { UserGroupProvider, useUserGroup } from '../contexts/UserGroupContext';
 import {
-  UserGroupProvider,
-  useUserGroup,
-} from '../contexts/UserGroupContext';
-import { GeolocationProvider, useGeolocationContext } from '../contexts/GeolocationContext';
+  GeolocationProvider,
+  useGeolocationContext,
+} from '../contexts/GeolocationContext';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { useGroupLoader } from '../hooks/useGroupLoader';
 import { useTheme } from '../hooks/useTheme';
 import { GlobalStyle } from '../styles/GlobalStyle';
-import {
-  UnifiedButton,
-  UnifiedCard,
-} from '../components/unified';
+import { UnifiedButton, UnifiedCard } from '../components/unified';
 import { UnifiedModal } from '../design-system/components/UnifiedModal';
 import SelectionModal from '../components/SelectionModal';
 import { AntifaudeProvider } from '../components/AntifaudeProvider';
@@ -66,7 +63,8 @@ function AppContent({ Component, pageProps }: AppProps) {
   }, []);
 
   // Forçar re-renderização quando a rota mudar (incluindo navegação com seta)
-  const { setLastCaptureLocation, setLastCaptureStatus } = useGeolocationContext();
+  const { setLastCaptureLocation, setLastCaptureStatus } =
+    useGeolocationContext();
   useEffect(() => {
     const handleRouteChange = () => {
       setKey(prev => prev + 1);
@@ -78,15 +76,22 @@ function AppContent({ Component, pageProps }: AppProps) {
           .then(json => {
             const last = json?.data;
             if (last) {
-              setLastCaptureLocation && setLastCaptureLocation({
-                latitude: last.latitude,
-                longitude: last.longitude,
-                accuracy: last.precisao,
-                address: last.endereco || undefined,
-                wifiName: last.nomeRedeWiFi || undefined,
-                timestamp: new Date(last.dataHora)
-              });
-              setLastCaptureStatus && setLastCaptureStatus({ approved: !!last.aprovado, pending: !last.aprovado, imprecise: !last.dentroGeofence, serverRecordId: last.id });
+              setLastCaptureLocation &&
+                setLastCaptureLocation({
+                  latitude: last.latitude,
+                  longitude: last.longitude,
+                  accuracy: last.precisao,
+                  address: last.endereco || undefined,
+                  wifiName: last.nomeRedeWiFi || undefined,
+                  timestamp: new Date(last.dataHora),
+                });
+              setLastCaptureStatus &&
+                setLastCaptureStatus({
+                  approved: !!last.aprovado,
+                  pending: !last.aprovado,
+                  imprecise: !last.dentroGeofence,
+                  serverRecordId: last.id,
+                });
             }
           })
           .catch(() => {});
@@ -100,7 +105,12 @@ function AppContent({ Component, pageProps }: AppProps) {
       router.events.off('routeChangeComplete', handleRouteChange);
       router.events.off('beforeHistoryChange', handleRouteChange);
     };
-  }, [router.events, router.pathname, setLastCaptureLocation, setLastCaptureStatus]);
+  }, [
+    router.events,
+    router.pathname,
+    setLastCaptureLocation,
+    setLastCaptureStatus,
+  ]);
 
   const handleProfileSelect = (profile: any) => {
     handleProfileSelection(profile);
@@ -112,83 +122,129 @@ function AppContent({ Component, pageProps }: AppProps) {
       <GlobalStyle />
       <Component key={key} {...pageProps} />
 
-        {/* Modais apenas após hidratação para evitar FOUC */}
-        {isHydrated && (
-          <>
-            {/* Modal Global de Seleção de Perfil */}
-            <SelectionModal
-              isOpen={showProfileModal}
-              onClose={() => setShowProfileModal(false)}
-              items={(Array.isArray(availableProfiles) ? availableProfiles : []).map(profile => {
-                const displayName = profile.role || profile.nickname || profile.name || 'Perfil disponível';
-                const description = profile.nickname || profile.name || profile.role || '';
-                const avatar = profile.avatar || profile.nickname?.slice(0, 2)?.toUpperCase() || profile.name?.slice(0, 2)?.toUpperCase() || undefined;
+      {/* Modais apenas após hidratação para evitar FOUC */}
+      {isHydrated && (
+        <>
+          {/* Modal Global de Seleção de Perfil */}
+          <SelectionModal
+            isOpen={showProfileModal}
+            onClose={() => setShowProfileModal(false)}
+            items={(Array.isArray(availableProfiles)
+              ? availableProfiles
+              : []
+            ).map(profile => {
+              const displayName =
+                profile.role ||
+                profile.nickname ||
+                profile.name ||
+                'Perfil disponível';
+              const description =
+                profile.nickname || profile.name || profile.role || '';
+              const avatar =
+                profile.avatar ||
+                profile.nickname?.slice(0, 2)?.toUpperCase() ||
+                profile.name?.slice(0, 2)?.toUpperCase() ||
+                undefined;
 
-                return {
-                  id: profile.id,
-                  name: displayName,
-                  description,
-                  color: profile.color,
-                  avatar,
-                  role: profile.role,
-                };
-              })}
-              onItemSelect={(item: any) => {
-                const profile = availableProfiles?.find(p => p.id === item.id);
-                if (profile) handleProfileSelect(profile);
-              }}
-              currentItem={currentProfile ? {
-                id: currentProfile.id,
-                name: currentProfile.role || currentProfile.nickname || currentProfile.name || 'Perfil selecionado',
-                description: currentProfile.nickname || currentProfile.name || currentProfile.role || '',
-                color: currentProfile.color,
-                avatar: currentProfile.avatar || currentProfile.nickname?.slice(0, 2)?.toUpperCase() || currentProfile.name?.slice(0, 2)?.toUpperCase() || undefined,
-                role: currentProfile.role,
-              } : null}
-              title="👤 Selecionar Perfil"
-              subtitle="Escolha o perfil que deseja usar"
-              icon="👤"
-              type="profile"
-            />
+              return {
+                id: profile.id,
+                name: displayName,
+                description,
+                color: profile.color,
+                avatar,
+                role: profile.role,
+              };
+            })}
+            onItemSelect={(item: any) => {
+              const profile = availableProfiles?.find(p => p.id === item.id);
+              if (profile) handleProfileSelect(profile);
+            }}
+            currentItem={
+              currentProfile
+                ? {
+                    id: currentProfile.id,
+                    name:
+                      currentProfile.role ||
+                      currentProfile.nickname ||
+                      currentProfile.name ||
+                      'Perfil selecionado',
+                    description:
+                      currentProfile.nickname ||
+                      currentProfile.name ||
+                      currentProfile.role ||
+                      '',
+                    color: currentProfile.color,
+                    avatar:
+                      currentProfile.avatar ||
+                      currentProfile.nickname?.slice(0, 2)?.toUpperCase() ||
+                      currentProfile.name?.slice(0, 2)?.toUpperCase() ||
+                      undefined,
+                    role: currentProfile.role,
+                  }
+                : null
+            }
+            title='👤 Selecionar Perfil'
+            subtitle='Escolha o perfil que deseja usar'
+            icon='👤'
+            type='profile'
+          />
 
-            {/* Modal Global de Seleção de Grupo */}
-            <SelectionModal
-              isOpen={showGroupModal}
-              onClose={() => setShowGroupModal(false)}
-              items={(Array.isArray(availableGroups) ? availableGroups : []).map(group => ({
+          {/* Modal Global de Seleção de Grupo */}
+          <SelectionModal
+            isOpen={showGroupModal}
+            onClose={() => setShowGroupModal(false)}
+            items={(Array.isArray(availableGroups) ? availableGroups : []).map(
+              group => ({
                 id: group.id,
                 name: group.nome,
                 description: group.descricao,
                 color: group.cor,
-                icon: group.icone === 'building' ? '🏢' : 
-                      group.icone === 'users' ? '👥' : 
-                      group.icone === 'home' ? '🏠' : 
-                      group.icone === 'briefcase' ? '💼' : '📁'
-              }))}
-              onItemSelect={(item: any) => {
-                const group = availableGroups?.find(g => g.id === item.id);
-                if (group) {
-                  setCurrentGroup(group);
-                  setShowGroupModal(false);
-                }
-              }}
-              currentItem={currentGroup ? {
-                id: currentGroup.id,
-                name: currentGroup.nome,
-                description: currentGroup.descricao,
-                color: currentGroup.cor,
-                icon: currentGroup.icone === 'building' ? '🏢' : 
-                      currentGroup.icone === 'users' ? '👥' : 
-                      currentGroup.icone === 'home' ? '🏠' : 
-                      currentGroup.icone === 'briefcase' ? '💼' : '📁'
-              } : null}
-              title="👥 Selecionar Grupo"
-              subtitle="Escolha o grupo que deseja usar"
-              icon="👥"
-              type="group"
-            />
-          </>
-        )}
+                icon:
+                  group.icone === 'building'
+                    ? '🏢'
+                    : group.icone === 'users'
+                      ? '👥'
+                      : group.icone === 'home'
+                        ? '🏠'
+                        : group.icone === 'briefcase'
+                          ? '💼'
+                          : '📁',
+              })
+            )}
+            onItemSelect={(item: any) => {
+              const group = availableGroups?.find(g => g.id === item.id);
+              if (group) {
+                setCurrentGroup(group);
+                setShowGroupModal(false);
+              }
+            }}
+            currentItem={
+              currentGroup
+                ? {
+                    id: currentGroup.id,
+                    name: currentGroup.nome,
+                    description: currentGroup.descricao,
+                    color: currentGroup.cor,
+                    icon:
+                      currentGroup.icone === 'building'
+                        ? '🏢'
+                        : currentGroup.icone === 'users'
+                          ? '👥'
+                          : currentGroup.icone === 'home'
+                            ? '🏠'
+                            : currentGroup.icone === 'briefcase'
+                              ? '💼'
+                              : '📁',
+                  }
+                : null
+            }
+            title='👥 Selecionar Grupo'
+            subtitle='Escolha o grupo que deseja usar'
+            icon='👥'
+            type='group'
+          />
+        </>
+      )}
     </div>
   );
 }

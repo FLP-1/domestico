@@ -89,8 +89,8 @@ class EnvironmentManager {
       api: {
         baseUrl: this.getEnvVar(
           'API_BASE_URL',
-          process.env.NODE_ENV === 'production' 
-            ? 'https://api.dom-esocial.com.br/v1' 
+          process.env.NODE_ENV === 'production'
+            ? 'https://api.dom-esocial.com.br/v1'
             : 'http://localhost:3000/api'
         ),
         timeout: parseInt(this.getEnvVar('API_TIMEOUT', '30000')),
@@ -136,7 +136,10 @@ class EnvironmentManager {
             port: parseInt(this.getEnvVar('SMTP_PORT', '587')),
             secure: this.getEnvVar('SMTP_SECURE', 'false') === 'true',
             user: this.getEnvVar('SMTP_USER', process.env.SMTP_USER || ''),
-            password: this.getEnvVar('SMTP_PASSWORD', process.env.SMTP_PASSWORD || ''),
+            password: this.getEnvVar(
+              'SMTP_PASSWORD',
+              process.env.SMTP_PASSWORD || ''
+            ),
           },
         },
         push: {

@@ -10,58 +10,62 @@
 
 ### **✅ CORES 'WHITE' QUE ESTAVAM CORRETAS:**
 
-| **Arquivo** | **Contexto** | **Razão** | **Status** |
-|-------------|--------------|-----------|------------|
-| `ClockInButton/index.tsx` | Texto em botão com gradiente colorido | Contraste necessário | ✅ **MANTIDA** |
-| `NotificationBadge/index.tsx` | Texto em badge com background colorido | Contraste necessário | ✅ **MANTIDA** |
-| `UserManagementForm/index.tsx` | Background de container com fallback | Semântica apropriada | ✅ **MANTIDA** |
-| `Communication.tsx` | Mensagem do outro usuário | Contraste com texto escuro | ✅ **MANTIDA** |
-| `DataList.tsx` | Texto em badge com background dinâmico | Contraste necessário | ✅ **MANTIDA** |
-| `TimeRecordCard/index.tsx` | Texto em status colorido | Contraste necessário | ✅ **MANTIDA** |
-| `GroupSelector/index.tsx` | Texto em ícone colorido | Contraste necessário | ✅ **MANTIDA** |
-| `Alert Management` | Texto em status colorido | Contraste necessário | ✅ **MANTIDA** |
-| `Payroll Management` | Texto em elemento colorido | Contraste necessário | ✅ **MANTIDA** |
-| `Register` | Texto em gradiente colorido | Contraste necessário | ✅ **MANTIDA** |
-| `Welcome Tutorial` | Texto em gradiente colorido | Contraste necessário | ✅ **MANTIDA** |
-| `Terms Management` | Texto em badge colorido | Contraste necessário | ✅ **MANTIDA** |
-| `Subscription Plans` | Texto em gradiente colorido | Contraste necessário | ✅ **MANTIDA** |
-| `ESocial Domestico` | Texto em background colorido | Contraste necessário | ✅ **MANTIDA** |
-| `Monitoring Dashboard` | Texto em background colorido | Contraste necessário | ✅ **MANTIDA** |
+| **Arquivo**                    | **Contexto**                           | **Razão**                  | **Status**     |
+| ------------------------------ | -------------------------------------- | -------------------------- | -------------- |
+| `ClockInButton/index.tsx`      | Texto em botão com gradiente colorido  | Contraste necessário       | ✅ **MANTIDA** |
+| `NotificationBadge/index.tsx`  | Texto em badge com background colorido | Contraste necessário       | ✅ **MANTIDA** |
+| `UserManagementForm/index.tsx` | Background de container com fallback   | Semântica apropriada       | ✅ **MANTIDA** |
+| `Communication.tsx`            | Mensagem do outro usuário              | Contraste com texto escuro | ✅ **MANTIDA** |
+| `DataList.tsx`                 | Texto em badge com background dinâmico | Contraste necessário       | ✅ **MANTIDA** |
+| `TimeRecordCard/index.tsx`     | Texto em status colorido               | Contraste necessário       | ✅ **MANTIDA** |
+| `GroupSelector/index.tsx`      | Texto em ícone colorido                | Contraste necessário       | ✅ **MANTIDA** |
+| `Alert Management`             | Texto em status colorido               | Contraste necessário       | ✅ **MANTIDA** |
+| `Payroll Management`           | Texto em elemento colorido             | Contraste necessário       | ✅ **MANTIDA** |
+| `Register`                     | Texto em gradiente colorido            | Contraste necessário       | ✅ **MANTIDA** |
+| `Welcome Tutorial`             | Texto em gradiente colorido            | Contraste necessário       | ✅ **MANTIDA** |
+| `Terms Management`             | Texto em badge colorido                | Contraste necessário       | ✅ **MANTIDA** |
+| `Subscription Plans`           | Texto em gradiente colorido            | Contraste necessário       | ✅ **MANTIDA** |
+| `ESocial Domestico`            | Texto em background colorido           | Contraste necessário       | ✅ **MANTIDA** |
+| `Monitoring Dashboard`         | Texto em background colorido           | Contraste necessário       | ✅ **MANTIDA** |
 
 ### **🔴 CORREÇÕES CONTEXTUAIS REALIZADAS:**
 
-| **Arquivo** | **Problema** | **Solução Aplicada** | **Status** |
-|-------------|--------------|----------------------|------------|
-| `alert-management.tsx` | `background: white` em select | `background: ${props => props.$theme?.colors?.surface \|\| 'white'}` | ✅ **CORRIGIDA** |
-| `communication.tsx` | `background: white` em múltiplos elementos | `background: ${props => props.$theme?.colors?.surface \|\| 'white'}` | ✅ **CORRIGIDA** |
-| `payroll-management.tsx` | `background: white` em elemento | `background: ${props => props.$theme?.colors?.surface \|\| 'white'}` | ✅ **CORRIGIDA** |
-| `esocial-integration.tsx` | `background-color: white` em toggle | `background-color: ${props => props.$theme?.colors?.surface \|\| 'white'}` | ✅ **CORRIGIDA** |
-| `geofencing/locais.tsx` | `background: white` em modal | `background: ${props => props.$theme?.colors?.surface \|\| 'white'}` | ✅ **CORRIGIDA** |
-| `GeofencingModal.tsx` | `background: white` em modal | `background: ${props => props.$theme?.colors?.surface \|\| 'white'}` | ✅ **CORRIGIDA** |
-| `GroupSelectionModal.tsx` | `background: white` em modal | `background: ${props => props.$theme?.colors?.surface \|\| 'white'}` | ✅ **CORRIGIDA** |
-| `TimeRecordCard/index.tsx` | `border: 1px solid #e9ecef` | `border: 1px solid ${props => props.$theme?.colors?.border \|\| '#e9ecef'}` | ✅ **CORRIGIDA** |
+| **Arquivo**                | **Problema**                               | **Solução Aplicada**                                                        | **Status**       |
+| -------------------------- | ------------------------------------------ | --------------------------------------------------------------------------- | ---------------- |
+| `alert-management.tsx`     | `background: white` em select              | `background: ${props => props.$theme?.colors?.surface \|\| 'white'}`        | ✅ **CORRIGIDA** |
+| `communication.tsx`        | `background: white` em múltiplos elementos | `background: ${props => props.$theme?.colors?.surface \|\| 'white'}`        | ✅ **CORRIGIDA** |
+| `payroll-management.tsx`   | `background: white` em elemento            | `background: ${props => props.$theme?.colors?.surface \|\| 'white'}`        | ✅ **CORRIGIDA** |
+| `esocial-integration.tsx`  | `background-color: white` em toggle        | `background-color: ${props => props.$theme?.colors?.surface \|\| 'white'}`  | ✅ **CORRIGIDA** |
+| `geofencing/locais.tsx`    | `background: white` em modal               | `background: ${props => props.$theme?.colors?.surface \|\| 'white'}`        | ✅ **CORRIGIDA** |
+| `GeofencingModal.tsx`      | `background: white` em modal               | `background: ${props => props.$theme?.colors?.surface \|\| 'white'}`        | ✅ **CORRIGIDA** |
+| `GroupSelectionModal.tsx`  | `background: white` em modal               | `background: ${props => props.$theme?.colors?.surface \|\| 'white'}`        | ✅ **CORRIGIDA** |
+| `TimeRecordCard/index.tsx` | `border: 1px solid #e9ecef`                | `border: 1px solid ${props => props.$theme?.colors?.border \|\| '#e9ecef'}` | ✅ **CORRIGIDA** |
 
 ---
 
 ## 🎯 **PRINCÍPIOS APLICADOS PARA CORREÇÕES CONTEXTUAIS**
 
 ### **✅ MANTER 'WHITE' QUANDO:**
+
 1. **Contraste necessário**: Texto sobre background colorido
 2. **Semântica apropriada**: Elementos que devem ser brancos
 3. **Fallback seguro**: Quando não há alternativa definida
 4. **Acessibilidade**: Para garantir contraste adequado
 
 ### **✅ SUBSTITUIR 'WHITE' QUANDO:**
+
 1. **Backgrounds de containers**: Usar `surface`
 2. **Backgrounds de páginas**: Usar `background`
 3. **Elementos neutros**: Usar cores semânticas apropriadas
 
 ### **✅ MANTER 'BLACK' QUANDO:**
+
 1. **Texto principal**: Quando deve ser preto
 2. **Contraste necessário**: Sobre backgrounds claros
 3. **Semântica apropriada**: Elementos que devem ser pretos
 
 ### **✅ SUBSTITUIR 'BLACK' QUANDO:**
+
 1. **Texto padrão**: Usar `text`
 2. **Texto secundário**: Usar `textSecondary`
 3. **Elementos neutros**: Usar cores semânticas apropriadas
@@ -72,13 +76,13 @@
 
 ### **📊 ESTATÍSTICAS:**
 
-| **Categoria** | **Quantidade** | **Status** |
-|---------------|----------------|------------|
-| **Cores 'white' mantidas** | 15 | ✅ **CORRETAS** |
-| **Cores 'white' corrigidas** | 8 | ✅ **CORRIGIDAS** |
-| **Cores 'black' encontradas** | 0 | ✅ **NENHUMA** |
-| **Outras cores corrigidas** | 1 | ✅ **CORRIGIDA** |
-| **Total de correções** | 9 | ✅ **CONCLUÍDAS** |
+| **Categoria**                 | **Quantidade** | **Status**        |
+| ----------------------------- | -------------- | ----------------- |
+| **Cores 'white' mantidas**    | 15             | ✅ **CORRETAS**   |
+| **Cores 'white' corrigidas**  | 8              | ✅ **CORRIGIDAS** |
+| **Cores 'black' encontradas** | 0              | ✅ **NENHUMA**    |
+| **Outras cores corrigidas**   | 1              | ✅ **CORRIGIDA**  |
+| **Total de correções**        | 9              | ✅ **CONCLUÍDAS** |
 
 ### **🎯 IMPACTO DAS CORREÇÕES:**
 

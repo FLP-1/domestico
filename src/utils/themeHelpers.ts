@@ -68,4 +68,3 @@ export const addOpacity = (color: string, opacity: number): string => {
   }
   return color;
 };
-

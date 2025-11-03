@@ -1,6 +1,10 @@
 // src/hooks/useNetworkFingerprinting.ts
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { networkFingerprintingService, NetworkFingerprint, NetworkAnalysisResult } from '../services/antifraude/network-fingerprinting';
+import {
+  networkFingerprintingService,
+  NetworkFingerprint,
+  NetworkAnalysisResult,
+} from '../services/antifraude/network-fingerprinting';
 import { logger } from '../utils/logger';
 
 const AUTO_ANALYSIS_INTERVAL_MS = 5 * 60 * 1000; // 5 minutos
@@ -16,8 +20,12 @@ interface UseNetworkFingerprintingReturn {
   riskLevel: 'low' | 'medium' | 'high';
 }
 
-export const useNetworkFingerprinting = (autoGenerate: boolean = true): UseNetworkFingerprintingReturn => {
-  const [fingerprint, setFingerprint] = useState<NetworkFingerprint | null>(null);
+export const useNetworkFingerprinting = (
+  autoGenerate: boolean = true
+): UseNetworkFingerprintingReturn => {
+  const [fingerprint, setFingerprint] = useState<NetworkFingerprint | null>(
+    null
+  );
   const [analysis, setAnalysis] = useState<NetworkAnalysisResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,14 +37,15 @@ export const useNetworkFingerprinting = (autoGenerate: boolean = true): UseNetwo
     setError(null);
 
     try {
-      const newFingerprint = await networkFingerprintingService.generateNetworkFingerprint();
+      const newFingerprint =
+        await networkFingerprintingService.generateNetworkFingerprint();
       setFingerprint(newFingerprint);
-      
+
       logger.log('🔍 Fingerprint de rede gerado:', {
         connectionType: newFingerprint.connectionType,
         effectiveType: newFingerprint.effectiveType,
         ipAddress: newFingerprint.ipAddress,
-        sessionId: newFingerprint.sessionId
+        sessionId: newFingerprint.sessionId,
       });
 
       return newFingerprint;
@@ -49,53 +58,53 @@ export const useNetworkFingerprinting = (autoGenerate: boolean = true): UseNetwo
     }
   }, []);
 
-  const analyzeNetwork = useCallback(async (): Promise<NetworkAnalysisResult> => {
-    if (!fingerprint) {
-      const error = 'Fingerprint não disponível para análise';
-      setError(error);
-      throw new Error(error);
-    }
-
-    autoAnalysisInFlightRef.current = true;
-    const startedAt = Date.now();
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Enviar para análise server-side
-      const response = await fetch('/api/antifraude/network-analysis', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ fingerprint }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Erro na análise: ${response.statusText}`);
+  const analyzeNetwork =
+    useCallback(async (): Promise<NetworkAnalysisResult> => {
+      if (!fingerprint) {
+        const error = 'Fingerprint não disponível para análise';
+        setError(error);
+        throw new Error(error);
       }
 
-      const data = await response.json();
-      setAnalysis(data.analysis);
+      autoAnalysisInFlightRef.current = true;
+      const startedAt = Date.now();
+      setLoading(true);
+      setError(null);
 
-      logger.log('🔍 Análise de rede concluída:', {
-        riskScore: data.analysis.riskScore,
-        confidence: data.analysis.confidence,
-        anomalies: data.analysis.anomalies.length
-      });
+      try {
+        // Enviar para análise server-side
+        const response = await fetch('/api/antifraude/network-analysis', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ fingerprint }),
+        });
 
-      return data.analysis;
+        if (!response.ok) {
+          throw new Error(`Erro na análise: ${response.statusText}`);
+        }
 
-    } catch (err: any) {
-      setError(err.message || 'Erro ao analisar rede');
-      logger.log('❌ Erro na análise de rede:', err);
-      throw err;
-    } finally {
-      setLoading(false);
-      autoAnalysisInFlightRef.current = false;
-      lastAnalysisTimeRef.current = startedAt;
-    }
-  }, [fingerprint]);
+        const data = await response.json();
+        setAnalysis(data.analysis);
+
+        logger.log('🔍 Análise de rede concluída:', {
+          riskScore: data.analysis.riskScore,
+          confidence: data.analysis.confidence,
+          anomalies: data.analysis.anomalies.length,
+        });
+
+        return data.analysis;
+      } catch (err: any) {
+        setError(err.message || 'Erro ao analisar rede');
+        logger.log('❌ Erro na análise de rede:', err);
+        throw err;
+      } finally {
+        setLoading(false);
+        autoAnalysisInFlightRef.current = false;
+        lastAnalysisTimeRef.current = startedAt;
+      }
+    }, [fingerprint]);
 
   // Auto-gerar fingerprint quando o hook é inicializado
   useEffect(() => {
@@ -108,14 +117,19 @@ export const useNetworkFingerprinting = (autoGenerate: boolean = true): UseNetwo
 
   // Auto-analisar quando fingerprint é gerado
   useEffect(() => {
-    if (!autoGenerate || !fingerprint || loading || autoAnalysisInFlightRef.current) {
+    if (
+      !autoGenerate ||
+      !fingerprint ||
+      loading ||
+      autoAnalysisInFlightRef.current
+    ) {
       return;
     }
 
     const now = Date.now();
     const lastAnalysis = lastAnalysisTimeRef.current;
     const elapsed = lastAnalysis ? now - lastAnalysis : Infinity;
-    
+
     // ✅ Só analisar se passou o intervalo mínimo
     if (elapsed < AUTO_ANALYSIS_INTERVAL_MS) {
       return;
@@ -140,9 +154,13 @@ export const useNetworkFingerprinting = (autoGenerate: boolean = true): UseNetwo
   }, [autoGenerate, fingerprint]); // ✅ Remover loading e analyzeNetwork - causam loops
 
   // Determinar nível de risco
-  const riskLevel: 'low' | 'medium' | 'high' = analysis ? 
-    (analysis.riskScore > 70 ? 'high' : 
-     analysis.riskScore > 40 ? 'medium' : 'low') : 'low';
+  const riskLevel: 'low' | 'medium' | 'high' = analysis
+    ? analysis.riskScore > 70
+      ? 'high'
+      : analysis.riskScore > 40
+        ? 'medium'
+        : 'low'
+    : 'low';
 
   // Detectar fraude baseado no riskScore
   const isFraudDetected = (analysis?.riskScore ?? 0) > 70;
@@ -155,6 +173,6 @@ export const useNetworkFingerprinting = (autoGenerate: boolean = true): UseNetwo
     generateFingerprint,
     analyzeNetwork,
     isFraudDetected,
-    riskLevel
+    riskLevel,
   };
 };

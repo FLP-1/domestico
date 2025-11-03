@@ -21,6 +21,7 @@ Você está recebendo um **projeto de gestão doméstica completo** (Sistema DOM
 ### STACK TECNOLÓGICO
 
 **Frontend:**
+
 - Next.js 15.5.2
 - React 18.2.0
 - TypeScript 5.0.4 (strict mode)
@@ -29,6 +30,7 @@ Você está recebendo um **projeto de gestão doméstica completo** (Sistema DOM
 - Tippy.js
 
 **Backend:**
+
 - Next.js API Routes
 - Prisma ORM 6.16.3
 - PostgreSQL
@@ -36,6 +38,7 @@ Você está recebendo um **projeto de gestão doméstica completo** (Sistema DOM
 - SOAP para integrações eSocial
 
 **Ferramentas:**
+
 - ESLint + Prettier
 - Husky + lint-staged
 - Jest (configurado mas não implementado)
@@ -69,6 +72,7 @@ E:\DOM\
 ### ✅ IMPLEMENTADO (65-70%)
 
 **Arquitetura (95%):**
+
 - Stack tecnológico completo
 - TypeScript strict mode
 - ESLint e Prettier configurados
@@ -76,6 +80,7 @@ E:\DOM\
 - Build sem erros
 
 **Banco de Dados (100%):**
+
 - 50+ modelos Prisma implementados
 - Constraints e índices otimizados
 - Seeds para dados iniciais
@@ -83,6 +88,7 @@ E:\DOM\
 - Normalização 3NF
 
 **Interface (95%):**
+
 - 99 páginas implementadas
 - 71 componentes React
 - Sistema de temas (4 perfis)
@@ -90,18 +96,21 @@ E:\DOM\
 - Acessibilidade básica
 
 **Serviços (70%):**
+
 - 21 serviços implementados
 - Autenticação e autorização
 - Anti-fraude básico
 - Integração eSocial (parcial)
 
 **APIs (75%):**
+
 - 50+ endpoints implementados
 - CRUD completo
 - Autenticação em rotas sensíveis
 - Alguns endpoints incompletos
 
 **Segurança (90%):**
+
 - NextAuth configurado
 - Device fingerprinting
 - IP analysis
@@ -109,6 +118,7 @@ E:\DOM\
 - Compliance LGPD
 
 **Documentação (85%):**
+
 - README completo
 - CHANGELOG detalhado
 - Guias de configuração
@@ -117,6 +127,7 @@ E:\DOM\
 ### ⚠️ PARCIALMENTE IMPLEMENTADO
 
 **Integração eSocial (60%):**
+
 - Serviços implementados
 - WSDLs configurados
 - Certificados digitais suportados
@@ -124,6 +135,7 @@ E:\DOM\
 - **FALTA:** Testes completos
 
 **Serviços de Negócio (70%):**
+
 - Maioria implementada
 - Alguns incompletos
 - Tratamento de erros pode ser melhorado
@@ -131,6 +143,7 @@ E:\DOM\
 ### ❌ NÃO IMPLEMENTADO
 
 **Testes (10%):**
+
 - ❌ Testes unitários
 - ❌ Testes de integração
 - ❌ Testes E2E
@@ -138,6 +151,7 @@ E:\DOM\
 - ✅ Jest configurado mas não usado
 
 **Validação:**
+
 - ❌ Validação em produção
 - ❌ Testes de carga
 - ❌ CI/CD
@@ -152,18 +166,21 @@ E:\DOM\
 #### 1.1 Testes Unitários
 
 **Escopo:**
+
 - Componentes React críticos
 - Serviços de negócio
 - Utilitários e helpers
 - Hooks customizados
 
 **Prioridade:**
+
 1. Componentes de autenticação
 2. Serviços de validação
 3. Hooks de formulário
 4. Utilitários de data/formatação
 
 **Exemplo de estrutura:**
+
 ```typescript
 // src/__tests__/components/UnifiedButton.test.tsx
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -190,18 +207,21 @@ describe('UnifiedButton', () => {
 #### 1.2 Testes de Integração
 
 **Escopo:**
+
 - Fluxos de autenticação
 - CRUD de entidades principais
 - Integração Prisma ↔ APIs
 - Processamento de dados
 
 **Prioridade:**
+
 1. Login e registro
 2. Gestão de usuários
 3. Registro de ponto
 4. Folha de pagamento
 
 **Exemplo:**
+
 ```typescript
 // src/__tests__/integration/auth.test.ts
 import { createMocks } from 'node-mocks-http';
@@ -213,8 +233,8 @@ describe('Auth API Integration', () => {
       method: 'POST',
       body: {
         email: 'user@example.com',
-        password: 'validPassword'
-      }
+        password: 'validPassword',
+      },
     });
 
     await handler(req, res);
@@ -226,22 +246,26 @@ describe('Auth API Integration', () => {
 #### 1.3 Testes E2E
 
 **Escopo:**
+
 - Fluxos críticos de usuário
 - Navegação entre páginas
 - Formulários complexos
 - Integração eSocial
 
 **Ferramentas:**
+
 - Playwright ou Cypress
 - Configured em `playwright.config.js`
 
 **Prioridade:**
+
 1. Fluxo de registro e login
 2. Dashboard e navegação
 3. Registro de ponto completo
 4. Gestão de folha de pagamento
 
 **Exemplo:**
+
 ```typescript
 // src/__tests__/e2e/auth.spec.ts
 import { test, expect } from '@playwright/test';
@@ -258,6 +282,7 @@ test('complete login flow', async ({ page }) => {
 #### 1.4 Testes de API
 
 **Escopo:**
+
 - Todos os endpoints API
 - Validação de requisições
 - Tratamento de erros
@@ -272,6 +297,7 @@ test('complete login flow', async ({ page }) => {
 #### 2.1 Validação de Integração eSocial
 
 **Tarefas:**
+
 1. Testar com certificados reais (homologação)
 2. Validar consultas de cadastro
 3. Testar envio de eventos
@@ -279,10 +305,12 @@ test('complete login flow', async ({ page }) => {
 5. Documentar fluxos de erro
 
 **Ambientes:**
+
 - Homologação (Produção Restrita)
 - Produção (após validação)
 
 **Checklist:**
+
 - [ ] Certificado A1 válido configurado
 - [ ] WSDLs acessíveis
 - [ ] Consulta empregador funcionando
@@ -295,6 +323,7 @@ test('complete login flow', async ({ page }) => {
 #### 2.2 Otimização de Performance
 
 **Tarefas:**
+
 1. Validar queries de banco de dados
 2. Implementar paginação onde necessário
 3. Adicionar índices faltantes
@@ -302,6 +331,7 @@ test('complete login flow', async ({ page }) => {
 5. Testes de carga básicos
 
 **Ferramentas:**
+
 - Lighthouse
 - PostgreSQL EXPLAIN ANALYZE
 - Bundle Analyzer
@@ -313,12 +343,14 @@ test('complete login flow', async ({ page }) => {
 #### 3.1 Configuração CI/CD
 
 **Tarefas:**
+
 1. Configurar GitHub Actions (ou similar)
 2. Workflow de testes
 3. Workflow de build
 4. Workflow de deploy
 
 **Exemplo workflow:**
+
 ```yaml
 # .github/workflows/ci.yml
 name: CI
@@ -338,6 +370,7 @@ jobs:
 #### 3.2 Documentação de Deploy
 
 **Tarefas:**
+
 1. Guia de configuração de ambiente
 2. Setup de PostgreSQL
 3. Configuração de variáveis de ambiente
@@ -351,6 +384,7 @@ jobs:
 #### 4.1 Melhorias de Código
 
 **Tarefas:**
+
 1. Refatorar componentes grandes
 2. Adicionar comentários em código complexo
 3. Melhorar tratamento de erros
@@ -360,6 +394,7 @@ jobs:
 #### 4.2 Documentação
 
 **Tarefas:**
+
 1. Manual de usuário final detalhado
 2. Guias de troubleshooting
 3. Vídeos tutoriais (se possível)
@@ -373,23 +408,27 @@ jobs:
 ### CONVENÇÕES DE CÓDIGO
 
 **TypeScript:**
+
 - Sempre usar tipos explícitos
 - Não usar `any` (usar `unknown` se necessário)
 - Interfaces para objetos complexos
 - Tipos para primitivos complexos
 
 **React:**
+
 - Componentes funcionais
 - Hooks customizados quando apropriado
 - Props tipadas
 - Código limpo e legível
 
 **Styled Components:**
+
 - Usar tokens de design
 - Não hardcodar cores
 - Usar temas do sistema
 
 **Testes:**
+
 - Arrange-Act-Assert pattern
 - Nomes descritivos
 - Isolar testes
@@ -398,6 +437,7 @@ jobs:
 ### ESTRUTURA DE PASTAS
 
 Manter estrutura existente:
+
 ```
 src/
 ├── __tests__/         # Testes
@@ -418,6 +458,7 @@ src/
 ### VARIÁVEIS DE AMBIENTE
 
 **Obrigatórias:**
+
 ```env
 DATABASE_URL=postgresql://user:password@localhost:5432/dom
 NEXTAUTH_URL=http://localhost:3000
@@ -427,6 +468,7 @@ ESOCIAL_ENVIRONMENT=homologacao
 ```
 
 **Opcionais:**
+
 ```env
 SENTRY_DSN=your-sentry-dsn
 ANALYTICS_ID=your-analytics-id
@@ -456,11 +498,13 @@ ANALYTICS_ID=your-analytics-id
 ### DOCUMENTAÇÃO DISPONÍVEL
 
 **Raiz do projeto:**
+
 - `README.md` - Visão geral
 - `CHANGELOG.md` - Histórico de mudanças
 - `ANALISE_PROJETO_DOM_COMPLETA.md` - Análise detalhada
 
 **Docs/arquivos importantes:**
+
 - `docs/INDICE.md` - Índice centralizado
 - `docs/guias/` - Guias de configuração
 - `ESTRUTURA_BANCO_DADOS_RESUMO.md` - Banco de dados
@@ -470,6 +514,7 @@ ANALYTICS_ID=your-analytics-id
 ### REFERÊNCIAS TÉCNICAS
 
 **Ferramentas:**
+
 - [Next.js Docs](https://nextjs.org/docs)
 - [React Docs](https://react.dev)
 - [Prisma Docs](https://www.prisma.io/docs)
@@ -477,6 +522,7 @@ ANALYTICS_ID=your-analytics-id
 - [Playwright Docs](https://playwright.dev)
 
 **Projeto:**
+
 - Ver arquivos em `docs/` para referências específicas
 
 ---
@@ -494,23 +540,27 @@ ANALYTICS_ID=your-analytics-id
 ### CRITÉRIOS DE SUCESSO
 
 **Testes:**
+
 - ✅ Cobertura de código > 80%
 - ✅ Todos os testes passam
 - ✅ Integração CI/CD funcionando
 
 **Qualidade:**
+
 - ✅ Build sem erros
 - ✅ Lint sem erros
 - ✅ TypeScript sem erros
 - ✅ Performance lighthouse > 90
 
 **Funcionalidade:**
+
 - ✅ Login e autenticação funcionando
 - ✅ Dashboard funcionando
 - ✅ CRUD de entidades funcionando
 - ✅ Integração eSocial validada
 
 **Documentação:**
+
 - ✅ README atualizado
 - ✅ Guias de deploy
 - ✅ Documentação de API
@@ -531,6 +581,7 @@ ANALYTICS_ID=your-analytics-id
    - `prisma/schema.prisma`
 
 3. **Execute o projeto**
+
    ```bash
    npm install
    npm run db:migrate
@@ -600,6 +651,7 @@ ANALYTICS_ID=your-analytics-id
 ### DOCUMENTAÇÃO
 
 Para dúvidas técnicas, consulte:
+
 - `docs/INDICE.md` - Índice completo
 - `docs/guias/` - Guias específicos
 - Documentação oficial das ferramentas
@@ -607,16 +659,19 @@ Para dúvidas técnicas, consulte:
 ### ISSUES COMUNS
 
 **Build falhando:**
+
 - Verificar `npm install` completo
 - Verificar variáveis de ambiente
 - Limpar `.next` e `node_modules`
 
 **Testes falhando:**
+
 - Verificar setup do banco
 - Verificar mocks
 - Verificar seeds
 
 **Integração eSocial:**
+
 - Verificar certificados
 - Verificar WSDLs
 - Verificar logs
@@ -628,6 +683,7 @@ Para dúvidas técnicas, consulte:
 **Missão:** Transformar este projeto de **65-70% completo** para **100% pronto para produção**.
 
 **Entregáveis esperados:**
+
 1. Testes automatizados com cobertura > 80%
 2. Integração eSocial validada
 3. CI/CD configurado
@@ -646,4 +702,3 @@ Para dúvidas técnicas, consulte:
 Este é um projeto sólido com base excelente. Com foco nas prioridades corretas e execução disciplinada, você pode facilmente completá-lo para produção.
 
 **Comece pequeno, teste frequentemente, e documente tudo!**
-

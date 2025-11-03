@@ -8,22 +8,22 @@ Implementar sistema completo de gerenciamento de certificados digitais em confor
 
 ## 📝 Resumo das Mudanças
 
-| # | Tipo | Arquivo/Local | Descrição |
-|---|------|---------------|-----------|
-| 1 | Alterado | `env.local` | Removidas senhas e dados de certificados |
-| 2 | Alterado | `env.local` | Adicionada `CERTIFICATE_MASTER_KEY` |
-| 3 | Alterado | `prisma/schema.prisma` | Removidos campos de certificado do model Empregador |
-| 4 | Criado | `prisma/schema.prisma` | Model `CertificadoDigital` |
-| 5 | Criado | `prisma/schema.prisma` | Model `CertificadoHistorico` |
-| 6 | Alterado | `prisma/seed.ts` | Adicionado seed de empregador |
-| 7 | Alterado | `prisma/seed.ts` | Adicionado seed de certificado |
-| 8 | Criado | `src/lib/security/certificateEncryption.ts` | Funções de criptografia AES-256-GCM |
-| 9 | Criado | `src/pages/api/certificates/index.ts` | API CRUD de certificados |
-| 10 | Criado | `src/pages/api/certificates/use.ts` | API para uso de certificados |
-| 11 | Criado | `CERTIFICADOS_DIGITAIS_LGPD.md` | Documentação técnica completa |
-| 12 | Criado | `RESUMO_CERTIFICADOS_LGPD.md` | Resumo executivo |
-| 13 | Criado | `CHECKLIST_CERTIFICADOS.md` | Lista de validação |
-| 14 | Criado | `LISTA_COMPLETA_ALTERACOES.md` | Este documento |
+| #   | Tipo     | Arquivo/Local                               | Descrição                                           |
+| --- | -------- | ------------------------------------------- | --------------------------------------------------- |
+| 1   | Alterado | `env.local`                                 | Removidas senhas e dados de certificados            |
+| 2   | Alterado | `env.local`                                 | Adicionada `CERTIFICATE_MASTER_KEY`                 |
+| 3   | Alterado | `prisma/schema.prisma`                      | Removidos campos de certificado do model Empregador |
+| 4   | Criado   | `prisma/schema.prisma`                      | Model `CertificadoDigital`                          |
+| 5   | Criado   | `prisma/schema.prisma`                      | Model `CertificadoHistorico`                        |
+| 6   | Alterado | `prisma/seed.ts`                            | Adicionado seed de empregador                       |
+| 7   | Alterado | `prisma/seed.ts`                            | Adicionado seed de certificado                      |
+| 8   | Criado   | `src/lib/security/certificateEncryption.ts` | Funções de criptografia AES-256-GCM                 |
+| 9   | Criado   | `src/pages/api/certificates/index.ts`       | API CRUD de certificados                            |
+| 10  | Criado   | `src/pages/api/certificates/use.ts`         | API para uso de certificados                        |
+| 11  | Criado   | `CERTIFICADOS_DIGITAIS_LGPD.md`             | Documentação técnica completa                       |
+| 12  | Criado   | `RESUMO_CERTIFICADOS_LGPD.md`               | Resumo executivo                                    |
+| 13  | Criado   | `CHECKLIST_CERTIFICADOS.md`                 | Lista de validação                                  |
+| 14  | Criado   | `LISTA_COMPLETA_ALTERACOES.md`              | Este documento                                      |
 
 ---
 
@@ -32,6 +32,7 @@ Implementar sistema completo de gerenciamento de certificados digitais em confor
 ### 1. **Arquivo: `env.local`**
 
 #### ❌ REMOVIDO:
+
 ```env
 ESOCIAL_EMPREGADOR_CPF=59876913700
 ESOCIAL_EMPREGADOR_NOME=FLP Business Strategy
@@ -40,12 +41,14 @@ ESOCIAL_CERTIFICATE_PASSWORD=456587
 ```
 
 #### ✅ ADICIONADO:
+
 ```env
 # Chave mestra para criptografia de senhas dos certificados
 CERTIFICATE_MASTER_KEY=dom_master_key_certificate_encryption_2025_secure_v1
 ```
 
-**Justificativa:** 
+**Justificativa:**
+
 - Dados de empregador agora estão na tabela `empregadores`
 - Dados de certificado agora estão na tabela `certificados_digitais`
 - Senhas criptografadas com AES-256-GCM usando a chave mestra
@@ -55,6 +58,7 @@ CERTIFICATE_MASTER_KEY=dom_master_key_certificate_encryption_2025_secure_v1
 ### 2. **Arquivo: `prisma/schema.prisma`**
 
 #### ✅ Model `Empregador` (Simplificado)
+
 ```prisma
 model Empregador {
   id               String                @id @default(uuid())
@@ -72,6 +76,7 @@ model Empregador {
 ```
 
 #### ✅ Model `CertificadoDigital` (NOVO)
+
 ```prisma
 model CertificadoDigital {
   id                       String    @id @default(uuid())
@@ -86,32 +91,32 @@ model CertificadoDigital {
   emissor                  String
   dataEmissao              DateTime
   dataValidade             DateTime
-  
+
   // 🔐 Segurança
   senhaHash                String    // ← Criptografada AES-256-GCM
   senhaSalt                String
   senhaAlgoritmo           String    @default("AES-256-GCM")
   criptografiaIV           String
-  
+
   // 📄 Arquivo
   caminhoArquivo           String
   nomeArquivoOriginal      String
   tamanhoArquivo           Int
   hashArquivo              String
   thumbprint               String
-  
+
   // 📊 Controle
   ativo                    Boolean   @default(true)
   revogado                 Boolean   @default(false)
   ultimoUso                DateTime?
   contagemUso              Int       @default(0)
-  
+
   // 🛡️ LGPD
   consentimentoLGPD        Boolean   @default(false)
   dataConsentimentoLGPD    DateTime?
   ipCadastro               String?
   usuarioCadastro          String?
-  
+
   // Relações
   empregador               Empregador? @relation(...)
   historicoAcessos         CertificadoHistorico[]
@@ -119,6 +124,7 @@ model CertificadoDigital {
 ```
 
 #### ✅ Model `CertificadoHistorico` (NOVO)
+
 ```prisma
 model CertificadoHistorico {
   id                String    @id @default(uuid())
@@ -146,6 +152,7 @@ model CertificadoHistorico {
 ### 3. **Arquivo: `src/lib/security/certificateEncryption.ts` (NOVO)**
 
 #### Funções Implementadas:
+
 1. **`encryptCertificatePassword(password: string)`**
    - Criptografa senha usando AES-256-GCM
    - Gera salt e IV aleatórios
@@ -179,21 +186,25 @@ model CertificadoHistorico {
 #### Endpoints Implementados:
 
 **GET `/api/certificates`**
+
 - Lista certificados com dados mascarados
 - Filtros: empregadorId, ativo, tipo
 - Retorna validação de cada certificado
 
 **POST `/api/certificates`**
+
 - Upload de certificado .pfx
 - Criptografa senha automaticamente
 - Gera hash SHA-256 do arquivo
 - Registra no histórico
 
 **PUT `/api/certificates`**
+
 - Atualiza informações (exceto senha)
 - Registra alteração no histórico
 
 **DELETE `/api/certificates`**
+
 - Revoga certificado (não deleta)
 - Registra motivo da revogação
 
@@ -208,6 +219,7 @@ model CertificadoHistorico {
 #### Endpoint: POST `/api/certificates/use`
 
 **Processo:**
+
 1. Valida se certificado existe
 2. Valida se está ativo e não revogado
 3. Valida se não está vencido
@@ -226,6 +238,7 @@ model CertificadoHistorico {
 ### 6. **Arquivo: `prisma/seed.ts`**
 
 #### ✅ Adicionado: Seed de Empregador
+
 ```typescript
 const empregadorPrincipal = await prisma.empregador.upsert({
   where: { cpfCnpj: '59876913700' },
@@ -235,11 +248,12 @@ const empregadorPrincipal = await prisma.empregador.upsert({
     nome: 'FLP Business Strategy',
     email: 'contato@flpbusiness.com',
     // ...
-  }
-})
+  },
+});
 ```
 
 #### ✅ Adicionado: Seed de Certificado
+
 ```typescript
 const certificadoPrincipal = await prisma.certificadoDigital.upsert({
   where: { numeroSerial: 'ECPF-A1-24940271-2024' },
@@ -248,15 +262,16 @@ const certificadoPrincipal = await prisma.certificadoDigital.upsert({
     empregadorId: empregadorPrincipal.id,
     nome: 'Certificado eCPF A1 - FLP Business Strategy',
     tipo: 'E_CPF_A1',
-    senhaHash: encryptedPassword,  // ← Criptografada!
+    senhaHash: encryptedPassword, // ← Criptografada!
     senhaSalt: salt,
     criptografiaIV: iv,
     // ...
-  }
-})
+  },
+});
 ```
 
 #### ✅ Adicionado: Histórico de Criação
+
 ```typescript
 await prisma.certificadoHistorico.create({
   data: {
@@ -264,9 +279,9 @@ await prisma.certificadoHistorico.create({
     acao: 'CRIACAO',
     descricao: 'Certificado cadastrado pelo seed',
     enderecoIP: '127.0.0.1',
-    sucesso: true
-  }
-})
+    sucesso: true,
+  },
+});
 ```
 
 **Linhas Adicionadas:** ~80
@@ -275,44 +290,44 @@ await prisma.certificadoHistorico.create({
 
 ## 📊 Estatísticas de Código
 
-| Métrica | Valor |
-|---------|-------|
-| **Arquivos Criados** | 7 |
-| **Arquivos Alterados** | 3 |
-| **Linhas de Código Adicionadas** | ~920 |
-| **Models Criados** | 2 |
-| **APIs Criadas** | 2 |
-| **Funções de Segurança** | 10 |
-| **Campos de Banco** | 57 |
-| **Documentos** | 4 |
+| Métrica                          | Valor |
+| -------------------------------- | ----- |
+| **Arquivos Criados**             | 7     |
+| **Arquivos Alterados**           | 3     |
+| **Linhas de Código Adicionadas** | ~920  |
+| **Models Criados**               | 2     |
+| **APIs Criadas**                 | 2     |
+| **Funções de Segurança**         | 10    |
+| **Campos de Banco**              | 57    |
+| **Documentos**                   | 4     |
 
 ---
 
 ## 🔒 Segurança Implementada
 
-| Recurso | Status |
-|---------|--------|
-| Criptografia AES-256-GCM | ✅ |
-| Salt único por senha | ✅ |
-| IV único por senha | ✅ |
-| Authentication Tag | ✅ |
-| Hash SHA-256 de arquivos | ✅ |
-| Thumbprint SHA-1 | ✅ |
-| Mascaramento de dados | ✅ |
-| Validação de validade | ✅ |
-| Controle de revogação | ✅ |
+| Recurso                  | Status |
+| ------------------------ | ------ |
+| Criptografia AES-256-GCM | ✅     |
+| Salt único por senha     | ✅     |
+| IV único por senha       | ✅     |
+| Authentication Tag       | ✅     |
+| Hash SHA-256 de arquivos | ✅     |
+| Thumbprint SHA-1         | ✅     |
+| Mascaramento de dados    | ✅     |
+| Validação de validade    | ✅     |
+| Controle de revogação    | ✅     |
 
 ---
 
 ## ⚖️ Conformidade LGPD
 
-| Requisito | Implementação | Status |
-|-----------|---------------|--------|
-| **Art. 46** - Segurança | Criptografia AES-256-GCM | ✅ |
-| **Art. 37** - Registro | Tabela de histórico | ✅ |
-| **Art. 9** - Consentimento | Campo no banco | ✅ |
-| **Art. 18** - Direitos | APIs de consulta/exclusão | ✅ |
-| **Art. 48** - Comunicação | Dados em linguagem clara | ✅ |
+| Requisito                  | Implementação             | Status |
+| -------------------------- | ------------------------- | ------ |
+| **Art. 46** - Segurança    | Criptografia AES-256-GCM  | ✅     |
+| **Art. 37** - Registro     | Tabela de histórico       | ✅     |
+| **Art. 9** - Consentimento | Campo no banco            | ✅     |
+| **Art. 18** - Direitos     | APIs de consulta/exclusão | ✅     |
+| **Art. 48** - Comunicação  | Dados em linguagem clara  | ✅     |
 
 ---
 
@@ -320,21 +335,21 @@ await prisma.certificadoHistorico.create({
 
 ### Dados de Empregador
 
-| Antes | Depois |
-|-------|--------|
+| Antes                | Depois                   |
+| -------------------- | ------------------------ |
 | ❌ No arquivo `.env` | ✅ Tabela `empregadores` |
-| ❌ Hardcoded | ✅ Gerenciável via API |
-| ❌ Um único | ✅ Suporte a múltiplos |
+| ❌ Hardcoded         | ✅ Gerenciável via API   |
+| ❌ Um único          | ✅ Suporte a múltiplos   |
 
 ### Dados de Certificado
 
-| Antes | Depois |
-|-------|--------|
-| ❌ Caminho no `.env` | ✅ Tabela `certificados_digitais` |
-| ❌ Senha em texto claro | ✅ Criptografada AES-256-GCM |
-| ❌ Sem auditoria | ✅ Histórico completo |
-| ❌ Sem controle de validade | ✅ Validação automática |
-| ❌ Sem LGPD | ✅ 100% conforme |
+| Antes                       | Depois                            |
+| --------------------------- | --------------------------------- |
+| ❌ Caminho no `.env`        | ✅ Tabela `certificados_digitais` |
+| ❌ Senha em texto claro     | ✅ Criptografada AES-256-GCM      |
+| ❌ Sem auditoria            | ✅ Histórico completo             |
+| ❌ Sem controle de validade | ✅ Validação automática           |
+| ❌ Sem LGPD                 | ✅ 100% conforme                  |
 
 ---
 
@@ -420,4 +435,3 @@ psql -h localhost -p 5433 -U userdom -d dom -c "SELECT * FROM certificados_digit
 **Data:** 2025-10-02  
 **Versão:** DOM v1.0.0-final  
 **Status:** ✅ **CONCLUÍDO**
-

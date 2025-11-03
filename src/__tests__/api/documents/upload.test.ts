@@ -94,7 +94,7 @@ describe('API de Documentos', () => {
 
       const mockHandler = jest.fn(async (req: any, res: any) => {
         const { tamanho } = req.body;
-        
+
         if (tamanho > MAX_FILE_SIZE) {
           return res.status(400).json({
             error: 'Arquivo muito grande',
@@ -126,7 +126,7 @@ describe('API de Documentos', () => {
 
       const mockHandler = jest.fn(async (req: any, res: any) => {
         const { mimeType } = req.body;
-        
+
         if (!ALLOWED_TYPES.includes(mimeType)) {
           return res.status(400).json({
             error: 'Tipo de arquivo não permitido',
@@ -156,12 +156,12 @@ describe('API de Documentos', () => {
     it('deve validar campos obrigatórios', async () => {
       const mockHandler = jest.fn(async (req: any, res: any) => {
         const { usuarioId, nome, tipo } = req.body;
-        
+
         const missing = [];
         if (!usuarioId) missing.push('usuarioId');
         if (!nome) missing.push('nome');
         if (!tipo) missing.push('tipo');
-        
+
         if (missing.length > 0) {
           return res.status(400).json({
             error: 'Campos obrigatórios ausentes',
@@ -205,7 +205,9 @@ describe('API de Documentos', () => {
         },
       ];
 
-      (prisma.documento.findMany as jest.Mock).mockResolvedValue(mockDocumentos);
+      (prisma.documento.findMany as jest.Mock).mockResolvedValue(
+        mockDocumentos
+      );
 
       const mockHandler = jest.fn(async (req: any, res: any) => {
         return res.status(200).json({
@@ -238,7 +240,9 @@ describe('API de Documentos', () => {
         },
       ];
 
-      (prisma.documento.findMany as jest.Mock).mockResolvedValue(mockDocumentos);
+      (prisma.documento.findMany as jest.Mock).mockResolvedValue(
+        mockDocumentos
+      );
 
       const mockHandler = jest.fn(async (req: any, res: any) => {
         return res.status(200).json({
@@ -272,7 +276,9 @@ describe('API de Documentos', () => {
         nome: 'Documento.pdf',
       };
 
-      (prisma.documento.findUnique as jest.Mock).mockResolvedValue(mockDocumento);
+      (prisma.documento.findUnique as jest.Mock).mockResolvedValue(
+        mockDocumento
+      );
       (prisma.documento.delete as jest.Mock).mockResolvedValue(mockDocumento);
       (prisma.logAuditoria.create as jest.Mock).mockResolvedValue({});
 

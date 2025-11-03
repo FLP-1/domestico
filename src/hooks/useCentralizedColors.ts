@@ -3,7 +3,7 @@ import { geofencingColors } from '../design-system/tokens/geofencing-colors';
 
 export const useCentralizedColors = () => {
   const { config, loading, error } = useSystemConfig();
-  
+
   // Se as configurações do sistema estão carregando ou há erro, usar cores padrão
   if (loading || error || !config) {
     return {
@@ -23,12 +23,13 @@ export const useCentralizedColors = () => {
       error,
     };
   }
-  
+
   // Mesclar cores do sistema com cores específicas
   const mergedColors = {
     ...geofencingColors,
     // Garantir que sempre tenha as propriedades esperadas pelo PageContainer
-    surface: (config.colors as any).background || geofencingColors.background.primary,
+    surface:
+      (config.colors as any).background || geofencingColors.background.primary,
     border: (config.colors as any).border || geofencingColors.border.light,
     primary: config.colors.primary,
     secondary: config.colors.secondary,
@@ -86,7 +87,7 @@ export const useCentralizedColors = () => {
       red: config.colors.error,
     },
   };
-  
+
   return {
     colors: mergedColors,
     loading,

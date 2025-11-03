@@ -54,20 +54,22 @@ describe('API de Registro de Ponto', () => {
       const mockLocal = {
         id: 'local-123',
         nome: 'Residência Principal',
-        latitude: -23.550520,
+        latitude: -23.55052,
         longitude: -46.633308,
         raio: 100,
       };
 
       (prisma.usuario.findUnique as jest.Mock).mockResolvedValue(mockUser);
-      (prisma.localTrabalho.findUnique as jest.Mock).mockResolvedValue(mockLocal);
+      (prisma.localTrabalho.findUnique as jest.Mock).mockResolvedValue(
+        mockLocal
+      );
       (prisma.registroPonto.findFirst as jest.Mock).mockResolvedValue(null);
       (prisma.registroPonto.create as jest.Mock).mockResolvedValue({
         id: 'registro-123',
         usuarioId: mockUser.id,
         tipo: 'ENTRADA',
         dataHora: new Date(),
-        latitude: -23.550520,
+        latitude: -23.55052,
         longitude: -46.633308,
       });
 
@@ -87,7 +89,7 @@ describe('API de Registro de Ponto', () => {
           usuarioId: 'user-123',
           localId: 'local-123',
           tipo: 'ENTRADA',
-          latitude: -23.550520,
+          latitude: -23.55052,
           longitude: -46.633308,
         },
       });
@@ -110,13 +112,15 @@ describe('API de Registro de Ponto', () => {
       const mockLocal = {
         id: 'local-123',
         nome: 'Residência Principal',
-        latitude: -23.550520,
+        latitude: -23.55052,
         longitude: -46.633308,
         raio: 100, // 100 metros
       };
 
       (prisma.usuario.findUnique as jest.Mock).mockResolvedValue(mockUser);
-      (prisma.localTrabalho.findUnique as jest.Mock).mockResolvedValue(mockLocal);
+      (prisma.localTrabalho.findUnique as jest.Mock).mockResolvedValue(
+        mockLocal
+      );
 
       const mockHandler = jest.fn(async (req: any, res: any) => {
         // Simula localização fora do raio
@@ -136,7 +140,7 @@ describe('API de Registro de Ponto', () => {
           usuarioId: 'user-123',
           localId: 'local-123',
           tipo: 'ENTRADA',
-          latitude: -23.555520, // Fora do raio
+          latitude: -23.55552, // Fora do raio
           longitude: -46.638308,
         },
       });
@@ -163,7 +167,9 @@ describe('API de Registro de Ponto', () => {
       };
 
       (prisma.usuario.findUnique as jest.Mock).mockResolvedValue(mockUser);
-      (prisma.registroPonto.findFirst as jest.Mock).mockResolvedValue(mockRegistroExistente);
+      (prisma.registroPonto.findFirst as jest.Mock).mockResolvedValue(
+        mockRegistroExistente
+      );
 
       const mockHandler = jest.fn(async (req: any, res: any) => {
         return res.status(400).json({
@@ -177,7 +183,7 @@ describe('API de Registro de Ponto', () => {
           usuarioId: 'user-123',
           localId: 'local-123',
           tipo: 'ENTRADA',
-          latitude: -23.550520,
+          latitude: -23.55052,
           longitude: -46.633308,
         },
       });
@@ -192,7 +198,7 @@ describe('API de Registro de Ponto', () => {
     it('deve validar campos obrigatórios', async () => {
       const mockHandler = jest.fn(async (req: any, res: any) => {
         const { usuarioId, localId, tipo, latitude, longitude } = req.body;
-        
+
         if (!usuarioId || !localId || !tipo || !latitude || !longitude) {
           return res.status(400).json({
             error: 'Campos obrigatórios ausentes',
@@ -225,19 +231,21 @@ describe('API de Registro de Ponto', () => {
           id: 'registro-1',
           tipo: 'ENTRADA',
           dataHora: new Date('2025-10-30T08:00:00'),
-          latitude: -23.550520,
+          latitude: -23.55052,
           longitude: -46.633308,
         },
         {
           id: 'registro-2',
           tipo: 'SAIDA',
           dataHora: new Date('2025-10-30T17:00:00'),
-          latitude: -23.550520,
+          latitude: -23.55052,
           longitude: -46.633308,
         },
       ];
 
-      (prisma.registroPonto.findMany as jest.Mock).mockResolvedValue(mockRegistros);
+      (prisma.registroPonto.findMany as jest.Mock).mockResolvedValue(
+        mockRegistros
+      );
 
       const mockHandler = jest.fn(async (req: any, res: any) => {
         return res.status(200).json({

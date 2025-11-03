@@ -15,21 +15,21 @@ async function main() {
   // 1. VERIFICAR SE USUÁRIO JÁ EXISTE
   // ============================================
   console.log('🔍 Verificando se usuário já existe...');
-  
+
   const usuarioExistente = await prisma.usuario.findUnique({
-    where: { cpf: '59876913700' }
+    where: { cpf: '59876913700' },
   });
 
   if (usuarioExistente) {
     console.log('⚠️  Usuário já existe. Adicionando apenas grupos e perfis...');
-    
+
     // Buscar perfis existentes
     const perfilFamilia = await prisma.perfil.findUnique({
-      where: { codigo: 'FAMILIA' }
+      where: { codigo: 'FAMILIA' },
     });
 
     const perfilEmpregado = await prisma.perfil.findUnique({
-      where: { codigo: 'EMPREGADO' }
+      where: { codigo: 'EMPREGADO' },
     });
 
     if (!perfilFamilia || !perfilEmpregado) {
@@ -45,8 +45,8 @@ async function main() {
         icone: '👨‍👩‍👧‍👦',
         tipo: 'familia',
         privado: true,
-        ativo: true
-      }
+        ativo: true,
+      },
     });
 
     const grupoTrabalho = await prisma.grupo.create({
@@ -57,8 +57,8 @@ async function main() {
         icone: '🏢',
         tipo: 'empresa',
         privado: false,
-        ativo: true
-      }
+        ativo: true,
+      },
     });
 
     const grupoTrabalho2 = await prisma.grupo.create({
@@ -69,8 +69,8 @@ async function main() {
         icone: '🏭',
         tipo: 'empresa',
         privado: false,
-        ativo: true
-      }
+        ativo: true,
+      },
     });
 
     // Associar usuário aos grupos
@@ -80,21 +80,21 @@ async function main() {
           usuarioId: usuarioExistente.id,
           grupoId: grupoFamilia.id,
           papel: 'admin',
-          ativo: true
+          ativo: true,
         },
         {
           usuarioId: usuarioExistente.id,
           grupoId: grupoTrabalho.id,
           papel: 'membro',
-          ativo: true
+          ativo: true,
         },
         {
           usuarioId: usuarioExistente.id,
           grupoId: grupoTrabalho2.id,
           papel: 'membro',
-          ativo: true
-        }
-      ]
+          ativo: true,
+        },
+      ],
     });
 
     // Criar perfis (sem vinculação a grupos)
@@ -106,7 +106,7 @@ async function main() {
           avatar: 'JS',
           apelido: 'João Família',
           principal: true,
-          ativo: true
+          ativo: true,
         },
         {
           usuarioId: usuarioExistente.id,
@@ -114,15 +114,15 @@ async function main() {
           avatar: 'JS',
           apelido: 'João Trabalho',
           principal: false,
-          ativo: true
-        }
-      ]
+          ativo: true,
+        },
+      ],
     });
 
     console.log('✅ Dados adicionados ao usuário existente\n');
   } else {
     console.log('👤 Criando novo usuário familiar...');
-    
+
     const senhaHash = await bcrypt.hash('123456', 10);
     const salt = await bcrypt.genSalt(10);
 
@@ -154,19 +154,19 @@ async function main() {
         dataConsentimento: new Date(),
         termosAceitos: true,
         versaoTermos: '1.0',
-        ativo: true
-      }
+        ativo: true,
+      },
     });
 
     console.log(`✅ Usuário familiar criado: ${familiar.nomeCompleto}\n`);
 
     // Buscar perfis existentes
     const perfilFamilia = await prisma.perfil.findUnique({
-      where: { codigo: 'FAMILIA' }
+      where: { codigo: 'FAMILIA' },
     });
 
     const perfilEmpregado = await prisma.perfil.findUnique({
-      where: { codigo: 'EMPREGADO' }
+      where: { codigo: 'EMPREGADO' },
     });
 
     if (!perfilFamilia || !perfilEmpregado) {
@@ -182,8 +182,8 @@ async function main() {
         icone: '👨‍👩‍👧‍👦',
         tipo: 'familia',
         privado: true,
-        ativo: true
-      }
+        ativo: true,
+      },
     });
 
     const grupoTrabalho = await prisma.grupo.create({
@@ -194,8 +194,8 @@ async function main() {
         icone: '🏢',
         tipo: 'empresa',
         privado: false,
-        ativo: true
-      }
+        ativo: true,
+      },
     });
 
     const grupoTrabalho2 = await prisma.grupo.create({
@@ -206,8 +206,8 @@ async function main() {
         icone: '🏭',
         tipo: 'empresa',
         privado: false,
-        ativo: true
-      }
+        ativo: true,
+      },
     });
 
     // Associar usuário aos grupos
@@ -217,21 +217,21 @@ async function main() {
           usuarioId: familiar.id,
           grupoId: grupoFamilia.id,
           papel: 'admin',
-          ativo: true
+          ativo: true,
         },
         {
           usuarioId: familiar.id,
           grupoId: grupoTrabalho.id,
           papel: 'membro',
-          ativo: true
+          ativo: true,
         },
         {
           usuarioId: familiar.id,
           grupoId: grupoTrabalho2.id,
           papel: 'membro',
-          ativo: true
-        }
-      ]
+          ativo: true,
+        },
+      ],
     });
 
     // Criar perfis (sem vinculação a grupos)
@@ -243,7 +243,7 @@ async function main() {
           avatar: 'JS',
           apelido: 'João Família',
           principal: true,
-          ativo: true
+          ativo: true,
         },
         {
           usuarioId: familiar.id,
@@ -251,9 +251,9 @@ async function main() {
           avatar: 'JS',
           apelido: 'João Trabalho',
           principal: false,
-          ativo: true
-        }
-      ]
+          ativo: true,
+        },
+      ],
     });
 
     console.log('✅ Dados criados para novo usuário\n');
@@ -270,15 +270,15 @@ async function main() {
     include: {
       perfis: {
         include: {
-          perfil: true
-        }
+          perfil: true,
+        },
       },
       gruposUsuario: {
         include: {
-          grupo: true
-        }
-      }
-    }
+          grupo: true,
+        },
+      },
+    },
   });
 
   if (usuario) {
@@ -314,7 +314,7 @@ async function main() {
   console.log('  ✅ USUÁRIO COM MÚLTIPLOS PERFIS E GRUPOS');
   console.log('  ✅ REGRAS DE CONFLITO IMPLEMENTADAS');
   console.log('  ✅ LÓGICA DE NEGÓCIO COMPLETA\n');
-  
+
   console.log('✅ Criação concluída com sucesso!');
   console.log('\n🔐 Para testar o login:');
   console.log('  CPF: 59876913700');
@@ -326,7 +326,7 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
+  .catch(e => {
     console.error('❌ Erro ao criar dados:', e);
     process.exit(1);
   })

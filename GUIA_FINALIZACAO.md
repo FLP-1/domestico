@@ -48,6 +48,7 @@ npm run build
 ```
 
 **Resultado Esperado:**
+
 - **Cenário Ideal:** O build é concluído com sucesso (`✓ Compiled successfully`).
 - **Cenário Provável:** O build falha, mas com um número **significativamente menor** de erros.
 
@@ -63,6 +64,7 @@ Type error: No overload matches this call.
 ```
 
 **Ação:**
+
 1.  Abra o arquivo `src/lib/auth.ts` no seu editor.
 2.  Navegue até a linha 21.
 3.  Analise o erro. Neste caso, o `jwt.sign` está recebendo um `secret` que pode ser `undefined`.
@@ -94,6 +96,7 @@ Após corrigir todos os erros de compilação, o build pode passar, mas ainda ex
 ```
 
 **Ação:**
+
 1.  Abra o arquivo `src/pages/time-clock.tsx`.
 2.  Encontre o `useEffect` na linha 397.
 3.  Adicione a dependência `theme` ao array de dependências do hook.

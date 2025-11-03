@@ -141,7 +141,7 @@ export const EmployeeModalNew: React.FC<EmployeeModalNewProps> = ({
     if (!validateForm()) {
       showAlert({
         type: 'error',
-        message: 'Por favor, corrija os erros no formulário.'
+        message: 'Por favor, corrija os erros no formulário.',
       });
       return;
     }
@@ -149,7 +149,7 @@ export const EmployeeModalNew: React.FC<EmployeeModalNewProps> = ({
     onSave(formData);
     showAlert({
       type: 'success',
-      message: `Funcionário ${employee ? 'atualizado' : 'cadastrado'} com sucesso!`
+      message: `Funcionário ${employee ? 'atualizado' : 'cadastrado'} com sucesso!`,
     });
     onClose();
   };
@@ -175,20 +175,20 @@ export const EmployeeModalNew: React.FC<EmployeeModalNewProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title={`${employee ? 'Editar' : 'Adicionar'} Funcionário`}
-      maxWidth="800px"
+      maxWidth='800px'
       $theme={$theme}
     >
       <ModalContent>
         <Form onSubmit={e => e.preventDefault()}>
           <FormRow>
             <FormGroup>
-              <label htmlFor="nome">Nome Completo *</label>
+              <label htmlFor='nome'>Nome Completo *</label>
               <Input
-                id="nome"
-                type="text"
+                id='nome'
+                type='text'
                 value={formData.nome}
                 onChange={e => handleInputChange('nome', e.target.value)}
-                placeholder="Digite o nome completo"
+                placeholder='Digite o nome completo'
                 $theme={$theme}
                 $hasError={!!errors.nome}
               />
@@ -196,13 +196,15 @@ export const EmployeeModalNew: React.FC<EmployeeModalNewProps> = ({
             </FormGroup>
 
             <FormGroup>
-              <label htmlFor="cpf">CPF *</label>
+              <label htmlFor='cpf'>CPF *</label>
               <Input
-                id="cpf"
-                type="text"
+                id='cpf'
+                type='text'
                 value={formData.cpf}
-                onChange={e => handleInputChange('cpf', formatCPF(e.target.value))}
-                placeholder="000.000.000-00"
+                onChange={e =>
+                  handleInputChange('cpf', formatCPF(e.target.value))
+                }
+                placeholder='000.000.000-00'
                 maxLength={14}
                 $theme={$theme}
                 $hasError={!!errors.cpf}
@@ -213,13 +215,13 @@ export const EmployeeModalNew: React.FC<EmployeeModalNewProps> = ({
 
           <FormRow>
             <FormGroup>
-              <label htmlFor="email">Email *</label>
+              <label htmlFor='email'>Email *</label>
               <Input
-                id="email"
-                type="email"
+                id='email'
+                type='email'
                 value={formData.email}
                 onChange={e => handleInputChange('email', e.target.value)}
-                placeholder="email@exemplo.com"
+                placeholder='email@exemplo.com'
                 $theme={$theme}
                 $hasError={!!errors.email}
               />
@@ -227,13 +229,15 @@ export const EmployeeModalNew: React.FC<EmployeeModalNewProps> = ({
             </FormGroup>
 
             <FormGroup>
-              <label htmlFor="telefone">Telefone *</label>
+              <label htmlFor='telefone'>Telefone *</label>
               <Input
-                id="telefone"
-                type="tel"
+                id='telefone'
+                type='tel'
                 value={formData.telefone}
-                onChange={e => handleInputChange('telefone', formatPhone(e.target.value))}
-                placeholder="(11) 99999-9999"
+                onChange={e =>
+                  handleInputChange('telefone', formatPhone(e.target.value))
+                }
+                placeholder='(11) 99999-9999'
                 $theme={$theme}
                 $hasError={!!errors.telefone}
               />
@@ -243,13 +247,13 @@ export const EmployeeModalNew: React.FC<EmployeeModalNewProps> = ({
 
           <FormRow>
             <FormGroup>
-              <label htmlFor="cargo">Cargo *</label>
+              <label htmlFor='cargo'>Cargo *</label>
               <Input
-                id="cargo"
-                type="text"
+                id='cargo'
+                type='text'
                 value={formData.cargo}
                 onChange={e => handleInputChange('cargo', e.target.value)}
-                placeholder="Digite o cargo"
+                placeholder='Digite o cargo'
                 $theme={$theme}
                 $hasError={!!errors.cargo}
               />
@@ -257,15 +261,17 @@ export const EmployeeModalNew: React.FC<EmployeeModalNewProps> = ({
             </FormGroup>
 
             <FormGroup>
-              <label htmlFor="salario">Salário *</label>
+              <label htmlFor='salario'>Salário *</label>
               <Input
-                id="salario"
-                type="number"
+                id='salario'
+                type='number'
                 value={formData.salario}
-                onChange={e => handleInputChange('salario', parseFloat(e.target.value) || 0)}
-                placeholder="0.00"
-                step="0.01"
-                min="0"
+                onChange={e =>
+                  handleInputChange('salario', parseFloat(e.target.value) || 0)
+                }
+                placeholder='0.00'
+                step='0.01'
+                min='0'
                 $theme={$theme}
                 $hasError={!!errors.salario}
               />
@@ -275,33 +281,37 @@ export const EmployeeModalNew: React.FC<EmployeeModalNewProps> = ({
 
           <FormRow>
             <FormGroup>
-              <label htmlFor="dataAdmissao">Data de Admissão *</label>
+              <label htmlFor='dataAdmissao'>Data de Admissão *</label>
               <Input
-                id="dataAdmissao"
-                type="date"
+                id='dataAdmissao'
+                type='date'
                 value={formData.dataAdmissao}
-                onChange={e => handleInputChange('dataAdmissao', e.target.value)}
+                onChange={e =>
+                  handleInputChange('dataAdmissao', e.target.value)
+                }
                 $theme={$theme}
                 $hasError={!!errors.dataAdmissao}
               />
-              {errors.dataAdmissao && <ErrorText>{errors.dataAdmissao}</ErrorText>}
+              {errors.dataAdmissao && (
+                <ErrorText>{errors.dataAdmissao}</ErrorText>
+              )}
             </FormGroup>
           </FormRow>
 
           <ButtonContainer>
             <UnifiedButton
-              $variant="secondary"
+              $variant='secondary'
               $theme={$theme}
               onClick={onClose}
             >
               Cancelar
             </UnifiedButton>
             <UnifiedButton
-              $variant="primary"
+              $variant='primary'
               $theme={$theme}
               onClick={handleSave}
             >
-              <AccessibleEmoji emoji="💾" label="Salvar" /> Salvar
+              <AccessibleEmoji emoji='💾' label='Salvar' /> Salvar
             </UnifiedButton>
           </ButtonContainer>
         </Form>

@@ -25,13 +25,13 @@ const DebugContainer = styled.div`
 
 const DebugSection = styled.div`
   margin-bottom: 1rem;
-  
+
   h4 {
     color: ${props => props.theme?.text?.secondary || '#495057'};
     margin: 0 0 0.5rem 0;
     font-size: 0.9rem;
   }
-  
+
   pre {
     background: ${props => props.theme?.background?.primary || '#ffffff'};
     border: 1px solid ${props => props.theme?.border?.primary || '#dee2e6'};
@@ -51,7 +51,7 @@ const RefreshButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   margin-bottom: 1rem;
-  
+
   &:hover {
     background: ${props => props.theme?.navigation?.primary || '#0056b3'};
   }
@@ -63,12 +63,9 @@ const NetworkDebugInfo: React.FC = () => {
   const [debugInfo, setDebugInfo] = useState<DebugInfo | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // ✅ Hook unificado de detecção de rede (inclui SSID real)
-  const {
-    detectNetworkInfo,
-    refreshRealSSID,
-  } = useNetworkDetection({
+  const { detectNetworkInfo, refreshRealSSID } = useNetworkDetection({
     enableLogging: false,
     enableRealSSID: true,
     updateInterval: 0,
@@ -92,10 +89,12 @@ const NetworkDebugInfo: React.FC = () => {
       }
 
       // Gerar fingerprint
-      const fingerprint = await networkFingerprintingService.generateNetworkFingerprint();
-      
+      const fingerprint =
+        await networkFingerprintingService.generateNetworkFingerprint();
+
       // Análise de rede
-      const analysis = await networkFingerprintingService.analyzeNetwork(fingerprint);
+      const analysis =
+        await networkFingerprintingService.analyzeNetwork(fingerprint);
 
       const info: DebugInfo = {
         timestamp: new Date().toISOString(),
@@ -104,7 +103,7 @@ const NetworkDebugInfo: React.FC = () => {
           ...ssidInfo,
         },
         fingerprint: fingerprint,
-        analysis: analysis
+        analysis: analysis,
       };
 
       setDebugInfo(info);
@@ -122,7 +121,12 @@ const NetworkDebugInfo: React.FC = () => {
   if (error) {
     return (
       <DebugContainer>
-        <h3><span role="img" aria-label="Erro">❌</span> Erro ao Coletar Dados de Rede</h3>
+        <h3>
+          <span role='img' aria-label='Erro'>
+            ❌
+          </span>{' '}
+          Erro ao Coletar Dados de Rede
+        </h3>
         <p>{error}</p>
         <RefreshButton onClick={collectDebugInfo}>
           Tentar Novamente
@@ -133,51 +137,109 @@ const NetworkDebugInfo: React.FC = () => {
 
   return (
     <DebugContainer>
-      <h3><span role="img" aria-label="Lupa">🔍</span> Dados de Rede Capturados Automaticamente</h3>
-      
+      <h3>
+        <span role='img' aria-label='Lupa'>
+          🔍
+        </span>{' '}
+        Dados de Rede Capturados Automaticamente
+      </h3>
+
       <RefreshButton onClick={collectDebugInfo} disabled={loading}>
-        {loading ? 'Coletando...' : <><span role="img" aria-label="Atualizar">🔄</span> Atualizar Dados</>}
+        {loading ? (
+          'Coletando...'
+        ) : (
+          <>
+            <span role='img' aria-label='Atualizar'>
+              🔄
+            </span>{' '}
+            Atualizar Dados
+          </>
+        )}
       </RefreshButton>
 
       {debugInfo && (
         <>
           <DebugSection>
-            <h4><span role="img" aria-label="Sinal">📶</span> Detecção de Rede (useNetworkDetection)</h4>
+            <h4>
+              <span role='img' aria-label='Sinal'>
+                📶
+              </span>{' '}
+              Detecção de Rede (useNetworkDetection)
+            </h4>
             <pre>{JSON.stringify(debugInfo.networkDetection, null, 2)}</pre>
           </DebugSection>
 
           <DebugSection>
-            <h4><span role="img" aria-label="Lupa">🔍</span> Fingerprint de Rede (networkFingerprintingService)</h4>
+            <h4>
+              <span role='img' aria-label='Lupa'>
+                🔍
+              </span>{' '}
+              Fingerprint de Rede (networkFingerprintingService)
+            </h4>
             <pre>{JSON.stringify(debugInfo.fingerprint, null, 2)}</pre>
           </DebugSection>
 
           <DebugSection>
-            <h4><span role="img" aria-label="Escudo">🛡️</span> Análise de Risco e Antifraude</h4>
+            <h4>
+              <span role='img' aria-label='Escudo'>
+                🛡️
+              </span>{' '}
+              Análise de Risco e Antifraude
+            </h4>
             <pre>{JSON.stringify(debugInfo.analysis, null, 2)}</pre>
           </DebugSection>
 
           <DebugSection>
-            <h4><span role="img" aria-label="Localização">📍</span> Dados de Endereço</h4>
-            <pre>{JSON.stringify({
-              endereco: debugInfo.fingerprint?.address || 'Não disponível',
-              coordenadas: {
-                latitude: debugInfo.fingerprint?.latitude || 'Não disponível',
-                longitude: debugInfo.fingerprint?.longitude || 'Não disponível'
-              },
-              precisao: debugInfo.fingerprint?.accuracy || 'Não disponível'
-            }, null, 2)}</pre>
+            <h4>
+              <span role='img' aria-label='Localização'>
+                📍
+              </span>{' '}
+              Dados de Endereço
+            </h4>
+            <pre>
+              {JSON.stringify(
+                {
+                  endereco: debugInfo.fingerprint?.address || 'Não disponível',
+                  coordenadas: {
+                    latitude:
+                      debugInfo.fingerprint?.latitude || 'Não disponível',
+                    longitude:
+                      debugInfo.fingerprint?.longitude || 'Não disponível',
+                  },
+                  precisao: debugInfo.fingerprint?.accuracy || 'Não disponível',
+                },
+                null,
+                2
+              )}
+            </pre>
           </DebugSection>
 
           <DebugSection>
-            <h4><span role="img" aria-label="Sinal">📶</span> SSID Real do Sistema Operacional (Integrado)</h4>
-            <pre>{JSON.stringify({
-              realSSID: debugInfo.networkDetection?.realSSID || 'Não detectado',
-              ssidPlatform: debugInfo.networkDetection?.ssidPlatform || 'desconhecido',
-              ssidLoading: debugInfo.networkDetection?.ssidLoading || false,
-              ssidError: debugInfo.networkDetection?.ssidError || null,
-              wifiName: debugInfo.networkDetection?.wifiName || 'Não detectado',
-              connectionType: debugInfo.networkDetection?.connectionType || 'desconhecido'
-            }, null, 2)}</pre>
+            <h4>
+              <span role='img' aria-label='Sinal'>
+                📶
+              </span>{' '}
+              SSID Real do Sistema Operacional (Integrado)
+            </h4>
+            <pre>
+              {JSON.stringify(
+                {
+                  realSSID:
+                    debugInfo.networkDetection?.realSSID || 'Não detectado',
+                  ssidPlatform:
+                    debugInfo.networkDetection?.ssidPlatform || 'desconhecido',
+                  ssidLoading: debugInfo.networkDetection?.ssidLoading || false,
+                  ssidError: debugInfo.networkDetection?.ssidError || null,
+                  wifiName:
+                    debugInfo.networkDetection?.wifiName || 'Não detectado',
+                  connectionType:
+                    debugInfo.networkDetection?.connectionType ||
+                    'desconhecido',
+                },
+                null,
+                2
+              )}
+            </pre>
           </DebugSection>
         </>
       )}

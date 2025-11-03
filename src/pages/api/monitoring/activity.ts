@@ -1,7 +1,10 @@
 import prisma from '@/lib/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
     switch (req.method) {
       case 'GET':
@@ -9,11 +12,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       case 'POST':
         return await createActivity(req, res);
       default:
-        return res.status(405).json({ success: false, error: 'Método não permitido' });
+        return res
+          .status(405)
+          .json({ success: false, error: 'Método não permitido' });
     }
   } catch (error) {
     console.error('Erro na API de atividade:', error);
-    return res.status(500).json({ success: false, error: 'Erro interno do servidor' });
+    return res
+      .status(500)
+      .json({ success: false, error: 'Erro interno do servidor' });
   } finally {
     await prisma.$disconnect();
   }
@@ -48,13 +55,7 @@ async function getActivity(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function createActivity(req: NextApiRequest, res: NextApiResponse) {
-  const {
-    tipo,
-    titulo,
-    descricao,
-    usuarioId,
-    dados,
-  } = req.body;
+  const { tipo, titulo, descricao, usuarioId, dados } = req.body;
 
   if (!tipo || !titulo) {
     return res.status(400).json({

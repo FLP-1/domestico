@@ -42,7 +42,9 @@ export class DadosReaisService {
       }
 
       // MÉTODO 2: Dados confirmados do portal eSocial
-      const empresaConfig = await import('../lib/configService').then(m => m.getEmpresaConfig());
+      const empresaConfig = await import('../lib/configService').then(m =>
+        m.getEmpresaConfig()
+      );
       if (cpf === empresaConfig.cpf) {
         const dadosPortal: DadosReaisEmpregador = {
           cpf: cpf,
@@ -163,7 +165,9 @@ export class DadosReaisService {
       // Importar serviço eSocial
       const { ESocialSoapClientService } = await import('./esocialSoapClient');
 
-      const empresaConfig = await import('../lib/configService').then(m => m.getEmpresaConfig());
+      const empresaConfig = await import('../lib/configService').then(m =>
+        m.getEmpresaConfig()
+      );
       const soapService = new ESocialSoapClientService({
         environment: 'producao',
         companyId: empresaConfig.cpf, // CPF do empregador dinâmico

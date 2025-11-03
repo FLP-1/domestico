@@ -46,13 +46,12 @@ export default async function handler(
       return res.status(200).json({ success: true, data: perfis });
     } catch (error) {
       console.error('Erro ao buscar perfis:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao buscar perfis' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao buscar perfis',
       });
     }
   }
 
   return res.status(405).json({ error: 'Method not allowed' });
 }
-

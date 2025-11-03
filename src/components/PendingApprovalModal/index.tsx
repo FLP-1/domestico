@@ -136,14 +136,16 @@ const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
   isOpen,
   onClose,
   onApprovalComplete,
-  theme
+  theme,
 }) => {
   const { currentProfile } = useUserProfile();
   const { colors: themeColors } = useTheme(currentProfile?.role.toLowerCase());
   const [pendingRecords, setPendingRecords] = useState<PendingRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [processing, setProcessing] = useState<string | null>(null);
-  const [justifications, setJustifications] = useState<Record<string, string>>({});
+  const [justifications, setJustifications] = useState<Record<string, string>>(
+    {}
+  );
 
   // Carregar registros pendentes
   const loadPendingRecords = async () => {
@@ -165,7 +167,10 @@ const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
   };
 
   // Processar aprovação/rejeição
-  const handleApproval = async (recordId: string, action: 'aprovar' | 'rejeitar') => {
+  const handleApproval = async (
+    recordId: string,
+    action: 'aprovar' | 'rejeitar'
+  ) => {
     setProcessing(recordId);
     try {
       const response = await fetch('/api/time-clock/pending-approval', {
@@ -176,17 +181,22 @@ const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
         body: JSON.stringify({
           registroId: recordId,
           acao: action,
-          justificativa: justifications[recordId] || undefined
-        })
+          justificativa: justifications[recordId] || undefined,
+        }),
       });
 
       if (response.ok) {
         const result = await response.json();
-        toast.success(result.message || `Registro ${action === 'aprovar' ? 'aprovado' : 'rejeitado'} com sucesso`);
-        
+        toast.success(
+          result.message ||
+            `Registro ${action === 'aprovar' ? 'aprovado' : 'rejeitado'} com sucesso`
+        );
+
         // Remover registro da lista
-        setPendingRecords(prev => prev.filter(record => record.id !== recordId));
-        
+        setPendingRecords(prev =>
+          prev.filter(record => record.id !== recordId)
+        );
+
         // Limpar justificativa
         setJustifications(prev => {
           const newJustifications = { ...prev };
@@ -221,7 +231,7 @@ const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
       month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -232,7 +242,7 @@ const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
       retorno_almoco: 'Retorno Almoço',
       saida: 'Saída',
       inicio_extra: 'Início Hora Extra',
-      fim_extra: 'Fim Hora Extra'
+      fim_extra: 'Fim Hora Extra',
     };
     return labels[tipo] || tipo;
   };
@@ -244,16 +254,14 @@ const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
       label: 'Tipo',
       width: '120px',
       render: (item: any) => (
-        <RecordType>
-          {getTypeLabel((item as PendingRecord).tipo)}
-        </RecordType>
-      )
+        <RecordType>{getTypeLabel((item as PendingRecord).tipo)}</RecordType>
+      ),
     },
     {
       key: 'dataHora',
       label: 'Data/Hora',
       width: '150px',
-      render: (item: any) => formatTime((item as PendingRecord).dataHora)
+      render: (item: any) => formatTime((item as PendingRecord).dataHora),
     },
     {
       key: 'usuario',
@@ -261,10 +269,14 @@ const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
       width: '200px',
       render: (item: any) => (
         <UserInfo>
-          <div className="user-name">{(item as PendingRecord).usuario.nomeCompleto}</div>
-          <div className="user-email">{(item as PendingRecord).usuario.email}</div>
+          <div className='user-name'>
+            {(item as PendingRecord).usuario.nomeCompleto}
+          </div>
+          <div className='user-email'>
+            {(item as PendingRecord).usuario.email}
+          </div>
         </UserInfo>
-      )
+      ),
     },
     {
       key: 'endereco',
@@ -272,12 +284,14 @@ const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
       width: '200px',
       render: (item: any) => (
         <LocationInfo>
-          <div className="address">{(item as PendingRecord).endereco || 'Não informado'}</div>
-          <div className="precision">
+          <div className='address'>
+            {(item as PendingRecord).endereco || 'Não informado'}
+          </div>
+          <div className='precision'>
             Precisão: {(item as PendingRecord).precisao?.toFixed(0) || 'N/A'}m
           </div>
         </LocationInfo>
-      )
+      ),
     },
     {
       key: 'wifi',
@@ -287,8 +301,8 @@ const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
         <WifiInfo>
           {(item as PendingRecord).nomeRedeWiFi || 'Não detectado'}
         </WifiInfo>
-      )
-    }
+      ),
+    },
   ];
 
   // Configurar ações para o DataList
@@ -297,33 +311,35 @@ const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
       icon: '✅',
       label: 'Aprovar',
       variant: 'primary',
-      onClick: (item: any) => handleApproval((item as PendingRecord).id, 'aprovar'),
-      disabled: (item: any) => processing === (item as PendingRecord).id
+      onClick: (item: any) =>
+        handleApproval((item as PendingRecord).id, 'aprovar'),
+      disabled: (item: any) => processing === (item as PendingRecord).id,
     },
     {
       icon: '❌',
       label: 'Rejeitar',
       variant: 'danger',
-      onClick: (item: any) => handleApproval((item as PendingRecord).id, 'rejeitar'),
-      disabled: (item: any) => processing === (item as PendingRecord).id
-    }
+      onClick: (item: any) =>
+        handleApproval((item as PendingRecord).id, 'rejeitar'),
+      disabled: (item: any) => processing === (item as PendingRecord).id,
+    },
   ];
 
   return (
     <UnifiedModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Aprovação de Registros Pendentes"
+      title='Aprovação de Registros Pendentes'
     >
       <ModalContent>
         {loading ? (
           <LoadingSpinner>
-            <AccessibleEmoji emoji="⏳" label="Carregando" />
+            <AccessibleEmoji emoji='⏳' label='Carregando' />
             Carregando registros pendentes...
           </LoadingSpinner>
         ) : pendingRecords.length === 0 ? (
           <EmptyState>
-            <AccessibleEmoji emoji="✅" label="Concluído" />
+            <AccessibleEmoji emoji='✅' label='Concluído' />
             <p>Não há registros pendentes para aprovação.</p>
           </EmptyState>
         ) : (
@@ -331,15 +347,23 @@ const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
             <DescriptionText>
               Registros que precisam de aprovação ou rejeição:
             </DescriptionText>
-            
+
             <DataList
-              theme={theme || { colors: { primary: '#29abe2', text: '#2c3e50', shadow: 'rgba(0, 0, 0, 0.1)' } }}
+              theme={
+                theme || {
+                  colors: {
+                    primary: '#29abe2',
+                    text: '#2c3e50',
+                    shadow: 'rgba(0, 0, 0, 0.1)',
+                  },
+                }
+              }
               items={pendingRecords}
               columns={columns}
               actions={actions}
-              emptyMessage="Nenhum registro pendente encontrado"
+              emptyMessage='Nenhum registro pendente encontrado'
               loading={loading}
-              variant="detailed"
+              variant='detailed'
               striped={true}
               hoverable={true}
             />

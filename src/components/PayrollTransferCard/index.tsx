@@ -57,7 +57,7 @@ const TransferRow = styled.div<{ $theme?: any }>`
   align-items: center;
   padding: 0.5rem 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  
+
   &:last-child {
     border-bottom: none;
   }
@@ -71,8 +71,9 @@ const TransferLabel = styled.span<{ $theme?: any }>`
 
 const TransferValue = styled.span<{ $theme?: any; $highlight?: boolean }>`
   font-size: 1rem;
-  font-weight: ${props => props.$highlight ? '700' : '600'};
-  color: ${props => props.$highlight ? props.$theme.colors.primary : '#2c3e50'};
+  font-weight: ${props => (props.$highlight ? '700' : '600')};
+  color: ${props =>
+    props.$highlight ? props.$theme.colors.primary : '#2c3e50'};
 `;
 
 const TransferActions = styled.div<{ $theme?: any }>`
@@ -162,58 +163,63 @@ export const PayrollTransferCard: React.FC<PayrollTransferCardProps> = ({
   };
 
   const canTransfer = (lastTransfer || upcomingTransfer) && !isTransferring;
-  const hasOvertime = payrollData?.overtimeData?.totalOvertime && parseFloat(payrollData.overtimeData.totalOvertime) > 0;
+  const hasOvertime =
+    payrollData?.overtimeData?.totalOvertime &&
+    parseFloat(payrollData.overtimeData.totalOvertime) > 0;
 
   return (
     <TransferContainer $theme={theme}>
       <UnifiedCard
         theme={theme}
-        variant="default"
-        size="md"
-        icon={<AccessibleEmoji emoji="💰" label="Folha de Pagamento" />}
-        title="Transferir para Folha de Pagamento"
+        variant='default'
+        size='md'
+        icon={<AccessibleEmoji emoji='💰' label='Folha de Pagamento' />}
+        title='Transferir para Folha de Pagamento'
       >
         <TransferInfo $theme={theme}>
           <TransferInfoTitle>
-            <AccessibleEmoji emoji="ℹ️" label="Informação" />
+            <AccessibleEmoji emoji='ℹ️' label='Informação' />
             Informações Importantes
           </TransferInfoTitle>
           <TransferInfoText>
-            Os dados de horas trabalhadas serão transferidos para o sistema de cálculo da folha de pagamento. 
-            Esta ação não pode ser desfeita.
+            Os dados de horas trabalhadas serão transferidos para o sistema de
+            cálculo da folha de pagamento. Esta ação não pode ser desfeita.
           </TransferInfoText>
         </TransferInfo>
 
         <TransferSummary $theme={theme}>
           <TransferSummaryTitle>
-            <AccessibleEmoji emoji="📊" label="Resumo" />
+            <AccessibleEmoji emoji='📊' label='Resumo' />
             Resumo das Transferências
           </TransferSummaryTitle>
-          
+
           <TransferRow>
             <TransferLabel>Última Transferência:</TransferLabel>
             <TransferValue $theme={theme}>
-              {lastTransfer ? `${lastTransfer.mesReferencia.toString().padStart(2, '0')}/${lastTransfer.anoReferencia}` : 'N/A'}
+              {lastTransfer
+                ? `${lastTransfer.mesReferencia.toString().padStart(2, '0')}/${lastTransfer.anoReferencia}`
+                : 'N/A'}
             </TransferValue>
           </TransferRow>
-          
+
           <TransferRow>
             <TransferLabel>Valor da Última Transferência:</TransferLabel>
             <TransferValue $theme={theme}>
-              {lastTransfer?.valorTotal ? 
-                `R$ ${lastTransfer.valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 
-                'N/A'
-              }
+              {lastTransfer?.valorTotal
+                ? `R$ ${lastTransfer.valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+                : 'N/A'}
             </TransferValue>
           </TransferRow>
-          
+
           <TransferRow>
             <TransferLabel>Próxima Transferência:</TransferLabel>
             <TransferValue $theme={theme}>
-              {upcomingTransfer ? `${upcomingTransfer.mesReferencia.toString().padStart(2, '0')}/${upcomingTransfer.anoReferencia}` : 'Não agendada'}
+              {upcomingTransfer
+                ? `${upcomingTransfer.mesReferencia.toString().padStart(2, '0')}/${upcomingTransfer.anoReferencia}`
+                : 'Não agendada'}
             </TransferValue>
           </TransferRow>
-          
+
           <TransferRow>
             <TransferLabel>Total de Transferências:</TransferLabel>
             <TransferValue $theme={theme} $highlight>
@@ -225,11 +231,15 @@ export const PayrollTransferCard: React.FC<PayrollTransferCardProps> = ({
         {lastTransfer && (
           <TransferInfo $theme={theme}>
             <TransferInfoTitle>
-              <AccessibleEmoji emoji="🕒" label="Última Transferência" />
+              <AccessibleEmoji emoji='🕒' label='Última Transferência' />
               Última Transferência
             </TransferInfoTitle>
             <TransferInfoText>
-              {`${lastTransfer.mesReferencia.toString().padStart(2, '0')}/${lastTransfer.anoReferencia}`} - Status: {lastTransfer.status} - Valor: R$ {lastTransfer.valorTotal?.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) || '0,00'}
+              {`${lastTransfer.mesReferencia.toString().padStart(2, '0')}/${lastTransfer.anoReferencia}`}{' '}
+              - Status: {lastTransfer.status} - Valor: R${' '}
+              {lastTransfer.valorTotal?.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+              }) || '0,00'}
             </TransferInfoText>
           </TransferInfo>
         )}
@@ -237,33 +247,34 @@ export const PayrollTransferCard: React.FC<PayrollTransferCardProps> = ({
         {!canTransfer && (
           <WarningSection $theme={theme}>
             <WarningTitle>
-              <AccessibleEmoji emoji="⚠️" label="Aviso" />
+              <AccessibleEmoji emoji='⚠️' label='Aviso' />
               Nenhuma Hora para Transferir
             </WarningTitle>
             <WarningText>
-              Não há horas trabalhadas registradas neste período para transferir.
+              Não há horas trabalhadas registradas neste período para
+              transferir.
             </WarningText>
           </WarningSection>
         )}
 
         <TransferActions>
           <UnifiedButton
-            $variant="secondary"
+            $variant='secondary'
             $theme={theme}
             onClick={onViewDetails}
           >
-            <AccessibleEmoji emoji="👁️" label="Ver Detalhes" />
+            <AccessibleEmoji emoji='👁️' label='Ver Detalhes' />
             Ver Detalhes
           </UnifiedButton>
-          
+
           <UnifiedButton
-            $variant="primary"
+            $variant='primary'
             $theme={theme}
             onClick={handleTransfer}
             $disabled={!canTransfer || isTransferring}
             $loading={isTransferring}
           >
-            <AccessibleEmoji emoji="📤" label="Transferir" />
+            <AccessibleEmoji emoji='📤' label='Transferir' />
             {isTransferring ? 'Transferindo...' : 'Transferir'}
           </UnifiedButton>
         </TransferActions>

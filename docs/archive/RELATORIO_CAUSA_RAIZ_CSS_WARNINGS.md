@@ -3,9 +3,11 @@
 ## 🔍 **CAUSA RAIZ IDENTIFICADA**
 
 ### Problema Real
+
 Os warnings de CSS inline styles do Microsoft Edge Tools **NÃO são causados por estilos inline no código fonte**.
 
 ### Evidências
+
 1. **✅ Código Limpo**: Análise profunda confirma 0 estilos inline no código
 2. **✅ Build Limpo**: `npm run build` não mostra warnings de CSS
 3. **✅ Scripts Confirmam**: Todos os scripts confirmam ausência de estilos inline
@@ -13,6 +15,7 @@ Os warnings de CSS inline styles do Microsoft Edge Tools **NÃO são causados po
 ### Causa Raiz: **Falso Positivo do Webhint**
 
 O Microsoft Edge Tools usa **Webhint** para análise, que pode:
+
 - **Detectar estilos inline em tempo de execução** (não no código fonte)
 - **Gerar falsos positivos** devido a cache corrompido
 - **Detectar estilos inline em elementos filhos** não visíveis no código fonte
@@ -20,12 +23,14 @@ O Microsoft Edge Tools usa **Webhint** para análise, que pode:
 ### Solução Implementada
 
 #### 1. **Limpeza Completa de Cache**
+
 ```bash
 # Cache do Webhint/Microsoft Edge Tools limpo
 node scripts/fix-webhint-cache.js
 ```
 
 #### 2. **Verificação Confirmada**
+
 - **Código fonte**: ✅ Sem estilos inline
 - **Build**: ✅ Sem warnings de CSS
 - **Análise profunda**: ✅ Confirmada ausência de estilos inline
@@ -41,6 +46,7 @@ node scripts/fix-webhint-cache.js
 5. **Executar**: `npm run build`
 
 #### **Se ainda persistirem:**
+
 - **Falso positivo confirmado** do Webhint
 - **Ignorar warnings** (não afetam o funcionamento)
 - **Configurar Webhint** para suprimir warnings específicos

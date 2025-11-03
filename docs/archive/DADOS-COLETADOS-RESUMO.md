@@ -3,6 +3,7 @@
 ## ✅ DADOS COLETADOS E ADICIONADOS AO PROMPT
 
 ### **1. Versões Exatas:**
+
 - **Node.js:** v22.16.0 (não "v18+" genérico)
 - **npm:** 11.4.2
 - **Prisma:** 6.16.3
@@ -12,6 +13,7 @@
 - **Binary Target:** windows
 
 ### **2. Variáveis de Ambiente:**
+
 ```
 ✅ VERCEL: não definida
 ✅ CI: não definida
@@ -22,6 +24,7 @@
 **Descoberta:** Sem variáveis VERCEL ou CI que expliquem a mensagem do log
 
 ### **3. Estado do Projeto:**
+
 ```
 ✅ Prisma Client gerado e presente (node_modules/.prisma/client)
 ✅ Sem pasta .vercel (sem cache Vercel)
@@ -30,12 +33,14 @@
 ```
 
 ### **4. Código de configService.ts:**
+
 - ✅ **367 linhas** adicionadas ao prompt
 - ✅ **Linha 53 identificada** como onde o erro ocorre
 - ✅ É a **primeira query** do sistema ao banco
 - ✅ Importa Prisma via: `import prisma from './prisma'`
 
 ### **5. Descobertas Importantes:**
+
 - ⚠️ **DATABASE_URL** aponta para `dom_v2` (não `dom`)
 - ⚠️ Erro na **primeira query** do sistema
 - ⚠️ `configService.ts` é um **Singleton** carregado cedo
@@ -60,6 +65,7 @@
 ## 📝 ATUALIZAÇÕES NO PROMPT
 
 ### **Seções Atualizadas:**
+
 1. **Seção 2:** DATABASE_URL corrigida para `dom_v2`
 2. **Seção 7:** Código completo de `configService.ts` adicionado
 3. **Ambiente:** Node v22.16.0, npm 11.4.2, TypeScript 5.9.2
@@ -70,6 +76,7 @@
 8. **Resumo Executivo:** Novo - sintetiza todas as descobertas
 
 ### **Total de Linhas:**
+
 - **Antes:** 614 linhas
 - **Depois:** ~758 linhas (144 linhas adicionadas)
 
@@ -78,12 +85,15 @@
 ## 🎯 HIPÓTESE REFINADA
 
 ### **Antes da Coleta:**
+
 > "Prisma Client desatualizado/corrompido detectando ambiente Vercel incorretamente"
 
 ### **Depois da Coleta:**
+
 > "Prisma Client não consegue acessar `process.env.DATABASE_URL` no momento da query dentro do Next.js 15, mesmo ela estando definida. O problema ocorre especificamente na primeira query do sistema em `configService.ts:53`, que é carregado muito cedo no ciclo de vida do Next.js."
 
 **Evidências adicionais:**
+
 - ✅ Prisma Client NÃO está desatualizado (6.16.3, gerado)
 - ✅ Não há cache Vercel (pasta .vercel não existe)
 - ✅ Não há variáveis VERCEL ou CI
@@ -95,13 +105,15 @@
 ## 🔬 PRÓXIMOS PASSOS RECOMENDADOS
 
 ### **1. Teste Diagnóstico Imediato:**
+
 Adicionar log em `src/lib/configService.ts` ANTES da linha 53:
+
 ```typescript
 public async getConfig(chave: string, empresaId?: string): Promise<string> {
   // 🔍 DEBUG
   console.log('🔍 DATABASE_URL em configService:', process.env.DATABASE_URL);
   console.log('🔍 Todas env vars:', Object.keys(process.env).filter(k => k.includes('DATABASE')));
-  
+
   await this.updateCacheIfNeeded();
   // ... resto do código
 }
@@ -110,6 +122,7 @@ public async getConfig(chave: string, empresaId?: string): Promise<string> {
 **Objetivo:** Verificar se `DATABASE_URL` está disponível no momento da query
 
 ### **2. Teste de Limpeza Completa:**
+
 ```powershell
 # Limpar TUDO
 Remove-Item -Recurse -Force node_modules, .next, node_modules/.prisma
@@ -119,6 +132,7 @@ npm run dev
 ```
 
 ### **3. Se ainda falhar, enviar prompt atualizado para:**
+
 - ChatGPT-4
 - Claude Sonnet
 - GitHub Issues do Prisma
@@ -159,4 +173,3 @@ npm run dev
 ---
 
 **✅ COLETA DE DADOS COMPLETA E PROMPT ATUALIZADO COM SUCESSO!**
-

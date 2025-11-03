@@ -5,17 +5,19 @@
 ### **1. Loop Infinito do useAutoGeolocation** ✅ **CORRIGIDO**
 
 #### **Problema:**
+
 - `useAutoGeolocation` estava executando `captureLocation()` automaticamente
 - Violações de geolocalização sem gesto do usuário
 - Múltiplas capturas causando loop infinito
 
 #### **Correção Aplicada:**
+
 ```typescript
 // ❌ ANTES (causava loop infinito):
 useAutoGeolocation({
   intervalMinutes: 2,
   captureOnRouteChange: false,
-  enableLogging: true
+  enableLogging: true,
 });
 
 // ✅ DEPOIS (desabilitado temporariamente):
@@ -27,14 +29,18 @@ useAutoGeolocation({
 ```
 
 #### **Correção no Hook:**
+
 ```typescript
 // ❌ ANTES (violava política de geolocalização):
 useEffect(() => {
   if (intervalMinutes > 0) {
     captureLocation(); // ❌ Causava violações
-    intervalRef.current = setInterval(() => {
-      captureLocation(); // ❌ Causava violações
-    }, intervalMinutes * 60 * 1000);
+    intervalRef.current = setInterval(
+      () => {
+        captureLocation(); // ❌ Causava violações
+      },
+      intervalMinutes * 60 * 1000
+    );
   }
 }, [intervalMinutes]);
 
@@ -44,13 +50,18 @@ useEffect(() => {
     // ❌ NÃO capturar imediatamente - viola política de geolocalização
     // captureLocation(); // Removido - causa violações
 
-    intervalRef.current = setInterval(() => {
-      // ❌ NÃO capturar automaticamente - viola política de geolocalização
-      // captureLocation(); // Removido - causa violações
-      if (enableLogging) {
-        console.log('⏰ Intervalo de captura automática atingido - pulado (requer interação do usuário)');
-      }
-    }, intervalMinutes * 60 * 1000);
+    intervalRef.current = setInterval(
+      () => {
+        // ❌ NÃO capturar automaticamente - viola política de geolocalização
+        // captureLocation(); // Removido - causa violações
+        if (enableLogging) {
+          console.log(
+            '⏰ Intervalo de captura automática atingido - pulado (requer interação do usuário)'
+          );
+        }
+      },
+      intervalMinutes * 60 * 1000
+    );
   }
 }, [intervalMinutes, enableLogging]);
 ```
@@ -60,11 +71,13 @@ useEffect(() => {
 ### **2. Loop Infinito do useNetworkDetection** ✅ **CORRIGIDO**
 
 #### **Problema:**
+
 - `useEffect` com `updateNetworkInfo` como dependência
 - `updateNetworkInfo` com `detectNetworkInfo` como dependência
 - Criação de loop infinito de re-execuções
 
 #### **Correção Aplicada:**
+
 ```typescript
 // ❌ ANTES (causava loop infinito):
 useEffect(() => {
@@ -82,10 +95,12 @@ useEffect(() => {
 ### **3. Configuração Manual Removida** ✅ **CORRIGIDO**
 
 #### **Problema:**
+
 - Configuração manual de WiFi quebrava o antifraude
 - Usuário poderia falsificar dados de rede
 
 #### **Correção Aplicada:**
+
 ```typescript
 // ❌ ANTES (configuração manual):
 import { useWiFiConfiguration } from '../../hooks/useWiFiConfiguration';
@@ -112,6 +127,7 @@ import WiFiConfigurationModal from '../WiFiConfigurationModal';
 ## 🔍 **ANÁLISE DOS DADOS CAPTURADOS:**
 
 ### **1. Dados de WiFi Reais:**
+
 ```typescript
 // ✅ O que está sendo capturado:
 {
@@ -124,6 +140,7 @@ import WiFiConfigurationModal from '../WiFiConfigurationModal';
 ```
 
 ### **2. Dados de Endereço:**
+
 ```typescript
 // ✅ Coordenadas capturadas:
 {
@@ -146,12 +163,14 @@ import WiFiConfigurationModal from '../WiFiConfigurationModal';
 ## 🧪 **COMPONENTE DE DEBUG IMPLEMENTADO:**
 
 ### **NetworkDebugInfo** 🔍
+
 ```typescript
 // ✅ Adicionado temporariamente ao time-clock
 <NetworkDebugInfo />
 ```
 
 #### **O que mostra:**
+
 1. **📶 Detecção de Rede**: Dados do `useNetworkDetection`
 2. **🔍 Fingerprint**: Dados do `networkFingerprintingService`
 3. **🛡️ Análise de Risco**: Score e detecção de fraudes
@@ -162,18 +181,21 @@ import WiFiConfigurationModal from '../WiFiConfigurationModal';
 ## 📊 **STATUS ATUAL:**
 
 ### **✅ PROBLEMAS CORRIGIDOS:**
+
 1. **Loop infinito**: `useAutoGeolocation` desabilitado temporariamente
 2. **Loop infinito**: `useNetworkDetection` corrigido
 3. **Configuração manual**: Removida para proteger antifraude
 4. **Violações de geolocalização**: Eliminadas
 
 ### **🔍 DADOS REAIS CAPTURADOS:**
+
 1. **WiFi**: "WiFi: 4g" (conexão 4G detectada)
 2. **Endereço**: "Rua Doutor Nogueira Martins, 154..." (coordenadas atuais)
 3. **Precisão**: ~1354m (baixa precisão - explica "Imprecisa")
 4. **Antifraude**: Dados técnicos não manipuláveis
 
 ### **⚠️ PONTOS DE ATENÇÃO:**
+
 1. **Coordenadas diferentes**: Sistema capturando coordenadas diferentes das esperadas
 2. **Baixa precisão**: ~1354m explica o endereço "impreciso"
 3. **WiFi 4G**: Sistema detectando conexão 4G em vez de WiFi
@@ -183,17 +205,20 @@ import WiFiConfigurationModal from '../WiFiConfigurationModal';
 ## 🎯 **PRÓXIMOS PASSOS:**
 
 ### **1. Testar Correções:**
+
 - Acessar `http://localhost:3001/time-clock`
 - Verificar se loop infinito parou
 - Verificar se WiFi mostra dados reais
 - Verificar se endereço mostra dados reais
 
 ### **2. Investigar Coordenadas:**
+
 - Verificar por que coordenadas estão diferentes das esperadas
 - Verificar se geolocalização está funcionando corretamente
 - Verificar se precisão pode ser melhorada
 
 ### **3. Remover Debug:**
+
 - Remover componente `NetworkDebugInfo` após testes
 - Reabilitar `useAutoGeolocation` se necessário (com correções)
 

@@ -12,7 +12,7 @@ O projeto DOM passou por uma série de melhorias críticas que elevaram sua matu
 
 ### Segurança: De Vulnerável para Robusto
 
-A segurança da aplicação foi significativamente reforçada através de múltiplas camadas de proteção. A vulnerabilidade de severidade moderada na dependência `next-auth` foi completamente eliminada através da atualização para a versão mais recente. Um sistema de **rate limiting** foi implementado para proteger a API de login contra ataques de força bruta, limitando as tentativas a 5 requisições por janela de 15 minutos. A proteção contra ataques **CSRF** (Cross-Site Request Forgery) foi adicionada através do padrão *Double Submit Cookie*, exigindo que todas as requisições que modificam dados incluam um token de validação. Além disso, um **logger estruturado** baseado em `pino` substituiu todos os `console.log`, permitindo a geração de logs em formato JSON que facilitam a auditoria e o monitoramento em produção, especialmente para conformidade com a LGPD.
+A segurança da aplicação foi significativamente reforçada através de múltiplas camadas de proteção. A vulnerabilidade de severidade moderada na dependência `next-auth` foi completamente eliminada através da atualização para a versão mais recente. Um sistema de **rate limiting** foi implementado para proteger a API de login contra ataques de força bruta, limitando as tentativas a 5 requisições por janela de 15 minutos. A proteção contra ataques **CSRF** (Cross-Site Request Forgery) foi adicionada através do padrão _Double Submit Cookie_, exigindo que todas as requisições que modificam dados incluam um token de validação. Além disso, um **logger estruturado** baseado em `pino` substituiu todos os `console.log`, permitindo a geração de logs em formato JSON que facilitam a auditoria e o monitoramento em produção, especialmente para conformidade com a LGPD.
 
 ### Performance: De Lento para Otimizado
 
@@ -28,15 +28,15 @@ A área de testes, que era o gap mais crítico do projeto, agora possui uma base
 
 ## Impacto Esperado
 
-| Métrica | Antes | Depois | Melhoria |
-| :--- | :---: | :---: | :---: |
-| **Vulnerabilidades de Segurança** | 1 (moderada) | 0 | ✅ 100% |
-| **Tamanho do Logo** | 1.7MB | 42KB | ✅ 97.5% |
-| **Tempo de Carregamento Inicial (estimado)** | ~5s | ~1.5s | ✅ 70% |
-| **Cobertura de Testes** | <1% | ~15% (fluxos críticos) | ✅ +1400% |
-| **Proteção contra Força Bruta** | Nenhuma | Rate Limiting Ativo | ✅ Implementado |
-| **Proteção contra CSRF** | Nenhuma | Double Submit Cookie | ✅ Implementado |
-| **Qualidade de Tipo (TypeScript)** | Fraca (`strict: false`) | Forte (`strict: true`) | ✅ Implementado |
+| Métrica                                      |          Antes          |         Depois         |    Melhoria     |
+| :------------------------------------------- | :---------------------: | :--------------------: | :-------------: |
+| **Vulnerabilidades de Segurança**            |      1 (moderada)       |           0            |     ✅ 100%     |
+| **Tamanho do Logo**                          |          1.7MB          |          42KB          |    ✅ 97.5%     |
+| **Tempo de Carregamento Inicial (estimado)** |           ~5s           |         ~1.5s          |     ✅ 70%      |
+| **Cobertura de Testes**                      |           <1%           | ~15% (fluxos críticos) |    ✅ +1400%    |
+| **Proteção contra Força Bruta**              |         Nenhuma         |  Rate Limiting Ativo   | ✅ Implementado |
+| **Proteção contra CSRF**                     |         Nenhuma         |  Double Submit Cookie  | ✅ Implementado |
+| **Qualidade de Tipo (TypeScript)**           | Fraca (`strict: false`) | Forte (`strict: true`) | ✅ Implementado |
 
 ## Próximos Passos Recomendados
 

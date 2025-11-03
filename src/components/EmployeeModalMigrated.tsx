@@ -40,8 +40,6 @@ const FormRow = styled.div`
   }
 `;
 
-
-
 const Label = styled.label`
   font-weight: 600;
   color: #2c3e50;
@@ -309,7 +307,7 @@ const EmployeeModalMigrated: React.FC<EmployeeModalProps> = ({
     if (!value.trim()) {
       showAlert({
         type: 'error',
-        message: `Por favor, preencha o ${type === 'email' ? 'email' : 'telefone'} primeiro.`
+        message: `Por favor, preencha o ${type === 'email' ? 'email' : 'telefone'} primeiro.`,
       });
       return;
     }
@@ -331,7 +329,7 @@ const EmployeeModalMigrated: React.FC<EmployeeModalProps> = ({
 
     showAlert({
       type: 'success',
-      message: `${validationType === 'email' ? 'Email' : 'Telefone'} validado com sucesso!`
+      message: `${validationType === 'email' ? 'Email' : 'Telefone'} validado com sucesso!`,
     });
   };
 
@@ -406,7 +404,7 @@ const EmployeeModalMigrated: React.FC<EmployeeModalProps> = ({
     if (!validateForm()) {
       showAlert({
         type: 'error',
-        message: 'Por favor, corrija os erros no formulário.'
+        message: 'Por favor, corrija os erros no formulário.',
       });
       return;
     }
@@ -415,7 +413,7 @@ const EmployeeModalMigrated: React.FC<EmployeeModalProps> = ({
     if (!validation.email.isVerified) {
       showAlert({
         type: 'warning',
-        message: 'Por favor, valide o email antes de salvar.'
+        message: 'Por favor, valide o email antes de salvar.',
       });
       return;
     }
@@ -423,7 +421,7 @@ const EmployeeModalMigrated: React.FC<EmployeeModalProps> = ({
     if (!validation.telefone.isVerified) {
       showAlert({
         type: 'warning',
-        message: 'Por favor, valide o telefone antes de salvar.'
+        message: 'Por favor, valide o telefone antes de salvar.',
       });
       return;
     }
@@ -432,7 +430,7 @@ const EmployeeModalMigrated: React.FC<EmployeeModalProps> = ({
     onClose();
     showAlert({
       type: 'success',
-      message: 'Funcionário salvo com sucesso!'
+      message: 'Funcionário salvo com sucesso!',
     });
   };
 

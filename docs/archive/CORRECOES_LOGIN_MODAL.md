@@ -3,16 +3,19 @@
 ## ✅ 1. Validação de Senha no Login
 
 ### Problema:
+
 - O login não validava a senha, apenas verificava se o CPF existia
 - Qualquer senha era aceita para qualquer usuário
 
 ### Solução Implementada:
+
 - **Nova API**: `src/pages/api/auth/login.ts`
 - **Validação completa**: CPF + Senha
 - **Segurança**: Usa `bcrypt.compare()` para validar senha hash
 - **Resposta estruturada**: Retorna perfis apenas se login válido
 
 ### Funcionalidades:
+
 ```typescript
 // POST /api/auth/login
 {
@@ -36,6 +39,7 @@
 ```
 
 ### Validações Implementadas:
+
 - ✅ CPF obrigatório e válido (11 dígitos)
 - ✅ Senha obrigatória
 - ✅ Usuário existe no banco
@@ -48,10 +52,12 @@
 ## ✅ 2. Melhoria do Modal de Seleção de Perfis
 
 ### Problema:
+
 - Nome do usuário repetido em cada opção
 - Interface confusa e redundante
 
 ### Solução Implementada:
+
 - **Header melhorado**: Nome do usuário no cabeçalho
 - **Opções simplificadas**: Apenas tipo de perfil
 - **Design limpo**: Foco no essencial
@@ -59,6 +65,7 @@
 ### Antes vs Depois:
 
 #### ❌ Antes:
+
 ```
 ┌─ Selecionar Perfil ─────────────┐
 │                                │
@@ -71,6 +78,7 @@
 ```
 
 #### ✅ Depois:
+
 ```
 ┌─ Selecionar Perfil ─────────────┐
 │ Francisco Jose Lattari Papaleo │
@@ -82,6 +90,7 @@
 ```
 
 ### Melhorias Visuais:
+
 - **Header redesenhado**: Nome do usuário destacado
 - **Subtítulo atualizado**: "Escolha o **tipo** de perfil..."
 - **Tipografia melhorada**: Tipo de perfil mais destacado
@@ -92,6 +101,7 @@
 ## 🧪 Como Testar
 
 ### 1. Teste de Validação de Senha:
+
 ```bash
 # Login com senha correta
 CPF: 598.769.137-00
@@ -110,6 +120,7 @@ Senha: qualquer
 ```
 
 ### 2. Teste do Modal Melhorado:
+
 ```bash
 # Login com usuário de múltiplos perfis
 CPF: 598.769.137-00
@@ -125,12 +136,14 @@ Senha: senha123
 ## 🔐 Segurança Implementada
 
 ### Validação de Senha:
+
 - **Hash seguro**: `bcrypt` com salt
 - **Comparação segura**: `bcrypt.compare()`
 - **Sem exposição**: Senha nunca retornada na API
 - **Logs de segurança**: Tentativas de login registradas
 
 ### Validação de Usuário:
+
 - **Status ativo**: Apenas usuários ativos podem fazer login
 - **Perfis ativos**: Apenas perfis ativos são retornados
 - **CPF limpo**: Remove máscaras automaticamente
@@ -141,6 +154,7 @@ Senha: senha123
 ## 📊 APIs Atualizadas
 
 ### 1. `/api/auth/login` (NOVA)
+
 ```typescript
 POST /api/auth/login
 Body: { cpf: string, senha: string }
@@ -148,17 +162,20 @@ Response: { success: boolean, data?: UserProfile[], error?: string }
 ```
 
 ### 2. `/api/auth/profiles` (MANTIDA)
+
 ```typescript
 GET /api/auth/profiles?cpf=string
 Response: { success: boolean, data?: UserProfile[], error?: string }
 ```
-*Nota: Mantida para compatibilidade, mas login.tsx agora usa `/api/auth/login`*
+
+_Nota: Mantida para compatibilidade, mas login.tsx agora usa `/api/auth/login`_
 
 ---
 
 ## 🎯 Próximos Passos
 
 ### Testes Recomendados:
+
 1. **Login com senha correta** ✅
 2. **Login com senha incorreta** ✅
 3. **Login com CPF inexistente** ✅
@@ -167,6 +184,7 @@ Response: { success: boolean, data?: UserProfile[], error?: string }
 6. **Seleção de perfil** (Empregador vs Família)
 
 ### Monitoramento:
+
 - Verificar logs de tentativas de login
 - Monitorar performance da validação bcrypt
 - Testar em diferentes navegadores

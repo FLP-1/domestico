@@ -23,7 +23,7 @@ export class DynamicConfigService {
    * Obtém uma configuração do banco de dados
    */
   async getConfig<T extends ConfigType>(
-    key: string, 
+    key: string,
     type: T,
     defaultValue?: ConfigValue[T]
   ): Promise<ConfigValue[T]> {
@@ -35,23 +35,25 @@ export class DynamicConfigService {
 
     try {
       const config = await prisma.configuracaoSistema.findUnique({
-        where: { 
-          chave: key
-        }
+        where: {
+          chave: key,
+        },
       });
 
       if (!config) {
         if (defaultValue !== undefined) {
           return defaultValue;
         }
-        throw new Error(`Configuração '${key}' não encontrada e sem valor padrão`);
+        throw new Error(
+          `Configuração '${key}' não encontrada e sem valor padrão`
+        );
       }
 
       const value = this.parseValue(config.valor, type);
-      
+
       // Armazenar no cache
       this.setCache(key, value);
-      
+
       return value;
     } catch (error) {
       console.error(`Erro ao buscar configuração '${key}':`, error);
@@ -72,8 +74,10 @@ export class DynamicConfigService {
     description?: string
   ): Promise<void> {
     try {
-      const configValue = typeof value === 'string' ? value : JSON.stringify(value);
-      const configType = typeof value === 'object' ? 'json' : typeof value as ConfigType;
+      const configValue =
+        typeof value === 'string' ? value : JSON.stringify(value);
+      const configType =
+        typeof value === 'object' ? 'json' : (typeof value as ConfigType);
 
       await prisma.configuracaoSistema.upsert({
         where: { chave: key },
@@ -82,20 +86,19 @@ export class DynamicConfigService {
           tipo: configType,
           categoria: category,
           descricao: description,
-          atualizadoEm: new Date()
+          atualizadoEm: new Date(),
         },
         create: {
           chave: key,
           valor: configValue,
           tipo: configType,
           categoria: category,
-          descricao: description
-        }
+          descricao: description,
+        },
       });
 
       // Limpar cache
       this.clearCache(key);
-      
     } catch (error) {
       console.error(`Erro ao definir configuração '${key}':`, error);
       throw error;
@@ -105,22 +108,30 @@ export class DynamicConfigService {
   /**
    * Obtém todas as configurações de uma categoria
    */
-  async getConfigsByCategory(category: ConfigCategory): Promise<Record<string, any>> {
+  async getConfigsByCategory(
+    category: ConfigCategory
+  ): Promise<Record<string, any>> {
     try {
       const configs = await prisma.configuracaoSistema.findMany({
-        where: { 
-          categoria: category
-        }
+        where: {
+          categoria: category,
+        },
       });
 
       const result: Record<string, any> = {};
       for (const config of configs) {
-        result[config.chave] = this.parseValue(config.valor, config.tipo as ConfigType);
+        result[config.chave] = this.parseValue(
+          config.valor,
+          config.tipo as ConfigType
+        );
       }
 
       return result;
     } catch (error) {
-      console.error(`Erro ao buscar configurações da categoria '${category}':`, error);
+      console.error(
+        `Erro ao buscar configurações da categoria '${category}':`,
+        error
+      );
       return {};
     }
   }
@@ -157,7 +168,8 @@ export class DynamicConfigService {
     switch (type) {
       case 'number':
         const num = parseFloat(value);
-        if (isNaN(num)) throw new Error(`Valor '${value}' não é um número válido`);
+        if (isNaN(num))
+          throw new Error(`Valor '${value}' não é um número válido`);
         return num;
       case 'boolean':
         return value.toLowerCase() === 'true';
@@ -174,7 +186,10 @@ export class DynamicConfigService {
   }
 
   private castValue(value: any, type: ConfigType): ConfigValue[ConfigType] {
-    return this.parseValue(typeof value === 'string' ? value : JSON.stringify(value), type);
+    return this.parseValue(
+      typeof value === 'string' ? value : JSON.stringify(value),
+      type
+    );
   }
 }
 

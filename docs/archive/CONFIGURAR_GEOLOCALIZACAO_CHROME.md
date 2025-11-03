@@ -40,11 +40,11 @@
 
 ## 🎯 Resultado Esperado
 
-| Dispositivo | Precisão Esperada |
-|-------------|-------------------|
-| **Mobile (GPS)** | 5-50 metros |
-| **Desktop (WiFi)** | 50-200 metros |
-| **Desktop (IP)** | 500m-5km ❌ |
+| Dispositivo        | Precisão Esperada |
+| ------------------ | ----------------- |
+| **Mobile (GPS)**   | 5-50 metros       |
+| **Desktop (WiFi)** | 50-200 metros     |
+| **Desktop (IP)**   | 500m-5km ❌       |
 
 ---
 
@@ -63,16 +63,19 @@ Após configurar:
 ## ❓ Problemas Comuns
 
 ### Ainda pede permissão toda vez
+
 - Verifique se configurou no Chrome (passo 1)
 - Limpe cache do navegador
 - Tente em modo anônimo (para testar)
 
 ### Precisão ruim (>500m)
+
 - Desktop: ative Windows Location Service
 - Aproxime-se de uma janela (melhora WiFi)
 - Mobile: ative GPS nas configurações
 
 ### Timeout / Não funciona
+
 - Permissão negada: volte ao passo 1
 - Sem GPS/WiFi disponível
 - Windows Location Service desligado
@@ -83,4 +86,3 @@ Após configurar:
 
 - [Geolocation API - MDN](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API)
 - [Chrome Site Permissions](https://support.google.com/chrome/answer/114662)
-

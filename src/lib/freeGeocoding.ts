@@ -1,12 +1,12 @@
 /**
  * 🆓 APIs de Geocodificação GRATUITAS
- * 
+ *
  * Sistema inteligente com múltiplas APIs gratuitas:
  * 1. OpenCage Data (2.500 req/dia grátis)
  * 2. BigDataCloud (ilimitado, boa qualidade)
  * 3. Positionstack (10.000 req/dia grátis)
  * 4. Nominatim (fallback final)
- * 
+ *
  * Vantagens:
  * - 100% gratuito
  * - Redundância (múltiplas fontes)
@@ -51,15 +51,15 @@ export async function reverseGeocodeOpenCage(
     }
 
     logger.geo('🌐 Tentando OpenCage Data API...');
-    
+
     const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${apiKey}&language=pt&countrycode=br&no_annotations=1`;
-    
+
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'DOM-System/1.0 (Free Geocoding)',
       },
       // ✅ Timeout de 15 segundos para APIs gratuitas
-      signal: AbortSignal.timeout(15000)
+      signal: AbortSignal.timeout(15000),
     });
 
     if (!response.ok) {
@@ -67,25 +67,29 @@ export async function reverseGeocodeOpenCage(
     }
 
     const data = await response.json();
-    
+
     if (!data.results || data.results.length === 0) {
       return { success: false, error: 'Nenhum endereço encontrado' };
     }
 
     const result = data.results[0];
     const components = result.components;
-    
+
     const formattedAddress = [
-      components.house_number && components.road ? 
-        `${components.road}, ${components.house_number}` : 
-        components.road,
+      components.house_number && components.road
+        ? `${components.road}, ${components.house_number}`
+        : components.road,
       components.suburb || components.neighbourhood,
       components.city || components.town,
       components.state,
-      components.country
-    ].filter(Boolean).join(', ');
+      components.country,
+    ]
+      .filter(Boolean)
+      .join(', ');
 
-    const postalCode = components.postcode ? ` - CEP: ${components.postcode}` : '';
+    const postalCode = components.postcode
+      ? ` - CEP: ${components.postcode}`
+      : '';
 
     return {
       success: true,
@@ -98,11 +102,10 @@ export async function reverseGeocodeOpenCage(
         city: components.city || components.town,
         state: components.state,
         country: components.country,
-        postalCode: components.postcode
+        postalCode: components.postcode,
       },
-      source: 'opencage'
+      source: 'opencage',
     };
-
   } catch (error: any) {
     logger.error('❌ Erro OpenCage:', error);
     return { success: false, error: error.message };
@@ -119,15 +122,15 @@ export async function reverseGeocodeBigDataCloud(
 ): Promise<GeocodingResult> {
   try {
     logger.geo('🌐 Tentando BigDataCloud API...');
-    
+
     const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=pt`;
-    
+
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'DOM-System/1.0 (Free Geocoding)',
       },
       // ✅ Timeout de 15 segundos para APIs gratuitas
-      signal: AbortSignal.timeout(15000)
+      signal: AbortSignal.timeout(15000),
     });
 
     if (!response.ok) {
@@ -135,7 +138,7 @@ export async function reverseGeocodeBigDataCloud(
     }
 
     const data = await response.json();
-    
+
     if (!data.localityInfo) {
       return { success: false, error: 'Nenhum endereço encontrado' };
     }
@@ -143,14 +146,22 @@ export async function reverseGeocodeBigDataCloud(
     const info = data.localityInfo;
     const administrative = info.administrative || [];
     const locality = info.locality || [];
-    
+
     // Construir endereço
     const street = locality.find((l: any) => l.administrativeLevel === 1)?.name;
-    const city = administrative.find((a: any) => a.administrativeLevel === 2)?.name;
-    const state = administrative.find((a: any) => a.administrativeLevel === 1)?.name;
-    const country = administrative.find((a: any) => a.administrativeLevel === 0)?.name;
-    
-    const formattedAddress = [street, city, state, country].filter(Boolean).join(', ');
+    const city = administrative.find(
+      (a: any) => a.administrativeLevel === 2
+    )?.name;
+    const state = administrative.find(
+      (a: any) => a.administrativeLevel === 1
+    )?.name;
+    const country = administrative.find(
+      (a: any) => a.administrativeLevel === 0
+    )?.name;
+
+    const formattedAddress = [street, city, state, country]
+      .filter(Boolean)
+      .join(', ');
 
     return {
       success: true,
@@ -160,11 +171,10 @@ export async function reverseGeocodeBigDataCloud(
         street: street,
         city: city,
         state: state,
-        country: country
+        country: country,
       },
-      source: 'bigdatacloud'
+      source: 'bigdatacloud',
     };
-
   } catch (error: any) {
     logger.error('❌ Erro BigDataCloud:', error);
     return { success: false, error: error.message };
@@ -187,15 +197,15 @@ export async function reverseGeocodePositionstack(
     }
 
     logger.geo('🌐 Tentando Positionstack API...');
-    
+
     const url = `http://api.positionstack.com/v1/reverse?access_key=${apiKey}&query=${latitude},${longitude}&limit=1&language=pt`;
-    
+
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'DOM-System/1.0 (Free Geocoding)',
       },
       // ✅ Timeout de 15 segundos para APIs gratuitas
-      signal: AbortSignal.timeout(15000)
+      signal: AbortSignal.timeout(15000),
     });
 
     if (!response.ok) {
@@ -203,20 +213,22 @@ export async function reverseGeocodePositionstack(
     }
 
     const data = await response.json();
-    
+
     if (!data.data || data.data.length === 0) {
       return { success: false, error: 'Nenhum endereço encontrado' };
     }
 
     const result = data.data[0];
-    
+
     const formattedAddress = [
       result.street,
       result.neighbourhood,
       result.locality,
       result.region,
-      result.country
-    ].filter(Boolean).join(', ');
+      result.country,
+    ]
+      .filter(Boolean)
+      .join(', ');
 
     return {
       success: true,
@@ -229,11 +241,10 @@ export async function reverseGeocodePositionstack(
         city: result.locality,
         state: result.region,
         country: result.country,
-        postalCode: result.postal_code
+        postalCode: result.postal_code,
       },
-      source: 'positionstack'
+      source: 'positionstack',
     };
-
   } catch (error: any) {
     logger.error('❌ Erro Positionstack:', error);
     return { success: false, error: error.message };
@@ -250,15 +261,15 @@ export async function reverseGeocodeNominatim(
 ): Promise<GeocodingResult> {
   try {
     logger.geo('🌐 Usando Nominatim como fallback final...');
-    
+
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1&accept-language=pt-BR`;
-    
+
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'DOM-System/1.0 (Free Geocoding)',
       },
       // ✅ Timeout de 15 segundos para APIs gratuitas
-      signal: AbortSignal.timeout(15000)
+      signal: AbortSignal.timeout(15000),
     });
 
     if (!response.ok) {
@@ -266,30 +277,33 @@ export async function reverseGeocodeNominatim(
     }
 
     const data = await response.json();
-    
+
     const address = data.display_name || 'Endereço não encontrado';
     const addressComponents = data.address || {};
-    
+
     const formattedAddress = [
-      addressComponents.house_number && addressComponents.road ? 
-        `${addressComponents.road}, ${addressComponents.house_number}` : 
-        addressComponents.road,
+      addressComponents.house_number && addressComponents.road
+        ? `${addressComponents.road}, ${addressComponents.house_number}`
+        : addressComponents.road,
       addressComponents.suburb || addressComponents.neighbourhood,
       addressComponents.city || addressComponents.town,
       addressComponents.state,
-      addressComponents.country
-    ].filter(Boolean).join(', ');
+      addressComponents.country,
+    ]
+      .filter(Boolean)
+      .join(', ');
 
-    const cep = addressComponents.postcode ? ` - CEP: ${addressComponents.postcode}` : '';
+    const cep = addressComponents.postcode
+      ? ` - CEP: ${addressComponents.postcode}`
+      : '';
 
     return {
       success: true,
       address: address,
       formattedAddress: formattedAddress + cep,
       components: addressComponents,
-      source: 'nominatim'
+      source: 'nominatim',
     };
-
   } catch (error: any) {
     logger.error('❌ Erro Nominatim:', error);
     return { success: false, error: error.message };
@@ -316,7 +330,11 @@ export async function reverseGeocodeFree(
   // 2. Tentar OpenCage (melhor qualidade, 2.500 req/dia)
   const openCageKey = process.env.NEXT_PUBLIC_OPENCAGE_API_KEY;
   if (openCageKey) {
-    const openCageResult = await reverseGeocodeOpenCage(latitude, longitude, openCageKey);
+    const openCageResult = await reverseGeocodeOpenCage(
+      latitude,
+      longitude,
+      openCageKey
+    );
     if (openCageResult.success) {
       logger.geo('✅ OpenCage retornou endereço');
       return openCageResult;
@@ -326,7 +344,11 @@ export async function reverseGeocodeFree(
   // 3. Tentar Positionstack (10.000 req/dia, excelente qualidade)
   const positionstackKey = process.env.NEXT_PUBLIC_POSITIONSTACK_API_KEY;
   if (positionstackKey) {
-    const positionstackResult = await reverseGeocodePositionstack(latitude, longitude, positionstackKey);
+    const positionstackResult = await reverseGeocodePositionstack(
+      latitude,
+      longitude,
+      positionstackKey
+    );
     if (positionstackResult.success) {
       logger.geo('✅ Positionstack retornou endereço');
       return positionstackResult;
@@ -344,7 +366,7 @@ export async function reverseGeocodeFree(
   return {
     success: false,
     error: 'Todas as APIs de geocodificação falharam',
-    source: 'none'
+    source: 'none',
   };
 }
 
@@ -353,19 +375,19 @@ export async function reverseGeocodeFree(
  */
 export function getAvailableFreeAPIs(): string[] {
   const apis = [];
-  
+
   // BigDataCloud sempre disponível (ilimitado)
   apis.push('BigDataCloud (ilimitado)');
-  
+
   if (process.env.NEXT_PUBLIC_OPENCAGE_API_KEY) {
     apis.push('OpenCage (2.500 req/dia)');
   }
-  
+
   if (process.env.NEXT_PUBLIC_POSITIONSTACK_API_KEY) {
     apis.push('Positionstack (10.000 req/dia)');
   }
-  
+
   apis.push('Nominatim (fallback)');
-  
+
   return apis;
 }

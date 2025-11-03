@@ -1,7 +1,7 @@
 /**
  * API de Histórico de Análises de Risco
  * GET /api/antifraude/historico?usuarioId=xxx&limit=10
- * 
+ *
  * Retorna histórico de análises de risco de um usuário
  */
 
@@ -46,13 +46,13 @@ export default async function handler(
         vpnDetectado: true,
         botDetectado: true,
         bloqueado: true,
-        criadoEm: true
-      }
+        criadoEm: true,
+      },
     });
 
     // Contar total
     const total = await prisma.riskAnalysis.count({
-      where: { usuarioId }
+      where: { usuarioId },
     });
 
     return res.status(200).json({
@@ -62,16 +62,15 @@ export default async function handler(
         total,
         limit: limitNum,
         offset: offsetNum,
-        hasMore: total > offsetNum + limitNum
-      }
+        hasMore: total > offsetNum + limitNum,
+      },
     });
   } catch (error) {
     console.error('Erro ao buscar histórico:', error);
-    
+
     return res.status(500).json({
       error: 'Erro ao buscar histórico',
-      message: error instanceof Error ? error.message : 'Erro desconhecido'
+      message: error instanceof Error ? error.message : 'Erro desconhecido',
     });
   }
 }
-

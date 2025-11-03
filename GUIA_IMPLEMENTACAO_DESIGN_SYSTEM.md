@@ -30,6 +30,7 @@ tar -xzf dom-refatoracao-design-system.tar.gz
 ```
 
 Isso criará/atualizará os seguintes arquivos:
+
 - `prisma/migrations/add_config_tables/migration.sql`
 - `prisma/seed-config.sql`
 - `prisma/schema.prisma`
@@ -121,22 +122,26 @@ export default function TestComponents() {
       <h1>Teste de Componentes</h1>
 
       <h2>Botões</h2>
-      <Button variant="primary">Primário</Button>
-      <Button variant="secondary">Secundário</Button>
-      <Button variant="success">Sucesso</Button>
-      <Button variant="error">Erro</Button>
+      <Button variant='primary'>Primário</Button>
+      <Button variant='secondary'>Secundário</Button>
+      <Button variant='success'>Sucesso</Button>
+      <Button variant='error'>Erro</Button>
 
       <h2>Input</h2>
-      <Input label="Nome" placeholder="Digite seu nome" fullWidth />
+      <Input label='Nome' placeholder='Digite seu nome' fullWidth />
 
       <h2>Card</h2>
-      <Card title="Título do Card" subtitle="Subtítulo">
+      <Card title='Título do Card' subtitle='Subtítulo'>
         Conteúdo do card
       </Card>
 
       <h2>Modal</h2>
       <Button onClick={() => setModalOpen(true)}>Abrir Modal</Button>
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Modal de Teste">
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title='Modal de Teste'
+      >
         Conteúdo do modal
       </Modal>
     </div>
@@ -151,15 +156,17 @@ Acesse `http://localhost:3000/test-components` para testar.
 Comece migrando os componentes mais usados para usar o sistema de tema. Exemplo:
 
 **Antes:**
+
 ```tsx
 const Button = styled.button`
-  background: #29ABE2;
+  background: #29abe2;
   padding: 8px 16px;
   font-size: 16px;
 `;
 ```
 
 **Depois:**
+
 ```tsx
 import { theme } from '../config/theme';
 
@@ -175,15 +182,19 @@ const Button = styled.button`
 Identifique componentes duplicados (ex: múltiplos botões customizados) e substitua-os pelo componente da biblioteca UI:
 
 **Antes:**
+
 ```tsx
 <CustomButton onClick={handleClick}>Salvar</CustomButton>
 ```
 
 **Depois:**
+
 ```tsx
 import { Button } from '../components/ui';
 
-<Button variant="primary" onClick={handleClick}>Salvar</Button>
+<Button variant='primary' onClick={handleClick}>
+  Salvar
+</Button>;
 ```
 
 ### Passo 10: Testar em Produção
@@ -206,6 +217,7 @@ git push origin main
 ```
 
 Não esqueça de:
+
 - ✅ Aplicar as migrations no banco de produção
 - ✅ Executar o script `seed-config.sql` no banco de produção
 - ✅ Verificar se as variáveis de ambiente estão configuradas
@@ -227,6 +239,7 @@ Após a implementação, verifique:
 ### Erro: "Cannot find module 'styled-components'"
 
 **Solução:** Instale a dependência:
+
 ```bash
 npm install styled-components
 ```
@@ -234,6 +247,7 @@ npm install styled-components
 ### Erro: "Table 'TemaVisual' does not exist"
 
 **Solução:** Execute a migration:
+
 ```bash
 npx prisma migrate dev
 ```
@@ -245,6 +259,7 @@ npx prisma migrate dev
 ### Componentes não estão usando as cores do tema
 
 **Solução:** Verifique se você está importando e usando o objeto `theme` corretamente:
+
 ```tsx
 import { theme } from '../config/theme';
 ```
@@ -252,6 +267,7 @@ import { theme } from '../config/theme';
 ## 6. Suporte
 
 Para dúvidas ou problemas, consulte:
+
 - **Documentação:** `docs/DESIGN_SYSTEM.md`
 - **Relatório:** `RELATORIO_REFATORACAO_DESIGN_SYSTEM.md`
 

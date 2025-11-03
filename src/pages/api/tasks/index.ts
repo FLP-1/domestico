@@ -76,17 +76,24 @@ export default async function handler(
       return res.status(200).json({ success: true, data: tarefasFormatadas });
     } catch (error) {
       console.error('Erro ao buscar tarefas:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao buscar tarefas' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao buscar tarefas',
       });
     }
   }
 
   if (req.method === 'POST') {
     try {
-      const { titulo, descricao, prioridade, atribuidoPara, dataVencimento, tags } = req.body;
-      
+      const {
+        titulo,
+        descricao,
+        prioridade,
+        atribuidoPara,
+        dataVencimento,
+        tags,
+      } = req.body;
+
       const novaTarefa = await prisma.tarefa.create({
         data: {
           titulo,
@@ -111,13 +118,12 @@ export default async function handler(
       return res.status(201).json({ success: true, data: novaTarefa });
     } catch (error) {
       console.error('Erro ao criar tarefa:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao criar tarefa' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao criar tarefa',
       });
     }
   }
 
   return res.status(405).json({ error: 'Method not allowed' });
 }
-

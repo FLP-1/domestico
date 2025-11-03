@@ -52,7 +52,8 @@ const SelectionModalContent = styled.div<{ $theme?: any }>`
   max-height: 85vh;
   overflow-y: auto;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-  border: 1px solid ${props => props.$theme?.navigation?.primary || 'rgba(41, 171, 226, 0.3)'};
+  border: 1px solid
+    ${props => props.$theme?.navigation?.primary || 'rgba(41, 171, 226, 0.3)'};
   animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 
   @keyframes fadeIn {
@@ -80,7 +81,8 @@ const SelectionModalContent = styled.div<{ $theme?: any }>`
     align-items: flex-start;
     justify-content: space-between;
     margin-bottom: 2rem;
-    border-bottom: 2px solid ${props => props.theme?.border?.secondary || '#f1f3f4'};
+    border-bottom: 2px solid
+      ${props => props.theme?.border?.secondary || '#f1f3f4'};
     padding-bottom: 1.5rem;
 
     .title {
@@ -96,14 +98,18 @@ const SelectionModalContent = styled.div<{ $theme?: any }>`
 
     .user-info {
       margin-top: 0.5rem;
-      
+
       .user-nickname {
         font-family: 'Montserrat', sans-serif;
         font-size: 1.25rem;
         font-weight: 800;
         color: ${props => props.theme?.navigation?.primary || '#29abe2'};
         margin: 0 0 0.25rem 0;
-        background: linear-gradient(135deg, ${props => props.theme?.navigation?.primary || '#29abe2'}, ${props => props.theme?.accent?.green || '#90ee90'});
+        background: linear-gradient(
+          135deg,
+          ${props => props.theme?.navigation?.primary || '#29abe2'},
+          ${props => props.theme?.accent?.green || '#90ee90'}
+        );
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -156,16 +162,21 @@ const ItemList = styled.div<{ $theme?: any }>`
   gap: 1rem;
 `;
 
-const ItemButton = styled.button<{ $isSelected: boolean; $color?: string; $theme?: any }>`
+const ItemButton = styled.button<{
+  $isSelected: boolean;
+  $color?: string;
+  $theme?: any;
+}>`
   position: relative;
-  background: ${props => 
-    props.$isSelected 
-      ? `${props.$color || props.$theme?.navigation?.primary || '#29abe2'}15` 
+  background: ${props =>
+    props.$isSelected
+      ? `${props.$color || props.$theme?.navigation?.primary || '#29abe2'}15`
       : props.$theme?.background?.secondary || '#f8f9fa'};
-  border: 2px solid ${props => 
-    props.$isSelected 
-      ? `${props.$color || props.$theme?.navigation?.primary || '#29abe2'}40` 
-      : props.$theme?.background?.tertiary || '#e9ecef'};
+  border: 2px solid
+    ${props =>
+      props.$isSelected
+        ? `${props.$color || props.$theme?.navigation?.primary || '#29abe2'}40`
+        : props.$theme?.background?.tertiary || '#e9ecef'};
   border-radius: 16px;
   padding: 1.5rem;
   cursor: pointer;
@@ -177,15 +188,17 @@ const ItemButton = styled.button<{ $isSelected: boolean; $color?: string; $theme
   gap: 1rem;
 
   &:hover {
-    background: ${props => `${props.$color || props.$theme?.navigation?.primary || '#29abe2'}10`};
-    border-color: ${props => `${props.$color || props.$theme?.navigation?.primary || '#29abe2'}60`};
+    background: ${props =>
+      `${props.$color || props.$theme?.navigation?.primary || '#29abe2'}10`};
+    border-color: ${props =>
+      `${props.$color || props.$theme?.navigation?.primary || '#29abe2'}60`};
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   }
 
   .item-info {
     flex: 1;
-    
+
     .item-name {
       font-family: 'Montserrat', sans-serif;
       font-size: 1.125rem;
@@ -220,8 +233,8 @@ const ItemButton = styled.button<{ $isSelected: boolean; $color?: string; $theme
     width: 48px;
     height: 48px;
     border-radius: 12px;
-    background: ${props => 
-      props.$isSelected 
+    background: ${props =>
+      props.$isSelected
         ? props.$color || props.$theme?.navigation?.primary || '#29abe2'
         : props.$theme?.text?.secondary || '#6c757d'};
     display: flex;
@@ -230,10 +243,11 @@ const ItemButton = styled.button<{ $isSelected: boolean; $color?: string; $theme
     color: white;
     font-size: 1.25rem;
     font-weight: 600;
-    box-shadow: 0 4px 12px ${props => 
-      props.$isSelected 
-        ? `${props.$color || '#29abe2'}40` 
-        : 'rgba(0, 0, 0, 0.1)'};
+    box-shadow: 0 4px 12px
+      ${props =>
+        props.$isSelected
+          ? `${props.$color || '#29abe2'}40`
+          : 'rgba(0, 0, 0, 0.1)'};
     transition: all 0.3s ease;
   }
 
@@ -263,7 +277,7 @@ const ItemButton = styled.button<{ $isSelected: boolean; $color?: string; $theme
 `;
 
 const Icons = {
-  close: <AccessibleEmoji emoji="✖️" label="Fechar" />,
+  close: <AccessibleEmoji emoji='✖️' label='Fechar' />,
 };
 
 const SelectionModalComponent: React.FC<SelectionModalProps> = ({
@@ -281,7 +295,10 @@ const SelectionModalComponent: React.FC<SelectionModalProps> = ({
   const { colors: theme } = useTheme(currentProfile?.role.toLowerCase());
   // Para perfis, mostrar nome e nickname do primeiro item (todos têm o mesmo usuário)
   const userName = type === 'profile' && items.length > 0 ? items[0].name : '';
-  const userNickname = type === 'profile' && items.length > 0 ? items[0].nickname || items[0].name : '';
+  const userNickname =
+    type === 'profile' && items.length > 0
+      ? items[0].nickname || items[0].name
+      : '';
 
   return (
     <SelectionModal $isOpen={isOpen}>
@@ -308,9 +325,7 @@ const SelectionModalComponent: React.FC<SelectionModalProps> = ({
           </button>
         </div>
 
-        <ModalSubtitle $theme={theme}>
-          {subtitle}
-        </ModalSubtitle>
+        <ModalSubtitle $theme={theme}>{subtitle}</ModalSubtitle>
 
         <ItemList>
           {items.map((item: any) => (
@@ -326,19 +341,11 @@ const SelectionModalComponent: React.FC<SelectionModalProps> = ({
                 {item.avatar || item.icon || (type === 'profile' ? '👤' : '👥')}
               </div>
               <div className='item-info'>
-                <h3 className='item-name'>
-                  {item.name}
-                </h3>
+                <h3 className='item-name'>{item.name}</h3>
                 {item.description && (
-                  <p className='item-description'>
-                    {item.description}
-                  </p>
+                  <p className='item-description'>{item.description}</p>
                 )}
-                {item.role && (
-                  <p className='item-role'>
-                    {item.role}
-                  </p>
-                )}
+                {item.role && <p className='item-role'>{item.role}</p>}
               </div>
               <div className='selection-indicator' />
             </ItemButton>

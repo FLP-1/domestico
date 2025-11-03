@@ -6,11 +6,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import ValidationService from '../../../services/validationService';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ 
-      success: false, 
-      error: 'Método não permitido' 
+    return res.status(405).json({
+      success: false,
+      error: 'Método não permitido',
     });
   }
 
@@ -20,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!type || !data) {
       return res.status(400).json({
         success: false,
-        error: 'Tipo de validação e dados são obrigatórios'
+        error: 'Tipo de validação e dados são obrigatórios',
       });
     }
 
@@ -43,7 +46,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         break;
 
       case 'user-group-assignment':
-        validationResult = await ValidationService.validateUserGroupAssignment(data);
+        validationResult =
+          await ValidationService.validateUserGroupAssignment(data);
         break;
 
       case 'user-group-removal':
@@ -61,10 +65,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         break;
 
       case 'single-employer-per-group':
-        validationResult = await ValidationService.validateSingleEmployerPerGroup(
-          data.grupoId,
-          data.usuarioId
-        );
+        validationResult =
+          await ValidationService.validateSingleEmployerPerGroup(
+            data.grupoId,
+            data.usuarioId
+          );
         break;
 
       case 'unique-cpf-in-group':
@@ -78,20 +83,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       default:
         return res.status(400).json({
           success: false,
-          error: 'Tipo de validação não reconhecido'
+          error: 'Tipo de validação não reconhecido',
         });
     }
 
     return res.status(200).json({
       success: true,
-      data: validationResult
+      data: validationResult,
     });
-
   } catch (error: any) {
     console.error('Erro na validação:', error);
     return res.status(500).json({
       success: false,
-      error: 'Erro interno do servidor'
+      error: 'Erro interno do servidor',
     });
   }
 }

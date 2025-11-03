@@ -37,15 +37,25 @@ const SelectionButton = styled.button<{ active?: boolean; $theme?: any }>`
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  border: 1px solid ${props => props.active ? props.$theme.colors.navigation.active : props.$theme.colors.border.muted};
+  border: 1px solid
+    ${props =>
+      props.active
+        ? props.$theme.colors.navigation.active
+        : props.$theme.colors.border.muted};
   border-radius: 6px;
-  background: ${props => props.active ? props.$theme.colors.background.light : props.$theme.colors.background.primary};
-  color: ${props => props.active ? props.$theme.colors.navigation.active : props.$theme.colors.text.primary};
+  background: ${props =>
+    props.active
+      ? props.$theme.colors.background.light
+      : props.$theme.colors.background.primary};
+  color: ${props =>
+    props.active
+      ? props.$theme.colors.navigation.active
+      : props.$theme.colors.text.primary};
   cursor: pointer;
   transition: all 0.2s;
   font-size: 0.9rem;
   font-weight: 500;
-  
+
   &:hover {
     border-color: ${props => props.$theme.colors.navigation.active};
     background: ${props => props.$theme.colors.background.light};
@@ -57,7 +67,6 @@ const SelectionInfo = styled.div<{ $theme?: any }>`
   flex-direction: column;
   align-items: flex-start;
 `;
-
 
 const SelectionLabel = styled.span<{ $theme?: any }>`
   font-size: 0.8rem;
@@ -103,14 +112,19 @@ interface HeaderWithSelectionProps {
 
 const HeaderWithSelection: React.FC<HeaderWithSelectionProps> = ({
   userName = 'Usuário',
-  userInitials = 'U'
+  userInitials = 'U',
 }) => {
-  const { currentProfile, availableProfiles, showProfileModal, setShowProfileModal } = useUserProfile();
+  const {
+    currentProfile,
+    availableProfiles,
+    showProfileModal,
+    setShowProfileModal,
+  } = useUserProfile();
   const { colors: theme } = useTheme(currentProfile?.role.toLowerCase());
   const { selectedGroup, showGroupModal, setShowGroupModal } = useGroup();
   const [showGroupModalLocal, setShowGroupModalLocal] = useState(false);
   const [showProfileModalLocal, setShowProfileModalLocal] = useState(false);
-  
+
   // TODO: Implementar availableGroups do contexto
   const availableGroups: any[] = [];
 
@@ -128,7 +142,9 @@ const HeaderWithSelection: React.FC<HeaderWithSelectionProps> = ({
     <>
       <HeaderContainer $theme={theme}>
         <Logo $theme={theme}>
-          <span role="img" aria-label="Logo">🏠</span>
+          <span role='img' aria-label='Logo'>
+            🏠
+          </span>
           Sistema DOM
         </Logo>
 
@@ -138,7 +154,9 @@ const HeaderWithSelection: React.FC<HeaderWithSelectionProps> = ({
             $theme={theme}
             onClick={() => setShowGroupModalLocal(true)}
           >
-            <span role="img" aria-label="Grupo">👥</span>
+            <span role='img' aria-label='Grupo'>
+              👥
+            </span>
             <SelectionInfo>
               <SelectionLabel $theme={theme}>Grupo</SelectionLabel>
               <SelectionValue $theme={theme}>
@@ -152,7 +170,9 @@ const HeaderWithSelection: React.FC<HeaderWithSelectionProps> = ({
             $theme={theme}
             onClick={() => setShowProfileModalLocal(true)}
           >
-            <span role="img" aria-label="Perfil">👤</span>
+            <span role='img' aria-label='Perfil'>
+              👤
+            </span>
             <SelectionInfo>
               <SelectionLabel $theme={theme}>Perfil</SelectionLabel>
               <SelectionValue $theme={theme}>
@@ -163,9 +183,7 @@ const HeaderWithSelection: React.FC<HeaderWithSelectionProps> = ({
         </SelectionControls>
 
         <UserInfo>
-          <UserAvatar>
-            {userInitials}
-          </UserAvatar>
+          <UserAvatar>{userInitials}</UserAvatar>
           <UserName>{userName}</UserName>
         </UserInfo>
       </HeaderContainer>
@@ -174,64 +192,88 @@ const HeaderWithSelection: React.FC<HeaderWithSelectionProps> = ({
       <SelectionModal
         isOpen={showGroupModalLocal}
         onClose={() => setShowGroupModalLocal(false)}
-        items={(Array.isArray(availableGroups) ? availableGroups : []).map(group => ({
-          id: group.id,
-          name: group.nome,
-          description: group.descricao,
-          color: group.cor,
-          icon: group.icone === 'building' ? '🏢' : 
-                group.icone === 'users' ? '👥' : 
-                group.icone === 'home' ? '🏠' : 
-                group.icone === 'briefcase' ? '💼' : '📁'
-        }))}
+        items={(Array.isArray(availableGroups) ? availableGroups : []).map(
+          group => ({
+            id: group.id,
+            name: group.nome,
+            description: group.descricao,
+            color: group.cor,
+            icon:
+              group.icone === 'building'
+                ? '🏢'
+                : group.icone === 'users'
+                  ? '👥'
+                  : group.icone === 'home'
+                    ? '🏠'
+                    : group.icone === 'briefcase'
+                      ? '💼'
+                      : '📁',
+          })
+        )}
         onItemSelect={(item: any) => {
           const group = availableGroups?.find(g => g.id === item.id);
           if (group) handleGroupSelect(group);
         }}
-        currentItem={selectedGroup ? {
-          id: selectedGroup.id,
-          name: selectedGroup.nome,
-          description: selectedGroup.descricao,
-          color: selectedGroup.cor,
-          icon: selectedGroup.icone === 'building' ? '🏢' : 
-                selectedGroup.icone === 'users' ? '👥' : 
-                selectedGroup.icone === 'home' ? '🏠' : 
-                selectedGroup.icone === 'briefcase' ? '💼' : '📁'
-        } : null}
-        title="👥 Selecionar Grupo"
-        subtitle="Escolha o grupo que deseja usar"
-        icon="👥"
-        type="group"
+        currentItem={
+          selectedGroup
+            ? {
+                id: selectedGroup.id,
+                name: selectedGroup.nome,
+                description: selectedGroup.descricao,
+                color: selectedGroup.cor,
+                icon:
+                  selectedGroup.icone === 'building'
+                    ? '🏢'
+                    : selectedGroup.icone === 'users'
+                      ? '👥'
+                      : selectedGroup.icone === 'home'
+                        ? '🏠'
+                        : selectedGroup.icone === 'briefcase'
+                          ? '💼'
+                          : '📁',
+              }
+            : null
+        }
+        title='👥 Selecionar Grupo'
+        subtitle='Escolha o grupo que deseja usar'
+        icon='👥'
+        type='group'
       />
 
       {/* Modal de Seleção de Perfil */}
       <SelectionModal
         isOpen={showProfileModalLocal}
         onClose={() => setShowProfileModalLocal(false)}
-        items={(Array.isArray(availableProfiles) ? availableProfiles : []).map(profile => ({
-          id: profile.id,
-          name: profile.role,
-          description: profile.name,
-          color: profile.color,
-          avatar: profile.avatar,
-          role: profile.role
-        }))}
+        items={(Array.isArray(availableProfiles) ? availableProfiles : []).map(
+          profile => ({
+            id: profile.id,
+            name: profile.role,
+            description: profile.name,
+            color: profile.color,
+            avatar: profile.avatar,
+            role: profile.role,
+          })
+        )}
         onItemSelect={(item: any) => {
           const profile = availableProfiles?.find(p => p.id === item.id);
           if (profile) handleProfileSelect(profile);
         }}
-        currentItem={currentProfile ? {
-          id: currentProfile.id,
-          name: currentProfile.role,
-          description: currentProfile.name,
-          color: currentProfile.color,
-          avatar: currentProfile.avatar,
-          role: currentProfile.role
-        } : null}
-        title="👤 Selecionar Perfil"
-        subtitle="Escolha o perfil que deseja usar"
-        icon="👤"
-        type="profile"
+        currentItem={
+          currentProfile
+            ? {
+                id: currentProfile.id,
+                name: currentProfile.role,
+                description: currentProfile.name,
+                color: currentProfile.color,
+                avatar: currentProfile.avatar,
+                role: currentProfile.role,
+              }
+            : null
+        }
+        title='👤 Selecionar Perfil'
+        subtitle='Escolha o perfil que deseja usar'
+        icon='👤'
+        type='profile'
       />
     </>
   );

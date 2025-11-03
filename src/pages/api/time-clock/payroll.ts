@@ -5,11 +5,13 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       const currentUser = await getCurrentUser(req);
-      
+
       if (!currentUser) {
-        return res.status(401).json({ message: 'Token de autenticação necessário' });
+        return res
+          .status(401)
+          .json({ message: 'Token de autenticação necessário' });
       }
-      
+
       const userId = currentUser.userId;
 
       // Não existe modelo TransferenciaFolha no schema atual
@@ -22,7 +24,7 @@ export default async function handler(req, res) {
       const currentDate = new Date();
       const currentMonth = currentDate.getMonth() + 1;
       const currentYear = currentDate.getFullYear();
-      
+
       const upcomingTransfers: any[] = [];
 
       // Calcular total de transferências por mês (últimos 6 meses)
@@ -34,7 +36,7 @@ export default async function handler(req, res) {
       // Usar FolhaPagamento existente no schema
       const latestPayroll = await prisma.folhaPagamento.findFirst({
         where: { usuarioId: userId },
-        orderBy: { criadoEm: 'desc' }
+        orderBy: { criadoEm: 'desc' },
       });
 
       const payrollData = {

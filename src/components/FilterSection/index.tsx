@@ -14,8 +14,10 @@ const FilterContainer = styled.div<{ $theme?: any }>`
   border-radius: 16px;
   padding: 1.5rem;
   margin-bottom: 2rem;
-  box-shadow: 0 4px 16px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
-  border: 1px solid ${props => props.$theme?.colors?.primary || defaultColors.primary}20;
+  box-shadow: 0 4px 16px
+    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+  border: 1px solid
+    ${props => props.$theme?.colors?.primary || defaultColors.primary}20;
 `;
 
 const FilterTitle = styled.h3<{ $theme?: any }>`

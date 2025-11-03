@@ -94,11 +94,11 @@
 
 ## Contatos de Emergência
 
-| Função | Nome | Contato |
-| :--- | :--- | :--- |
+| Função                  | Nome   | Contato          |
+| :---------------------- | :----- | :--------------- |
 | Desenvolvedor Principal | [Nome] | [Email/Telefone] |
-| DBA | [Nome] | [Email/Telefone] |
-| DevOps | [Nome] | [Email/Telefone] |
+| DBA                     | [Nome] | [Email/Telefone] |
+| DevOps                  | [Nome] | [Email/Telefone] |
 
 ## Notas Adicionais
 

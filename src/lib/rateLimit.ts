@@ -12,17 +12,17 @@ interface RateLimitOptions {
    * Número máximo de requisições permitidas
    */
   maxRequests: number;
-  
+
   /**
    * Janela de tempo em milissegundos
    */
   windowMs: number;
-  
+
   /**
    * Mensagem de erro customizada
    */
   message?: string;
-  
+
   /**
    * Código de status HTTP para rate limit excedido
    */
@@ -46,10 +46,11 @@ const rateLimitCache = new LRUCache<string, RateLimitEntry>({
 function getClientIdentifier(req: NextApiRequest): string {
   // Tenta obter o IP real através de headers de proxy
   const forwarded = req.headers['x-forwarded-for'];
-  const ip = typeof forwarded === 'string' 
-    ? forwarded.split(',')[0].trim()
-    : req.socket.remoteAddress || 'unknown';
-  
+  const ip =
+    typeof forwarded === 'string'
+      ? forwarded.split(',')[0].trim()
+      : req.socket.remoteAddress || 'unknown';
+
   return ip;
 }
 
@@ -64,7 +65,11 @@ export function rateLimit(options: RateLimitOptions) {
     statusCode = 429,
   } = options;
 
-  return async (req: NextApiRequest, res: NextApiResponse, next?: () => void) => {
+  return async (
+    req: NextApiRequest,
+    res: NextApiResponse,
+    next?: () => void
+  ) => {
     const identifier = getClientIdentifier(req);
     const key = `rate_limit:${identifier}:${req.url}`;
     const now = Date.now();
@@ -87,7 +92,10 @@ export function rateLimit(options: RateLimitOptions) {
 
     // Adiciona headers informativos
     res.setHeader('X-RateLimit-Limit', maxRequests.toString());
-    res.setHeader('X-RateLimit-Remaining', Math.max(0, maxRequests - entry.count).toString());
+    res.setHeader(
+      'X-RateLimit-Remaining',
+      Math.max(0, maxRequests - entry.count).toString()
+    );
     res.setHeader('X-RateLimit-Reset', new Date(entry.resetTime).toISOString());
 
     // Verifica se excedeu o limite
@@ -136,7 +144,8 @@ export const rateLimiters = {
   api: rateLimit({
     maxRequests: 100,
     windowMs: 15 * 60 * 1000, // 15 minutos
-    message: 'Limite de requisições excedido. Tente novamente em alguns minutos.',
+    message:
+      'Limite de requisições excedido. Tente novamente em alguns minutos.',
   }),
 
   /**
@@ -154,7 +163,8 @@ export const rateLimiters = {
   upload: rateLimit({
     maxRequests: 10,
     windowMs: 60 * 60 * 1000, // 1 hora
-    message: 'Limite de uploads excedido. Aguarde antes de enviar mais arquivos.',
+    message:
+      'Limite de uploads excedido. Aguarde antes de enviar mais arquivos.',
   }),
 };
 

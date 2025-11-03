@@ -276,16 +276,13 @@ const ESocialDomesticoCompleto: React.FC = () => {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
     null
   );
-  const [isEmployeeModalNewOpen, setIsEmployeeModalNewOpen] =
-    useState(false);
-  const [isEmployerModalNewOpen, setIsEmployerModalNewOpen] =
-    useState(false);
+  const [isEmployeeModalNewOpen, setIsEmployeeModalNewOpen] = useState(false);
+  const [isEmployerModalNewOpen, setIsEmployerModalNewOpen] = useState(false);
   const [isPayrollUnifiedModalOpen, setIsPayrollUnifiedModalOpen] =
     useState(false);
   const [isTaxGuideUnifiedModalOpen, setIsTaxGuideUnifiedModalOpen] =
     useState(false);
-  const [isReportModalOpen, setIsReportModalOpen] =
-    useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   // useEffect removido - isClient não utilizado
 
@@ -293,8 +290,10 @@ const ESocialDomesticoCompleto: React.FC = () => {
   const loadInitialData = useCallback(async () => {
     try {
       // Usar serviço centralizado de dados
-      const { dataService } = await import('../data/centralized/services/dataService');
-      
+      const { dataService } = await import(
+        '../data/centralized/services/dataService'
+      );
+
       // Carregar funcionários do serviço centralizado
       const employeesResult = await dataService.getEmpregadosData();
       if (employeesResult.success && employeesResult.data) {
@@ -315,7 +314,7 @@ const ESocialDomesticoCompleto: React.FC = () => {
       try {
         const payrollResponse = await fetch('/api/payroll');
         const payrollResult = await payrollResponse.json();
-        
+
         if (payrollResult.success && payrollResult.data) {
           const mappedPayroll = payrollResult.data.map((item: any) => ({
             id: item.id,
@@ -342,7 +341,7 @@ const ESocialDomesticoCompleto: React.FC = () => {
       try {
         const taxGuidesResponse = await fetch('/api/tax-guides');
         const taxGuidesResult = await taxGuidesResponse.json();
-        
+
         if (taxGuidesResult.success && taxGuidesResult.data) {
           const mappedTaxGuides = taxGuidesResult.data.map((item: any) => ({
             id: item.id,
@@ -655,7 +654,8 @@ const ESocialDomesticoCompleto: React.FC = () => {
         currentPath={router.pathname}
       />
       <MainContent>
-        <WelcomeSection $theme={theme}
+        <WelcomeSection
+          $theme={theme}
           userAvatar={currentProfile?.avatar || 'U'}
           userName={currentProfile?.name || 'Usuário'}
           userRole={currentProfile?.role || 'Usuário'}
@@ -962,16 +962,20 @@ const ESocialDomesticoCompleto: React.FC = () => {
           isOpen={isEmployeeModalNewOpen}
           onClose={() => setIsEmployeeModalNewOpen(false)}
           onSave={handleSaveEmployee}
-          employee={selectedEmployee ? {
-            id: selectedEmployee.id,
-            nome: selectedEmployee.nome,
-            cpf: selectedEmployee.cpf,
-            email: selectedEmployee.contato?.email || '',
-            telefone: selectedEmployee.contato?.telefone || '',
-            cargo: selectedEmployee.cargo,
-            salario: selectedEmployee.salario,
-            dataAdmissao: selectedEmployee.dataAdmissao
-          } : undefined}
+          employee={
+            selectedEmployee
+              ? {
+                  id: selectedEmployee.id,
+                  nome: selectedEmployee.nome,
+                  cpf: selectedEmployee.cpf,
+                  email: selectedEmployee.contato?.email || '',
+                  telefone: selectedEmployee.contato?.telefone || '',
+                  cargo: selectedEmployee.cargo,
+                  salario: selectedEmployee.salario,
+                  dataAdmissao: selectedEmployee.dataAdmissao,
+                }
+              : undefined
+          }
           $theme={theme}
         />
 
@@ -987,20 +991,23 @@ const ESocialDomesticoCompleto: React.FC = () => {
           isOpen={isTaxGuideUnifiedModalOpen}
           onClose={() => setIsTaxGuideUnifiedModalOpen(false)}
           onSave={handleSaveTaxGuides}
-          $theme={theme} />
+          $theme={theme}
+        />
 
         <ReportModal
           isOpen={isReportModalOpen}
           onClose={() => setIsReportModalOpen(false)}
           onSave={handleSaveReports}
-          $theme={theme} />
+          $theme={theme}
+        />
 
         {/* Toast Container */}
         <EmployerModalNew
           isOpen={isEmployerModalNewOpen}
           onClose={() => setIsEmployerModalNewOpen(false)}
           onSave={handleSaveEmployer}
-          $theme={theme} />
+          $theme={theme}
+        />
 
         <ToastContainer
           position='top-right'

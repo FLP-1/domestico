@@ -24,9 +24,7 @@ import type {
 import { getESocialApiService } from '../services/esocialHybridApi';
 // Imports SOAP removidos - usando apenas gov.br OAuth2
 import { validateCpf } from '../utils/cpfValidator';
-import {
-  UnifiedCard,
-} from '../components/unified';
+import { UnifiedCard } from '../components/unified';
 import {
   OptimizedFormRow,
   OptimizedSectionTitle,
@@ -68,7 +66,10 @@ const SmallText = styled.div`
 `;
 
 const ApiStatusIndicator = styled.span<{ $isReal: boolean }>`
-  color: ${props => (props.$isReal ? (props.theme?.status?.success?.color || '#27ae60') : (props.theme?.status?.warning?.color || '#f39c12'))};
+  color: ${props =>
+    props.$isReal
+      ? props.theme?.status?.success?.color || '#27ae60'
+      : props.theme?.status?.warning?.color || '#f39c12'};
   font-weight: bold;
 `;
 
@@ -90,7 +91,10 @@ const SSLWarningDescription = styled.div`
 
 const DataSourceIndicator = styled.span<{ $isReal: boolean }>`
   font-size: 0.8rem;
-  color: ${props => (props.$isReal ? (props.theme?.status?.success?.color || '#27ae60') : (props.theme?.status?.warning?.color || '#f39c12'))};
+  color: ${props =>
+    props.$isReal
+      ? props.theme?.status?.success?.color || '#27ae60'
+      : props.theme?.status?.warning?.color || '#f39c12'};
   margin-left: 10px;
   font-weight: bold;
 `;
@@ -112,7 +116,11 @@ const SelectWrapper = styled.div`
 const Container = styled.div`
   display: flex;
   min-height: 100vh;
-  background: linear-gradient(135deg, ${props => props.theme?.background?.secondary || '#f5f7fa'} 0%, ${props => props.theme?.background?.tertiary || '#c3cfe2'} 100%);
+  background: linear-gradient(
+    135deg,
+    ${props => props.theme?.background?.secondary || '#f5f7fa'} 0%,
+    ${props => props.theme?.background?.tertiary || '#c3cfe2'} 100%
+  );
   animation: ${fadeIn} 0.6s ease-out;
 `;
 
@@ -1402,7 +1410,7 @@ const ESocialIntegration: React.FC = () => {
                   <OptimizedLabel htmlFor='employer-uf'>UF *</OptimizedLabel>
                   <OptimizedSelectStyled
                     id='employer-uf'
-                    aria-label="Selecionar UF"
+                    aria-label='Selecionar UF'
                     value={employerData.endereco.uf}
                     onChange={e =>
                       handleEmployerDataChange('endereco.uf', e.target.value)
@@ -1734,7 +1742,7 @@ const ESocialIntegration: React.FC = () => {
               </ConfigValue>
               <SelectWrapper>
                 <OptimizedSelectStyled
-                  aria-label="Selecionar ambiente"
+                  aria-label='Selecionar ambiente'
                   value={esocialConfig.environment}
                   onChange={e =>
                     setEsocialConfig(prev => ({

@@ -34,6 +34,7 @@ psql -h localhost -p 5433 -U userdom -d dom -c "\dt"
 ```
 
 **Esperado:**
+
 ```
  Schema |           Name           | Type  |  Owner
 --------+--------------------------+-------+---------
@@ -86,6 +87,7 @@ Test-Path src\pages\api\certificates\use.ts
 ## 5️⃣ Segurança
 
 - [ ] ✅ Senhas criptografadas (AES-256-GCM)
+
   ```sql
   -- A senha NO BANCO deve estar criptografada (hash longo)
   SELECT LENGTH(senha_hash) > 50 FROM certificados_digitais;
@@ -93,6 +95,7 @@ Test-Path src\pages\api\certificates\use.ts
   ```
 
 - [ ] ✅ Dados mascarados na API
+
   ```powershell
   # Testar API (quando servidor rodar)
   curl http://localhost:3000/api/certificates
@@ -100,6 +103,7 @@ Test-Path src\pages\api\certificates\use.ts
   ```
 
 - [ ] ✅ Histórico de acessos funcionando
+
   ```sql
   SELECT COUNT(*) FROM certificados_historico WHERE acao = 'CRIACAO';
   -- Resultado esperado: >= 1
@@ -123,7 +127,7 @@ Test-Path src\pages\api\certificates\use.ts
 
 ```sql
 -- Verificar campos LGPD
-SELECT 
+SELECT
   consentimentoLGPD,
   dataConsentimentoLGPD,
   ipCadastro
@@ -135,17 +139,20 @@ FROM certificados_digitais;
 ## 7️⃣ Funcionalidades
 
 ### Upload de Certificado
+
 - [ ] ✅ Aceita arquivo .pfx
 - [ ] ✅ Criptografa senha automaticamente
 - [ ] ✅ Gera hash SHA-256 do arquivo
 - [ ] ✅ Registra no histórico
 
 ### Listagem
+
 - [ ] ✅ Retorna certificados ativos
 - [ ] ✅ Mascara dados sensíveis
 - [ ] ✅ Mostra validade do certificado
 
 ### Uso (Descriptografia)
+
 - [ ] ✅ Valida se certificado está ativo
 - [ ] ✅ Valida se não está revogado
 - [ ] ✅ Valida se não está vencido
@@ -154,6 +161,7 @@ FROM certificados_digitais;
 - [ ] ✅ Incrementa contador de uso
 
 ### Revogação
+
 - [ ] ✅ Marca como revogado (não deleta)
 - [ ] ✅ Registra motivo
 - [ ] ✅ Registra no histórico
@@ -163,8 +171,9 @@ FROM certificados_digitais;
 ## 8️⃣ Validação de Senhas
 
 ### Senha NO BANCO (deve estar criptografada):
+
 ```sql
-SELECT 
+SELECT
   nome,
   LEFT(senha_hash, 20) || '...' as senha_parcial,
   LENGTH(senha_hash) as tamanho_hash
@@ -172,6 +181,7 @@ FROM certificados_digitais;
 ```
 
 **Esperado:**
+
 ```
  nome                          | senha_parcial              | tamanho_hash
 -------------------------------|----------------------------|-------------
@@ -186,17 +196,22 @@ FROM certificados_digitais;
 ## 9️⃣ Testes Funcionais
 
 ### Teste 1: Sincronizar Banco
+
 ```powershell
 npx prisma generate
 npx prisma db push
 ```
+
 **Esperado:** ✅ Sem erros
 
 ### Teste 2: Executar Seed
+
 ```powershell
 npx tsx prisma/seed.ts
 ```
-**Esperado:** 
+
+**Esperado:**
+
 ```
 🌱 Iniciando seed...
 📋 Criando perfis...
@@ -208,9 +223,10 @@ npx tsx prisma/seed.ts
 ```
 
 ### Teste 3: Consultar Dados
+
 ```powershell
 psql -h localhost -p 5433 -U userdom -d dom -c "
-SELECT 
+SELECT
   e.nome as empregador,
   c.nome as certificado,
   c.tipo,
@@ -222,6 +238,7 @@ JOIN empregadores e ON e.id = c.empregador_id;
 ```
 
 **Esperado:**
+
 ```
      empregador        |          certificado           |   tipo    | data_validade | ativo
 -----------------------|--------------------------------|-----------|---------------|-------
@@ -243,8 +260,9 @@ JOIN empregadores e ON e.id = c.empregador_id;
 ## 📊 Relatórios de Validação
 
 ### Relatório 1: Status Geral
+
 ```sql
-SELECT 
+SELECT
   COUNT(*) as total_certificados,
   SUM(CASE WHEN ativo THEN 1 ELSE 0 END) as ativos,
   SUM(CASE WHEN revogado THEN 1 ELSE 0 END) as revogados,
@@ -253,8 +271,9 @@ FROM certificados_digitais;
 ```
 
 ### Relatório 2: Auditoria LGPD
+
 ```sql
-SELECT 
+SELECT
   acao,
   COUNT(*) as total,
   COUNT(DISTINCT certificado_id) as certificados_diferentes
@@ -263,10 +282,11 @@ GROUP BY acao;
 ```
 
 ### Relatório 3: Segurança
+
 ```sql
-SELECT 
+SELECT
   'Senhas Criptografadas' as verificacao,
-  CASE 
+  CASE
     WHEN MIN(LENGTH(senha_hash)) > 50 THEN '✅ SIM'
     ELSE '❌ NÃO'
   END as status
@@ -274,9 +294,9 @@ FROM certificados_digitais
 
 UNION ALL
 
-SELECT 
+SELECT
   'Consentimento LGPD',
-  CASE 
+  CASE
     WHEN COUNT(*) = SUM(CASE WHEN consentimento_lgpd THEN 1 ELSE 0 END) THEN '✅ SIM'
     ELSE '⚠️ PARCIAL'
   END
@@ -310,15 +330,19 @@ Se TODOS os itens acima estiverem marcados:
 ## 🆘 Problemas Comuns
 
 ### ❌ Problema: Tabelas não foram criadas
+
 **Solução:**
+
 ```powershell
 npx prisma db push --force-reset
 npx tsx prisma/seed.ts
 ```
 
 ### ❌ Problema: Senha em texto claro no banco
+
 **Causa:** Seed antigo executado
 **Solução:**
+
 ```powershell
 # Limpar e recriar
 npx prisma migrate reset --force
@@ -326,15 +350,19 @@ npx tsx prisma/seed.ts
 ```
 
 ### ❌ Problema: CERTIFICATE_MASTER_KEY não encontrada
+
 **Solução:**
+
 ```powershell
 # Adicionar ao env.local
 echo 'CERTIFICATE_MASTER_KEY=dom_master_key_certificate_encryption_2025_secure_v1' >> env.local
 ```
 
 ### ❌ Problema: API retorna erro 500
+
 **Causa:** Banco não sincronizado
 **Solução:**
+
 ```powershell
 npx prisma generate
 npx prisma db push
@@ -355,4 +383,3 @@ Se algo não está funcionando:
 
 **Data**: 2025-10-02  
 **Versão**: DOM v1.0.0-final
-

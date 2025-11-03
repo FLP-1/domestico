@@ -9,6 +9,7 @@ Remover completamente as chamadas automáticas de geolocalização enfraquece o 
 ### Camada 1: Geolocalização Estratégica (Respeita Políticas)
 
 #### 1.1 Solicitação no Login (Primeira Interação)
+
 - ✅ **Momento**: Quando usuário faz login (gesto do usuário: `onSubmit`)
 - ✅ **Objetivo**: Obter permissão persistente para sessão
 - ✅ **Implementação**: `requestGeolocationPermission()` já existe em `login.tsx`
@@ -18,27 +19,29 @@ Remover completamente as chamadas automáticas de geolocalização enfraquece o 
 // ✅ CORRETO: No login (gesto do usuário)
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault(); // Gesto do usuário
-  
+
   // Solicitar permissão (dispara popup)
   await requestGeolocationPermission();
-  
+
   // Continuar com login...
 };
 ```
 
 #### 1.2 Captura em Ações Críticas
+
 - ✅ **Momentos**: Antes de registrar ponto (botão clicado)
 - ✅ **Implementação**: Já existe em `time-clock.tsx` via `handleTimeRecord`
 - ✅ **Vantagem**: Geolocalização sempre capturada quando realmente importa
 
 ```typescript
 // ✅ CORRETO: No clique do botão (gesto do usuário)
-<RegisterButton 
+<RegisterButton
   onClick={(locationData) => handleTimeRecord(locationData, 'entrada')}
 />
 ```
 
 #### 1.3 Cache Inteligente
+
 - ✅ **Estratégia**: Usar última localização conhecida se < 1 minuto
 - ✅ **Benefício**: Evita múltiplas solicitações desnecessárias
 - ✅ **Fallback**: Se cache expirou, solicitar nova captura (em resposta a gesto)
@@ -46,11 +49,13 @@ const handleSubmit = async (e: React.FormEvent) => {
 ### Camada 2: **REMOVIDA** - Alternativas à Geolocalização GPS
 
 #### ❌ WiFi SSID Fingerprinting - REMOVIDO
+
 - ❌ **Problema**: Precisão insuficiente - não confiável para antifraude
 - ❌ **Risco**: Pode mascarar fraudes (fraudador pode usar mesma rede WiFi)
 - ❌ **Decisão**: Não usado mais no sistema
 
 #### ❌ Análise Contextual (Histórico) - REMOVIDO
+
 - ❌ **Problema**: Pode mascarar fraude (fraudador pode usar localização histórica legítima)
 - ❌ **Risco**: Baixa segurança - histórico não garante localização atual
 - ❌ **Decisão**: Não usado mais no sistema
@@ -60,21 +65,25 @@ const handleSubmit = async (e: React.FormEvent) => {
 ### Camada 3: Métricas Sempre Disponíveis
 
 #### 3.1 Device Fingerprinting (30% do score)
+
 - ✅ **Sempre disponível**: Hardware, browser, plugins, timezone
 - ✅ **Robustez**: Muito difícil de falsificar completamente
 - ✅ **Detecção**: Dispositivo novo = risco aumentado
 
 #### 3.2 IP Analysis (30% do score)
+
 - ✅ **Sempre disponível**: Endereço IP do cliente
 - ✅ **Detecções**: VPN, Proxy, Datacenter, Tor
 - ✅ **Robustez**: IP novo ou suspeito = risco alto
 
 #### 3.3 Análise Comportamental (20% do score)
+
 - ✅ **Métricas**: Velocidade de ações, padrão temporal, regularidade
 - ✅ **Detecção**: Bots, scripts automatizados
 - ✅ **Sempre disponível**: Não requer permissões especiais
 
 #### 3.4 Análise Temporal (10% do score)
+
 - ✅ **Métricas**: Horário atípico, dia da semana, intervalo entre ações
 - ✅ **Detecção**: Ações fora do padrão do usuário
 - ✅ **Sempre disponível**: Não requer dados externos
@@ -82,6 +91,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 ### Camada 4: Sistema Adaptativo de Scoring
 
 #### 4.1 Pesos Dinâmicos
+
 O sistema ajusta os pesos baseado na disponibilidade de dados:
 
 ```typescript
@@ -104,10 +114,12 @@ O sistema ajusta os pesos baseado na disponibilidade de dados:
 ```
 
 #### 4.2 Confiança Geral
+
 ```typescript
 let confiancaGeral = 0.7; // Base
 
-if (GPS_disponível) confiancaGeral += 0.2; // +20% com GPS
+if (GPS_disponível)
+  confiancaGeral += 0.2; // +20% com GPS
 else confiancaGeral -= 0.1; // -10% sem GPS
 
 if (dispositivo_confiável) confiancaGeral += 0.1;
@@ -118,13 +130,15 @@ if (dispositivo_confiável) confiancaGeral += 0.1;
 ### Camada 5: Implementação Prática
 
 #### 5.1 Hook: `useStrategicGeolocation`
+
 ```typescript
-const { capture, requestPermission, captureForCriticalAction } = useStrategicGeolocation({
-  requestPersistentPermission: true, // Solicitar no primeiro uso
-  immediateCapture: true,
-  timeout: 10000,
-  maximumAge: 60000 // Cache de 1 minuto
-});
+const { capture, requestPermission, captureForCriticalAction } =
+  useStrategicGeolocation({
+    requestPersistentPermission: true, // Solicitar no primeiro uso
+    immediateCapture: true,
+    timeout: 10000,
+    maximumAge: 60000, // Cache de 1 minuto
+  });
 
 // No login
 await requestPermission();
@@ -136,6 +150,7 @@ await captureForCriticalAction('registro_ponto', async () => {
 ```
 
 #### 5.2 Integração com Sistema de Risco
+
 ```typescript
 // Em vez de:
 const risco = await analisarRisco(dados);
@@ -147,21 +162,21 @@ const risco = await analisarRiscoAdaptativo({
   horarioEsperado: isHorarioEsperado(),
   padraoComportamental: analisarComportamento(),
   dispositivoConfiavel: isDispositivoConfiavel(),
-  ultimaLocalizacaoConhecida: await buscarUltimaLocalizacao()
+  ultimaLocalizacaoConhecida: await buscarUltimaLocalizacao(),
 });
 ```
 
 ## 📊 Comparação: Antes vs Depois
 
-| Métrica | Sem Geoloc Auto | Com Estratégia Híbrida |
-|---------|----------------|----------------------|
-| **Cobertura de Detecção** | 60% | 95% ✅ |
-| **Respeita Políticas** | ❌ Não | ✅ Sim |
-| **Geolocalização GPS** | 0% do score | 20% (quando disponível) |
-| **WiFi SSID** | Não usado | 15% (quando GPS não disponível) |
-| **Análise Contextual** | Não usada | 10% (fallback) |
-| **Confiança Geral** | 0.7 | 0.7 - 1.0 ✅ |
-| **Detecção de Fraude** | Básica | Robusta ✅ |
+| Métrica                   | Sem Geoloc Auto | Com Estratégia Híbrida          |
+| ------------------------- | --------------- | ------------------------------- |
+| **Cobertura de Detecção** | 60%             | 95% ✅                          |
+| **Respeita Políticas**    | ❌ Não          | ✅ Sim                          |
+| **Geolocalização GPS**    | 0% do score     | 20% (quando disponível)         |
+| **WiFi SSID**             | Não usado       | 15% (quando GPS não disponível) |
+| **Análise Contextual**    | Não usada       | 10% (fallback)                  |
+| **Confiança Geral**       | 0.7             | 0.7 - 1.0 ✅                    |
+| **Detecção de Fraude**    | Básica          | Robusta ✅                      |
 
 ## 🎯 Resultado Final
 
@@ -201,4 +216,3 @@ const risco = await analisarRiscoAdaptativo({
 2. Migrar APIs para usar análise adaptativa
 3. Testar em diferentes cenários (com/sem GPS, diferentes navegadores)
 4. Monitorar métricas de detecção de fraude
-

@@ -17001,658 +17001,352 @@
     {
       "file": "src\\components\\ActionIcon\\index.tsx",
       "problems": 24,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames"
-      ]
+      "types": ["hex", "rgba", "colorNames"]
     },
     {
       "file": "src\\components\\CertificateUploadModal.tsx",
       "problems": 20,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\components\\ClockInButton\\index.tsx",
       "problems": 15,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames"
-      ]
+      "types": ["hex", "rgba", "colorNames"]
     },
     {
       "file": "src\\components\\DataList.tsx",
       "problems": 16,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\components\\EmployeeModal.tsx",
       "problems": 13,
-      "types": [
-        "hex",
-        "rgba",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "backgroundColors"]
     },
     {
       "file": "src\\components\\EmployerModal.tsx",
       "problems": 42,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\components\\FormComponents\\index.tsx",
       "problems": 11,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\components\\GeofencingModal.tsx",
       "problems": 30,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "styledColors",
-        "borderColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "styledColors", "borderColors"]
     },
     {
       "file": "src\\components\\GroupSelector\\index.tsx",
       "problems": 16,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\components\\Layout.tsx",
       "problems": 23,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "styledColors",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "styledColors", "backgroundColors"]
     },
     {
       "file": "src\\components\\NotificationBadge\\index.tsx",
       "problems": 15,
-      "types": [
-        "hex",
-        "colorNames"
-      ]
+      "types": ["hex", "colorNames"]
     },
     {
       "file": "src\\components\\PasswordChangeModal.tsx",
       "problems": 26,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\components\\PayrollModalNew.tsx",
       "problems": 34,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\components\\PayrollTransferCard\\index.tsx",
       "problems": 15,
-      "types": [
-        "hex",
-        "rgba",
-        "styledColors",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "styledColors", "backgroundColors"]
     },
     {
       "file": "src\\components\\PendingApprovalModal\\index.tsx",
       "problems": 14,
-      "types": [
-        "hex",
-        "rgba"
-      ]
+      "types": ["hex", "rgba"]
     },
     {
       "file": "src\\components\\PendingRecordsList\\index.tsx",
       "problems": 18,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\components\\ProfileSelectionModal.tsx",
       "problems": 30,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\components\\ProxyUploadModal.tsx",
       "problems": 28,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\components\\ReportModal.tsx",
       "problems": 20,
-      "types": [
-        "hex",
-        "rgba",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "backgroundColors"]
     },
     {
       "file": "src\\components\\SelectionModal.tsx",
       "problems": 38,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "styledColors",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "styledColors", "backgroundColors"]
     },
     {
       "file": "src\\components\\shared\\mixins.ts",
       "problems": 29,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames"
-      ]
+      "types": ["hex", "rgba", "colorNames"]
     },
     {
       "file": "src\\components\\shared\\styles.ts",
       "problems": 81,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\components\\Sidebar\\index.tsx",
       "problems": 30,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\components\\StatusCard\\index.tsx",
       "problems": 16,
-      "types": [
-        "hex",
-        "rgba",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "backgroundColors"]
     },
     {
       "file": "src\\components\\TaxGuideModalNew.tsx",
       "problems": 26,
-      "types": [
-        "hex",
-        "rgba",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "backgroundColors"]
     },
     {
       "file": "src\\components\\TermsAcceptanceModal.tsx",
       "problems": 41,
-      "types": [
-        "hex",
-        "colorNames",
-        "styledColors",
-        "backgroundColors"
-      ]
+      "types": ["hex", "colorNames", "styledColors", "backgroundColors"]
     },
     {
       "file": "src\\components\\TimeRecordCard\\index.tsx",
       "problems": 16,
-      "types": [
-        "hex",
-        "colorNames"
-      ]
+      "types": ["hex", "colorNames"]
     },
     {
       "file": "src\\components\\TutorialComponent.tsx",
       "problems": 55,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "styledColors",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "styledColors", "backgroundColors"]
     },
     {
       "file": "src\\components\\UnifiedButton\\index.tsx",
       "problems": 24,
-      "types": [
-        "hex",
-        "colorNames"
-      ]
+      "types": ["hex", "colorNames"]
     },
     {
       "file": "src\\components\\UnifiedCard\\index.tsx",
       "problems": 37,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames"
-      ]
+      "types": ["hex", "rgba", "colorNames"]
     },
     {
       "file": "src\\components\\UnifiedModal\\index.tsx",
       "problems": 17,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "styledColors",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "styledColors", "backgroundColors"]
     },
     {
       "file": "src\\components\\UserManagementForm\\index.tsx",
       "problems": 31,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\components\\ValidationModal.tsx",
       "problems": 34,
-      "types": [
-        "hex",
-        "colorNames"
-      ]
+      "types": ["hex", "colorNames"]
     },
     {
       "file": "src\\components\\WelcomeSection\\index.tsx",
       "problems": 13,
-      "types": [
-        "hex",
-        "colorNames"
-      ]
+      "types": ["hex", "colorNames"]
     },
     {
       "file": "src\\config\\default-colors.ts",
       "problems": 19,
-      "types": [
-        "hex",
-        "rgba"
-      ]
+      "types": ["hex", "rgba"]
     },
     {
       "file": "src\\design-system\\components\\Modal.tsx",
       "problems": 16,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\design-system\\components\\UnifiedModal.tsx",
       "problems": 16,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\design-system\\tokens\\colors-simplificado.ts",
       "problems": 11,
-      "types": [
-        "hex",
-        "colorNames"
-      ]
+      "types": ["hex", "colorNames"]
     },
     {
       "file": "src\\design-system\\tokens\\colors.ts",
       "problems": 36,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames"
-      ]
+      "types": ["hex", "rgba", "colorNames"]
     },
     {
       "file": "src\\design-system\\tokens\\geofencing-colors.ts",
       "problems": 40,
-      "types": [
-        "hex",
-        "colorNames"
-      ]
+      "types": ["hex", "colorNames"]
     },
     {
       "file": "src\\design-system\\tokens\\shadows.ts",
       "problems": 14,
-      "types": [
-        "rgba"
-      ]
+      "types": ["rgba"]
     },
     {
       "file": "src\\hooks\\useTheme.ts",
       "problems": 74,
-      "types": [
-        "hex",
-        "rgba"
-      ]
+      "types": ["hex", "rgba"]
     },
     {
       "file": "src\\lib\\emailConfig.ts",
       "problems": 12,
-      "types": [
-        "hex",
-        "colorNames",
-        "styledColors"
-      ]
+      "types": ["hex", "colorNames", "styledColors"]
     },
     {
       "file": "src\\lib\\twilioEmailConfig.ts",
       "problems": 24,
-      "types": [
-        "hex",
-        "colorNames",
-        "styledColors",
-        "backgroundColors"
-      ]
+      "types": ["hex", "colorNames", "styledColors", "backgroundColors"]
     },
     {
       "file": "src\\pages\\admin\\antifraude.tsx",
       "problems": 39,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "styledColors",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "styledColors", "backgroundColors"]
     },
     {
       "file": "src\\pages\\alert-management.tsx",
       "problems": 48,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\pages\\communication.tsx",
       "problems": 57,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames"
-      ]
+      "types": ["hex", "rgba", "colorNames"]
     },
     {
       "file": "src\\pages\\dashboard.tsx",
       "problems": 13,
-      "types": [
-        "hex",
-        "rgba",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "backgroundColors"]
     },
     {
       "file": "src\\pages\\diagnostico-esocial.tsx",
       "problems": 36,
-      "types": [
-        "colorNames"
-      ]
+      "types": ["colorNames"]
     },
     {
       "file": "src\\pages\\document-management.tsx",
       "problems": 32,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\pages\\esocial-demo.tsx",
       "problems": 44,
-      "types": [
-        "colorNames"
-      ]
+      "types": ["colorNames"]
     },
     {
       "file": "src\\pages\\esocial-domestico-completo.tsx",
       "problems": 28,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\pages\\esocial-fluxo-completo.tsx",
       "problems": 39,
-      "types": [
-        "colorNames"
-      ]
+      "types": ["colorNames"]
     },
     {
       "file": "src\\pages\\esocial-integration.tsx",
       "problems": 78,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "styledColors",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "styledColors", "backgroundColors"]
     },
     {
       "file": "src\\pages\\loan-management.tsx",
       "problems": 69,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\pages\\login.tsx",
       "problems": 55,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\pages\\monitoring-dashboard.tsx",
       "problems": 46,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "styledColors",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "styledColors", "backgroundColors"]
     },
     {
       "file": "src\\pages\\payroll-management.tsx",
       "problems": 79,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\pages\\privacy.tsx",
       "problems": 11,
-      "types": [
-        "hex",
-        "colorNames"
-      ]
+      "types": ["hex", "colorNames"]
     },
     {
       "file": "src\\pages\\register.tsx",
       "problems": 46,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames"
-      ]
+      "types": ["hex", "rgba", "colorNames"]
     },
     {
       "file": "src\\pages\\shopping-management-backup.tsx",
       "problems": 29,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\pages\\shopping-management.tsx",
       "problems": 22,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames"
-      ]
+      "types": ["hex", "rgba", "colorNames"]
     },
     {
       "file": "src\\pages\\subscription-plans.tsx",
       "problems": 66,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\pages\\task-management.tsx",
       "problems": 35,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\pages\\terms-management.tsx",
       "problems": 27,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "backgroundColors"]
     },
     {
       "file": "src\\pages\\terms.tsx",
       "problems": 11,
-      "types": [
-        "hex",
-        "colorNames"
-      ]
+      "types": ["hex", "colorNames"]
     },
     {
       "file": "src\\pages\\test-geolocation.tsx",
       "problems": 30,
-      "types": [
-        "hex",
-        "colorNames",
-        "styledColors",
-        "backgroundColors"
-      ]
+      "types": ["hex", "colorNames", "styledColors", "backgroundColors"]
     },
     {
       "file": "src\\pages\\time-clock-simple.tsx",
       "problems": 13,
-      "types": [
-        "hex",
-        "colorNames"
-      ]
+      "types": ["hex", "colorNames"]
     },
     {
       "file": "src\\pages\\time-clock.tsx",
       "problems": 18,
-      "types": [
-        "hex",
-        "rgba",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "backgroundColors"]
     },
     {
       "file": "src\\pages\\welcome-tutorial.tsx",
       "problems": 65,
-      "types": [
-        "hex",
-        "rgba",
-        "colorNames",
-        "styledColors",
-        "backgroundColors"
-      ]
+      "types": ["hex", "rgba", "colorNames", "styledColors", "backgroundColors"]
     }
   ],
   "correctionPlan": {

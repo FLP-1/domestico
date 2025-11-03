@@ -45,7 +45,7 @@ export const GroupProvider: React.FC<GroupProviderProps> = ({ children }) => {
   const selectGroup = (group: Group) => {
     setSelectedGroup(group);
     setShowGroupModal(false);
-    
+
     // Salvar no localStorage
     localStorage.setItem('selectedGroup', JSON.stringify(group));
   };
@@ -72,12 +72,10 @@ export const GroupProvider: React.FC<GroupProviderProps> = ({ children }) => {
     showGroupModal,
     setShowGroupModal,
     loading,
-    setLoading
+    setLoading,
   };
 
   return (
-    <GroupContext.Provider value={value}>
-      {children}
-    </GroupContext.Provider>
+    <GroupContext.Provider value={value}>{children}</GroupContext.Provider>
   );
 };

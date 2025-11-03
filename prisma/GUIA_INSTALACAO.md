@@ -212,31 +212,31 @@ No Prisma Studio, verifique:
 Criar arquivo `test-db.ts`:
 
 ```typescript
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 async function main() {
   // Buscar todos os perfis
-  const perfis = await prisma.perfil.findMany()
-  console.log('Perfis:', perfis)
+  const perfis = await prisma.perfil.findMany();
+  console.log('Perfis:', perfis);
 
   // Buscar usuários
   const usuarios = await prisma.usuario.findMany({
     include: {
       perfis: {
         include: {
-          perfil: true
-        }
-      }
-    }
-  })
-  console.log('Usuários:', usuarios)
+          perfil: true,
+        },
+      },
+    },
+  });
+  console.log('Usuários:', usuarios);
 }
 
 main()
   .catch(console.error)
-  .finally(() => prisma.$disconnect())
+  .finally(() => prisma.$disconnect());
 ```
 
 Executar:
@@ -312,22 +312,22 @@ psql -U dom_user -h localhost -d dom_db < backup_20240101.sql
 Criar `scripts/backup-db.js`:
 
 ```javascript
-const { exec } = require('child_process')
-const path = require('path')
+const { exec } = require('child_process');
+const path = require('path');
 
-const backupDir = path.join(__dirname, '..', 'backups')
-const date = new Date().toISOString().split('T')[0]
-const backupFile = path.join(backupDir, `backup_${date}.sql`)
+const backupDir = path.join(__dirname, '..', 'backups');
+const date = new Date().toISOString().split('T')[0];
+const backupFile = path.join(backupDir, `backup_${date}.sql`);
 
-const command = `pg_dump -U dom_user -h localhost -d dom_db > "${backupFile}"`
+const command = `pg_dump -U dom_user -h localhost -d dom_db > "${backupFile}"`;
 
 exec(command, (error, stdout, stderr) => {
   if (error) {
-    console.error(`❌ Erro no backup: ${error}`)
-    return
+    console.error(`❌ Erro no backup: ${error}`);
+    return;
   }
-  console.log(`✅ Backup criado: ${backupFile}`)
-})
+  console.log(`✅ Backup criado: ${backupFile}`);
+});
 ```
 
 ---
@@ -493,4 +493,3 @@ npx ts-node test-db.ts
 **Versão:** 2.2.1  
 **Última Atualização:** 2024  
 **Suporte:** Sistema DOM
-

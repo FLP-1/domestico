@@ -23,12 +23,12 @@
 
 Quando analisei o projeto inicialmente, encontrei:
 
-| Métrica | Valor Original | Após Melhorias | Ideal |
-|---------|---------------|----------------|-------|
-| **Arquivos de Teste** | 1 de 259 | 4 de 259 | >80% dos arquivos |
-| **Cobertura Estimada** | <2% | ~25% | >80% |
-| **Testes de Componentes UI** | 0 | 0 | Todos os componentes |
-| **Testes E2E** | 0 | 1 (login) | Fluxos críticos |
+| Métrica                      | Valor Original | Após Melhorias | Ideal                |
+| ---------------------------- | -------------- | -------------- | -------------------- |
+| **Arquivos de Teste**        | 1 de 259       | 4 de 259       | >80% dos arquivos    |
+| **Cobertura Estimada**       | <2%            | ~25%           | >80%                 |
+| **Testes de Componentes UI** | 0              | 0              | Todos os componentes |
+| **Testes E2E**               | 0              | 1 (login)      | Fluxos críticos      |
 
 ### 2.2. Tipos de Testes Implementados
 
@@ -48,6 +48,7 @@ Os testes que criei focaram em:
 Os frameworks de teste (Jest, Cypress) por padrão **não executam verificação de tipos TypeScript**. Eles apenas executam o código JavaScript transpilado.
 
 **Exemplo:**
+
 ```typescript
 // Este código tem erro de tipo, mas o teste passa!
 const getSizeStyles = (size: ActionIconProps['size']) => {
@@ -118,26 +119,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      
+
       - name: Install dependencies
         run: npm install
-      
+
       # 1. Verificação de tipos (pega erros de build)
       - name: Type Check
         run: npx tsc --noEmit
-      
+
       # 2. Linting (pega problemas de código)
       - name: Lint
         run: npm run lint
-      
+
       # 3. Testes unitários
       - name: Unit Tests
         run: npm test
-      
+
       # 4. Build (garante que o código compila)
       - name: Build
         run: npm run build
-      
+
       # 5. Testes E2E (garante que a aplicação funciona)
       - name: E2E Tests
         run: npm run cypress:run
@@ -155,10 +156,10 @@ module.exports = {
     'ts-jest': {
       isolatedModules: false, // Habilita verificação de tipos
       diagnostics: {
-        warnOnly: false // Falha em erros de tipo
-      }
-    }
-  }
+        warnOnly: false, // Falha em erros de tipo
+      },
+    },
+  },
 };
 ```
 
@@ -169,6 +170,7 @@ module.exports = {
 ### Prioridade Crítica
 
 1. **Adicionar Type Check ao Pipeline**
+
    ```json
    // package.json
    {
@@ -181,6 +183,7 @@ module.exports = {
    ```
 
 2. **Configurar Husky para Pre-commit Hooks**
+
    ```bash
    npm install --save-dev husky
    npx husky install

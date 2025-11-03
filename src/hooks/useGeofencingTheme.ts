@@ -3,7 +3,7 @@ import { geofencingColors } from '../design-system/tokens/geofencing-colors';
 
 export const useGeofencingTheme = () => {
   const { config, loading, error } = useSystemConfig();
-  
+
   // Se as configurações do sistema estão carregando ou há erro, usar cores padrão
   if (loading || error || !config) {
     return {
@@ -12,7 +12,7 @@ export const useGeofencingTheme = () => {
       error,
     };
   }
-  
+
   // Mesclar cores do sistema com cores específicas de geofencing
   const mergedColors = {
     ...geofencingColors,
@@ -66,7 +66,7 @@ export const useGeofencingTheme = () => {
       red: config.colors.error,
     },
   };
-  
+
   return {
     colors: mergedColors,
     loading,

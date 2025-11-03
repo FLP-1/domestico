@@ -74,12 +74,13 @@ const RecordItem = styled.div<{ $theme?: any }>`
   border-radius: 12px;
   padding: 1rem;
   margin-bottom: 1rem;
-  border-left: 4px solid ${props => props.theme?.status?.warning?.color || '#ffc107'};
+  border-left: 4px solid
+    ${props => props.theme?.status?.warning?.color || '#ffc107'};
   transition: all 0.3s ease;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -162,12 +163,12 @@ const PendingRecordsList: React.FC<PendingRecordsListProps> = ({ theme }) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await fetch('/api/time-clock/pending-approval');
       if (!response.ok) {
         throw new Error('Erro ao carregar registros pendentes');
       }
-      
+
       const data = await response.json();
       setPendingRecords(data.data || []); // ✅ Corrigido: usar data.data em vez de data.records
     } catch (err) {
@@ -181,7 +182,10 @@ const PendingRecordsList: React.FC<PendingRecordsListProps> = ({ theme }) => {
     loadPendingRecords();
   }, []);
 
-  const handleApproval = async (recordId: string, action: 'approve' | 'reject') => {
+  const handleApproval = async (
+    recordId: string,
+    action: 'approve' | 'reject'
+  ) => {
     try {
       const response = await fetch('/api/time-clock/pending-approval', {
         method: 'POST',
@@ -195,17 +199,21 @@ const PendingRecordsList: React.FC<PendingRecordsListProps> = ({ theme }) => {
       });
 
       if (!response.ok) {
-        throw new Error(`Erro ao ${action === 'approve' ? 'aprovar' : 'rejeitar'} registro`);
+        throw new Error(
+          `Erro ao ${action === 'approve' ? 'aprovar' : 'rejeitar'} registro`
+        );
       }
 
       // Recarregar lista após ação
       await loadPendingRecords();
-      
+
       // Disparar evento para atualizar contadores
       window.dispatchEvent(new CustomEvent('timeClockNotificationsUpdated'));
-      
     } catch (err) {
-      console.error(`Erro ao ${action === 'approve' ? 'aprovar' : 'rejeitar'} registro:`, err);
+      console.error(
+        `Erro ao ${action === 'approve' ? 'aprovar' : 'rejeitar'} registro:`,
+        err
+      );
       // Usar toast em vez de alert para melhor UX
       // toast.error(`Erro ao ${action === 'approve' ? 'aprovar' : 'rejeitar'} registro`);
     }
@@ -223,12 +231,12 @@ const PendingRecordsList: React.FC<PendingRecordsListProps> = ({ theme }) => {
 
   const getTypeLabel = (tipo: string) => {
     const labels: Record<string, string> = {
-      'entrada': 'Entrada',
-      'saida_almoco': 'Saída Almoço',
-      'retorno_almoco': 'Retorno Almoço',
-      'saida': 'Saída',
-      'entrada_extra': 'Entrada Extra',
-      'saida_extra': 'Saída Extra',
+      entrada: 'Entrada',
+      saida_almoco: 'Saída Almoço',
+      retorno_almoco: 'Retorno Almoço',
+      saida: 'Saída',
+      entrada_extra: 'Entrada Extra',
+      saida_extra: 'Saída Extra',
     };
     return labels[tipo] || tipo;
   };
@@ -237,7 +245,7 @@ const PendingRecordsList: React.FC<PendingRecordsListProps> = ({ theme }) => {
     return (
       <ListContainer $theme={theme}>
         <LoadingState>
-          <AccessibleEmoji emoji="⏳" label="Carregando" />
+          <AccessibleEmoji emoji='⏳' label='Carregando' />
           Carregando registros pendentes...
         </LoadingState>
       </ListContainer>
@@ -248,7 +256,7 @@ const PendingRecordsList: React.FC<PendingRecordsListProps> = ({ theme }) => {
     return (
       <ListContainer $theme={theme}>
         <ErrorState>
-          <AccessibleEmoji emoji="❌" label="Erro" />
+          <AccessibleEmoji emoji='❌' label='Erro' />
           {error}
           <br />
           <RefreshButton onClick={loadPendingRecords}>
@@ -263,18 +271,18 @@ const PendingRecordsList: React.FC<PendingRecordsListProps> = ({ theme }) => {
     <ListContainer $theme={theme}>
       <ListHeader>
         <ListTitle>
-          <AccessibleEmoji emoji="🕒" label="Pendências" />
+          <AccessibleEmoji emoji='🕒' label='Pendências' />
           Registros Pendentes ({pendingRecords.length})
         </ListTitle>
         <RefreshButton onClick={loadPendingRecords}>
-          <AccessibleEmoji emoji="🔄" label="Atualizar" />
+          <AccessibleEmoji emoji='🔄' label='Atualizar' />
           Atualizar
         </RefreshButton>
       </ListHeader>
 
       {pendingRecords.length === 0 ? (
         <EmptyState>
-          <AccessibleEmoji emoji="✅" label="Concluído" />
+          <AccessibleEmoji emoji='✅' label='Concluído' />
           <p>Não há registros pendentes para aprovação.</p>
         </EmptyState>
       ) : (
@@ -282,45 +290,59 @@ const PendingRecordsList: React.FC<PendingRecordsListProps> = ({ theme }) => {
           <RecordDescription>
             Registros que precisam de aprovação ou rejeição:
           </RecordDescription>
-          
+
           {pendingRecords.map((record: any) => (
             <RecordItem key={record.id}>
               <RecordHeader>
                 <RecordType>
-                  <AccessibleEmoji emoji="📍" label="Registro" />
+                  <AccessibleEmoji emoji='📍' label='Registro' />
                   {getTypeLabel(record.tipo)}
                 </RecordType>
-                <RecordTime>
-                  {formatTime(record.dataHora)}
-                </RecordTime>
+                <RecordTime>{formatTime(record.dataHora)}</RecordTime>
               </RecordHeader>
-              
+
               <RecordDetails>
-                <div><strong>Usuário:</strong> {record.usuario.nomeCompleto}</div>
-                <div><strong>Email:</strong> {record.usuario.email}</div>
-                <div><strong>Localização:</strong> {record.endereco || 'Não informado'}</div>
-                <div><strong>Precisão:</strong> {record.precisao?.toFixed(0) || 'N/A'}m</div>
+                <div>
+                  <strong>Usuário:</strong> {record.usuario.nomeCompleto}
+                </div>
+                <div>
+                  <strong>Email:</strong> {record.usuario.email}
+                </div>
+                <div>
+                  <strong>Localização:</strong>{' '}
+                  {record.endereco || 'Não informado'}
+                </div>
+                <div>
+                  <strong>Precisão:</strong>{' '}
+                  {record.precisao?.toFixed(0) || 'N/A'}m
+                </div>
                 {record.observacao && (
-                  <div><strong>Observação:</strong> {record.observacao}</div>
+                  <div>
+                    <strong>Observação:</strong> {record.observacao}
+                  </div>
                 )}
               </RecordDetails>
-              
+
               <RecordActions>
                 <ActionIcon
-                  variant="approve"
-                  size="medium"
-                  onClick={() => handleApproval(record.id, 'approve')}  
-                  title="Aprovar"
+                  variant='approve'
+                  size='medium'
+                  onClick={() => handleApproval(record.id, 'approve')}
+                  title='Aprovar'
                 >
-                  <span role="img" aria-label="Aprovar">✅</span>
+                  <span role='img' aria-label='Aprovar'>
+                    ✅
+                  </span>
                 </ActionIcon>
                 <ActionIcon
-                  variant="reject"
-                  size="medium"
+                  variant='reject'
+                  size='medium'
                   onClick={() => handleApproval(record.id, 'reject')}
-                  title="Rejeitar"
+                  title='Rejeitar'
                 >
-                  <span role="img" aria-label="Rejeitar">❌</span>
+                  <span role='img' aria-label='Rejeitar'>
+                    ❌
+                  </span>
                 </ActionIcon>
               </RecordActions>
             </RecordItem>

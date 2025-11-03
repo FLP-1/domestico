@@ -25,9 +25,9 @@ const ProfileModal = styled.div<{ $isOpen: boolean }>`
   justify-content: center;
   z-index: 2000;
   animation: fadeIn 0.3s ease-out;
-  
+
   /* CSS inline para evitar FOUC */
-  &[style*="display: flex"] {
+  &[style*='display: flex'] {
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(10px);
   }
@@ -71,7 +71,8 @@ const ProfileModalContent = styled.div<{ $theme?: any }>`
     align-items: flex-start;
     justify-content: space-between;
     margin-bottom: 2rem;
-    border-bottom: 2px solid ${props => props.$theme?.colors?.border?.light || '#f1f3f4'};
+    border-bottom: 2px solid
+      ${props => props.$theme?.colors?.border?.light || '#f1f3f4'};
     padding-bottom: 1.5rem;
 
     .title {
@@ -91,7 +92,11 @@ const ProfileModalContent = styled.div<{ $theme?: any }>`
       font-weight: 800;
       color: ${props => props.$theme?.colors?.navigation?.primary || '#29abe2'};
       margin: 0.5rem 0 0.25rem 0;
-      background: linear-gradient(135deg, ${props => props.$theme?.colors?.navigation?.primary || '#29abe2'}, ${props => props.$theme?.colors?.accent?.green || '#90ee90'});
+      background: linear-gradient(
+        135deg,
+        ${props => props.$theme?.colors?.navigation?.primary || '#29abe2'},
+        ${props => props.$theme?.colors?.accent?.green || '#90ee90'}
+      );
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -107,7 +112,8 @@ const ProfileModalContent = styled.div<{ $theme?: any }>`
     }
 
     .close-button {
-      background: ${props => props.$theme?.colors?.background?.secondary || '#f8f9fa'};
+      background: ${props =>
+        props.$theme?.colors?.background?.secondary || '#f8f9fa'};
       border: none;
       font-size: 1.25rem;
       color: ${props => props.$theme?.colors?.text?.secondary || '#6c757d'};
@@ -120,7 +126,8 @@ const ProfileModalContent = styled.div<{ $theme?: any }>`
       justify-content: center;
 
       &:hover {
-        background: ${props => props.$theme?.colors?.background?.tertiary || '#e9ecef'};
+        background: ${props =>
+          props.$theme?.colors?.background?.tertiary || '#e9ecef'};
         color: ${props => props.$theme?.colors?.text?.primary || '#495057'};
         transform: scale(1.05);
       }
@@ -254,10 +261,11 @@ const ProfileSelectionModal: React.FC<ProfileSelectionModalProps> = ({
   const { colors: theme } = useTheme(currentProfile?.role.toLowerCase());
   // Validação robusta: garantir que profiles seja um array
   const safeProfiles = Array.isArray(profiles) ? profiles : [];
-  
+
   // Pega o nome e apelido do usuário do primeiro perfil (todos têm o mesmo nome)
   const userName = safeProfiles.length > 0 ? safeProfiles[0].name : 'Usuário';
-  const userNickname = safeProfiles.length > 0 ? safeProfiles[0].nickname || 'Usuário' : 'Usuário';
+  const userNickname =
+    safeProfiles.length > 0 ? safeProfiles[0].nickname || 'Usuário' : 'Usuário';
 
   return (
     <ProfileModal $isOpen={isOpen}>

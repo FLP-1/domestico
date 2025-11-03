@@ -144,8 +144,8 @@ GROUP BY p.id, p.nome;
 
 ```sql
 -- Últimos 10 logs
-SELECT * FROM logs_auditoria 
-ORDER BY criado_em DESC 
+SELECT * FROM logs_auditoria
+ORDER BY criado_em DESC
 LIMIT 10;
 
 -- Logs por tipo
@@ -171,7 +171,7 @@ SELECT * FROM registros_ponto
 WHERE aprovado = false;
 
 -- Estatísticas de ponto
-SELECT 
+SELECT
   tipo,
   COUNT(*) as total,
   AVG(CASE WHEN dentro_geofence THEN 1 ELSE 0 END) * 100 as perc_geofence
@@ -186,29 +186,31 @@ GROUP BY tipo;
 ### Operações Básicas
 
 ```typescript
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 // CREATE
 const usuario = await prisma.usuario.create({
-  data: { /* dados */ }
-})
+  data: {
+    /* dados */
+  },
+});
 
 // READ
 const usuario = await prisma.usuario.findUnique({
-  where: { cpf: '12345678901' }
-})
+  where: { cpf: '12345678901' },
+});
 
 // UPDATE
 await prisma.usuario.update({
   where: { id: 'uuid' },
-  data: { nomeCompleto: 'Novo Nome' }
-})
+  data: { nomeCompleto: 'Novo Nome' },
+});
 
 // DELETE
 await prisma.usuario.delete({
-  where: { id: 'uuid' }
-})
+  where: { id: 'uuid' },
+});
 
 // FIND MANY
 const usuarios = await prisma.usuario.findMany({
@@ -216,8 +218,8 @@ const usuarios = await prisma.usuario.findMany({
   include: { perfis: true },
   take: 20,
   skip: 0,
-  orderBy: { criadoEm: 'desc' }
-})
+  orderBy: { criadoEm: 'desc' },
+});
 ```
 
 ### Transações
@@ -227,22 +229,22 @@ const usuarios = await prisma.usuario.findMany({
 await prisma.$transaction([
   prisma.usuario.create({ data: {} }),
   prisma.logAuditoria.create({ data: {} }),
-])
+]);
 
 // Ou com lógica
-await prisma.$transaction(async (tx) => {
-  const usuario = await tx.usuario.create({ data: {} })
-  await tx.logAuditoria.create({ 
-    data: { usuarioId: usuario.id } 
-  })
-})
+await prisma.$transaction(async tx => {
+  const usuario = await tx.usuario.create({ data: {} });
+  await tx.logAuditoria.create({
+    data: { usuarioId: usuario.id },
+  });
+});
 ```
 
 ### Aggregations
 
 ```typescript
 // Contar
-const count = await prisma.usuario.count()
+const count = await prisma.usuario.count();
 
 // Aggregate
 const stats = await prisma.calculoSalarial.aggregate({
@@ -250,7 +252,7 @@ const stats = await prisma.calculoSalarial.aggregate({
   _sum: { salarioBruto: true },
   _max: { salarioBruto: true },
   _min: { salarioBruto: true },
-})
+});
 ```
 
 ---
@@ -263,34 +265,32 @@ const stats = await prisma.calculoSalarial.aggregate({
 // Em desenvolvimento
 const prisma = new PrismaClient({
   log: ['query', 'info', 'warn', 'error'],
-})
+});
 
 // Ver SQL gerado
 const prisma = new PrismaClient({
-  log: [
-    { emit: 'event', level: 'query' },
-  ],
-})
+  log: [{ emit: 'event', level: 'query' }],
+});
 
-prisma.$on('query', (e) => {
-  console.log('Query: ' + e.query)
-  console.log('Params: ' + e.params)
-  console.log('Duration: ' + e.duration + 'ms')
-})
+prisma.$on('query', e => {
+  console.log('Query: ' + e.query);
+  console.log('Params: ' + e.params);
+  console.log('Duration: ' + e.duration + 'ms');
+});
 ```
 
 ### Verificar Conexão
 
 ```typescript
 // Testar conexão
-await prisma.$connect()
-console.log('✅ Conectado ao banco')
+await prisma.$connect();
+console.log('✅ Conectado ao banco');
 
 // Executar query raw
 const result = await prisma.$queryRaw`
   SELECT version();
-`
-console.log(result)
+`;
+console.log(result);
 ```
 
 ---
@@ -356,7 +356,7 @@ brew services start postgresql@14
 SELECT pg_size_pretty(pg_database_size('dom_db'));
 
 -- Tamanho por tabela
-SELECT 
+SELECT
   schemaname,
   tablename,
   pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) as size
@@ -433,8 +433,8 @@ await prisma.perfil.create({
     nome: 'Parceiro',
     cor: '#3498DB',
     ativo: true,
-  }
-})
+  },
+});
 ```
 
 ### Adicionar Nova Funcionalidade
@@ -446,8 +446,8 @@ const func = await prisma.funcionalidade.create({
     nome: 'Nova Funcionalidade',
     rota: '/nova-funcionalidade',
     ordem: 12,
-  }
-})
+  },
+});
 
 // Dar permissão a um perfil
 await prisma.perfilFuncionalidade.create({
@@ -456,8 +456,8 @@ await prisma.perfilFuncionalidade.create({
     funcionalidadeId: func.id,
     permissaoLeitura: true,
     permissaoEscrita: true,
-  }
-})
+  },
+});
 ```
 
 ### Limpar Logs Antigos
@@ -477,21 +477,21 @@ WHERE criado_em < NOW() - INTERVAL '90 days';
 ```typescript
 // Exportar todos usuários
 const usuarios = await prisma.usuario.findMany({
-  include: { perfis: true }
-})
+  include: { perfis: true },
+});
 
-const fs = require('fs')
-fs.writeFileSync('usuarios.json', JSON.stringify(usuarios, null, 2))
+const fs = require('fs');
+fs.writeFileSync('usuarios.json', JSON.stringify(usuarios, null, 2));
 ```
 
 ### Importar Dados (JSON)
 
 ```typescript
-const fs = require('fs')
-const data = JSON.parse(fs.readFileSync('usuarios.json', 'utf-8'))
+const fs = require('fs');
+const data = JSON.parse(fs.readFileSync('usuarios.json', 'utf-8'));
 
 for (const usuario of data) {
-  await prisma.usuario.create({ data: usuario })
+  await prisma.usuario.create({ data: usuario });
 }
 ```
 
@@ -513,19 +513,19 @@ npx prisma migrate diff \
 
 ```typescript
 // Usar Redis ou similar
-import Redis from 'ioredis'
-const redis = new Redis()
+import Redis from 'ioredis';
+const redis = new Redis();
 
-const cacheKey = 'usuarios:all'
-const cached = await redis.get(cacheKey)
+const cacheKey = 'usuarios:all';
+const cached = await redis.get(cacheKey);
 
 if (cached) {
-  return JSON.parse(cached)
+  return JSON.parse(cached);
 }
 
-const usuarios = await prisma.usuario.findMany()
-await redis.set(cacheKey, JSON.stringify(usuarios), 'EX', 3600)
-return usuarios
+const usuarios = await prisma.usuario.findMany();
+await redis.set(cacheKey, JSON.stringify(usuarios), 'EX', 3600);
+return usuarios;
 ```
 
 ### Paginação Eficiente
@@ -536,15 +536,15 @@ const usuarios = await prisma.usuario.findMany({
   take: 20,
   cursor: { id: lastId },
   orderBy: { id: 'asc' },
-})
+});
 
 // Offset-based (mais simples)
-const page = 1
-const pageSize = 20
+const page = 1;
+const pageSize = 20;
 const usuarios = await prisma.usuario.findMany({
   take: pageSize,
   skip: (page - 1) * pageSize,
-})
+});
 ```
 
 ### Select Específico
@@ -552,8 +552,8 @@ const usuarios = await prisma.usuario.findMany({
 ```typescript
 // ❌ Ruim - traz tudo
 const usuario = await prisma.usuario.findUnique({
-  where: { id }
-})
+  where: { id },
+});
 
 // ✅ Bom - traz apenas necessário
 const usuario = await prisma.usuario.findUnique({
@@ -562,8 +562,8 @@ const usuario = await prisma.usuario.findUnique({
     id: true,
     nomeCompleto: true,
     email: true,
-  }
-})
+  },
+});
 ```
 
 ---
@@ -574,30 +574,30 @@ const usuario = await prisma.usuario.findUnique({
 
 ```typescript
 // Sempre remover máscaras antes de salvar
-const cpfLimpo = cpf.replace(/\D/g, '') // 12345678901
-const telefoneLimpo = telefone.replace(/\D/g, '') // 11999999999
-const cepLimpo = cep.replace(/\D/g, '') // 01234567
+const cpfLimpo = cpf.replace(/\D/g, ''); // 12345678901
+const telefoneLimpo = telefone.replace(/\D/g, ''); // 11999999999
+const cepLimpo = cep.replace(/\D/g, ''); // 01234567
 ```
 
 ### Hash de Senha
 
 ```typescript
-import * as bcrypt from 'bcrypt'
+import * as bcrypt from 'bcrypt';
 
 // Criar hash
-const saltRounds = 10
-const hash = await bcrypt.hash(senha, saltRounds)
+const saltRounds = 10;
+const hash = await bcrypt.hash(senha, saltRounds);
 
 // Verificar senha
-const match = await bcrypt.compare(senha, hash)
+const match = await bcrypt.compare(senha, hash);
 ```
 
 ### UUID
 
 ```typescript
-import { randomUUID } from 'crypto'
+import { randomUUID } from 'crypto';
 
-const id = randomUUID() // Gera UUID v4
+const id = randomUUID(); // Gera UUID v4
 ```
 
 ---
@@ -614,4 +614,3 @@ const id = randomUUID() // Gera UUID v4
 **✅ Referência rápida para uso diário do Prisma!**
 
 **Versão:** 2.2.1
-

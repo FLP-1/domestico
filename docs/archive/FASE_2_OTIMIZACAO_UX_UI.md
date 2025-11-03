@@ -3,6 +3,7 @@
 ## 🎯 **OBJETIVO DA FASE 2**
 
 Implementar melhorias avançadas de experiência do usuário, incluindo:
+
 - ✅ Variações de cores (light, medium, dark)
 - ✅ Estados de interação (hover, focus, disabled)
 - ✅ Melhorias de acessibilidade
@@ -16,6 +17,7 @@ Implementar melhorias avançadas de experiência do usuário, incluindo:
 ### **🎨 1. IMPLEMENTAR VARIAÇÕES DE CORES**
 
 #### **1.1 Sistema de Variações por Perfil:**
+
 ```typescript
 // Estrutura otimizada com variações
 profiles: {
@@ -35,6 +37,7 @@ profiles: {
 ```
 
 #### **1.2 Estados de Interação:**
+
 ```typescript
 // Estados para cada cor
 states: {
@@ -48,6 +51,7 @@ states: {
 ### **🎯 2. MELHORAR CONTRASTE E ACESSIBILIDADE**
 
 #### **2.1 Cores de Texto Otimizadas:**
+
 ```typescript
 text: {
   primary: '#1F2937',      // Contraste 4.5:1
@@ -58,6 +62,7 @@ text: {
 ```
 
 #### **2.2 Cores de Superfície:**
+
 ```typescript
 surface: {
   primary: '#FFFFFF',      // Base
@@ -70,6 +75,7 @@ surface: {
 ### **🌈 3. HIERARQUIA VISUAL APRIMORADA**
 
 #### **3.1 Sistema de Elevação:**
+
 ```typescript
 elevation: {
   none: '0px',
@@ -81,6 +87,7 @@ elevation: {
 ```
 
 #### **3.2 Sistema de Espaçamento:**
+
 ```typescript
 spacing: {
   xs: '0.25rem',    // 4px
@@ -99,11 +106,13 @@ spacing: {
 ### **📝 1. ATUALIZAR ARQUIVOS DE CORES**
 
 #### **1.1 Expandir default-colors.ts:**
+
 - Adicionar variações de cores
 - Implementar estados de interação
 - Melhorar sistema de contraste
 
 #### **1.2 Atualizar useTheme.ts:**
+
 - Implementar variações por perfil
 - Adicionar estados hover/focus
 - Otimizar acessibilidade
@@ -111,12 +120,14 @@ spacing: {
 ### **🎨 2. CRIAR SISTEMA DE DESIGN TOKENS**
 
 #### **2.1 Design Tokens Avançados:**
+
 - Cores com variações
 - Espaçamentos consistentes
 - Tipografia otimizada
 - Sombras e elevações
 
 #### **2.2 Componentes Otimizados:**
+
 - Botões com estados
 - Inputs com feedback visual
 - Cards com elevação
@@ -125,11 +136,13 @@ spacing: {
 ### **♿ 3. MELHORIAS DE ACESSIBILIDADE**
 
 #### **3.1 Contraste WCAG AA:**
+
 - Texto normal: 4.5:1
 - Texto grande: 3:1
 - Elementos UI: 3:1
 
 #### **3.2 Estados Visuais:**
+
 - Hover claramente visível
 - Focus com outline
 - Disabled com opacidade
@@ -140,16 +153,19 @@ spacing: {
 ## 📋 **CRONOGRAMA DE IMPLEMENTAÇÃO**
 
 ### **SEMANA 1: Variações de Cores**
+
 - [ ] Implementar sistema de variações
 - [ ] Atualizar arquivos de cores
 - [ ] Testar consistência visual
 
 ### **SEMANA 2: Estados de Interação**
+
 - [ ] Implementar hover/focus/active
 - [ ] Otimizar feedback visual
 - [ ] Testar acessibilidade
 
 ### **SEMANA 3: Validação e Testes**
+
 - [ ] Testes de contraste
 - [ ] Validação WCAG
 - [ ] Testes de usuário
@@ -159,6 +175,7 @@ spacing: {
 ## 🎯 **RESULTADO ESPERADO**
 
 ### **✅ BENEFÍCIOS DA FASE 2:**
+
 - **Experiência visual** aprimorada
 - **Acessibilidade** melhorada
 - **Interatividade** otimizada
@@ -166,6 +183,7 @@ spacing: {
 - **Profissionalismo** elevado
 
 ### **🚀 SISTEMA FINAL:**
+
 - Cores com variações dinâmicas
 - Estados de interação fluidos
 - Acessibilidade WCAG AA

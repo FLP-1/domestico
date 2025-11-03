@@ -11,6 +11,7 @@ Foi criada uma estrutura de dados **robusta, escalável e em total conformidade 
 ### 1. ✅ 1 CPF + Tipo de Usuário Único
 
 **Implementação:**
+
 - Tabela `usuarios` com CPF único (`@unique`)
 - Tabela pivot `usuarios_perfis` com constraint `@@unique([usuarioId, perfilId])`
 
@@ -26,11 +27,13 @@ UNIQUE (usuario_id, perfil_id)
 ### 2. ✅ Informações do CPF Não Repetidas
 
 **Implementação:**
+
 - Normalização total (3ª Forma Normal)
 - Dados pessoais centralizados na tabela `usuarios`
 - Relacionamentos via chaves estrangeiras
 
 **Benefícios:**
+
 - Sem duplicação de dados
 - Atualização centralizada
 - Integridade referencial garantida
@@ -40,6 +43,7 @@ UNIQUE (usuario_id, perfil_id)
 ### 3. ✅ Dados Sem Máscaras
 
 **Implementação:**
+
 ```prisma
 cpf       String @db.VarChar(11)  // Apenas números: 12345678901
 telefone  String @db.VarChar(11)  // Apenas números: 11999999999
@@ -53,6 +57,7 @@ cep       String @db.VarChar(8)   // Apenas números: 01234567
 ### 4. ✅ Usuário em Múltiplos Grupos (Sem Duplicidade)
 
 **Implementação:**
+
 - Tabela pivot `usuarios_grupos`
 - Constraint `@@unique([usuarioId, grupoId])`
 
@@ -65,12 +70,14 @@ cep       String @db.VarChar(8)   // Apenas números: 01234567
 **Implementação:**
 
 **4 Perfis:**
+
 1. **EMPREGADO** - Cor: #29ABE2
 2. **EMPREGADOR** - Cor: #E74C3C
 3. **FAMILIA** - Cor: #9B59B6
 4. **ADMIN** - Cor: #34495E
 
 **11+ Funcionalidades:**
+
 1. Dashboard
 2. Controle de Ponto
 3. Gestão de Tarefas
@@ -84,6 +91,7 @@ cep       String @db.VarChar(8)   // Apenas números: 01234567
 11. Monitoramento
 
 **Permissões Granulares:**
+
 - `permissaoLeitura` - Visualizar
 - `permissaoEscrita` - Criar/Editar
 - `permissaoExclusao` - Excluir
@@ -94,6 +102,7 @@ cep       String @db.VarChar(8)   // Apenas números: 01234567
 ### 6. ✅ Tabela de Log
 
 **Implementação:**
+
 ```prisma
 model LogAuditoria {
   id              String   @id @default(uuid())
@@ -112,6 +121,7 @@ model LogAuditoria {
 ```
 
 **Registra:**
+
 - ✅ Todas operações CRUD
 - ✅ Acessos a dados pessoais (LGPD)
 - ✅ Alterações de configuração
@@ -125,6 +135,7 @@ model LogAuditoria {
 **Implementação:**
 
 #### Consentimento
+
 ```prisma
 consentimentoLGPD Boolean  @default(false)
 dataConsentimento DateTime?
@@ -135,33 +146,40 @@ versaoTermos      String?
 #### Direitos do Titular
 
 **1. Direito de Acesso**
+
 ```typescript
 // Usuário pode acessar seus dados
 const meusDados = await prisma.usuario.findUnique({
   where: { id: userId },
-  include: { /* todos os dados */ }
-})
+  include: {
+    /* todos os dados */
+  },
+});
 ```
 
 **2. Direito de Retificação**
+
 ```typescript
 // Usuário pode corrigir dados
 // Registrado automaticamente em logs_auditoria
 ```
 
 **3. Direito de Exclusão**
+
 ```typescript
 // Direito ao esquecimento
-await prisma.usuario.delete({ where: { id: userId } })
+await prisma.usuario.delete({ where: { id: userId } });
 ```
 
 **4. Direito de Portabilidade**
+
 ```typescript
 // Exportar dados em JSON
-const exportacao = await exportarDadosUsuario(userId)
+const exportacao = await exportarDadosUsuario(userId);
 ```
 
 #### Logs de Auditoria (5 anos de retenção)
+
 - ✅ Todos os acessos a dados pessoais
 - ✅ Modificações de dados
 - ✅ Consentimentos
@@ -174,30 +192,31 @@ const exportacao = await exportarDadosUsuario(userId)
 
 ### Principais
 
-| Tabela | Descrição | Registros |
-|--------|-----------|-----------|
-| `usuarios` | Dados principais dos usuários | CPF único |
-| `perfis` | Tipos de usuário | 4 perfis |
-| `funcionalidades` | Funcionalidades do sistema | 11+ |
-| `usuarios_perfis` | Usuário ↔ Perfil (N:N) | Com constraint |
-| `usuarios_grupos` | Usuário ↔ Grupo (N:N) | Com constraint |
-| `perfis_funcionalidades` | Perfil ↔ Funcionalidade (N:N) | Permissões |
-| `dispositivos` | Dispositivos (anti-fraude) | - |
-| `registros_ponto` | Ponto (anti-fraude) | Hora do servidor |
-| `documentos` | Gestão de documentos | - |
-| `tarefas` | Gestão de tarefas | - |
-| `mensagens` | Comunicação | - |
-| `eventos_esocial` | Eventos eSocial | - |
-| `calculos_salariais` | Folha de pagamento | Único por mês |
-| `emprestimos` | Empréstimos | - |
-| `alertas` | Sistema de alertas | - |
-| `logs_auditoria` | **Log completo (LGPD)** | Todos eventos |
-| `configuracoes` | Configurações | - |
-| `termos` | Termos e políticas | Versionados |
+| Tabela                   | Descrição                      | Registros        |
+| ------------------------ | ------------------------------ | ---------------- |
+| `usuarios`               | Dados principais dos usuários  | CPF único        |
+| `perfis`                 | Tipos de usuário               | 4 perfis         |
+| `funcionalidades`        | Funcionalidades do sistema     | 11+              |
+| `usuarios_perfis`        | Usuário ↔ Perfil (N:N)        | Com constraint   |
+| `usuarios_grupos`        | Usuário ↔ Grupo (N:N)         | Com constraint   |
+| `perfis_funcionalidades` | Perfil ↔ Funcionalidade (N:N) | Permissões       |
+| `dispositivos`           | Dispositivos (anti-fraude)     | -                |
+| `registros_ponto`        | Ponto (anti-fraude)            | Hora do servidor |
+| `documentos`             | Gestão de documentos           | -                |
+| `tarefas`                | Gestão de tarefas              | -                |
+| `mensagens`              | Comunicação                    | -                |
+| `eventos_esocial`        | Eventos eSocial                | -                |
+| `calculos_salariais`     | Folha de pagamento             | Único por mês    |
+| `emprestimos`            | Empréstimos                    | -                |
+| `alertas`                | Sistema de alertas             | -                |
+| `logs_auditoria`         | **Log completo (LGPD)**        | Todos eventos    |
+| `configuracoes`          | Configurações                  | -                |
+| `termos`                 | Termos e políticas             | Versionados      |
 
 ### Índices
 
 **Performance otimizada:**
+
 ```sql
 -- usuarios
 CREATE INDEX idx_usuarios_cpf ON usuarios(cpf);
@@ -222,6 +241,7 @@ CREATE INDEX idx_ponto_data ON registros_ponto(data_hora);
 ### Registro de Ponto (Anti-Fraude)
 
 **Recursos:**
+
 1. ✅ **Hora do servidor** (nunca do dispositivo)
 2. ✅ Geolocalização obrigatória
 3. ✅ Geofence (área permitida)
@@ -360,7 +380,7 @@ npx prisma studio
 ```typescript
 const usuario = await prisma.usuario.create({
   data: {
-    cpf: '12345678901',      // Sem máscara
+    cpf: '12345678901', // Sem máscara
     nomeCompleto: 'João Silva',
     email: 'joao@email.com',
     telefone: '11999999999', // Sem máscara
@@ -369,8 +389,8 @@ const usuario = await prisma.usuario.create({
     salt: 'salt',
     consentimentoLGPD: true,
     termosAceitos: true,
-  }
-})
+  },
+});
 ```
 
 ### Adicionar Perfil (Sem Duplicação)
@@ -382,8 +402,8 @@ await prisma.usuarioPerfil.create({
     usuarioId: usuario.id,
     perfilId: perfilEmpregado.id, // Não pode duplicar
     ativo: true,
-  }
-})
+  },
+});
 ```
 
 ### Verificar Permissão
@@ -392,11 +412,11 @@ await prisma.usuarioPerfil.create({
 const permissao = await prisma.perfilFuncionalidade.findFirst({
   where: {
     perfilId: usuario.perfilId,
-    funcionalidade: { codigo: 'time-clock' }
-  }
-})
+    funcionalidade: { codigo: 'time-clock' },
+  },
+});
 
-const podeRegistrar = permissao?.permissaoEscrita
+const podeRegistrar = permissao?.permissaoEscrita;
 ```
 
 ### Registrar Ponto (Anti-Fraude)
@@ -406,15 +426,15 @@ await prisma.registroPonto.create({
   data: {
     usuarioId: usuario.id,
     dispositivoId: dispositivo.id,
-    dataHora: new Date(),      // SEMPRE do servidor
+    dataHora: new Date(), // SEMPRE do servidor
     tipo: 'ENTRADA',
     latitude: -23.5505,
     longitude: -46.6333,
     dentroGeofence: true,
     enderecoIP: req.ip,
     hashIntegridade: hashDeDados,
-  }
-})
+  },
+});
 ```
 
 ### Log de Auditoria (LGPD)
@@ -429,8 +449,8 @@ await prisma.logAuditoria.create({
     tipoLog: 'LGPD',
     nivelSeveridade: 'INFO',
     enderecoIP: req.ip,
-  }
-})
+  },
+});
 ```
 
 ---
@@ -438,28 +458,33 @@ await prisma.logAuditoria.create({
 ## 🎯 Vantagens da Estrutura
 
 ### ✅ Robustez
+
 - Constraints de unicidade
 - Integridade referencial
 - Validações em múltiplos níveis
 
 ### ✅ Escalabilidade
+
 - Normalização (3NF)
 - Índices otimizados
 - Estrutura modular
 
 ### ✅ Segurança
+
 - Anti-fraude no ponto
 - Hash de senhas
 - 2FA suportado
 - Logs completos
 
 ### ✅ LGPD
+
 - Consentimento explícito
 - Logs de auditoria
 - Direitos do titular
 - Portabilidade de dados
 
 ### ✅ Performance
+
 - Índices em campos chave
 - Queries otimizadas
 - Cache-friendly
@@ -468,14 +493,14 @@ await prisma.logAuditoria.create({
 
 ## 📚 Documentação Completa
 
-| Arquivo | Conteúdo |
-|---------|----------|
-| [schema.prisma](./prisma/schema.prisma) | Schema completo do banco |
-| [DOCUMENTACAO_SCHEMA.md](./prisma/DOCUMENTACAO_SCHEMA.md) | Documentação detalhada |
-| [GUIA_INSTALACAO.md](./prisma/GUIA_INSTALACAO.md) | Guia passo a passo |
-| [seed.ts](./prisma/seed.ts) | Dados iniciais |
-| [exemplos-uso.ts](./prisma/exemplos-uso.ts) | Exemplos práticos |
-| [README.md](./prisma/README.md) | Guia de uso |
+| Arquivo                                                   | Conteúdo                 |
+| --------------------------------------------------------- | ------------------------ |
+| [schema.prisma](./prisma/schema.prisma)                   | Schema completo do banco |
+| [DOCUMENTACAO_SCHEMA.md](./prisma/DOCUMENTACAO_SCHEMA.md) | Documentação detalhada   |
+| [GUIA_INSTALACAO.md](./prisma/GUIA_INSTALACAO.md)         | Guia passo a passo       |
+| [seed.ts](./prisma/seed.ts)                               | Dados iniciais           |
+| [exemplos-uso.ts](./prisma/exemplos-uso.ts)               | Exemplos práticos        |
+| [README.md](./prisma/README.md)                           | Guia de uso              |
 
 ---
 
@@ -519,4 +544,3 @@ Para dúvidas ou problemas:
 **Versão:** 2.2.1  
 **Data:** 2024  
 **Autor:** Sistema DOM
-

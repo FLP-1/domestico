@@ -3,11 +3,13 @@
 ## Por Que Usar APIs Gratuitas?
 
 **Problema:**
+
 - ❌ **Budget limitado** (Google Maps custa $5-15/mês)
 - ❌ **Nominatim sozinho** (qualidade limitada)
 - ✅ **Necessidade de qualidade** (anti-fraude)
 
 **Solução:**
+
 - ✅ **Múltiplas APIs gratuitas** (redundância)
 - ✅ **Qualidade superior ao Nominatim**
 - ✅ **100% gratuito**
@@ -18,24 +20,28 @@
 ## 🎯 APIs Disponíveis (100% Gratuitas)
 
 ### 1️⃣ **OpenCage Data** - Melhor Qualidade
+
 - **Limite:** 2.500 requisições/dia grátis
 - **Qualidade:** Excelente (dados atualizados)
 - **Cobertura:** Global
 - **Configuração:** Requer API key gratuita
 
 ### 2️⃣ **BigDataCloud** - Ilimitado
+
 - **Limite:** Ilimitado e gratuito
 - **Qualidade:** Boa
 - **Cobertura:** Global
 - **Configuração:** Sem API key necessária
 
 ### 3️⃣ **Positionstack** - Alta Capacidade
+
 - **Limite:** 10.000 requisições/dia grátis
 - **Qualidade:** Excelente
 - **Cobertura:** Global
 - **Configuração:** Requer API key gratuita
 
 ### 4️⃣ **Nominatim** - Fallback Final
+
 - **Limite:** Ilimitado e gratuito
 - **Qualidade:** Limitada (open source)
 - **Cobertura:** Global
@@ -48,12 +54,14 @@
 ### 1️⃣ OpenCage Data (Recomendado)
 
 **Criar conta gratuita:**
+
 1. Acesse: https://opencagedata.com/
 2. Clique "Sign up for free"
 3. Confirme email
 4. Copie sua API key
 
 **Adicionar ao `.env.local`:**
+
 ```bash
 NEXT_PUBLIC_OPENCAGE_API_KEY=sua_chave_aqui
 ```
@@ -61,12 +69,14 @@ NEXT_PUBLIC_OPENCAGE_API_KEY=sua_chave_aqui
 ### 2️⃣ Positionstack (Opcional)
 
 **Criar conta gratuita:**
+
 1. Acesse: https://positionstack.com/
 2. Clique "Get Free API Key"
 3. Confirme email
 4. Copie sua API key
 
 **Adicionar ao `.env.local`:**
+
 ```bash
 NEXT_PUBLIC_POSITIONSTACK_API_KEY=sua_chave_aqui
 ```
@@ -74,6 +84,7 @@ NEXT_PUBLIC_POSITIONSTACK_API_KEY=sua_chave_aqui
 ### 3️⃣ BigDataCloud (Automático)
 
 **Não precisa de configuração!**
+
 - Funciona automaticamente
 - Sem API key necessária
 - Ilimitado e gratuito
@@ -81,6 +92,7 @@ NEXT_PUBLIC_POSITIONSTACK_API_KEY=sua_chave_aqui
 ### 4️⃣ Nominatim (Fallback)
 
 **Não precisa de configuração!**
+
 - Sempre funciona
 - Fallback final garantido
 
@@ -89,11 +101,13 @@ NEXT_PUBLIC_POSITIONSTACK_API_KEY=sua_chave_aqui
 ## 🧪 Testar
 
 1. **Reiniciar servidor:**
+
    ```powershell
    npm run dev
    ```
 
 2. **Testar endpoint:**
+
    ```powershell
    curl "http://localhost:3000/api/geocoding/reverse?lat=-23.5505&lon=-46.6333"
    ```
@@ -125,6 +139,7 @@ NEXT_PUBLIC_POSITIONSTACK_API_KEY=sua_chave_aqui
 4. **Nominatim** → Fallback final garantido
 
 **Vantagens:**
+
 - ✅ **Redundância:** Múltiplas fontes
 - ✅ **Qualidade:** Melhor que Nominatim sozinho
 - ✅ **Confiabilidade:** Sempre funciona
@@ -134,14 +149,15 @@ NEXT_PUBLIC_POSITIONSTACK_API_KEY=sua_chave_aqui
 
 ## 📊 Comparação de Qualidade
 
-| API | Qualidade | Limite | Configuração |
-|-----|-----------|--------|--------------|
-| **OpenCage** | ⭐⭐⭐⭐⭐ | 2.500/dia | API key |
-| **Positionstack** | ⭐⭐⭐⭐⭐ | 10.000/dia | API key |
-| **BigDataCloud** | ⭐⭐⭐⭐ | Ilimitado | Nenhuma |
-| **Nominatim** | ⭐⭐ | Ilimitado | Nenhuma |
+| API               | Qualidade  | Limite     | Configuração |
+| ----------------- | ---------- | ---------- | ------------ |
+| **OpenCage**      | ⭐⭐⭐⭐⭐ | 2.500/dia  | API key      |
+| **Positionstack** | ⭐⭐⭐⭐⭐ | 10.000/dia | API key      |
+| **BigDataCloud**  | ⭐⭐⭐⭐   | Ilimitado  | Nenhuma      |
+| **Nominatim**     | ⭐⭐       | Ilimitado  | Nenhuma      |
 
 **Recomendação:**
+
 - Configure OpenCage + Positionstack para máxima qualidade
 - BigDataCloud garante funcionamento sempre
 - Nominatim como fallback final
@@ -151,12 +167,14 @@ NEXT_PUBLIC_POSITIONSTACK_API_KEY=sua_chave_aqui
 ## 🚀 Configuração Mínima
 
 **Para começar imediatamente:**
+
 ```bash
 # .env.local (mínimo)
 # Não precisa de nada! BigDataCloud funciona automaticamente
 ```
 
 **Para máxima qualidade:**
+
 ```bash
 # .env.local (recomendado)
 NEXT_PUBLIC_OPENCAGE_API_KEY=sua_chave_opencage
@@ -187,11 +205,13 @@ R: Sistema automaticamente usa a próxima API disponível.
 ## 📝 Checklist de Configuração
 
 **Mínimo (funciona imediatamente):**
+
 - [ ] Reiniciar servidor
 - [ ] Testar endpoint
 - [ ] Verificar que BigDataCloud funciona
 
 **Recomendado (máxima qualidade):**
+
 - [ ] Criar conta OpenCage
 - [ ] Adicionar API key ao `.env.local`
 - [ ] Criar conta Positionstack (opcional)

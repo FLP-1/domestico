@@ -2,19 +2,24 @@ import { Html, Head, Main, NextScript } from 'next/document';
 
 export default function Document() {
   return (
-    <Html lang="pt-BR">
+    <Html lang='pt-BR'>
       <Head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel='preconnect' href='https://fonts.googleapis.com' />
         <link
-          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap"
-          rel="stylesheet"
+          rel='preconnect'
+          href='https://fonts.gstatic.com'
+          crossOrigin='anonymous'
+        />
+        <link
+          href='https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap'
+          rel='stylesheet'
         />
       </Head>
       <body>
         {/* Estilo inline para evitar flash de tela em branco */}
-        <style dangerouslySetInnerHTML={{
-          __html: `
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
             body {
               margin: 0;
               padding: 0;
@@ -58,8 +63,9 @@ export default function Document() {
               box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
               border: 1px solid rgba(41, 171, 226, 0.3);
             }
-          `
-        }} />
+          `,
+          }}
+        />
         <Main />
         <NextScript />
       </body>

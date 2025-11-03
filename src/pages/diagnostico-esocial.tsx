@@ -225,25 +225,27 @@ const DiagnosticoESocial: NextPage = () => {
                   </span>{' '}
                   Testes Detalhados
                 </h2>
-                {diagnostico.data.diagnostico.testes.map((teste: any, index: any) => (
-                  <div key={index} className='border rounded-lg p-4'>
-                    <div className='flex items-center justify-between mb-2'>
-                      <h3 className='font-medium text-gray-900'>
-                        {getStatusIcon(teste.status)} {teste.nome}
-                      </h3>
-                      <span
-                        className={`font-medium ${getStatusColor(teste.status)}`}
-                      >
-                        {teste.status.toUpperCase()}
-                      </span>
+                {diagnostico.data.diagnostico.testes.map(
+                  (teste: any, index: any) => (
+                    <div key={index} className='border rounded-lg p-4'>
+                      <div className='flex items-center justify-between mb-2'>
+                        <h3 className='font-medium text-gray-900'>
+                          {getStatusIcon(teste.status)} {teste.nome}
+                        </h3>
+                        <span
+                          className={`font-medium ${getStatusColor(teste.status)}`}
+                        >
+                          {teste.status.toUpperCase()}
+                        </span>
+                      </div>
+                      <div className='bg-gray-50 rounded p-3'>
+                        <pre className='text-sm text-gray-700 whitespace-pre-wrap'>
+                          {JSON.stringify(teste.detalhes, null, 2)}
+                        </pre>
+                      </div>
                     </div>
-                    <div className='bg-gray-50 rounded p-3'>
-                      <pre className='text-sm text-gray-700 whitespace-pre-wrap'>
-                        {JSON.stringify(teste.detalhes, null, 2)}
-                      </pre>
-                    </div>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
 
               {/* Recomendações */}

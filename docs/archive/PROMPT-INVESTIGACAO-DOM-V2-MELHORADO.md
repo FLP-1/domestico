@@ -13,6 +13,7 @@
 ## ❌ PROBLEMA DETALHADO
 
 ### **Comportamento Atual:**
+
 ```bash
 # Arquivo .env.local (CORRETO):
 DATABASE_URL="postgresql://userdom:FLP*2025@localhost:5433/dom?schema=public"
@@ -27,8 +28,9 @@ GET /api/debug/env
 ```
 
 ### **Contradição Crítica:**
+
 - ✅ **Arquivo `.env.local`:** `dom` (correto)
-- ✅ **Script Node.js:** `dom` (correto)  
+- ✅ **Script Node.js:** `dom` (correto)
 - ❌ **Next.js `process.env.DATABASE_URL`:** `dom_v2` (incorreto)
 
 ---
@@ -36,6 +38,7 @@ GET /api/debug/env
 ## 🔧 AMBIENTE TÉCNICO
 
 ### **Stack:**
+
 ```json
 {
   "next": "15.5.4",
@@ -48,6 +51,7 @@ GET /api/debug/env
 ```
 
 ### **Estrutura Crítica:**
+
 ```
 E:\DOM\
 ├── .env.local              # ✅ Contém dom (correto)
@@ -64,38 +68,47 @@ E:\DOM\
 ## 🧪 EVIDÊNCIAS CONCRETAS
 
 ### **Teste 1: Arquivo .env.local**
+
 ```bash
 # Conteúdo real do arquivo:
 DATABASE_URL="postgresql://userdom:FLP*2025@localhost:5433/dom?schema=public"
 ```
+
 **Status:** ✅ CORRETO
 
 ### **Teste 2: Script Node.js Direto**
+
 ```javascript
 require('dotenv').config({ path: '.env.local' });
 console.log(process.env.DATABASE_URL);
 // Output: postgresql://userdom:***@localhost:5433/dom?schema=public
 ```
+
 **Status:** ✅ CORRETO
 
 ### **Teste 3: Next.js API Route**
+
 ```typescript
 // GET /api/debug/env
 console.log(process.env.DATABASE_URL);
 // Output: postgresql://userdom:***@localhost:5433/dom_v2?schema=public
 ```
+
 **Status:** ❌ INCORRETO
 
 ### **Teste 4: Logs do Prisma (ATUAL)**
+
 ```
 ⚠️ CORREÇÃO APLICADA - process.env.DATABASE_URL tinha dom_v2: postgresql://userdom:***@localhost:5433/dom_v2?schema=public
 ✅ Usando URL correta: postgresql://userdom:***@localhost:5433/dom?schema=public
 🔄 Criando nova instância do Prisma Client...
 ✅ Prisma Client criado com sucesso
 ```
+
 **Status:** ❌ PROBLEMA CONFIRMADO + GAMBIARRA ATIVA
 
-### **Teste 5: Investigação de Arquivos .env* (REALIZADO)**
+### **Teste 5: Investigação de Arquivos .env\* (REALIZADO)**
+
 ```bash
 # Resultado da busca por arquivos .env*:
 E:\DOM\.env.local           # ✅ Contém dom (correto)
@@ -103,9 +116,11 @@ E:\DOM\.env.local.backup    # ✅ Contém dom (correto)
 # ❌ Arquivo .env simples: NÃO EXISTE
 # ❌ Arquivo .env.development: NÃO EXISTE
 ```
+
 **Status:** ❌ HIPÓTESE DE ARQUIVO .env DESCARTA
 
 ### **Teste 6: Variáveis do Sistema (REALIZADO)**
+
 ```bash
 # Ambiente PowerShell atual:
 $env:DATABASE_URL = (vazio após remoção)
@@ -113,6 +128,7 @@ $env:DATABASE_URL = (vazio após remoção)
 # Registry HKLM: (limpo)
 # Todos os processos Node: (parados)
 ```
+
 **Status:** ❌ PROBLEMA PERSISTE APÓS LIMPEZA COMPLETA
 
 ---
@@ -120,34 +136,44 @@ $env:DATABASE_URL = (vazio após remoção)
 ## 🔄 TENTATIVAS REALIZADAS
 
 ### **✅ Limpeza Completa de Cache**
+
 ```powershell
 Remove-Item -Recurse -Force node_modules, .next, node_modules\.prisma
 npm install && npx prisma generate
 ```
+
 **Resultado:** ❌ `dom_v2` persistiu (testado múltiplas vezes)
 
 ### **✅ Remoção de Variáveis do Sistema**
+
 ```powershell
 Remove-Item Env:\DATABASE_URL -ErrorAction SilentlyContinue
 ```
+
 **Resultado:** ❌ `dom_v2` persistiu
 
 ### **✅ Limpeza do Registro Windows**
+
 ```powershell
 Remove-ItemProperty -Path "HKCU:\Environment" -Name "DATABASE_URL"
 ```
+
 **Resultado:** ❌ `dom_v2` persistiu
 
 ### **✅ Parada de Processos Node.js**
+
 ```powershell
 Get-Process -Name node | Stop-Process -Force
 ```
+
 **Resultado:** ❌ `dom_v2` persistiu
 
 ### **✅ Investigação de Arquivos**
+
 ```powershell
 Get-ChildItem -Recurse | Select-String "dom_v2"
 ```
+
 **Resultado:** ✅ Apenas em arquivos .md (documentação)
 
 ---
@@ -155,18 +181,22 @@ Get-ChildItem -Recurse | Select-String "dom_v2"
 ## 🎯 HIPÓTESES PRIORITÁRIAS
 
 ### **🔴 HIPÓTESE 1: Cache do Next.js 15.5.4**
+
 **Evidência:** Next.js tem sistema próprio de carregamento de env vars
 **Teste Sugerido:** Investigar cache interno do Next.js que não foi limpo
 
 ### **🟡 HIPÓTESE 2: Configuração do Windows**
+
 **Evidência:** Variável pode estar em nível de sistema mais profundo
 **Teste Sugerido:** Verificar todas as fontes de env vars do Windows
 
 ### **🟢 HIPÓTESE 3: Processo Pai do Node.js**
+
 **Evidência:** Next.js pode herdar env vars de processo pai
 **Teste Sugerido:** Investigar contexto de execução do Next.js
 
 ### **🔵 HIPÓTESE 4: Configuração do PowerShell**
+
 **Evidência:** Shell pode ter cache persistente de variáveis
 **Teste Sugerido:** Testar com CMD ou reiniciar PowerShell completamente
 
@@ -175,6 +205,7 @@ Get-ChildItem -Recurse | Select-String "dom_v2"
 ## 🔬 COMANDOS DE DEBUGGING SUGERIDOS
 
 ### **1. Verificação Completa de Env Vars**
+
 ```powershell
 # Todas as variáveis relacionadas
 [Environment]::GetEnvironmentVariables("Machine") | Where-Object { $_.Value -like "*dom*" }
@@ -183,12 +214,14 @@ Get-ChildItem -Recurse | Select-String "dom_v2"
 ```
 
 ### **2. Investigação do Next.js**
+
 ```javascript
 // Adicionar ao next.config.js temporariamente
 console.log('Next.js DATABASE_URL:', process.env.DATABASE_URL);
 ```
 
 ### **3. Teste com Diferentes Shells**
+
 ```cmd
 # Testar com CMD
 set DATABASE_URL
@@ -196,6 +229,7 @@ echo %DATABASE_URL%
 ```
 
 ### **4. Verificação de Processo Pai**
+
 ```powershell
 # Verificar processo pai do Node.js
 Get-Process -Id $PID | Select-Object Id, ProcessName, Parent
@@ -206,12 +240,14 @@ Get-Process -Id $PID | Select-Object Id, ProcessName, Parent
 ## 📊 CRITÉRIOS DE SUCESSO
 
 ### **✅ Solução Aceitável:**
+
 1. **`process.env.DATABASE_URL`** mostra `dom` (não `dom_v2`)
 2. **Sem gambiarras** no código
 3. **Reprodutível** em ambiente limpo
 4. **Documentável** para equipe
 
 ### **❌ Soluções Inaceitáveis:**
+
 1. Forçar URL no código
 2. Workarounds temporários
 3. Soluções que não funcionam em produção
@@ -223,18 +259,23 @@ Get-Process -Id $PID | Select-Object Id, ProcessName, Parent
 
 ```markdown
 ## 🔍 CAUSA RAIZ IDENTIFICADA
+
 [Explicação clara de onde vem o dom_v2]
 
 ## 🔧 SOLUÇÃO DEFINITIVA
+
 [Passo a passo reprodutível]
 
 ## 🧪 COMANDOS DE VALIDAÇÃO
+
 [Como confirmar que funciona]
 
 ## ⚠️ PONTOS DE ATENÇÃO
+
 [O que pode dar errado]
 
 ## 📚 REFERÊNCIAS
+
 [Links para documentação]
 ```
 
@@ -253,6 +294,7 @@ Get-Process -Id $PID | Select-Object Id, ProcessName, Parent
 ## 🚨 DESCOBERTAS CRÍTICAS ADICIONAIS
 
 ### **❌ HIPÓTESE EXTERNA DESCARTA:**
+
 A sugestão de "arquivo `.env` oculto com `dom_v2`" foi **INVESTIGADA E DESCARTA**:
 
 ```bash
@@ -276,7 +318,9 @@ A sugestão de "arquivo `.env` oculto com `dom_v2`" foi **INVESTIGADA E DESCARTA
 ```
 
 ### **🔍 FONTE AINDA DESCONHECIDA:**
+
 O valor `dom_v2` está sendo carregado de uma fonte que:
+
 - ❌ Não é arquivo `.env*`
 - ❌ Não é variável do sistema
 - ❌ Não é Registry Windows
@@ -284,6 +328,7 @@ O valor `dom_v2` está sendo carregado de uma fonte que:
 - ❌ Não é cache óbvio
 
 **PRÓXIMAS INVESTIGAÇÕES SUGERIDAS:**
+
 1. ~~Cache interno do Node.js~~ ✅ INVESTIGADO
 2. ~~Configuração oculta do Next.js~~ ✅ INVESTIGADO
 3. Problema de timing no carregamento ⚠️ SUSPEITA FORTE
@@ -292,11 +337,13 @@ O valor `dom_v2` está sendo carregado de uma fonte que:
 ### **🎯 DESCOBERTAS CRÍTICAS ADICIONAIS:**
 
 **✅ PROCESSO PAI IDENTIFICADO:** Cursor IDE (fork do VS Code)
+
 - O PowerShell é iniciado pelo Cursor
 - Histórico do Cursor contém referências a projeto `C:\dom-v2`
 - MAS: Não há variável de ambiente sendo injetada pelo Cursor
 
 **✅ INVESTIGAÇÃO COMPLETA DO SISTEMA:**
+
 ```bash
 # Buscas realizadas:
 ✅ Perfil PowerShell: limpo (sem DATABASE_URL)
@@ -310,6 +357,7 @@ O valor `dom_v2` está sendo carregado de uma fonte que:
 ```
 
 **❌ CONCLUSÃO PARADOXAL:**
+
 - O valor `dom_v2` NÃO EXISTE em nenhum arquivo
 - O valor `dom_v2` NÃO EXISTE em nenhuma variável de ambiente
 - O valor `dom_v2` NÃO EXISTE no código fonte
@@ -317,6 +365,7 @@ O valor `dom_v2` está sendo carregado de uma fonte que:
 
 **🔍 HIPÓTESE FINAL MAIS PROVÁVEL:**
 O Next.js pode estar carregando um **cache interno** ou **artefato de build** que contém o valor antigo de `DATABASE_URL`. Esse cache pode estar em:
+
 - `.next/cache/`
 - `node_modules/.cache/`
 - Cache em memória do processo Next.js
@@ -327,17 +376,20 @@ O Next.js pode estar carregando um **cache interno** ou **artefato de build** qu
 ## 💡 INFORMAÇÕES ADICIONAIS
 
 ### **Arquivos de Debug Criados:**
+
 - `src/pages/api/debug/env.ts` - Mostra env vars (ainda dom_v2)
 - `src/pages/api/debug/db.ts` - Testa conexão banco (funciona com gambiarra)
 - `test-env-direct.js` - Script de teste direto (foi deletado após uso)
 
 ### **Logs Disponíveis:**
+
 - Logs completos do servidor Next.js (múltiplos processos)
 - Logs do Prisma Client (com correção aplicada)
 - Logs de debug customizados (mostrando dom_v2 vs dom)
 - Evidência de gambiarra ativa no código
 
 ### **Ambiente de Teste:**
+
 - Sistema Windows 10 limpo
 - PostgreSQL rodando
 - Node.js 22.16.0

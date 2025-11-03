@@ -45,7 +45,8 @@ const SectionTitle = styled.h3`
   align-items: center;
   gap: 0.5rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid ${props => props.theme?.navigation?.primary || '#29abe2'};
+  border-bottom: 2px solid
+    ${props => props.theme?.navigation?.primary || '#29abe2'};
 `;
 
 const Label = styled.label`
@@ -59,7 +60,11 @@ const Label = styled.label`
 const InputStyled = styled(Input)<{ $hasError?: boolean }>`
   width: 100%;
   padding: 0.6rem;
-  border: 2px solid ${props => (props.$hasError ? (props.theme?.status?.error?.color || '#e74c3c') : (props.theme?.border?.light || '#e9ecef'))};
+  border: 2px solid
+    ${props =>
+      props.$hasError
+        ? props.theme?.status?.error?.color || '#e74c3c'
+        : props.theme?.border?.light || '#e9ecef'};
   border-radius: 8px;
   font-size: 0.9rem;
   transition: all 0.3s ease;
@@ -71,7 +76,6 @@ const InputStyled = styled(Input)<{ $hasError?: boolean }>`
     box-shadow: 0 0 0 3px rgba(41, 171, 226, 0.1);
   }
 `;
-
 
 const ErrorMessage = styled.div`
   color: ${props => props.theme?.status?.error?.color || '#e74c3c'};
@@ -288,14 +292,18 @@ const TaxGuideModalNew: React.FC<TaxGuideModalProps> = ({
     <UnifiedModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Gerar Guias de Impostos"
+      title='Gerar Guias de Impostos'
       maxWidth='600px'
       footer={
         <>
           <UnifiedButton $variant='secondary' $theme={$theme} onClick={onClose}>
             Cancelar
           </UnifiedButton>
-          <UnifiedButton $variant='primary' $theme={$theme} onClick={handleSubmit}>
+          <UnifiedButton
+            $variant='primary'
+            $theme={$theme}
+            onClick={handleSubmit}
+          >
             <AccessibleEmoji emoji='💾' label='Salvar' /> Gerar Guias
           </UnifiedButton>
         </>

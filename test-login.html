@@ -1,63 +1,71 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
+  <head>
     <title>Teste Login</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Teste de Login</h1>
     <form id="loginForm">
-        <div>
-            <label>CPF:</label>
-            <input type="text" id="cpf" value="598.769.137-00" placeholder="000.000.000-00">
-        </div>
-        <div>
-            <label>Senha:</label>
-            <input type="password" id="senha" value="senha123">
-        </div>
-        <button type="submit">Login</button>
+      <div>
+        <label>CPF:</label>
+        <input
+          type="text"
+          id="cpf"
+          value="598.769.137-00"
+          placeholder="000.000.000-00"
+        />
+      </div>
+      <div>
+        <label>Senha:</label>
+        <input type="password" id="senha" value="senha123" />
+      </div>
+      <button type="submit">Login</button>
     </form>
     <div id="result"></div>
 
     <script>
-        function removeCpfMask(cpf) {
-            return cpf.replace(/\D/g, '');
-        }
+      function removeCpfMask(cpf) {
+        return cpf.replace(/\D/g, '');
+      }
 
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const cpf = document.getElementById('cpf').value;
-            const senha = document.getElementById('senha').value;
-            
-            console.log('CPF com máscara:', cpf);
-            console.log('CPF sem máscara:', removeCpfMask(cpf));
-            
-            try {
-                const response = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        cpf: removeCpfMask(cpf),
-                        senha: senha
-                    })
-                });
-                
-                const result = await response.json();
-                document.getElementById('result').innerHTML = 
-                    '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
-                
-                if (response.ok) {
-                    console.log('Login sucesso:', result);
-                } else {
-                    console.log('Login erro:', result);
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                document.getElementById('result').innerHTML = 'Erro: ' + error.message;
+      document
+        .getElementById('loginForm')
+        .addEventListener('submit', async e => {
+          e.preventDefault();
+
+          const cpf = document.getElementById('cpf').value;
+          const senha = document.getElementById('senha').value;
+
+          console.log('CPF com máscara:', cpf);
+          console.log('CPF sem máscara:', removeCpfMask(cpf));
+
+          try {
+            const response = await fetch('/api/auth/login', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                cpf: removeCpfMask(cpf),
+                senha: senha,
+              }),
+            });
+
+            const result = await response.json();
+            document.getElementById('result').innerHTML =
+              '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+
+            if (response.ok) {
+              console.log('Login sucesso:', result);
+            } else {
+              console.log('Login erro:', result);
             }
+          } catch (error) {
+            console.error('Erro:', error);
+            document.getElementById('result').innerHTML =
+              'Erro: ' + error.message;
+          }
         });
     </script>
-</body>
+  </body>
 </html>

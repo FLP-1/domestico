@@ -11,12 +11,13 @@ O erro ocorre especificamente nas **API Routes do Next.js** e impede qualquer in
 ## ❌ ERRO PRINCIPAL
 
 ```
-Error [PrismaClientInitializationError]: 
+Error [PrismaClientInitializationError]:
 Invalid prisma.configuracaoSistema.findFirst() invocation:
 Database `(not available)` does not exist on the database server at `localhost:5433`.
 ```
 
 ### **Características do Erro:**
+
 - ✅ **PostgreSQL funciona perfeitamente** (testado via `psql`)
 - ✅ **Prisma funciona fora do Next.js** (scripts Node.js funcionam)
 - ❌ **Prisma NÃO funciona dentro das API Routes do Next.js**
@@ -27,6 +28,7 @@ Database `(not available)` does not exist on the database server at `localhost:5
 ## 🔧 CONFIGURAÇÕES ATUAIS
 
 ### **1. Versões:**
+
 ```json
 {
   "@prisma/client": "^6.16.3",
@@ -39,11 +41,13 @@ Database `(not available)` does not exist on the database server at `localhost:5
 ```
 
 ### **2. DATABASE_URL (.env.local):**
+
 ```env
 DATABASE_URL="postgresql://userdom:FLP*2025@localhost:5433/dom?schema=public"
 ```
 
 **Status:**
+
 - ✅ Arquivo existe na raiz do projeto
 - ✅ Nome correto: `.env.local` (não `env.local`)
 - ✅ Sintaxe válida
@@ -51,6 +55,7 @@ DATABASE_URL="postgresql://userdom:FLP*2025@localhost:5433/dom?schema=public"
 - ✅ **ATUALIZADO:** DATABASE usa `dom` (corrigido de `dom_v2`)
 
 ### **3. Schema Prisma (prisma/schema.prisma):**
+
 ```prisma
 generator client {
   provider = "prisma-client-js"
@@ -65,34 +70,40 @@ datasource db {
 ```
 
 ### **4. Singleton do Prisma (src/lib/prisma.ts):**
+
 ```typescript
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 
 declare global {
-  var __prisma: PrismaClient | undefined
+  var __prisma: PrismaClient | undefined;
 }
 
 // Forçar DATABASE_URL para resolver problema do Next.js 15.5.2
-const databaseUrl = process.env.DATABASE_URL || 'postgresql://userdom:FLP*2025@localhost:5433/dom?schema=public';
+const databaseUrl =
+  process.env.DATABASE_URL ||
+  'postgresql://userdom:FLP*2025@localhost:5433/dom?schema=public';
 
-const prisma = globalThis.__prisma || new PrismaClient({
-  log: ['query', 'info', 'warn', 'error'],
-  datasources: {
-    db: {
-      url: databaseUrl
-    }
-  }
-})
+const prisma =
+  globalThis.__prisma ||
+  new PrismaClient({
+    log: ['query', 'info', 'warn', 'error'],
+    datasources: {
+      db: {
+        url: databaseUrl,
+      },
+    },
+  });
 
 if (process.env.NODE_ENV !== 'production') {
-  globalThis.__prisma = prisma
+  globalThis.__prisma = prisma;
 }
 
-export default prisma
-export { prisma }
+export default prisma;
+export { prisma };
 ```
 
 ### **5. Next.js Config (next.config.js):**
+
 ```javascript
 module.exports = {
   reactStrictMode: true,
@@ -119,13 +130,17 @@ module.exports = {
 ```
 
 ### **6. Exemplo de API Route (src/pages/api/auth/login.ts):**
+
 ```typescript
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../lib/prisma'; // ❌ ERRO AQUI
 import { generateToken } from '../../../lib/auth';
 import bcrypt from 'bcryptjs';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === 'POST') {
     try {
       // ❌ ERRO NA LINHA ABAIXO
@@ -139,7 +154,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           },
         },
       });
-      
+
       // ... resto do código
     } catch (error) {
       console.error('Erro:', error);
@@ -150,19 +165,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 ```
 
 ### **7. ARQUIVO ONDE O ERRO REALMENTE OCORRE (src/lib/configService.ts):**
+
 ⚠️ **CRÍTICO:** O stack trace mostra que o erro ocorre em `configService.ts:53` (não linha 31 como stack trace sugeria)
 
 **Linha 53 (ONDE ERRO OCORRE):**
+
 ```typescript
 const config = await prisma.configuracaoSistema.findFirst({
   where: {
     chave,
-    ...(empresaId && { empresaId })
-  }
+    ...(empresaId && { empresaId }),
+  },
 });
 ```
 
 **Contexto completo do método `getConfig`:**
+
 ```typescript
 // Linha 42-72
 public async getConfig(chave: string, empresaId?: string): Promise<string> {
@@ -170,7 +188,7 @@ public async getConfig(chave: string, empresaId?: string): Promise<string> {
 
   const cacheKey = empresaId ? `${chave}_${empresaId}` : chave;
   const cached = this.cache.get(cacheKey);
-  
+
   if (cached) {
     return this.convertValue(cached.valor, cached.tipo);
   }
@@ -192,12 +210,14 @@ public async getConfig(chave: string, empresaId?: string): Promise<string> {
 ```
 
 **Como configService.ts importa Prisma:**
+
 ```typescript
 // Linha 7
-import prisma from './prisma'
+import prisma from './prisma';
 ```
 
 **Características importantes:**
+
 - ✅ É um **Singleton** (linha 30-36)
 - ✅ Tem **cache interno** (Map)
 - ✅ Métodos são **assíncronos**
@@ -209,12 +229,14 @@ import prisma from './prisma'
 ## 🧪 TESTES REALIZADOS
 
 ### **✅ Teste 1: PostgreSQL Direto**
+
 ```powershell
 psql -h localhost -p 5433 -U userdom -d dom
 # RESULTADO: ✅ FUNCIONA - Banco acessível
 ```
 
 ### **✅ Teste 2: Prisma Fora do Next.js**
+
 ```javascript
 // test-prisma-direct.js
 const { PrismaClient } = require('@prisma/client');
@@ -227,12 +249,14 @@ async function test() {
 
 test();
 ```
+
 ```powershell
 node test-prisma-direct.js
 # RESULTADO: ✅ FUNCIONA - Retorna dados
 ```
 
 ### **❌ Teste 3: Prisma Dentro do Next.js**
+
 ```powershell
 npm run dev
 # Acessar: http://localhost:3000/api/auth/login
@@ -240,6 +264,7 @@ npm run dev
 ```
 
 ### **📊 Logs do Debug:**
+
 ```
 🔍 DEBUG PRISMA [abc123]:
    DATABASE_URL presente: true
@@ -256,50 +281,61 @@ npm run dev
 ## 🔄 TENTATIVAS DE CORREÇÃO (TODAS FALHARAM)
 
 ### **❌ Tentativa 1: Renomear arquivo**
+
 - `env.local` → `.env.local`
 - **Resultado:** Não resolveu
 
 ### **❌ Tentativa 2: Regenerar Prisma Client**
+
 ```powershell
 npx prisma generate
 ```
+
 - **Resultado:** Não resolveu
 
 ### **❌ Tentativa 3: Adicionar dotenv manual**
+
 ```typescript
 import dotenv from 'dotenv';
 dotenv.config();
 ```
+
 - **Resultado:** Causou erro `Cannot read properties of undefined (reading 'isTTY')`
 
 ### **❌ Tentativa 4: Forçar DATABASE_URL no constructor**
+
 ```typescript
 const databaseUrl = process.env.DATABASE_URL || 'postgresql://...';
 const prisma = new PrismaClient({
   datasources: {
     db: {
-      url: databaseUrl
-    }
-  }
-})
+      url: databaseUrl,
+    },
+  },
+});
 ```
+
 - **Resultado:** Não resolveu
 
 ### **❌ Tentativa 5: Adicionar env no next.config.js**
+
 ```javascript
 module.exports = {
   env: {
-    DATABASE_URL: process.env.DATABASE_URL
-  }
-}
+    DATABASE_URL: process.env.DATABASE_URL,
+  },
+};
 ```
+
 - **Resultado:** Não resolveu
 
 ### **❌ Tentativa 6: Testar versões anteriores**
+
 - Pesquisado issues do Next.js 15.x
 - **Resultado:** Não encontrado solução específica
 
 ### **❌ Tentativa 7: Limpar cache e node_modules**
+
 ```powershell
 # PRECISO CONFIRMAR SE FOI FEITO:
 Remove-Item -Recurse -Force node_modules
@@ -307,30 +343,37 @@ Remove-Item -Recurse -Force .next
 npm install
 npx prisma generate
 ```
+
 - **Status:** (NÃO TESTADO OU NÃO DOCUMENTADO)
 
 ### **❌ Tentativa 8: Verificar Prisma Client gerado**
+
 ```powershell
 # TESTADO:
 ls node_modules/.prisma/client
 # RESULTADO: ✅ Prisma Client existe e está gerado
 ```
+
 - **Status:** ✅ TESTADO - Prisma Client presente
 
 ### **❌ Tentativa 9: Limpar variável de ambiente do sistema**
+
 ```powershell
 # PROBLEMA DESCOBERTO: Contradição entre sistema e arquivo
 $env:DATABASE_URL  # tinha dom_v2 (antiga)
 Get-Content .env.local  # tinha dom (correta)
 Remove-Item Env:\DATABASE_URL  # removida variável do sistema
 ```
+
 - **Status:** ✅ TESTADO - Contradição identificada e corrigida
 
 ### **❌ Tentativa 10: Adicionar dotenv.config() manual**
+
 ```typescript
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 ```
+
 - **Status:** ❌ FALHOU - Causou erro `Cannot read properties of undefined (reading 'isTTY')`
 - **Motivo:** Conflito entre dotenv manual e Next.js automático
 
@@ -339,23 +382,27 @@ dotenv.config({ path: '.env.local' });
 ## 🚨 PISTA MAIS IMPORTANTE DO LOG
 
 ⚠️ **MENSAGEM CRÍTICA:**
+
 ```
 Prisma has detected that this project was built on Vercel, which caches dependencies.
 This leads to an outdated Prisma Client because Prisma's auto-generation isn't triggered.
 ```
 
 **ANÁLISE:**
+
 1. **Projeto NÃO está no Vercel** - está rodando localmente
 2. **Por que Prisma detecta Vercel?** → Pode ter variável de ambiente `VERCEL=1` ou similar
 3. **"Outdated Prisma Client"** → Sugere problema de cache/geração
 4. **Solução sugerida:** "run `prisma generate` during build process"
 
 **QUESTÕES RESPONDIDAS:**
+
 - ✅ Há variável `VERCEL` ou `CI`? **NÃO** (verificado)
 - ✅ O Prisma Client foi regenerado? **SIM** (arquivos presentes e atualizados)
 - ✅ Há cache antigo do Vercel? **NÃO** (pasta `.vercel` não existe)
 
 **QUESTÕES REMANESCENTES:**
+
 - ❓ Por que Prisma detecta "built on Vercel" sem variáveis ou cache?
 - ❓ Por que DATABASE_URL vira `(not available)` na query?
 - ❓ Por que funciona fora do Next.js mas não dentro?
@@ -365,21 +412,25 @@ This leads to an outdated Prisma Client because Prisma's auto-generation isn't t
 ## 🎯 QUESTÕES ESPECÍFICAS
 
 ### **1. Por que o Prisma funciona fora do Next.js mas não dentro?**
+
 - PostgreSQL: ✅ Funciona
 - Prisma direto: ✅ Funciona
 - Prisma + Next.js: ❌ Falha
 
 ### **2. Por que `DATABASE_URL` está presente mas não é interpretada?**
+
 ```
 DATABASE_URL presente: true  // ✅ Confirmado no log
 Database `(not available)` does not exist  // ❌ Erro persiste
 ```
 
 ### **3. Existe algum problema conhecido do Next.js 15.5.2 com Prisma?**
+
 - Next.js 15.x é relativamente novo
 - Pode ter mudanças no carregamento de variáveis de ambiente
 
 ### **4. O singleton pattern está correto?**
+
 ```typescript
 const prisma = globalThis.__prisma || new PrismaClient(...)
 if (process.env.NODE_ENV !== 'production') {
@@ -388,16 +439,19 @@ if (process.env.NODE_ENV !== 'production') {
 ```
 
 ### **5. Há alguma configuração específica do Next.js 15.x que estou perdendo?**
+
 - Mudanças no `next.config.js`?
 - Mudanças no carregamento de env?
 - Mudanças no webpack/turbopack?
 
 ### **6. Por que Prisma detecta Vercel em projeto local?**
+
 - Há variável `VERCEL=1` ou `CI=true` no ambiente?
 - Há resquícios de build anterior do Vercel?
 - O Prisma Client está usando configuração antiga?
 
 ### **7. O erro ocorre no primeiro uso do Prisma (`configService.ts`)?**
+
 - Por que `configService.ts` é carregado antes de tudo?
 - Há importação circular?
 - `configService` tenta acessar banco antes do Prisma estar pronto?
@@ -407,12 +461,14 @@ if (process.env.NODE_ENV !== 'production') {
 ## 🔬 OBSERVAÇÕES IMPORTANTES
 
 ### **Comportamento Anômalo:**
+
 1. **DATABASE_URL está presente** no `process.env` quando `src/lib/prisma.ts` é carregado
 2. **Prisma Client é instanciado sem erros** inicialmente
 3. **Erro só ocorre na primeira query** dentro da API Route
 4. **Mensagem de erro sugere** que o Prisma não consegue ler `DATABASE_URL` internamente
 
 ### **Hipóteses:**
+
 - **Hipótese 1:** Next.js 15.x mudou como carrega variáveis de ambiente nas API Routes
 - **Hipótese 2:** Prisma Client é instanciado antes do `.env.local` ser carregado
 - **Hipótese 3:** Há conflito entre o carregamento do Next.js e do Prisma
@@ -423,23 +479,29 @@ if (process.env.NODE_ENV !== 'production') {
 ## 📝 O QUE PRECISO
 
 ### **Solução que:**
+
 1. ✅ Permita Prisma funcionar dentro das API Routes do Next.js
 2. ✅ Seja compatível com Next.js 15.5.2
 3. ✅ Não use workarounds temporários ou hardcoded
 4. ✅ Siga as melhores práticas oficiais do Prisma e Next.js
 
 ### **Formato de Resposta Desejado:**
+
 ```markdown
 ## 🎯 CAUSA RAIZ
+
 [Explicação detalhada do que causa o problema]
 
 ## 🔧 SOLUÇÃO
+
 [Passo a passo completo da correção]
 
 ## 📊 VALIDAÇÃO
+
 [Como testar se funcionou]
 
 ## 📚 REFERÊNCIAS
+
 [Links para documentação oficial]
 ```
 
@@ -448,6 +510,7 @@ if (process.env.NODE_ENV !== 'production') {
 ## 🌍 CONTEXTO ADICIONAL
 
 ### **Ambiente:**
+
 - **OS:** Windows 10 (Build 26100)
 - **Shell:** PowerShell
 - **Node:** v22.16.0 (✅ VERIFICADO)
@@ -457,6 +520,7 @@ if (process.env.NODE_ENV !== 'production') {
 - **TypeScript:** 5.9.2
 
 ### **Estrutura do Projeto:**
+
 ```
 E:\DOM\
 ├── .env.local                 # ✅ Existe
@@ -474,6 +538,7 @@ E:\DOM\
 ```
 
 ### **PostgreSQL:**
+
 - **Versão:** PostgreSQL 16+
 - **Host:** localhost
 - **Porta:** 5433 (customizada)
@@ -487,12 +552,14 @@ E:\DOM\
 ## ⚠️ RESTRIÇÕES
 
 ### **NÃO posso:**
+
 - ❌ Mudar para outro ORM (preciso do Prisma)
 - ❌ Fazer downgrade do Next.js (projeto exige 15.x)
 - ❌ Usar dados mockados (preciso de dados reais do banco)
 - ❌ Usar API externa (preciso de conexão direta)
 
 ### **POSSO:**
+
 - ✅ Modificar configurações do Prisma
 - ✅ Modificar `next.config.js`
 - ✅ Adicionar/remover dependências
@@ -514,6 +581,7 @@ const user = await prisma.usuario.findUnique({ where: { cpf } });
 ```
 
 **Sem retornar:**
+
 ```
 Database `(not available)` does not exist
 ```
@@ -523,6 +591,7 @@ Database `(not available)` does not exist
 ## 💡 AGRADECIMENTO
 
 Agradeço qualquer insight, mesmo que parcial:
+
 - Links para issues do GitHub relevantes
 - Mudanças conhecidas do Next.js 15.x
 - Configurações alternativas do Prisma
@@ -536,6 +605,7 @@ Agradeço qualquer insight, mesmo que parcial:
 ## 📎 ANEXOS
 
 ### **Log Completo do Erro:**
+
 ```
 Error [PrismaClientInitializationError]: Invalid prisma.configuracaoSistema.findFirst() invocation:
 
@@ -555,6 +625,7 @@ Database `(not available)` does not exist on the database server at `localhost:5
 ```
 
 ⚠️ **PISTAS CRÍTICAS NO LOG:**
+
 1. Mensagem menciona **"Vercel"** mas projeto está rodando **localmente**
    - ✅ **VERIFICADO:** Sem variáveis VERCEL ou CI no ambiente
    - ✅ **VERIFICADO:** Sem pasta `.vercel` no projeto
@@ -571,6 +642,7 @@ Database `(not available)` does not exist on the database server at `localhost:5
    - ❌ Prisma reporta database `(not available)`
 
 ### **Estrutura Completa do Schema:**
+
 - 90+ models
 - Relações complexas entre tabelas
 - Índices configurados
@@ -583,12 +655,14 @@ Database `(not available)` does not exist on the database server at `localhost:5
 **Contexto importante:** Esta aplicação já funcionou anteriormente. O erro começou recentemente.
 
 **Possíveis causas da quebra:**
+
 1. Atualização do Next.js (14.x → 15.5.2)?
 2. Atualização do Prisma (versão anterior → 6.16.3)?
 3. Mudança no `.env.local` (nome, localização, sintaxe)?
 4. Mudança na estrutura do Prisma Client singleton?
 
 **Seria útil saber:**
+
 - Quais mudanças exatas ocorreram entre Next.js 14.x e 15.x relacionadas a env vars
 - Se há breaking changes conhecidos do Prisma 6.x com Next.js 15.x
 - Como o Next.js 15.x carrega `.env.local` internamente
@@ -599,11 +673,13 @@ Database `(not available)` does not exist on the database server at `localhost:5
 ## ✅ INFORMAÇÕES ADICIONAIS COLETADAS
 
 ### **1. Versão exata do Node.js:**
+
 ```
 v22.16.0
 ```
 
 ### **2. Versão completa do Prisma:**
+
 ```
 prisma                  : 6.16.3
 @prisma/client          : 6.16.3
@@ -624,6 +700,7 @@ Studio                  : 0.511.0
 ⚠️ **AVISO:** Há um warning sobre `package.json#prisma` ser deprecated (migrar para `prisma.config.ts`)
 
 ### **3. Variáveis de ambiente:**
+
 ```
 VERCEL: (não definida)
 CI: (não definida)
@@ -637,13 +714,16 @@ DATABASE_URL (.env.local): postgresql://userdom:FLP*2025@localhost:5433/dom?sche
 ✅ **Contradição dom/dom_v2 resolvida** - variável do sistema removida
 
 ### **4. Conteúdo de `src/lib/configService.ts`:**
+
 ✅ **Código fornecido na seção 7** (367 linhas)
+
 - Erro ocorre na **linha 53**: `prisma.configuracaoSistema.findFirst()`
 - É a **primeira query** do sistema ao banco
 - Singleton com cache interno
 - ⚠️ **PROBLEMA:** Carregado muito cedo, antes das env vars estarem prontas
 
 ### **5. Estado do Prisma Client gerado:**
+
 ```
 ✅ Prisma Client existe
 
@@ -663,6 +743,7 @@ Arquivos encontrados:
 ✅ **Prisma Client está gerado e presente**
 
 ### **6. Arquivos de cache Vercel:**
+
 ```
 ✅ Pasta .vercel não existe
 ```
@@ -670,6 +751,7 @@ Arquivos encontrados:
 ✅ **Sem cache do Vercel** no projeto
 
 ### **7. Arquivos de configuração npm/yarn:**
+
 ```
 .npmrc: não existe
 .yarnrc: não existe
@@ -682,9 +764,11 @@ Arquivos encontrados:
 ## 🎯 HIPÓTESES PRIORIZADAS (COM BASE NO LOG)
 
 ### **🔴 HIPÓTESE MAIS PROVÁVEL:**
+
 **Prisma Client instanciado antes das env vars estarem disponíveis no contexto do Next.js**
 
 **Evidências:**
+
 - ✅ Next.js carrega `.env.local` (log confirmado)
 - ✅ Prisma funciona COM dotenv manual fora do Next.js
 - ✅ Prisma falha SEM dotenv manual fora do Next.js
@@ -692,11 +776,13 @@ Arquivos encontrados:
 - ❌ dotenv.config() manual causa conflito `isTTY` com Next.js
 
 **Nova hipótese:**
+
 - `configService.ts` é importado e executa query ANTES do Next.js processar `.env.local`
 - Singleton pattern pode estar usando instância antiga
 - Timing de carregamento entre Next.js e Prisma Client
 
 **Teste sugerido:**
+
 ```typescript
 // Lazy loading do Prisma Client
 const getPrisma = () => {
@@ -705,9 +791,9 @@ const getPrisma = () => {
       log: ['query', 'info', 'warn', 'error'],
       datasources: {
         db: {
-          url: process.env.DATABASE_URL
-        }
-      }
+          url: process.env.DATABASE_URL,
+        },
+      },
     });
   }
   return globalThis.__prisma;
@@ -715,24 +801,30 @@ const getPrisma = () => {
 ```
 
 ### **🟡 HIPÓTESE SECUNDÁRIA:**
+
 **`configService.ts` carrega antes do `.env.local` ser processado**
 
 **Evidências:**
+
 - ✅ Erro ocorre em `configService.ts` (carregado cedo?)
 - ✅ `DATABASE_URL` presente no log mas Prisma não vê
 
 **Teste sugerido:**
+
 - Inspecionar quando `configService.ts` é importado
 - Adicionar log em `configService.ts` mostrando `process.env.DATABASE_URL`
 
 ### **🟢 HIPÓTESE TERCIÁRIA:**
+
 **Next.js 15.x mudou ordem de carregamento de env vars**
 
 **Evidências:**
+
 - ✅ Projeto funcionava antes
 - ✅ Next.js 15.x é versão nova
 
 **Teste sugerido:**
+
 - Testar com Next.js 14.x temporariamente
 - Verificar changelog oficial do Next.js 15.x
 
@@ -745,11 +837,13 @@ const getPrisma = () => {
 ## 📋 DESCOBERTAS MAIS RECENTES (ATUALIZAÇÃO FINAL)
 
 ### **✅ PROBLEMAS RESOLVIDOS:**
+
 1. **Contradição dom/dom_v2:** Variável do sistema removida, `.env.local` usa `dom`
 2. **Conflito dotenv:** Removido `dotenv.config()` manual que causava erro `isTTY`
 3. **Next.js carrega .env.local:** Logs confirmam "injecting env (0) from .env.local"
 
 ### **🔍 EVIDÊNCIAS CRÍTICAS:**
+
 ```
 ✅ Script Node.js + dotenv: "Query executada com sucesso! Usuários: 5"
 ❌ Script Node.js sem dotenv: "Environment variable not found: DATABASE_URL"
@@ -757,14 +851,17 @@ const getPrisma = () => {
 ```
 
 ### **💡 INSIGHT PRINCIPAL:**
+
 **O problema NÃO é carregamento de env vars, mas sim TIMING de acesso ao Prisma Client**
 
 **Hipótese atual:**
+
 - `configService.ts` é importado e executa query ANTES do Prisma Client ter acesso às env vars
 - Next.js carrega `.env.local` mas Prisma Client já foi instanciado com configuração antiga
 - Singleton pattern pode estar usando instância com `DATABASE_URL` undefined
 
 ### **🎯 PRÓXIMAS ESTRATÉGIAS:**
+
 1. **Lazy loading:** Instanciar Prisma Client apenas na primeira query
 2. **Factory pattern:** Função que cria Prisma Client sob demanda
 3. **Delay de inicialização:** Aguardar env vars estarem prontas
@@ -775,6 +872,7 @@ const getPrisma = () => {
 ## 📊 RESUMO EXECUTIVO DAS DESCOBERTAS
 
 ### **✅ O QUE ESTÁ FUNCIONANDO:**
+
 1. PostgreSQL rodando e acessível via `psql` na porta 5433
 2. Prisma Client gerado corretamente (versão 6.16.3)
 3. `DATABASE_URL` definida no `.env.local` (aponta para `dom_v2`)
@@ -784,6 +882,7 @@ const getPrisma = () => {
 7. Sem cache `.vercel` no projeto
 
 ### **❌ O QUE ESTÁ FALHANDO:**
+
 1. Prisma NÃO funciona dentro das API Routes do Next.js
 2. Erro ocorre na **primeira query** ao banco (`configService.ts:53`)
 3. Prisma reporta database como `(not available)` (não consegue ler `DATABASE_URL`)
@@ -791,6 +890,7 @@ const getPrisma = () => {
 5. **NOVO:** dotenv.config() manual causa erro `isTTY` (conflito com Next.js)
 
 ### **🔴 CONTRADIÇÃO PRINCIPAL:**
+
 ```
 ✅ DATABASE_URL existe: postgresql://userdom:FLP*2025@localhost:5433/dom
 ✅ PostgreSQL acessível
@@ -800,29 +900,34 @@ const getPrisma = () => {
 ```
 
 ### **🎯 ARQUIVOS-CHAVE:**
+
 - `src/lib/prisma.ts` → Singleton do Prisma Client (funciona)
 - `src/lib/configService.ts:53` → ONDE O ERRO OCORRE (primeira query)
 - `.env.local` → DATABASE_URL definida
 - `next.config.js` → Configuração Next.js (sem env customizado)
 
 ### **💡 HIPÓTESE MAIS PROVÁVEL APÓS DESCOBERTAS RECENTES:**
+
 **Prisma Client não consegue acessar `process.env.DATABASE_URL` no momento da query dentro do Next.js, mesmo ela estando definida e sendo carregada pelo Next.js.**
 
 **Evidências adicionais:**
+
 - ✅ Next.js carrega `.env.local` (log: "injecting env (0) from .env.local")
 - ✅ Script Node.js COM dotenv funciona: "Query executada com sucesso! Usuários: 5"
 - ❌ Script Node.js SEM dotenv falha: "Environment variable not found: DATABASE_URL"
 - ❌ dotenv.config() manual causa conflito `isTTY` com Next.js
 
 **Possíveis causas:**
+
 1. **Timing de carregamento:** `configService.ts` é carregado ANTES do Next.js processar `.env.local`
 2. **Conflito de contexto:** Prisma Client instanciado em contexto diferente do Next.js
-3. **Singleton pattern:** globalThis.__prisma pode estar usando configuração antiga
+3. **Singleton pattern:** globalThis.\_\_prisma pode estar usando configuração antiga
 4. **Next.js 15.x:** Mudanças internas no carregamento de env vars
 
 ### **🧪 TESTES ADICIONAIS REALIZADOS:**
 
 **Teste com dotenv manual (FALHOU):**
+
 ```typescript
 // src/lib/prisma.ts
 import dotenv from 'dotenv';
@@ -830,6 +935,7 @@ dotenv.config({ path: '.env.local' }); // ❌ Causou erro 'isTTY'
 ```
 
 **Teste Prisma fora do Next.js (SUCESSO):**
+
 ```javascript
 // test-prisma-with-dotenv.js
 require('dotenv').config({ path: '.env.local' });
@@ -838,6 +944,7 @@ const { PrismaClient } = require('@prisma/client');
 ```
 
 **Teste Prisma sem dotenv (FALHOU):**
+
 ```javascript
 // test-prisma.js (sem dotenv)
 const { PrismaClient } = require('@prisma/client');
@@ -845,8 +952,8 @@ const { PrismaClient } = require('@prisma/client');
 ```
 
 ### **🎯 PRÓXIMAS HIPÓTESES A INVESTIGAR:**
+
 1. **Lazy loading do Prisma Client** - Instanciar apenas quando necessário
 2. **Contexto de execução** - Verificar se Prisma roda no contexto correto
 3. **Timing de inicialização** - Delay na primeira query até env vars estarem prontas
 4. **Singleton pattern alternativo** - Usar factory function em vez de instância global
-

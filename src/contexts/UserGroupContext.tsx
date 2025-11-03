@@ -36,9 +36,7 @@ const STORAGE_KEY = 'selectedUserGroup';
 export const UserGroupProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [currentGroup, setCurrentGroupState] = useState<UserGroup | null>(
-    null
-  );
+  const [currentGroup, setCurrentGroupState] = useState<UserGroup | null>(null);
   const [availableGroups, setAvailableGroupsState] = useState<UserGroup[]>([]);
   const [showGroupModal, setShowGroupModal] = useState(false);
 
@@ -75,10 +73,13 @@ export const UserGroupProvider: React.FC<{ children: ReactNode }> = ({
 
   const setAvailableGroups = (groups: UserGroup[]) => {
     setAvailableGroupsState(groups);
-    
+
     // ✅ Só selecionar automaticamente se não há grupo salvo no localStorage
     if (!currentGroup && groups.length > 0) {
-      const savedGroup = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
+      const savedGroup =
+        typeof window !== 'undefined'
+          ? localStorage.getItem(STORAGE_KEY)
+          : null;
       if (!savedGroup) {
         setCurrentGroupState(groups[0]);
       }

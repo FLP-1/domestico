@@ -22,7 +22,7 @@ A segurança da aplicação foi completamente reforçada através de múltiplas 
 
 **Proteção contra Força Bruta:** Um middleware de rate limiting foi implementado em `src/lib/rateLimit.ts` usando `lru-cache` para armazenamento em memória. A API de login agora está protegida com um limite de 5 tentativas por janela de 15 minutos, tornando ataques de força bruta praticamente inviáveis. O sistema inclui headers informativos (`X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`) e diferentes perfis de rate limiting para diferentes tipos de operações (autenticação, APIs públicas, operações sensíveis, uploads).
 
-**Proteção Anti-CSRF:** Uma proteção completa contra ataques CSRF foi implementada em `src/lib/csrf.ts` usando o padrão *Double Submit Cookie*. Um novo endpoint (`/api/csrf`) foi criado para fornecer tokens ao frontend. Todas as requisições que modificam estado (POST, PUT, DELETE) agora exigem um token `x-csrf-token` no header, validado através de comparação segura contra timing attacks usando `crypto.timingSafeEqual`.
+**Proteção Anti-CSRF:** Uma proteção completa contra ataques CSRF foi implementada em `src/lib/csrf.ts` usando o padrão _Double Submit Cookie_. Um novo endpoint (`/api/csrf`) foi criado para fornecer tokens ao frontend. Todas as requisições que modificam estado (POST, PUT, DELETE) agora exigem um token `x-csrf-token` no header, validado através de comparação segura contra timing attacks usando `crypto.timingSafeEqual`.
 
 **Middleware de Autenticação e Autorização:** Um sistema completo de middleware foi criado em `src/lib/authMiddleware.ts` que fornece funções de ordem superior para proteger rotas de API. O sistema inclui `requireAuth` para autenticação básica, `requireRole` para validação de permissões, `requireActiveUser` para verificar se o usuário está ativo e não bloqueado, e funções pré-configuradas para diferentes níveis de acesso (`requireAdmin`, `requireEmpregador`, `requireEmpregado`).
 
@@ -92,23 +92,24 @@ A infraestrutura foi reforçada com scripts e procedimentos para backup e recupe
 
 ## Impacto Quantitativo
 
-| Métrica | Antes | Depois | Melhoria |
-|---------|-------|--------|----------|
-| **Vulnerabilidades de Segurança** | 1 (moderada) | 0 | ✅ 100% |
-| **Tamanho do Logo** | 1.7MB | 42KB | ✅ 97.5% |
-| **Tempo de Carregamento Inicial** | ~5s | ~1.5s | ✅ 70% |
-| **Cobertura de Testes** | <1% (1 arquivo) | ~25% (fluxos críticos) | ✅ +2400% |
-| **Arquivos de Teste** | 1 | 4 | ✅ +300% |
-| **Proteção contra Força Bruta** | Nenhuma | Rate Limiting Ativo | ✅ Implementado |
-| **Proteção contra CSRF** | Nenhuma | Double Submit Cookie | ✅ Implementado |
-| **Qualidade de Tipo (TypeScript)** | Fraca (`strict: false`) | Forte (`strict: true`) | ✅ Implementado |
-| **Logger Estruturado** | Nenhum | Pino com JSON | ✅ Implementado |
-| **Documentação de API** | Nenhuma | Completa (OpenAPI) | ✅ Implementado |
-| **Estratégia de Backup** | Nenhuma | Completa (scripts + docs) | ✅ Implementado |
+| Métrica                            | Antes                   | Depois                    | Melhoria        |
+| ---------------------------------- | ----------------------- | ------------------------- | --------------- |
+| **Vulnerabilidades de Segurança**  | 1 (moderada)            | 0                         | ✅ 100%         |
+| **Tamanho do Logo**                | 1.7MB                   | 42KB                      | ✅ 97.5%        |
+| **Tempo de Carregamento Inicial**  | ~5s                     | ~1.5s                     | ✅ 70%          |
+| **Cobertura de Testes**            | <1% (1 arquivo)         | ~25% (fluxos críticos)    | ✅ +2400%       |
+| **Arquivos de Teste**              | 1                       | 4                         | ✅ +300%        |
+| **Proteção contra Força Bruta**    | Nenhuma                 | Rate Limiting Ativo       | ✅ Implementado |
+| **Proteção contra CSRF**           | Nenhuma                 | Double Submit Cookie      | ✅ Implementado |
+| **Qualidade de Tipo (TypeScript)** | Fraca (`strict: false`) | Forte (`strict: true`)    | ✅ Implementado |
+| **Logger Estruturado**             | Nenhum                  | Pino com JSON             | ✅ Implementado |
+| **Documentação de API**            | Nenhuma                 | Completa (OpenAPI)        | ✅ Implementado |
+| **Estratégia de Backup**           | Nenhuma                 | Completa (scripts + docs) | ✅ Implementado |
 
 ## Arquivos Criados e Modificados
 
 ### Arquivos Modificados (5)
+
 1. `next.config.js` - Política de cache otimizada e configurações de performance
 2. `tsconfig.json` - TypeScript strict mode habilitado
 3. `package.json` - Dependências atualizadas (next-auth, pino, rate limiting)
@@ -116,6 +117,7 @@ A infraestrutura foi reforçada com scripts e procedimentos para backup e recupe
 5. `src/lib/auth.ts` - Fallback inseguro removido
 
 ### Arquivos Criados (19)
+
 1. `src/lib/logger.ts` - Logger estruturado com Pino
 2. `src/lib/rateLimit.ts` - Middleware de rate limiting
 3. `src/lib/csrf.ts` - Proteção anti-CSRF

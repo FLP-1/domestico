@@ -7,17 +7,17 @@ export interface NetworkFingerprint {
   effectiveType: string;
   downlink: number;
   rtt: number;
-  
+
   // Informações de IP e localização
   ipAddress: string;
   timezone: string;
   language: string;
-  
+
   // Informações de hardware/software
   userAgent: string;
   platform: string;
   screenResolution: string;
-  
+
   // Informações de rede avançadas
   networkFingerprint: {
     connectionSpeed: string;
@@ -25,7 +25,7 @@ export interface NetworkFingerprint {
     networkLatency: number;
     bandwidthEstimate: number;
   };
-  
+
   // Informações de contexto
   timestamp: string;
   sessionId: string;
@@ -48,13 +48,13 @@ class NetworkFingerprintingService {
     try {
       // Tentar obter IP via WebRTC
       const pc = new RTCPeerConnection({
-        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
       });
-      
+
       pc.createDataChannel('');
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
-      
+
       return new Promise((resolve: any) => {
         pc.onicecandidate = (event: any) => {
           if (event.candidate) {
@@ -66,7 +66,7 @@ class NetworkFingerprintingService {
             }
           }
         };
-        
+
         // Timeout fallback
         setTimeout(() => {
           resolve('unknown');
@@ -88,7 +88,7 @@ class NetworkFingerprintingService {
           effectiveType: connection.effectiveType || 'unknown',
           downlink: connection.downlink || 0,
           rtt: connection.rtt || 0,
-          saveData: connection.saveData || false
+          saveData: connection.saveData || false,
         });
       } else {
         resolve({
@@ -96,7 +96,7 @@ class NetworkFingerprintingService {
           effectiveType: 'unknown',
           downlink: 0,
           rtt: 0,
-          saveData: false
+          saveData: false,
         });
       }
     });
@@ -104,7 +104,7 @@ class NetworkFingerprintingService {
 
   private calculateBandwidthEstimate(downlink: number, rtt: number): number {
     if (downlink === 0 || rtt === 0) return 0;
-    
+
     // Estimativa baseada em downlink e RTT
     const bandwidth = (downlink * 1000) / (rtt / 1000); // Kbps
     return Math.round(bandwidth);
@@ -210,7 +210,7 @@ class NetworkFingerprintingService {
     // Análise temporal (se há dados históricos)
     if (historicalData && historicalData.length > 0) {
       const lastFingerprint = historicalData[historicalData.length - 1];
-      
+
       // Verificar mudanças significativas no IP
       if (fingerprint.ipAddress !== lastFingerprint.ipAddress) {
         riskScore += 25;
@@ -236,22 +236,26 @@ class NetworkFingerprintingService {
     if (typeof window === 'undefined') {
       throw new Error('Network fingerprint só pode ser gerado no cliente');
     }
-    
+
     // ✅ Preservar timestamp e sessionId existentes se disponíveis
     let timestamp = new Date().toISOString();
     let sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     // Tentar obter timestamp e sessionId existentes do localStorage
     try {
-      const existingTimestamp = localStorage.getItem('network_fingerprint_timestamp');
-      const existingSessionId = localStorage.getItem('network_fingerprint_session_id');
-      
+      const existingTimestamp = localStorage.getItem(
+        'network_fingerprint_timestamp'
+      );
+      const existingSessionId = localStorage.getItem(
+        'network_fingerprint_session_id'
+      );
+
       if (existingTimestamp && existingSessionId) {
         // Verificar se o timestamp não é muito antigo (mais de 1 hora)
         const existingTime = new Date(existingTimestamp).getTime();
         const currentTime = new Date().getTime();
         const oneHour = 60 * 60 * 1000; // 1 hora em milissegundos
-        
+
         if (currentTime - existingTime < oneHour) {
           timestamp = existingTimestamp;
           sessionId = existingSessionId;
@@ -259,36 +263,42 @@ class NetworkFingerprintingService {
       }
     } catch (error) {
       // Se houver erro ao acessar localStorage, usar valores novos
-      console.warn('Erro ao acessar localStorage para timestamp/sessionId:', error);
+      console.warn(
+        'Erro ao acessar localStorage para timestamp/sessionId:',
+        error
+      );
     }
-    
+
     const connection = await this.getNetworkInformation();
     const ipAddress = await this.getClientIP();
-    const bandwidthEstimate = this.calculateBandwidthEstimate(connection.downlink, connection.rtt);
+    const bandwidthEstimate = this.calculateBandwidthEstimate(
+      connection.downlink,
+      connection.rtt
+    );
 
     const fingerprint: NetworkFingerprint = {
       connectionType: connection.type,
       effectiveType: connection.effectiveType,
       downlink: connection.downlink,
       rtt: connection.rtt,
-      
+
       ipAddress,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       language: navigator.language,
-      
+
       userAgent: navigator.userAgent,
       platform: navigator.platform,
       screenResolution: `${screen.width}x${screen.height}`,
-      
+
       networkFingerprint: {
         connectionSpeed: `${connection.downlink}Mbps`,
         connectionQuality: connection.effectiveType,
         networkLatency: connection.rtt,
-        bandwidthEstimate
+        bandwidthEstimate,
       },
-      
+
       timestamp,
-      sessionId
+      sessionId,
     };
 
     // ✅ Salvar timestamp e sessionId no localStorage para preservar entre sessões
@@ -297,16 +307,23 @@ class NetworkFingerprintingService {
     return fingerprint;
   }
 
-  public async analyzeNetwork(fingerprint: NetworkFingerprint, historicalData?: NetworkFingerprint[]): Promise<NetworkAnalysisResult> {
+  public async analyzeNetwork(
+    fingerprint: NetworkFingerprint,
+    historicalData?: NetworkFingerprint[]
+  ): Promise<NetworkAnalysisResult> {
     const networkProfile = this.analyzeNetworkProfile(fingerprint);
-    const { riskScore, confidence, anomalies } = this.calculateRiskScore(fingerprint, networkProfile, historicalData);
+    const { riskScore, confidence, anomalies } = this.calculateRiskScore(
+      fingerprint,
+      networkProfile,
+      historicalData
+    );
 
     const result: NetworkAnalysisResult = {
       riskScore,
       confidence,
       anomalies,
       networkProfile,
-      fingerprint
+      fingerprint,
     };
 
     logger.log('🔍 Análise de rede concluída:', {
@@ -314,14 +331,17 @@ class NetworkFingerprintingService {
       confidence,
       anomalies: anomalies.length,
       networkType: networkProfile.type,
-      quality: networkProfile.quality
+      quality: networkProfile.quality,
     });
 
     return result;
   }
 
   // Método para detectar possíveis fraudes baseado em padrões de rede
-  public detectNetworkFraud(fingerprint: NetworkFingerprint, historicalData: NetworkFingerprint[]): {
+  public detectNetworkFraud(
+    fingerprint: NetworkFingerprint,
+    historicalData: NetworkFingerprint[]
+  ): {
     isFraud: boolean;
     reasons: string[];
     confidence: number;
@@ -338,7 +358,9 @@ class NetworkFingerprintingService {
     }
 
     // Verificar padrões de conexão inconsistentes
-    const connectionTypes = historicalData.slice(-10).map(h => h.connectionType);
+    const connectionTypes = historicalData
+      .slice(-10)
+      .map(h => h.connectionType);
     const uniqueTypes = new Set(connectionTypes);
     if (uniqueTypes.size > 2) {
       reasons.push('Tipos de conexão inconsistentes');
@@ -346,19 +368,24 @@ class NetworkFingerprintingService {
     }
 
     // Verificar bandwidth inconsistente
-    const bandwidths = historicalData.slice(-5).map(h => h.networkFingerprint.bandwidthEstimate);
-    const avgBandwidth = bandwidths.reduce((a: any, b: any) => a + b, 0) / bandwidths.length;
+    const bandwidths = historicalData
+      .slice(-5)
+      .map(h => h.networkFingerprint.bandwidthEstimate);
+    const avgBandwidth =
+      bandwidths.reduce((a: any, b: any) => a + b, 0) / bandwidths.length;
     const currentBandwidth = fingerprint.networkFingerprint.bandwidthEstimate;
-    
+
     if (Math.abs(currentBandwidth - avgBandwidth) > avgBandwidth * 0.5) {
       reasons.push('Bandwidth inconsistente com histórico');
       confidence += 20;
     }
 
     // Verificar user agent suspeito
-    if (fingerprint.userAgent.includes('bot') || 
-        fingerprint.userAgent.includes('crawler') ||
-        fingerprint.userAgent.length < 50) {
+    if (
+      fingerprint.userAgent.includes('bot') ||
+      fingerprint.userAgent.includes('crawler') ||
+      fingerprint.userAgent.length < 50
+    ) {
       reasons.push('User agent suspeito detectado');
       confidence += 40;
     }

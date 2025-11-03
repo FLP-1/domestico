@@ -16,30 +16,30 @@ export const coresSimplificadas = {
   // CORES SEMÂNTICAS (apenas 4)
   // ========================================
   semantica: {
-    sucesso: '#10B981',    // Verde - para tudo que é positivo
-    aviso: '#F59E0B',      // Amarelo - para alertas
-    erro: '#EF4444',       // Vermelho - para problemas
-    info: '#3B82F6',       // Azul - para informações
+    sucesso: '#10B981', // Verde - para tudo que é positivo
+    aviso: '#F59E0B', // Amarelo - para alertas
+    erro: '#EF4444', // Vermelho - para problemas
+    info: '#3B82F6', // Azul - para informações
   },
 
   // ========================================
   // CORES DE PERFIL (apenas 1 cor por perfil)
   // ========================================
   perfis: {
-    empregado: '#29ABE2',   // Azul
-    empregador: '#E74C3C',  // Vermelho
-    familia: '#9B59B6',     // Roxo
-    admin: '#34495E',       // Cinza escuro
+    empregado: '#29ABE2', // Azul
+    empregador: '#E74C3C', // Vermelho
+    familia: '#9B59B6', // Roxo
+    admin: '#34495E', // Cinza escuro
   },
 
   // ========================================
   // TONS DE CINZA (apenas 5)
   // ========================================
   cinza: {
-    claro: '#F9FAFB',       // Backgrounds
-    medio: '#E5E7EB',       // Bordas
-    escuro: '#374151',      // Texto secundário
-    maisEscuro: '#1F2937',  // Texto principal
+    claro: '#F9FAFB', // Backgrounds
+    medio: '#E5E7EB', // Bordas
+    escuro: '#374151', // Texto secundário
+    maisEscuro: '#1F2937', // Texto principal
     maisEscuroAinda: '#111827', // Texto crítico
   },
 };
@@ -50,7 +50,11 @@ export const coresSimplificadas = {
 export const obterCores = {
   // Cor do perfil
   perfil: (nomePerfil: string) => {
-    return coresSimplificadas.perfis[nomePerfil as keyof typeof coresSimplificadas.perfis] || coresSimplificadas.perfis.empregado;
+    return (
+      coresSimplificadas.perfis[
+        nomePerfil as keyof typeof coresSimplificadas.perfis
+      ] || coresSimplificadas.perfis.empregado
+    );
   },
 
   // Cor semântica
@@ -117,19 +121,19 @@ export const temasSimplificados = {
 // STATUS SIMPLIFICADOS (usando cores semânticas)
 // ========================================
 export const statusSimplificados = {
-  pendente: coresSimplificadas.semantica.aviso,    // Amarelo
-  andamento: coresSimplificadas.semantica.info,    // Azul
+  pendente: coresSimplificadas.semantica.aviso, // Amarelo
+  andamento: coresSimplificadas.semantica.info, // Azul
   concluido: coresSimplificadas.semantica.sucesso, // Verde
-  erro: coresSimplificadas.semantica.erro,         // Vermelho
+  erro: coresSimplificadas.semantica.erro, // Vermelho
 };
 
 // ========================================
 // PRIORIDADES SIMPLIFICADAS (usando cores semânticas)
 // ========================================
 export const prioridadesSimplificadas = {
-  alta: coresSimplificadas.semantica.erro,         // Vermelho
-  media: coresSimplificadas.semantica.aviso,       // Amarelo
-  baixa: coresSimplificadas.semantica.sucesso,     // Verde
+  alta: coresSimplificadas.semantica.erro, // Vermelho
+  media: coresSimplificadas.semantica.aviso, // Amarelo
+  baixa: coresSimplificadas.semantica.sucesso, // Verde
 };
 
 export default coresSimplificadas;

@@ -206,7 +206,7 @@ class NotificationService {
     try {
       const response = await fetch('/api/notifications');
       const result = await response.json();
-      
+
       if (result.success && result.data) {
         const apiNotifications = result.data.map((item: any) => ({
           id: item.id,
@@ -221,7 +221,7 @@ class NotificationService {
           dataLeitura: item.dataLeitura,
           dataExpiracao: item.dataExpiracao,
         }));
-        
+
         this.notifications = apiNotifications;
         this.notifyListeners();
       }
@@ -326,7 +326,7 @@ class NotificationService {
   private async loadNotifications(): Promise<void> {
     // Primeiro tenta carregar da API
     await this.loadNotificationsFromAPI();
-    
+
     // Se não conseguir da API, carrega do localStorage como fallback
     if (this.notifications.length === 0) {
       const stored = localStorage.getItem('notifications');

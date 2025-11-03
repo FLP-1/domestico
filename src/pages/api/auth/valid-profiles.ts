@@ -2,15 +2,18 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../lib/prisma';
 import { filtrarPerfisValidosParaGrupo } from '../../../utils/profileConflictValidator';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === 'GET') {
     try {
       const { userId, grupoId } = req.query;
 
       if (!userId || !grupoId) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           success: false,
-          message: 'userId e grupoId são obrigatórios' 
+          message: 'userId e grupoId são obrigatórios',
         });
       }
 
@@ -32,18 +35,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
       if (!user) {
-        return res.status(404).json({ 
+        return res.status(404).json({
           success: false,
-          message: 'Usuário não encontrado' 
+          message: 'Usuário não encontrado',
         });
       }
 
       // Verificar se usuário está no grupo
-      const estaNoGrupo = user.gruposUsuario.some((ug: any) => ug.grupo.id === grupoId);
+      const estaNoGrupo = user.gruposUsuario.some(
+        (ug: any) => ug.grupo.id === grupoId
+      );
       if (!estaNoGrupo) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           success: false,
-          message: 'Usuário não está neste grupo' 
+          message: 'Usuário não está neste grupo',
         });
       }
 
@@ -58,7 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const perfisFormatados = perfisValidos.map((perfil: any) => ({
         id: perfil.id,
         codigo: perfil.perfil.codigo,
-        nome: perfil.perfil.nome
+        nome: perfil.perfil.nome,
       }));
 
       return res.status(200).json({
@@ -66,15 +71,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         message: 'Perfis válidos obtidos com sucesso',
         data: {
           perfis: perfisFormatados,
-          total: perfisFormatados.length
-        }
+          total: perfisFormatados.length,
+        },
       });
-
     } catch (error: unknown) {
       console.error('❌ Erro ao obter perfis válidos:', error);
-      return res.status(500).json({ 
+      return res.status(500).json({
         success: false,
-        message: 'Erro interno do servidor' 
+        message: 'Erro interno do servidor',
       });
     }
   } else {

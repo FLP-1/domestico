@@ -10,23 +10,23 @@ Agora **TODOS** os dados do sistema estão disponíveis através do serviço cen
 
 ### Dados Disponíveis no Banco PostgreSQL
 
-| Categoria | Quantidade | Status | API Endpoint |
-|-----------|------------|--------|--------------|
-| 👤 **Usuários** | 8 | ✅ Integrado | `/api/users` |
-| 👔 **Perfis/Tipos** | 4 | ✅ Integrado | `/api/profiles` |
-| 👥 **Grupos** | 1 | ✅ Integrado | `/api/groups` |
-| ✅ **Tarefas** | 20 | ✅ Integrado | `/api/tasks` |
-| 📄 **Documentos** | 15 | ✅ Integrado | `/api/documents` |
-| 🛒 **Listas Compras** | 1 | ✅ Integrado | `/api/shopping/lists` |
-| 📦 **Itens Compra** | 6 | ✅ Integrado | (incluído em listas) |
-| ⏰ **Registro Ponto** | 30 | ✅ Integrado | `/api/timeclock` |
-| 💬 **Conversas** | 0 | ✅ Integrado | `/api/messages` |
-| 🔔 **Alertas** | 5 | ✅ Integrado | `/api/alerts` |
-| 💳 **Planos** | 3 | ✅ Integrado | `/api/subscriptions/plans` |
-| 📋 **Assinaturas** | 1 | ✅ Integrado | (incluído em planos) |
-| 💰 **Empréstimos** | 0 | ✅ Integrado | `/api/loans` |
-| 📜 **Termos/Políticas** | 1 | ✅ Integrado | `/api/terms` |
-| 📊 **Total de Dados** | **89+** | ✅ **100%** | **14 APIs** |
+| Categoria               | Quantidade | Status       | API Endpoint               |
+| ----------------------- | ---------- | ------------ | -------------------------- |
+| 👤 **Usuários**         | 8          | ✅ Integrado | `/api/users`               |
+| 👔 **Perfis/Tipos**     | 4          | ✅ Integrado | `/api/profiles`            |
+| 👥 **Grupos**           | 1          | ✅ Integrado | `/api/groups`              |
+| ✅ **Tarefas**          | 20         | ✅ Integrado | `/api/tasks`               |
+| 📄 **Documentos**       | 15         | ✅ Integrado | `/api/documents`           |
+| 🛒 **Listas Compras**   | 1          | ✅ Integrado | `/api/shopping/lists`      |
+| 📦 **Itens Compra**     | 6          | ✅ Integrado | (incluído em listas)       |
+| ⏰ **Registro Ponto**   | 30         | ✅ Integrado | `/api/timeclock`           |
+| 💬 **Conversas**        | 0          | ✅ Integrado | `/api/messages`            |
+| 🔔 **Alertas**          | 5          | ✅ Integrado | `/api/alerts`              |
+| 💳 **Planos**           | 3          | ✅ Integrado | `/api/subscriptions/plans` |
+| 📋 **Assinaturas**      | 1          | ✅ Integrado | (incluído em planos)       |
+| 💰 **Empréstimos**      | 0          | ✅ Integrado | `/api/loans`               |
+| 📜 **Termos/Políticas** | 1          | ✅ Integrado | `/api/terms`               |
+| 📊 **Total de Dados**   | **89+**    | ✅ **100%**  | **14 APIs**                |
 
 ---
 
@@ -35,6 +35,7 @@ Agora **TODOS** os dados do sistema estão disponíveis através do serviço cen
 ### 1. 👤 **USUÁRIOS** (`/api/users`)
 
 **Dados Retornados:**
+
 - ✅ 8 usuários ativos
 - ✅ CPFs válidos (59876913700, 38645446880, etc)
 - ✅ Dados pessoais completos
@@ -42,6 +43,7 @@ Agora **TODOS** os dados do sistema estão disponíveis através do serviço cen
 - ✅ Cidade e UF
 
 **Método dataService:**
+
 ```typescript
 const result = await dataService.getEmpregadosData();
 // Retorna 8 usuários reais do banco!
@@ -52,6 +54,7 @@ const result = await dataService.getEmpregadosData();
 ### 2. 👔 **PERFIS/TIPOS DE USUÁRIOS** (`/api/profiles`)
 
 **Dados Retornados:**
+
 - ✅ Admin (acesso total)
 - ✅ Empregador (gestão completa)
 - ✅ Empregado (acesso limitado)
@@ -60,6 +63,7 @@ const result = await dataService.getEmpregadosData();
 - ✅ Permissões por funcionalidade
 
 **Método dataService:**
+
 ```typescript
 const result = await dataService.getPerfis();
 // Retorna 4 perfis com usuários e permissões!
@@ -70,12 +74,14 @@ const result = await dataService.getPerfis();
 ### 3. 👥 **GRUPOS** (`/api/groups`)
 
 **Dados Retornados:**
+
 - ✅ Família Papaleo
 - ✅ Membros do grupo (4 usuários)
 - ✅ Papéis (Admin, Moderador, Membro)
 - ✅ Status de cada membro
 
 **Método dataService:**
+
 ```typescript
 const result = await dataService.getGrupos();
 // Retorna 1 grupo familiar com 4 membros!
@@ -86,6 +92,7 @@ const result = await dataService.getGrupos();
 ### 4. ✅ **TAREFAS** (`/api/tasks`)
 
 **Dados Retornados:**
+
 - ✅ 20 tarefas reais
 - ✅ Prioridades (Baixa, Média, Alta, Urgente)
 - ✅ Status (Pendente, Em Andamento, Concluída)
@@ -95,6 +102,7 @@ const result = await dataService.getGrupos();
 - ✅ Checklist
 
 **Método dataService:**
+
 ```typescript
 const result = await dataService.getTarefas();
 // Retorna 20 tarefas com comentários e anexos!
@@ -105,6 +113,7 @@ const result = await dataService.getTarefas();
 ### 5. 📄 **DOCUMENTOS** (`/api/documents`)
 
 **Dados Retornados:**
+
 - ✅ 15 documentos diversos
 - ✅ Categorias (RG, CPF, CNH, Comprovante, CTPS)
 - ✅ Status de validação
@@ -114,6 +123,7 @@ const result = await dataService.getTarefas();
 - ✅ Status eSocial
 
 **Método dataService:**
+
 ```typescript
 const result = await dataService.getDocumentos();
 // Retorna 15 documentos com validação e compartilhamentos!
@@ -124,6 +134,7 @@ const result = await dataService.getDocumentos();
 ### 6. 🛒 **LISTAS DE COMPRAS** (`/api/shopping/lists`)
 
 **Dados Retornados:**
+
 - ✅ "Compras do Mês"
 - ✅ 6 itens reais:
   - Arroz (2 kg) - R$ 15,90
@@ -136,6 +147,7 @@ const result = await dataService.getDocumentos();
 - ✅ Compartilhamentos
 
 **Método dataService:**
+
 ```typescript
 const result = await dataService.getShoppingLists();
 // Retorna 1 lista com 6 itens reais!
@@ -146,6 +158,7 @@ const result = await dataService.getShoppingLists();
 ### 7. ⏰ **REGISTROS DE PONTO** (`/api/timeclock`)
 
 **Dados Retornados:**
+
 - ✅ 30 registros de ponto
 - ✅ Tipos (Entrada, Saída, Início/Fim Intervalo)
 - ✅ Geolocalização (lat/long)
@@ -155,6 +168,7 @@ const result = await dataService.getShoppingLists();
 - ✅ Hash de integridade
 
 **Método dataService:**
+
 ```typescript
 const result = await dataService.getRegistrosPonto();
 // Retorna 30 registros com geolocalização e aprovação!
@@ -165,6 +179,7 @@ const result = await dataService.getRegistrosPonto();
 ### 8. 💬 **COMUNICAÇÃO/MENSAGENS** (`/api/messages`)
 
 **Dados Retornados:**
+
 - ✅ Conversas (grupos e individuais)
 - ✅ Participantes
 - ✅ Mensagens com anexos
@@ -173,6 +188,7 @@ const result = await dataService.getRegistrosPonto();
 - ✅ Respostas encadeadas
 
 **Método dataService:**
+
 ```typescript
 const result = await dataService.getConversas();
 // Retorna conversas com mensagens, anexos e reações!
@@ -183,6 +199,7 @@ const result = await dataService.getConversas();
 ### 9. 🔔 **ALERTAS** (`/api/alerts`)
 
 **Dados Retornados:**
+
 - ✅ 5 alertas ativos
 - ✅ Tipos (Vencimento, Pagamento, Tarefa)
 - ✅ Prioridades (Baixa, Média, Alta)
@@ -191,6 +208,7 @@ const result = await dataService.getConversas();
 - ✅ Histórico de disparos
 
 **Método dataService:**
+
 ```typescript
 const result = await dataService.getAlertas();
 // Retorna 5 alertas com histórico de disparos!
@@ -201,6 +219,7 @@ const result = await dataService.getAlertas();
 ### 10. 💳 **PLANOS DE ASSINATURA** (`/api/subscriptions/plans`)
 
 **Dados Retornados:**
+
 - ✅ **Plano Gratuito** - R$ 0,00
   - 1 usuário, 5 documentos, Suporte básico
 - ✅ **Plano Básico** (Popular) - R$ 29,90/mês
@@ -211,6 +230,7 @@ const result = await dataService.getAlertas();
 - ✅ Recursos e limites
 
 **Método dataService:**
+
 ```typescript
 const result = await dataService.getPlanosAssinatura();
 // Retorna 3 planos com assinantes!
@@ -221,6 +241,7 @@ const result = await dataService.getPlanosAssinatura();
 ### 11. 💰 **EMPRÉSTIMOS** (`/api/loans`)
 
 **Dados Retornados:**
+
 - ✅ Empréstimos concedidos
 - ✅ Valor total e parcelas
 - ✅ Parcelas pagas vs total
@@ -228,6 +249,7 @@ const result = await dataService.getPlanosAssinatura();
 - ✅ Dados do funcionário
 
 **Método dataService:**
+
 ```typescript
 const result = await dataService.getEmprestimos();
 // Retorna empréstimos com status de pagamento!
@@ -238,6 +260,7 @@ const result = await dataService.getEmprestimos();
 ### 12. 📜 **TERMOS E POLÍTICAS** (`/api/terms`)
 
 **Dados Retornados:**
+
 - ✅ Termos de Uso v2.1.0
 - ✅ Conteúdo completo
 - ✅ Data de vigência
@@ -249,6 +272,7 @@ const result = await dataService.getEmprestimos();
   - Hash de assinatura
 
 **Método dataService:**
+
 ```typescript
 const result = await dataService.getTermosAtualizados();
 // Retorna termos com todos os aceites!
@@ -260,20 +284,20 @@ const result = await dataService.getTermosAtualizados();
 
 ### APIs de Dados Principais
 
-| # | Endpoint | Método | Função |
-|---|----------|--------|--------|
-| 1 | `/api/users` | GET | Lista usuários com perfis |
-| 2 | `/api/profiles` | GET | Lista perfis com permissões |
-| 3 | `/api/groups` | GET | Lista grupos com membros |
-| 4 | `/api/tasks` | GET/POST | Tarefas com comentários |
-| 5 | `/api/documents` | GET/POST | Documentos com compartilhamentos |
-| 6 | `/api/shopping/lists` | GET/POST | Listas de compras |
-| 7 | `/api/timeclock` | GET | Registros de ponto |
-| 8 | `/api/messages` | GET | Conversas e mensagens |
-| 9 | `/api/alerts` | GET/POST | Alertas e notificações |
-| 10 | `/api/subscriptions/plans` | GET | Planos de assinatura |
-| 11 | `/api/loans` | GET/POST | Empréstimos |
-| 12 | `/api/terms` | GET | Termos e políticas |
+| #   | Endpoint                   | Método   | Função                           |
+| --- | -------------------------- | -------- | -------------------------------- |
+| 1   | `/api/users`               | GET      | Lista usuários com perfis        |
+| 2   | `/api/profiles`            | GET      | Lista perfis com permissões      |
+| 3   | `/api/groups`              | GET      | Lista grupos com membros         |
+| 4   | `/api/tasks`               | GET/POST | Tarefas com comentários          |
+| 5   | `/api/documents`           | GET/POST | Documentos com compartilhamentos |
+| 6   | `/api/shopping/lists`      | GET/POST | Listas de compras                |
+| 7   | `/api/timeclock`           | GET      | Registros de ponto               |
+| 8   | `/api/messages`            | GET      | Conversas e mensagens            |
+| 9   | `/api/alerts`              | GET/POST | Alertas e notificações           |
+| 10  | `/api/subscriptions/plans` | GET      | Planos de assinatura             |
+| 11  | `/api/loans`               | GET/POST | Empréstimos                      |
+| 12  | `/api/terms`               | GET      | Termos e políticas               |
 
 ---
 
@@ -281,24 +305,24 @@ const result = await dataService.getTermosAtualizados();
 
 ```typescript
 // Métodos com dados REAIS do banco:
-await dataService.getEmpregadosData()      // ✅ 8 usuários
-await dataService.getPerfis()              // ✅ 4 perfis  
-await dataService.getGrupos()              // ✅ 1 grupo
-await dataService.getTarefas()             // ✅ 20 tarefas
-await dataService.getDocumentos()          // ✅ 15 documentos
-await dataService.getShoppingLists()       // ✅ 1 lista
-await dataService.getRegistrosPonto()      // ✅ 30 registros
-await dataService.getConversas()           // ✅ Conversas
-await dataService.getAlertas()             // ✅ 5 alertas
-await dataService.getPlanosAssinatura()    // ✅ 3 planos
-await dataService.getEmprestimos()         // ✅ Empréstimos
-await dataService.getTermosAtualizados()   // ✅ Termos
+await dataService.getEmpregadosData(); // ✅ 8 usuários
+await dataService.getPerfis(); // ✅ 4 perfis
+await dataService.getGrupos(); // ✅ 1 grupo
+await dataService.getTarefas(); // ✅ 20 tarefas
+await dataService.getDocumentos(); // ✅ 15 documentos
+await dataService.getShoppingLists(); // ✅ 1 lista
+await dataService.getRegistrosPonto(); // ✅ 30 registros
+await dataService.getConversas(); // ✅ Conversas
+await dataService.getAlertas(); // ✅ 5 alertas
+await dataService.getPlanosAssinatura(); // ✅ 3 planos
+await dataService.getEmprestimos(); // ✅ Empréstimos
+await dataService.getTermosAtualizados(); // ✅ Termos
 
 // Métodos que ainda usam mock (podem ser atualizados):
-await dataService.getEventosESocial()      // ⚠️ Mock
-await dataService.getConfiguracoes()       // ⚠️ Mock
-await dataService.getShoppingCategories()  // ⚠️ Mock
-await dataService.getDocumentCategories()  // ⚠️ Mock
+await dataService.getEventosESocial(); // ⚠️ Mock
+await dataService.getConfiguracoes(); // ⚠️ Mock
+await dataService.getShoppingCategories(); // ⚠️ Mock
+await dataService.getDocumentCategories(); // ⚠️ Mock
 ```
 
 ---
@@ -315,7 +339,7 @@ const resultado = await dataService.getPerfis();
 
 if (resultado.success) {
   console.log('Perfis:', resultado.data);
-  console.log('Fonte:', resultado.source); 
+  console.log('Fonte:', resultado.source);
   // { type: 'database', source: 'postgresql-prisma' }
 }
 ```
@@ -381,7 +405,7 @@ dataService.clearCache();
 ### ✅ Já Integradas com Dados Reais:
 
 1. **Shopping Management** → `getShoppingLists()`
-2. **eSocial Doméstico** → `getEmpregadosData()`  
+2. **eSocial Doméstico** → `getEmpregadosData()`
 3. **Task Management** → `getTarefas()`
 4. **Document Management** → `getDocumentos()`
 5. **Alert Management** → `getAlertas()`
@@ -515,15 +539,15 @@ http://localhost:3000/terms-management
 
 ### ✅ **100% DOS DADOS INTEGRADOS!**
 
-| Categoria | Status |
-|-----------|--------|
-| **APIs REST** | ✅ 12 criadas |
+| Categoria               | Status                |
+| ----------------------- | --------------------- |
+| **APIs REST**           | ✅ 12 criadas         |
 | **Métodos dataService** | ✅ 12 com dados reais |
-| **Tabelas Integradas** | ✅ 41 tabelas |
-| **Registros no Banco** | ✅ 150+ registros |
-| **Fallback Automático** | ✅ Dados mockados |
-| **Cache Inteligente** | ✅ Implementado |
-| **Fonte Identificada** | ✅ Database vs Mock |
+| **Tabelas Integradas**  | ✅ 41 tabelas         |
+| **Registros no Banco**  | ✅ 150+ registros     |
+| **Fallback Automático** | ✅ Dados mockados     |
+| **Cache Inteligente**   | ✅ Implementado       |
+| **Fonte Identificada**  | ✅ Database vs Mock   |
 
 ### 🎉 AGORA O SISTEMA USA DADOS 100% REAIS!
 
@@ -546,4 +570,3 @@ http://localhost:3000/terms-management
 **Versão:** DOM v1.0.0  
 **Banco:** PostgreSQL 18 - Porta 5433  
 **Status:** 🎊 **INTEGRAÇÃO 100% COMPLETA!**
-

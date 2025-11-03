@@ -7,18 +7,18 @@
 
 Este documento detalha as correções e melhorias aplicadas ao projeto DOM para endereçar os gaps críticos identificados na análise inicial, preparando a aplicação para um ambiente de produção seguro, performático e confiável.
 
-| Área | Ação Realizada | Status |
-| :--- | :--- | :---: |
-| **Segurança** | Vulnerabilidade `next-auth` corrigida | ✅ |
-| **Performance** | Logo otimizado (1.7MB → 42KB) | ✅ |
-| **Performance** | Política de cache de produção implementada no `next.config.js` | ✅ |
-| **Segurança** | Logger estruturado (`pino`) implementado | ✅ |
-| **Segurança** | Rate limiting implementado na API de login | ✅ |
-| **Segurança** | Proteção anti-CSRF (Double Submit Cookie) implementada | ✅ |
-| **Qualidade** | TypeScript `strict mode` habilitado | ✅ |
-| **Qualidade** | Configuração ESLint atualizada para proibir `any` e `console.log` | ✅ |
-| **Testes** | Teste de integração para a API de login criado | ✅ |
-| **Testes** | Teste E2E (Cypress) para o fluxo de login criado | ✅ |
+| Área            | Ação Realizada                                                    | Status |
+| :-------------- | :---------------------------------------------------------------- | :----: |
+| **Segurança**   | Vulnerabilidade `next-auth` corrigida                             |   ✅   |
+| **Performance** | Logo otimizado (1.7MB → 42KB)                                     |   ✅   |
+| **Performance** | Política de cache de produção implementada no `next.config.js`    |   ✅   |
+| **Segurança**   | Logger estruturado (`pino`) implementado                          |   ✅   |
+| **Segurança**   | Rate limiting implementado na API de login                        |   ✅   |
+| **Segurança**   | Proteção anti-CSRF (Double Submit Cookie) implementada            |   ✅   |
+| **Qualidade**   | TypeScript `strict mode` habilitado                               |   ✅   |
+| **Qualidade**   | Configuração ESLint atualizada para proibir `any` e `console.log` |   ✅   |
+| **Testes**      | Teste de integração para a API de login criado                    |   ✅   |
+| **Testes**      | Teste E2E (Cypress) para o fluxo de login criado                  |   ✅   |
 
 ---
 
@@ -32,16 +32,16 @@ Este documento detalha as correções e melhorias aplicadas ao projeto DOM para 
 
 - **Rate Limiting:** Foi implementado um middleware de rate limiting em `src/lib/rateLimit.ts` usando `lru-cache`. A API de login (`/api/auth/login`) agora está protegida contra ataques de força bruta, limitando as tentativas a 5 requisições por janela de 15 minutos.
 
-- **Proteção Anti-CSRF:** Foi adicionada uma proteção completa contra ataques CSRF em `src/lib/csrf.ts`, implementando o padrão *Double Submit Cookie*. Um novo endpoint (`/api/csrf`) foi criado para fornecer o token ao frontend. Todas as requisições que modificam estado (POST, PUT, DELETE) agora exigem um token `x-csrf-token` no header.
+- **Proteção Anti-CSRF:** Foi adicionada uma proteção completa contra ataques CSRF em `src/lib/csrf.ts`, implementando o padrão _Double Submit Cookie_. Um novo endpoint (`/api/csrf`) foi criado para fornecer o token ao frontend. Todas as requisições que modificam estado (POST, PUT, DELETE) agora exigem um token `x-csrf-token` no header.
 
 ### 2.2. Performance
 
 - **Otimização de Imagem:** O arquivo `public/Logo.png` de **1.7MB** foi convertido para `public/logo-optimized.webp` com apenas **42KB** (uma redução de **97.5%**), sem perda de qualidade perceptível. Recomenda-se substituir a referência no código.
 
 - **Política de Cache Avançada:** O arquivo `next.config.js` foi completamente reescrito para implementar uma estratégia de cache de produção eficiente:
-    - Ativos estáticos (`/static`, `/_next/static`) são cacheados por 1 ano (`public, max-age=31536000, immutable`).
-    - Páginas HTML são servidas com `public, max-age=0, must-revalidate` para garantir que o conteúdo esteja sempre atualizado, mas permitindo cache em CDNs.
-    - Foram adicionados headers de segurança adicionais como `Referrer-Policy` e `Permissions-Policy`.
+  - Ativos estáticos (`/static`, `/_next/static`) são cacheados por 1 ano (`public, max-age=31536000, immutable`).
+  - Páginas HTML são servidas com `public, max-age=0, must-revalidate` para garantir que o conteúdo esteja sempre atualizado, mas permitindo cache em CDNs.
+  - Foram adicionados headers de segurança adicionais como `Referrer-Policy` e `Permissions-Policy`.
 
 - **Otimizações de Build:** Foram habilitadas as opções `swcMinify: true` e `compress: true` no `next.config.js` e adicionada uma configuração avançada de `splitChunks` no Webpack para otimizar o tamanho dos bundles de JavaScript em produção.
 
@@ -52,8 +52,8 @@ Este documento detalha as correções e melhorias aplicadas ao projeto DOM para 
 - **ESLint Aprimorado:** A configuração do ESLint foi atualizada para proibir o uso de `any` (`@typescript-eslint/no-explicit-any`) e o uso de `console.log` em produção (`no-console`), forçando os desenvolvedores a escreverem código mais seguro e a usarem o logger estruturado.
 
 - **Testes Implementados:**
-    - **Integração:** Foi criado um teste de integração para a API de login em `src/__tests__/api/auth/login.test.ts`, validando todos os cenários (sucesso, falha, usuário não encontrado, etc.) usando `node-mocks-http`.
-    - **End-to-End (E2E):** Foi criado um teste E2E com Cypress em `cypress/e2e/auth/login.cy.ts` que simula o fluxo completo de login na interface do usuário, incluindo casos de erro e a verificação do rate limiting.
+  - **Integração:** Foi criado um teste de integração para a API de login em `src/__tests__/api/auth/login.test.ts`, validando todos os cenários (sucesso, falha, usuário não encontrado, etc.) usando `node-mocks-http`.
+  - **End-to-End (E2E):** Foi criado um teste E2E com Cypress em `cypress/e2e/auth/login.cy.ts` que simula o fluxo completo de login na interface do usuário, incluindo casos de erro e a verificação do rate limiting.
 
 ---
 
@@ -67,18 +67,18 @@ O projeto está configurado para deploy contínuo na Vercel. Siga estes passos p
 2.  **Framework Preset:** A Vercel deve detectar automaticamente que é um projeto Next.js. Nenhuma configuração de build é necessária.
 3.  **Variáveis de Ambiente:** Configure as seguintes variáveis de ambiente no painel da Vercel (`Project > Settings > Environment Variables`). **NÃO** as coloque em arquivos `.env` versionados.
 
-    | Variável | Descrição | Exemplo de Valor (Seguro) |
-    | :--- | :--- | :--- |
-    | `DATABASE_URL` | String de conexão com o banco de dados PostgreSQL. | `postgresql://user:password@host:port/db` |
-    | `NEXTAUTH_URL` | A URL de produção da sua aplicação. | `https://www.sistemadom.com` |
-    | `NEXTAUTH_SECRET` | Chave secreta para o NextAuth. Gere uma com `openssl rand -base64 32`. | `uma_chave_secreta_muito_longa_e_segura` |
-    | `JWT_SECRET` | Chave secreta para assinar tokens JWT. Gere uma nova. | `outra_chave_secreta_diferente_e_segura` |
-    | `CERTIFICATE_MASTER_KEY` | Chave mestra para criptografar senhas de certificados. | `chave_mestra_super_secreta_para_certificados` |
-    | `LOG_LEVEL` | Nível de log em produção. | `info` |
-    | `SENDGRID_API_KEY` | (Opcional) Chave da API do SendGrid. | `SG.xxxxxxxx` |
-    | `TWILIO_ACCOUNT_SID` | (Opcional) SID da conta Twilio. | `ACxxxxxxxx` |
-    | `TWILIO_AUTH_TOKEN` | (Opcional) Token de autenticação da Twilio. | `xxxxxxxx` |
-    | `TWILIO_PHONE_NUMBER` | (Opcional) Número de telefone da Twilio. | `+15017122661` |
+    | Variável                 | Descrição                                                              | Exemplo de Valor (Seguro)                      |
+    | :----------------------- | :--------------------------------------------------------------------- | :--------------------------------------------- |
+    | `DATABASE_URL`           | String de conexão com o banco de dados PostgreSQL.                     | `postgresql://user:password@host:port/db`      |
+    | `NEXTAUTH_URL`           | A URL de produção da sua aplicação.                                    | `https://www.sistemadom.com`                   |
+    | `NEXTAUTH_SECRET`        | Chave secreta para o NextAuth. Gere uma com `openssl rand -base64 32`. | `uma_chave_secreta_muito_longa_e_segura`       |
+    | `JWT_SECRET`             | Chave secreta para assinar tokens JWT. Gere uma nova.                  | `outra_chave_secreta_diferente_e_segura`       |
+    | `CERTIFICATE_MASTER_KEY` | Chave mestra para criptografar senhas de certificados.                 | `chave_mestra_super_secreta_para_certificados` |
+    | `LOG_LEVEL`              | Nível de log em produção.                                              | `info`                                         |
+    | `SENDGRID_API_KEY`       | (Opcional) Chave da API do SendGrid.                                   | `SG.xxxxxxxx`                                  |
+    | `TWILIO_ACCOUNT_SID`     | (Opcional) SID da conta Twilio.                                        | `ACxxxxxxxx`                                   |
+    | `TWILIO_AUTH_TOKEN`      | (Opcional) Token de autenticação da Twilio.                            | `xxxxxxxx`                                     |
+    | `TWILIO_PHONE_NUMBER`    | (Opcional) Número de telefone da Twilio.                               | `+15017122661`                                 |
 
 ### 3.2. Processo de Deploy
 

@@ -203,28 +203,30 @@ const ButtonContainer = styled.button<{
 
   /* Icon styles */
   .icon {
-    font-size: ${props => props.$size === 'xs'
-      ? '0.875rem'
-      : props.$size === 'sm'
-        ? '1rem'
-        : props.$size === 'lg'
-          ? '1.5rem'
-          : props.$size === 'xl'
-            ? '1.75rem'
-            : '1.25rem'};
+    font-size: ${props =>
+      props.$size === 'xs'
+        ? '0.875rem'
+        : props.$size === 'sm'
+          ? '1rem'
+          : props.$size === 'lg'
+            ? '1.5rem'
+            : props.$size === 'xl'
+              ? '1.75rem'
+              : '1.25rem'};
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
   /* Link variant specific styles */
-  ${props => props.$variant === 'link'
-    ? `
+  ${props =>
+    props.$variant === 'link'
+      ? `
         &:hover {
           text-decoration: underline;
         }
       `
-    : ''}
+      : ''}
 `;
 
 const LoadingSpinner = styled.div<{
@@ -319,15 +321,21 @@ export const UnifiedButton: React.FC<UnifiedButtonProps> = ({
   const { createCriticalButtonHandler } = useGeolocationCapture();
 
   // Handler que captura geolocalização automaticamente para ações críticas
-  const handleClick = useCallback(async (event: React.MouseEvent<HTMLButtonElement>) => {
-    if ($criticalAction && onClick) {
-      logger.geo(`🎯 Botão crítico clicado: ${$actionName}`);
-      const criticalHandler = createCriticalButtonHandler(onClick, $actionName);
-      await criticalHandler(event);
-    } else if (onClick) {
-      onClick(event);
-    }
-  }, [onClick, $criticalAction, $actionName, createCriticalButtonHandler]);
+  const handleClick = useCallback(
+    async (event: React.MouseEvent<HTMLButtonElement>) => {
+      if ($criticalAction && onClick) {
+        logger.geo(`🎯 Botão crítico clicado: ${$actionName}`);
+        const criticalHandler = createCriticalButtonHandler(
+          onClick,
+          $actionName
+        );
+        await criticalHandler(event);
+      } else if (onClick) {
+        onClick(event);
+      }
+    },
+    [onClick, $criticalAction, $actionName, createCriticalButtonHandler]
+  );
   return (
     <ButtonContainer
       $variant={$variant}

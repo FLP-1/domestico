@@ -1,9 +1,11 @@
 # 📋 CHECKLIST ULTRA DETALHADO - TODAS AS CORES HARDCODED
 
 ## 🎯 OBJETIVO
+
 Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referências dinâmicas ao sistema de temas.
 
 ## 📊 STATUS GERAL
+
 - **Total de arquivos com cores hexadecimais**: 36
 - **Total de arquivos com cores rgba**: 57
 - **Total de arquivos com cores rgb**: 1
@@ -17,6 +19,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 ## 🔥 PRIORIDADE CRÍTICA (Componentes principais)
 
 ### ✅ src/design-system/index.ts
+
 - **Status**: ✅ CONCLUÍDO
 - **Cores hexadecimais**: 0 encontradas
 - **Cores rgba**: 0 encontradas
@@ -25,6 +28,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 - **Ação**: ✅ CONCLUÍDO
 
 ### ✅ src/components/TutorialComponent.tsx
+
 - **Status**: ✅ CONCLUÍDO
 - **Cores hexadecimais**: 0 encontradas
 - **Cores rgba**: 17 encontradas (sombras e transparências - aceitáveis)
@@ -37,6 +41,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 ## 🚨 PRIORIDADE ALTA (Páginas principais)
 
 ### ✅ src/pages/esocial-domestico-completo.tsx
+
 - **Status**: ✅ CONCLUÍDO
 - **Cores hexadecimais**: 0 encontradas
 - **Cores rgba**: 10 encontradas (sombras e transparências - aceitáveis)
@@ -45,6 +50,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 - **Ação**: ✅ CONCLUÍDO
 
 ### ⚠️ src/pages/time-clock.tsx
+
 - **Status**: ⚠️ PARCIALMENTE CORRIGIDO
 - **Cores hexadecimais encontradas**:
   - `#2E8B57` ✅ CORRIGIDO
@@ -55,6 +61,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 - **Ação**: Verificar se há mais cores hardcoded
 
 ### ❌ src/pages/login.tsx
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hexadecimais**: Múltiplas encontradas
 - **Cores rgba**: Múltiplas encontradas
@@ -63,6 +70,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 - **Ação**: AUDITORIA COMPLETA NECESSÁRIA
 
 ### ❌ src/pages/esocial-integration.tsx
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hexadecimais**: Múltiplas encontradas
 - **Cores rgba**: Múltiplas encontradas
@@ -71,6 +79,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 - **Ação**: AUDITORIA COMPLETA NECESSÁRIA
 
 ### ❌ src/pages/welcome-tutorial.tsx
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hexadecimais**: Múltiplas encontradas
 - **Cores rgba**: Múltiplas encontradas
@@ -79,6 +88,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 - **Ação**: AUDITORIA COMPLETA NECESSÁRIA
 
 ### ❌ src/pages/payroll-management.tsx
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hexadecimais**: Múltiplas encontradas
 - **Cores rgba**: Múltiplas encontradas
@@ -87,6 +97,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 - **Ação**: AUDITORIA COMPLETA NECESSÁRIA
 
 ### ❌ src/pages/terms-management.tsx
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hexadecimais**: Múltiplas encontradas
 - **Cores rgba**: Múltiplas encontradas
@@ -95,6 +106,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 - **Ação**: AUDITORIA COMPLETA NECESSÁRIA
 
 ### ❌ src/pages/monitoring-dashboard.tsx
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hexadecimais**: Múltiplas encontradas
 - **Cores rgba**: Múltiplas encontradas
@@ -107,6 +119,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 ## 🔧 PRIORIDADE MÉDIA (Hooks e componentes)
 
 ### ❌ src/hooks/useTheme.ts
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hexadecimais**: Múltiplas encontradas
 - **Cores rgba**: Múltiplas encontradas
@@ -115,6 +128,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 - **Ação**: AUDITORIA COMPLETA NECESSÁRIA
 
 ### ❌ src/hooks/useSystemConfig.ts
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hexadecimais**: Múltiplas encontradas
 - **Cores rgba**: Múltiplas encontradas
@@ -123,6 +137,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 - **Ação**: AUDITORIA COMPLETA NECESSÁRIA
 
 ### ❌ src/components/UnifiedCard/index.tsx
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hexadecimais**: Múltiplas encontradas
 - **Cores rgba**: Múltiplas encontradas
@@ -131,6 +146,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 - **Ação**: AUDITORIA COMPLETA NECESSÁRIA
 
 ### ❌ src/components/shared/styles.ts
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hexadecimais**: Múltiplas encontradas
 - **Cores rgba**: Múltiplas encontradas
@@ -139,6 +155,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 - **Ação**: AUDITORIA COMPLETA NECESSÁRIA
 
 ### ❌ src/components/shared/mixins.ts
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hexadecimais**: Múltiplas encontradas
 - **Cores rgba**: Múltiplas encontradas
@@ -151,10 +168,12 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 ## 📁 PRIORIDADE BAIXA (Configurações e testes)
 
 ### ✅ src/config/default-colors.ts
+
 - **Status**: ✅ CORRETO (cores hardcoded são definições base)
 - **Ação**: Nenhuma - arquivo deve ter cores hardcoded
 
 ### ❌ src/config/constants.ts
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hexadecimais**: Múltiplas encontradas
 - **Cores rgba**: Múltiplas encontradas
@@ -163,6 +182,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 - **Ação**: AUDITORIA COMPLETA NECESSÁRIA
 
 ### ❌ src/config/centralized-config.ts
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hexadecimais**: Múltiplas encontradas
 - **Cores rgba**: Múltiplas encontradas
@@ -171,6 +191,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 - **Ação**: AUDITORIA COMPLETA NECESSÁRIA
 
 ### ❌ src/lib/antifraude/fingerprint.ts
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hexadecimais**: 0 encontradas
 - **Cores rgba**: 0 encontradas
@@ -185,7 +206,8 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 ## 🎯 METODOLOGIA ULTRA COMPLETA
 
 ### Para cada arquivo:
-1. **Auditoria completa**: 
+
+1. **Auditoria completa**:
    - Buscar cores hexadecimais: `#[0-9A-Fa-f]{6}`
    - Buscar cores rgba: `rgba\([^)]+\)`
    - Buscar cores rgb: `rgb\([^)]+\)`
@@ -197,28 +219,31 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 5. **Marcar como concluído**: ✅ no checklist
 
 ### Padrão de correção:
+
 ```typescript
 // ❌ ERRADO - TODOS OS FORMATOS
-color: '#29ABE2'
-background: 'rgba(41, 171, 226, 0.1)'
-border: 'rgb(255, 0, 0)'
-shadow: 'hsl(200, 50%, 50%)'
-gradient: 'hsla(200, 50%, 50%, 0.5)'
+color: '#29ABE2';
+background: 'rgba(41, 171, 226, 0.1)';
+border: 'rgb(255, 0, 0)';
+shadow: 'hsl(200, 50%, 50%)';
+gradient: 'hsla(200, 50%, 50%, 0.5)';
 
 // ✅ CORRETO - REFERÊNCIAS DINÂMICAS
-color: DEFAULT_COLORS.profiles.empregado.primary
-background: DEFAULT_COLORS.profiles.empregado.primaryLight
-border: DEFAULT_COLORS.profiles.empregado.border
-shadow: DEFAULT_COLORS.profiles.empregado.shadow
-gradient: DEFAULT_COLORS.profiles.empregado.primaryLight
+color: DEFAULT_COLORS.profiles.empregado.primary;
+background: DEFAULT_COLORS.profiles.empregado.primaryLight;
+border: DEFAULT_COLORS.profiles.empregado.border;
+shadow: DEFAULT_COLORS.profiles.empregado.shadow;
+gradient: DEFAULT_COLORS.profiles.empregado.primaryLight;
 ```
 
 ### Cores aceitáveis (sombras e transparências):
+
 - `rgba(0, 0, 0, 0.1)` - sombras pretas
 - `rgba(255, 255, 255, 0.95)` - transparências brancas
 - `rgba(0, 0, 0, 0.05)` - sombras suaves
 
 ### Cores NÃO aceitáveis (devem ser corrigidas):
+
 - `#29ABE2` - cores hexadecimais
 - `rgb(255, 0, 0)` - cores rgb
 - `hsl(200, 50%, 50%)` - cores hsl
@@ -227,6 +252,7 @@ gradient: DEFAULT_COLORS.profiles.empregado.primaryLight
 ---
 
 ## 📊 PROGRESSO REAL
+
 - **Arquivos completamente corrigidos**: 3/36
 - **Arquivos parcialmente corrigidos**: 2/36
 - **Arquivos pendentes**: 31/36
@@ -235,6 +261,7 @@ gradient: DEFAULT_COLORS.profiles.empregado.primaryLight
 ---
 
 ## 🚀 PRÓXIMOS PASSOS
+
 1. Finalizar src/pages/time-clock.tsx
 2. Corrigir src/lib/antifraude/fingerprint.ts (cores rgb)
 3. Continuar sistematicamente pela lista
@@ -244,6 +271,7 @@ gradient: DEFAULT_COLORS.profiles.empregado.primaryLight
 ---
 
 ## ⚠️ OBSERVAÇÕES IMPORTANTES
+
 - A auditoria deve incluir TODOS os formatos de cores
 - Não posso ignorar rgb, hsl, hsla
 - Cada arquivo deve ser completamente corrigido

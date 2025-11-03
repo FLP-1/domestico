@@ -29,8 +29,10 @@ const SidebarContainer = styled.aside<{ $collapsed: boolean; $theme?: any }>`
   left: 0;
   height: 100vh;
   width: ${props => (props.$collapsed ? '100px' : '280px')};
-  background: ${props => props.$theme?.colors?.background?.primary || '#ffffff'};
-  border-right: 1px solid ${props => props.$theme?.colors?.border?.light || '#e5e7eb'};
+  background: ${props =>
+    props.$theme?.colors?.background?.primary || '#ffffff'};
+  border-right: 1px solid
+    ${props => props.$theme?.colors?.border?.light || '#e5e7eb'};
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1000;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
@@ -42,7 +44,8 @@ const SidebarContainer = styled.aside<{ $collapsed: boolean; $theme?: any }>`
 
 const SidebarHeader = styled.div<{ $collapsed: boolean; $theme?: any }>`
   padding: ${props => (props.$collapsed ? '1rem 0 1rem 1.5rem' : '1.5rem')};
-  border-bottom: 1px solid ${props => props.$theme?.colors?.border?.light || '#dee2e6'};
+  border-bottom: 1px solid
+    ${props => props.$theme?.colors?.border?.light || '#dee2e6'};
   display: flex;
   align-items: center;
   justify-content: ${props =>
@@ -183,7 +186,11 @@ const Navigation = styled.nav<{ $theme?: any }>`
   overflow-y: auto;
 `;
 
-const NavItem = styled.div<{ $active?: boolean; $collapsed?: boolean; $theme?: any }>`
+const NavItem = styled.div<{
+  $active?: boolean;
+  $collapsed?: boolean;
+  $theme?: any;
+}>`
   display: flex;
   align-items: center;
   gap: ${props => (props.$collapsed ? '0' : '1rem')};
@@ -230,20 +237,25 @@ export default function Sidebar({
   currentPath,
 }: SidebarProps) {
   const router = useRouter();
-  
+
   // Hook do contexto de perfil
-  const { currentProfile, availableProfiles, setShowProfileModal, setCurrentProfile, showProfileModal } =
-    useUserProfile();
+  const {
+    currentProfile,
+    availableProfiles,
+    setShowProfileModal,
+    setCurrentProfile,
+    showProfileModal,
+  } = useUserProfile();
   const { colors: theme } = useTheme(currentProfile?.role.toLowerCase());
 
   // Hook do contexto de grupo
-  const { 
-    currentGroup, 
-    availableGroups, 
-    setShowGroupModal, 
+  const {
+    currentGroup,
+    availableGroups,
+    setShowGroupModal,
     hasMultipleGroups,
     setCurrentGroup,
-    showGroupModal
+    showGroupModal,
   } = useUserGroup();
 
   // Navegação centralizada - única fonte da verdade
@@ -385,7 +397,9 @@ export default function Sidebar({
           <>
             <LogoContainer>
               <Logo src='/Logo.png' alt='Logo DOM' $collapsed={collapsed} />
-              <SidebarTitle $collapsed={collapsed} $theme={theme}>DOM</SidebarTitle>
+              <SidebarTitle $collapsed={collapsed} $theme={theme}>
+                DOM
+              </SidebarTitle>
             </LogoContainer>
             <HeaderActionsContainer>
               {availableProfiles.length > 1 && (
@@ -405,10 +419,16 @@ export default function Sidebar({
                   onClick={() => setShowGroupModal(true)}
                   title={`Grupo: ${currentGroup?.nome || 'Grupo'}`}
                 >
-                  <span className='group-icon' role="img" aria-label="Grupo">👥</span>
+                  <span className='group-icon' role='img' aria-label='Grupo'>
+                    👥
+                  </span>
                 </GroupIconButton>
               )}
-              <ToggleButton $theme={theme} onClick={onToggle} aria-label='Recolher sidebar'>
+              <ToggleButton
+                $theme={theme}
+                onClick={onToggle}
+                aria-label='Recolher sidebar'
+              >
                 {Icons.close}
               </ToggleButton>
             </HeaderActionsContainer>
@@ -450,14 +470,16 @@ export default function Sidebar({
       <SelectionModal
         isOpen={showProfileModal}
         onClose={() => setShowProfileModal(false)}
-        items={(Array.isArray(availableProfiles) ? availableProfiles : []).map(profile => ({
-          id: profile.id,
-          name: profile.role,
-          description: profile.name,
-          color: profile.color,
-          avatar: profile.avatar,
-          role: profile.role
-        }))}
+        items={(Array.isArray(availableProfiles) ? availableProfiles : []).map(
+          profile => ({
+            id: profile.id,
+            name: profile.role,
+            description: profile.name,
+            color: profile.color,
+            avatar: profile.avatar,
+            role: profile.role,
+          })
+        )}
         onItemSelect={(item: any) => {
           const profile = availableProfiles?.find(p => p.id === item.id);
           if (profile) {
@@ -465,33 +487,45 @@ export default function Sidebar({
             setShowProfileModal(false);
           }
         }}
-        currentItem={currentProfile ? {
-          id: currentProfile.id,
-          name: currentProfile.role,
-          description: currentProfile.name,
-          color: currentProfile.color,
-          avatar: currentProfile.avatar,
-          role: currentProfile.role
-        } : null}
-        title="👤 Selecionar Perfil"
-        subtitle="Escolha o perfil que deseja usar"
-        icon="👤"
-        type="profile"
+        currentItem={
+          currentProfile
+            ? {
+                id: currentProfile.id,
+                name: currentProfile.role,
+                description: currentProfile.name,
+                color: currentProfile.color,
+                avatar: currentProfile.avatar,
+                role: currentProfile.role,
+              }
+            : null
+        }
+        title='👤 Selecionar Perfil'
+        subtitle='Escolha o perfil que deseja usar'
+        icon='👤'
+        type='profile'
       />
 
       <SelectionModal
         isOpen={showGroupModal}
         onClose={() => setShowGroupModal(false)}
-        items={(Array.isArray(availableGroups) ? availableGroups : []).map(group => ({
-          id: group.id,
-          name: group.nome,
-          description: group.descricao,
-          color: group.cor,
-          icon: group.icone === 'building' ? '🏢' : 
-                group.icone === 'users' ? '👥' : 
-                group.icone === 'home' ? '🏠' : 
-                group.icone === 'briefcase' ? '💼' : '📁'
-        }))}
+        items={(Array.isArray(availableGroups) ? availableGroups : []).map(
+          group => ({
+            id: group.id,
+            name: group.nome,
+            description: group.descricao,
+            color: group.cor,
+            icon:
+              group.icone === 'building'
+                ? '🏢'
+                : group.icone === 'users'
+                  ? '👥'
+                  : group.icone === 'home'
+                    ? '🏠'
+                    : group.icone === 'briefcase'
+                      ? '💼'
+                      : '📁',
+          })
+        )}
         onItemSelect={(item: any) => {
           const group = availableGroups?.find(g => g.id === item.id);
           if (group) {
@@ -499,20 +533,30 @@ export default function Sidebar({
             setShowGroupModal(false);
           }
         }}
-        currentItem={currentGroup ? {
-          id: currentGroup.id,
-          name: currentGroup.nome,
-          description: currentGroup.descricao,
-          color: currentGroup.cor,
-          icon: currentGroup.icone === 'building' ? '🏢' : 
-                currentGroup.icone === 'users' ? '👥' : 
-                currentGroup.icone === 'home' ? '🏠' : 
-                currentGroup.icone === 'briefcase' ? '💼' : '📁'
-        } : null}
-        title="👥 Selecionar Grupo"
-        subtitle="Escolha o grupo que deseja usar"
-        icon="👥"
-        type="group"
+        currentItem={
+          currentGroup
+            ? {
+                id: currentGroup.id,
+                name: currentGroup.nome,
+                description: currentGroup.descricao,
+                color: currentGroup.cor,
+                icon:
+                  currentGroup.icone === 'building'
+                    ? '🏢'
+                    : currentGroup.icone === 'users'
+                      ? '👥'
+                      : currentGroup.icone === 'home'
+                        ? '🏠'
+                        : currentGroup.icone === 'briefcase'
+                          ? '💼'
+                          : '📁',
+              }
+            : null
+        }
+        title='👥 Selecionar Grupo'
+        subtitle='Escolha o grupo que deseja usar'
+        icon='👥'
+        type='group'
       />
     </SidebarContainer>
   );

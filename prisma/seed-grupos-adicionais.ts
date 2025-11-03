@@ -14,9 +14,9 @@ async function main() {
   // 1. BUSCAR USUÁRIO EXISTENTE
   // ============================================
   console.log('🔍 Buscando usuário existente...');
-  
+
   const usuario = await prisma.usuario.findUnique({
-    where: { cpf: '59876913700' }
+    where: { cpf: '59876913700' },
   });
 
   if (!usuario) {
@@ -38,8 +38,8 @@ async function main() {
       icone: '🏭',
       tipo: 'empresa',
       privado: false,
-      ativo: true
-    }
+      ativo: true,
+    },
   });
 
   const grupoTrabalho3 = await prisma.grupo.create({
@@ -50,8 +50,8 @@ async function main() {
       icone: '🏢',
       tipo: 'empresa',
       privado: false,
-      ativo: true
-    }
+      ativo: true,
+    },
   });
 
   console.log('✅ Grupos adicionais criados\n');
@@ -67,15 +67,15 @@ async function main() {
         usuarioId: usuario.id,
         grupoId: grupoTrabalho2.id,
         papel: 'membro',
-        ativo: true
+        ativo: true,
       },
       {
         usuarioId: usuario.id,
         grupoId: grupoTrabalho3.id,
         papel: 'membro',
-        ativo: true
-      }
-    ]
+        ativo: true,
+      },
+    ],
   });
 
   console.log('✅ Usuário associado aos novos grupos\n');
@@ -91,15 +91,15 @@ async function main() {
     include: {
       perfis: {
         include: {
-          perfil: true
-        }
+          perfil: true,
+        },
       },
       gruposUsuario: {
         include: {
-          grupo: true
-        }
-      }
-    }
+          grupo: true,
+        },
+      },
+    },
   });
 
   if (usuarioCompleto) {
@@ -136,7 +136,7 @@ async function main() {
   console.log('  ✅ USUÁRIO COM MÚLTIPLOS PERFIS E GRUPOS');
   console.log('  ✅ REGRAS DE CONFLITO IMPLEMENTADAS');
   console.log('  ✅ LÓGICA DE NEGÓCIO COMPLETA\n');
-  
+
   console.log('✅ Criação concluída com sucesso!');
   console.log('\n🔐 Para testar o login:');
   console.log('  CPF: 59876913700');
@@ -148,7 +148,7 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
+  .catch(e => {
     console.error('❌ Erro ao criar dados:', e);
     process.exit(1);
   })

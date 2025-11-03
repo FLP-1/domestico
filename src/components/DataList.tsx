@@ -47,44 +47,64 @@ const DataListContainer = styled.div<{ $theme?: any; $variant: string }>`
   overflow: hidden;
   box-shadow: 0 4px 16px ${props => props.$theme.colors.shadow};
   border: 1px solid ${props => props.$theme.colors.primary}20;
-  
-  ${props => props.$variant === 'compact' && `
+
+  ${props =>
+    props.$variant === 'compact' &&
+    `
     border-radius: 12px;
     box-shadow: 0 2px 8px ${props.$theme.colors.shadow};
   `}
-  
-  ${props => props.$variant === 'detailed' && `
+
+  ${props =>
+    props.$variant === 'detailed' &&
+    `
     border-radius: 20px;
     box-shadow: 0 6px 24px ${props.$theme.colors.shadow};
   `}
 `;
 
-const DataListHeader = styled.div<{ $theme?: any; $variant: string; $gridTemplate?: string }>`
+const DataListHeader = styled.div<{
+  $theme?: any;
+  $variant: string;
+  $gridTemplate?: string;
+}>`
   background: ${props => props.$theme.colors.primary}10;
-  padding: ${props => props.$variant === 'compact' ? '0.75rem 1rem' : '1rem 1.5rem'};
+  padding: ${props =>
+    props.$variant === 'compact' ? '0.75rem 1rem' : '1rem 1.5rem'};
   border-bottom: 1px solid ${props => props.$theme.colors.primary}20;
   display: grid;
-  grid-template-columns: ${props => props.$gridTemplate || 'repeat(auto-fit, minmax(150px, 1fr))'};
+  grid-template-columns: ${props =>
+    props.$gridTemplate || 'repeat(auto-fit, minmax(150px, 1fr))'};
   gap: 1rem;
   align-items: center;
   font-weight: 600;
   color: ${props => props.$theme.colors.text || '#2c3e50'};
-  font-size: ${props => props.$variant === 'compact' ? '0.9rem' : '1rem'};
-  
-  ${props => props.$variant === 'detailed' && `
+  font-size: ${props => (props.$variant === 'compact' ? '0.9rem' : '1rem')};
+
+  ${props =>
+    props.$variant === 'detailed' &&
+    `
     padding: 1.25rem 2rem;
     font-size: 1.1rem;
   `}
 `;
 
-const DataListBody = styled.div<{ $theme?: any; $striped: boolean; $hoverable: boolean }>`
-  ${props => props.$striped && `
+const DataListBody = styled.div<{
+  $theme?: any;
+  $striped: boolean;
+  $hoverable: boolean;
+}>`
+  ${props =>
+    props.$striped &&
+    `
     .data-list-item:nth-child(even) {
       background: rgba(0, 0, 0, 0.02);
     }
   `}
-  
-  ${props => props.$hoverable && `
+
+  ${props =>
+    props.$hoverable &&
+    `
     .data-list-item:hover {
       background: ${props.$theme.colors.primary}05;
       transform: translateX(4px);
@@ -92,26 +112,34 @@ const DataListBody = styled.div<{ $theme?: any; $striped: boolean; $hoverable: b
   `}
 `;
 
-const DataListItem = styled.div<{ $theme?: any; $variant: string; $clickable: boolean }>`
+const DataListItem = styled.div<{
+  $theme?: any;
+  $variant: string;
+  $clickable: boolean;
+}>`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 1rem;
   align-items: center;
-  padding: ${props => props.$variant === 'compact' ? '0.75rem 1rem' : '1rem 1.5rem'};
+  padding: ${props =>
+    props.$variant === 'compact' ? '0.75rem 1rem' : '1rem 1.5rem'};
   border-bottom: 1px solid ${props => props.$theme.colors.primary}10;
   transition: all 0.3s ease;
-  cursor: ${props => props.$clickable ? 'pointer' : 'default'};
-  
-  ${props => props.$variant === 'detailed' && `
+  cursor: ${props => (props.$clickable ? 'pointer' : 'default')};
+
+  ${props =>
+    props.$variant === 'detailed' &&
+    `
     padding: 1.25rem 2rem;
   `}
-  
+
   &:last-child {
     border-bottom: none;
   }
-  
+
   &:hover {
-    background: ${props => props.$clickable ? `${props.$theme.colors.primary}05` : 'transparent'};
+    background: ${props =>
+      props.$clickable ? `${props.$theme.colors.primary}05` : 'transparent'};
   }
 `;
 
@@ -120,9 +148,12 @@ const DataListCell = styled.div<{ $align?: string; $width?: string }>`
   align-items: center;
   justify-content: ${props => {
     switch (props.$align) {
-      case 'center': return 'center';
-      case 'right': return 'flex-end';
-      default: return 'flex-start';
+      case 'center':
+        return 'center';
+      case 'right':
+        return 'flex-end';
+      default:
+        return 'flex-start';
     }
   }};
   ${props => props.$width && `width: ${props.$width};`}
@@ -137,16 +168,20 @@ const DataListActions = styled.div<{ $theme?: any }>`
   margin-left: auto;
 `;
 
-const ActionButton = styled.button<{ $theme?: any; $variant: string; $disabled: boolean }>`
+const ActionButton = styled.button<{
+  $theme?: any;
+  $variant: string;
+  $disabled: boolean;
+}>`
   background: none;
   border: none;
   padding: 0.5rem;
   border-radius: 8px;
-  cursor: ${props => props.$disabled ? 'not-allowed' : 'pointer'};
+  cursor: ${props => (props.$disabled ? 'not-allowed' : 'pointer')};
   transition: all 0.3s ease;
   font-size: 1.2rem;
-  opacity: ${props => props.$disabled ? 0.5 : 1};
-  
+  opacity: ${props => (props.$disabled ? 0.5 : 1)};
+
   ${props => {
     switch (props.$variant) {
       case 'primary':
@@ -172,7 +207,7 @@ const ActionButton = styled.button<{ $theme?: any; $variant: string; $disabled: 
         `;
     }
   }}
-  
+
   &:disabled {
     cursor: not-allowed;
     opacity: 0.5;
@@ -183,19 +218,19 @@ const EmptyState = styled.div<{ $theme?: any }>`
   padding: 3rem 2rem;
   text-align: center;
   color: #7f8c8d;
-  
+
   .empty-icon {
     font-size: 3rem;
     margin-bottom: 1rem;
     opacity: 0.5;
   }
-  
+
   .empty-title {
     font-size: 1.25rem;
     margin-bottom: 0.5rem;
     color: ${props => props.$theme.colors.text || '#2c3e50'};
   }
-  
+
   .empty-message {
     font-size: 0.9rem;
   }
@@ -205,16 +240,20 @@ const LoadingState = styled.div<{ $theme?: any }>`
   padding: 3rem 2rem;
   text-align: center;
   color: ${props => props.$theme.colors.primary};
-  
+
   .loading-spinner {
     font-size: 2rem;
     margin-bottom: 1rem;
     animation: spin 1s linear infinite;
   }
-  
+
   @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
 `;
 
@@ -225,8 +264,10 @@ const Badge = styled.span<{ $color: string; $variant: string }>`
   font-weight: 600;
   color: white;
   background: ${props => props.$color};
-  
-  ${props => props.$variant === 'compact' && `
+
+  ${props =>
+    props.$variant === 'compact' &&
+    `
     font-size: 0.7rem;
     padding: 0.2rem 0.4rem;
   `}
@@ -248,7 +289,7 @@ const TextTruncate = styled.span<{ $theme?: any }>`
 const LinkWrapper = styled.a<{ $theme?: any }>`
   color: ${props => props.$theme.colors.primary};
   text-decoration: none;
-  
+
   &:hover {
     text-decoration: underline;
   }
@@ -273,9 +314,9 @@ const DataList: React.FC<DataListProps> = ({
     if (column.render) {
       return column.render(item, column);
     }
-    
+
     const value = item[column.key];
-    
+
     // Renderização automática baseada no tipo de dado
     if (typeof value === 'boolean') {
       return (
@@ -284,15 +325,20 @@ const DataList: React.FC<DataListProps> = ({
         </Badge>
       );
     }
-    
+
     if (typeof value === 'string' && value.includes('http')) {
       return (
-        <LinkWrapper href={value} target="_blank" rel="noopener noreferrer" $theme={theme}>
+        <LinkWrapper
+          href={value}
+          target='_blank'
+          rel='noopener noreferrer'
+          $theme={theme}
+        >
           <TextTruncate>{value}</TextTruncate>
         </LinkWrapper>
       );
     }
-    
+
     return <TextTruncate>{value || '-'}</TextTruncate>;
   };
 
@@ -300,8 +346,8 @@ const DataList: React.FC<DataListProps> = ({
     return (
       <DataListContainer $theme={theme} $variant={variant}>
         <LoadingState $theme={theme}>
-          <div className="loading-spinner">
-            <AccessibleEmoji emoji="⏳" label="Carregando" />
+          <div className='loading-spinner'>
+            <AccessibleEmoji emoji='⏳' label='Carregando' />
           </div>
           <div>Carregando dados...</div>
         </LoadingState>
@@ -313,11 +359,11 @@ const DataList: React.FC<DataListProps> = ({
     return (
       <DataListContainer $theme={theme} $variant={variant}>
         <EmptyState $theme={theme}>
-          <div className="empty-icon">
-            <AccessibleEmoji emoji="📋" label="Lista vazia" />
+          <div className='empty-icon'>
+            <AccessibleEmoji emoji='📋' label='Lista vazia' />
           </div>
-          <div className="empty-title">Lista vazia</div>
-          <div className="empty-message">{emptyMessage}</div>
+          <div className='empty-title'>Lista vazia</div>
+          <div className='empty-message'>{emptyMessage}</div>
         </EmptyState>
       </DataListContainer>
     );
@@ -331,40 +377,52 @@ const DataList: React.FC<DataListProps> = ({
   return (
     <DataListContainer $theme={theme} $variant={variant}>
       {showHeader && (
-        <DataListHeader $theme={theme} $variant={variant} $gridTemplate={gridTemplate}>
+        <DataListHeader
+          $theme={theme}
+          $variant={variant}
+          $gridTemplate={gridTemplate}
+        >
           {columns.map(column => (
-            <DataListCell key={column.key} $align={column.align} $width={column.width}>
+            <DataListCell
+              key={column.key}
+              $align={column.align}
+              $width={column.width}
+            >
               {column.label}
             </DataListCell>
           ))}
           {actions.length > 0 && (
-            <DataListCell $align="right">
-              Ações
-            </DataListCell>
+            <DataListCell $align='right'>Ações</DataListCell>
           )}
         </DataListHeader>
       )}
-      
+
       <DataListBody $theme={theme} $striped={striped} $hoverable={hoverable}>
         {items.map((item: any, index: any) => (
           <DataListItem
             key={item.id}
-            className="data-list-item"
+            className='data-list-item'
             $theme={theme}
             $variant={variant}
             $clickable={!!onItemClick}
             onClick={() => onItemClick?.(item)}
           >
             {columns.map(column => (
-              <DataListCell key={column.key} $align={column.align} $width={column.width}>
+              <DataListCell
+                key={column.key}
+                $align={column.align}
+                $width={column.width}
+              >
                 {renderCell(item, column)}
               </DataListCell>
             ))}
-            
+
             {actions.length > 0 && (
               <DataListActions $theme={theme}>
                 {actions.map((action: any, actionIndex: any) => {
-                  const isDisabled = action.disabled ? action.disabled(item) : false;
+                  const isDisabled = action.disabled
+                    ? action.disabled(item)
+                    : false;
                   return (
                     <ActionButton
                       key={actionIndex}
@@ -380,7 +438,10 @@ const DataList: React.FC<DataListProps> = ({
                       title={action.label}
                       disabled={isDisabled}
                     >
-                      <AccessibleEmoji emoji={action.icon} label={action.label} />
+                      <AccessibleEmoji
+                        emoji={action.icon}
+                        label={action.label}
+                      />
                     </ActionButton>
                   );
                 })}

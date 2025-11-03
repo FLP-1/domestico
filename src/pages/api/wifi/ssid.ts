@@ -4,9 +4,14 @@ import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== 'GET') {
-    return res.status(405).json({ success: false, error: 'Método não permitido' });
+    return res
+      .status(405)
+      .json({ success: false, error: 'Método não permitido' });
   }
 
   try {
@@ -20,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Windows - usar netsh
         const { stdout } = await execAsync('netsh wlan show interfaces');
         const lines = stdout.split('\n');
-        
+
         for (const line of lines) {
           if (line.includes('SSID') && !line.includes('BSSID')) {
             const match = line.match(/SSID\s*:\s*(.+)/);
@@ -32,7 +37,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       } else if (platform === 'darwin') {
         // macOS - usar networksetup
-        const { stdout } = await execAsync('networksetup -getairportnetwork en0');
+        const { stdout } = await execAsync(
+          'networksetup -getairportnetwork en0'
+        );
         const match = stdout.match(/Current Wi-Fi Network: (.+)/);
         if (match && match[1].trim()) {
           ssid = match[1].trim();
@@ -46,30 +53,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
         } catch {
           // Fallback para nmcli
-          const { stdout } = await execAsync('nmcli -t -f active,ssid dev wifi | grep "^yes:" | cut -d: -f2');
+          const { stdout } = await execAsync(
+            'nmcli -t -f active,ssid dev wifi | grep "^yes:" | cut -d: -f2'
+          );
           if (stdout.trim()) {
             ssid = stdout.trim();
           }
         }
       }
     } catch (execError) {
-      error = execError instanceof Error ? execError.message : 'Erro ao executar comando';
+      error =
+        execError instanceof Error
+          ? execError.message
+          : 'Erro ao executar comando';
     }
 
     // ✅ Rate limiting ajustado
     const now = Date.now();
     const lastCall = global.lastSSIDCall || 0;
     const timeDiff = now - lastCall;
-    
-    if (timeDiff < 1000) { // 1 segundo entre chamadas (reduzido)
-      return res.status(429).json({ 
-        success: false, 
+
+    if (timeDiff < 1000) {
+      // 1 segundo entre chamadas (reduzido)
+      return res.status(429).json({
+        success: false,
         error: 'Rate limit: aguarde 1 segundo entre chamadas',
         ssid: 'Rate limited',
-        platform: platform
+        platform: platform,
       });
     }
-    
+
     global.lastSSIDCall = now;
 
     return res.status(200).json({
@@ -77,17 +90,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ssid: ssid,
       platform: platform,
       error: error,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('❌ Erro na API de SSID:', error);
-    
+
     return res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Erro interno do servidor',
+      error:
+        error instanceof Error ? error.message : 'Erro interno do servidor',
       ssid: 'Erro',
-      platform: process.platform
+      platform: process.platform,
     });
   }
 }

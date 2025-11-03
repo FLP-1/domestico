@@ -11,40 +11,41 @@
 ### **🔴 PROBLEMA 1: DEFAULT_COLORS CONTÉM CORES HARDCODED**
 
 **❌ PROBLEMA IDENTIFICADO:**
+
 ```typescript
 // src/config/default-colors.ts
 export const DEFAULT_COLORS = {
-  primary: '#29ABE2',           // ← COR HARDCODED!
-  secondary: '#90EE90',         // ← COR HARDCODED!
-  success: '#10B981',           // ← COR HARDCODED!
-  warning: '#F59E0B',           // ← COR HARDCODED!
-  error: '#EF4444',             // ← COR HARDCODED!
-  info: '#3B82F6',              // ← COR HARDCODED!
-  
+  primary: '#29ABE2', // ← COR HARDCODED!
+  secondary: '#90EE90', // ← COR HARDCODED!
+  success: '#10B981', // ← COR HARDCODED!
+  warning: '#F59E0B', // ← COR HARDCODED!
+  error: '#EF4444', // ← COR HARDCODED!
+  info: '#3B82F6', // ← COR HARDCODED!
+
   text: {
-    primary: '#2C3E50',         // ← COR HARDCODED!
-    secondary: '#6C757D',       // ← COR HARDCODED!
-    disabled: '#9CA3AF',        // ← COR HARDCODED!
+    primary: '#2C3E50', // ← COR HARDCODED!
+    secondary: '#6C757D', // ← COR HARDCODED!
+    disabled: '#9CA3AF', // ← COR HARDCODED!
   },
-  
+
   surface: {
-    primary: '#FFFFFF',         // ← COR HARDCODED!
-    secondary: '#F8F9FA',       // ← COR HARDCODED!
-    tertiary: '#F3F4F6',        // ← COR HARDCODED!
+    primary: '#FFFFFF', // ← COR HARDCODED!
+    secondary: '#F8F9FA', // ← COR HARDCODED!
+    tertiary: '#F3F4F6', // ← COR HARDCODED!
   },
-  
+
   border: {
-    primary: '#E5E7EB',         // ← COR HARDCODED!
-    secondary: '#D1D5DB',       // ← COR HARDCODED!
-    focus: '#29ABE2',           // ← COR HARDCODED!
+    primary: '#E5E7EB', // ← COR HARDCODED!
+    secondary: '#D1D5DB', // ← COR HARDCODED!
+    focus: '#29ABE2', // ← COR HARDCODED!
   },
-  
+
   states: {
-    hover: 'rgba(41, 171, 226, 0.1)',    // ← COR HARDCODED!
-    focus: 'rgba(41, 171, 226, 0.2)',    // ← COR HARDCODED!
-    active: 'rgba(41, 171, 226, 0.3)',   // ← COR HARDCODED!
+    hover: 'rgba(41, 171, 226, 0.1)', // ← COR HARDCODED!
+    focus: 'rgba(41, 171, 226, 0.2)', // ← COR HARDCODED!
+    active: 'rgba(41, 171, 226, 0.3)', // ← COR HARDCODED!
     disabled: 'rgba(41, 171, 226, 0.05)', // ← COR HARDCODED!
-  }
+  },
 };
 ```
 
@@ -57,6 +58,7 @@ export const DEFAULT_COLORS = {
 ### **🔴 IMPLEMENTAÇÃO PROBLEMÁTICA:**
 
 **❌ IMPLEMENTAÇÃO INCORRETA:**
+
 ```tsx
 // ❌ AINDA É HARDCODED!
 color: props.$theme?.colors?.textSecondary || DEFAULT_COLORS.text.secondary;
@@ -68,13 +70,13 @@ color: props.$theme?.colors?.textSecondary || DEFAULT_COLORS.text.secondary;
 
 ### **🔴 TODAS AS IMPLEMENTAÇÕES PROPOSTAS SÃO PROBLEMÁTICAS:**
 
-| **Implementação Proposta** | **Problema** | **Status** |
-|----------------------------|--------------|------------|
-| `|| DEFAULT_COLORS.primary` | Contém `'#29ABE2'` hardcoded | ❌ **PROBLEMÁTICA** |
-| `|| DEFAULT_COLORS.success` | Contém `'#10B981'` hardcoded | ❌ **PROBLEMÁTICA** |
-| `|| DEFAULT_COLORS.text.secondary` | Contém `'#6C757D'` hardcoded | ❌ **PROBLEMÁTICA** |
-| `|| DEFAULT_COLORS.surface.primary` | Contém `'#FFFFFF'` hardcoded | ❌ **PROBLEMÁTICA** |
-| `|| DEFAULT_COLORS.border.primary` | Contém `'#E5E7EB'` hardcoded | ❌ **PROBLEMÁTICA** |
+| **Implementação Proposta** | **Problema** | **Status**                      |
+| -------------------------- | ------------ | ------------------------------- | ---------------------------- | ------------------- |
+| `                          |              | DEFAULT_COLORS.primary`         | Contém `'#29ABE2'` hardcoded | ❌ **PROBLEMÁTICA** |
+| `                          |              | DEFAULT_COLORS.success`         | Contém `'#10B981'` hardcoded | ❌ **PROBLEMÁTICA** |
+| `                          |              | DEFAULT_COLORS.text.secondary`  | Contém `'#6C757D'` hardcoded | ❌ **PROBLEMÁTICA** |
+| `                          |              | DEFAULT_COLORS.surface.primary` | Contém `'#FFFFFF'` hardcoded | ❌ **PROBLEMÁTICA** |
+| `                          |              | DEFAULT_COLORS.border.primary`  | Contém `'#E5E7EB'` hardcoded | ❌ **PROBLEMÁTICA** |
 
 ---
 
@@ -103,15 +105,17 @@ color: props.$theme?.colors?.textSecondary || DEFAULT_COLORS.text.secondary;
 ### **✅ SOLUÇÃO 1: Sistema de Fallback Hierárquico**
 
 **✅ IMPLEMENTAÇÃO CORRETA:**
+
 ```tsx
 // ✅ CORRETO: Sistema de fallback hierárquico
-color: props.$theme?.colors?.textSecondary || 
-       props.$theme?.colors?.text || 
-       props.$theme?.colors?.primary || 
-       'inherit';
+color: props.$theme?.colors?.textSecondary ||
+  props.$theme?.colors?.text ||
+  props.$theme?.colors?.primary ||
+  'inherit';
 ```
 
 **✅ VANTAGENS:**
+
 - **Não usa cores hardcoded**
 - **Usa apenas cores do tema**
 - **Fallback seguro com 'inherit'**
@@ -120,14 +124,16 @@ color: props.$theme?.colors?.textSecondary ||
 ### **✅ SOLUÇÃO 2: Sistema de Fallback com Cores CSS**
 
 **✅ IMPLEMENTAÇÃO CORRETA:**
+
 ```tsx
 // ✅ CORRETO: Usar cores CSS nativas
-color: props.$theme?.colors?.textSecondary || 
-       props.$theme?.colors?.text || 
-       'currentColor';
+color: props.$theme?.colors?.textSecondary ||
+  props.$theme?.colors?.text ||
+  'currentColor';
 ```
 
 **✅ VANTAGENS:**
+
 - **Não usa cores hardcoded**
 - **Usa cores CSS nativas**
 - **Fallback seguro com 'currentColor'**
@@ -136,14 +142,16 @@ color: props.$theme?.colors?.textSecondary ||
 ### **✅ SOLUÇÃO 3: Sistema de Fallback com Variáveis CSS**
 
 **✅ IMPLEMENTAÇÃO CORRETA:**
+
 ```tsx
 // ✅ CORRETO: Usar variáveis CSS
-color: props.$theme?.colors?.textSecondary || 
-       props.$theme?.colors?.text || 
-       'var(--color-text-secondary, currentColor)';
+color: props.$theme?.colors?.textSecondary ||
+  props.$theme?.colors?.text ||
+  'var(--color-text-secondary, currentColor)';
 ```
 
 **✅ VANTAGENS:**
+
 - **Não usa cores hardcoded**
 - **Usa variáveis CSS**
 - **Fallback seguro com variáveis CSS**
@@ -155,19 +163,19 @@ color: props.$theme?.colors?.textSecondary ||
 
 ### **❌ IMPLEMENTAÇÕES PROPOSTAS NÃO SÃO ADEQUADAS:**
 
-| **Critério** | **Implementação Proposta** | **Status** |
-|--------------|----------------------------|------------|
-| **Adequado ao tema** | ❌ **NÃO** - Usa cores fixas | ❌ **INADEQUADO** |
-| **Adequado à centralização** | ❌ **NÃO** - Mantém hardcoded | ❌ **INADEQUADO** |
-| **Não gera hardcoded** | ❌ **NÃO** - Ainda é hardcoded | ❌ **INADEQUADO** |
+| **Critério**                 | **Implementação Proposta**     | **Status**        |
+| ---------------------------- | ------------------------------ | ----------------- |
+| **Adequado ao tema**         | ❌ **NÃO** - Usa cores fixas   | ❌ **INADEQUADO** |
+| **Adequado à centralização** | ❌ **NÃO** - Mantém hardcoded  | ❌ **INADEQUADO** |
+| **Não gera hardcoded**       | ❌ **NÃO** - Ainda é hardcoded | ❌ **INADEQUADO** |
 
 ### **✅ SOLUÇÕES CORRETAS SÃO ADEQUADAS:**
 
-| **Critério** | **Solução Correta** | **Status** |
-|--------------|---------------------|------------|
-| **Adequado ao tema** | ✅ **SIM** - Usa apenas cores do tema | ✅ **ADEQUADO** |
-| **Adequado à centralização** | ✅ **SIM** - Não usa cores hardcoded | ✅ **ADEQUADO** |
-| **Não gera hardcoded** | ✅ **SIM** - Elimina cores hardcoded | ✅ **ADEQUADO** |
+| **Critério**                 | **Solução Correta**                   | **Status**      |
+| ---------------------------- | ------------------------------------- | --------------- |
+| **Adequado ao tema**         | ✅ **SIM** - Usa apenas cores do tema | ✅ **ADEQUADO** |
+| **Adequado à centralização** | ✅ **SIM** - Não usa cores hardcoded  | ✅ **ADEQUADO** |
+| **Não gera hardcoded**       | ✅ **SIM** - Elimina cores hardcoded  | ✅ **ADEQUADO** |
 
 ---
 
@@ -176,6 +184,7 @@ color: props.$theme?.colors?.textSecondary ||
 ### **✅ RECOMENDAÇÃO 1: Rejeitar Implementações Propostas**
 
 **🔴 REJEITAR:**
+
 ```tsx
 // ❌ REJEITAR: Ainda é hardcoded
 color: props.$theme?.colors?.textSecondary || DEFAULT_COLORS.text.secondary;
@@ -184,22 +193,24 @@ color: props.$theme?.colors?.textSecondary || DEFAULT_COLORS.text.secondary;
 ### **✅ RECOMENDAÇÃO 2: Implementar Soluções Corretas**
 
 **✅ IMPLEMENTAR:**
+
 ```tsx
 // ✅ IMPLEMENTAR: Sistema de fallback hierárquico
-color: props.$theme?.colors?.textSecondary || 
-       props.$theme?.colors?.text || 
-       props.$theme?.colors?.primary || 
-       'inherit';
+color: props.$theme?.colors?.textSecondary ||
+  props.$theme?.colors?.text ||
+  props.$theme?.colors?.primary ||
+  'inherit';
 ```
 
 ### **✅ RECOMENDAÇÃO 3: Sistema de Fallback Robusto**
 
 **✅ IMPLEMENTAR:**
+
 ```tsx
 // ✅ IMPLEMENTAR: Sistema robusto
-color: props.$theme?.colors?.textSecondary || 
-       props.$theme?.colors?.text || 
-       'currentColor';
+color: props.$theme?.colors?.textSecondary ||
+  props.$theme?.colors?.text ||
+  'currentColor';
 ```
 
 ---

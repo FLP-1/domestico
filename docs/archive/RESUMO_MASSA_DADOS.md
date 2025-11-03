@@ -59,16 +59,16 @@ A função `gerarCPFValido()` implementa o algoritmo oficial de validação de C
 
 ### ✅ CPFs Pré-configurados (Todos Válidos)
 
-| Nome | CPF | Status |
-|------|-----|--------|
-| Francisco | **59876913700** | ✅ VÁLIDO |
-| Maria | **38645446880** | ✅ VÁLIDO |
-| João | Gerado automaticamente | ✅ VÁLIDO |
-| Ana | Gerado automaticamente | ✅ VÁLIDO |
-| Pedro | Gerado automaticamente | ✅ VÁLIDO |
-| Julia | Gerado automaticamente | ✅ VÁLIDO |
-| Carlos | Gerado automaticamente | ✅ VÁLIDO |
-| Fernanda | Gerado automaticamente | ✅ VÁLIDO |
+| Nome      | CPF                    | Status    |
+| --------- | ---------------------- | --------- |
+| Francisco | **59876913700**        | ✅ VÁLIDO |
+| Maria     | **38645446880**        | ✅ VÁLIDO |
+| João      | Gerado automaticamente | ✅ VÁLIDO |
+| Ana       | Gerado automaticamente | ✅ VÁLIDO |
+| Pedro     | Gerado automaticamente | ✅ VÁLIDO |
+| Julia     | Gerado automaticamente | ✅ VÁLIDO |
+| Carlos    | Gerado automaticamente | ✅ VÁLIDO |
+| Fernanda  | Gerado automaticamente | ✅ VÁLIDO |
 
 **TODOS OS CPFs TÊM DÍGITOS VERIFICADORES CORRETOS!** ✅
 
@@ -98,16 +98,19 @@ A função `gerarCPFValido()` implementa o algoritmo oficial de validação de C
 ### Dados Detalhados
 
 #### 👥 Usuários
+
 - **Francisco** - Empregador (CPF: 59876913700)
 - **Maria** - Empregado (CPF: 38645446880)
 - **João, Ana, Pedro, Julia, Carlos, Fernanda** - Diversos perfis
 
 #### 💳 Planos
+
 - **Gratuito** - R$ 0,00
 - **Básico** - R$ 29,90/mês
 - **Premium** - R$ 99,90/mês
 
 #### 🛒 Lista de Compras
+
 - Arroz, Feijão, Macarrão, Leite, Sabonete, Detergente
 
 ---
@@ -115,6 +118,7 @@ A função `gerarCPFValido()` implementa o algoritmo oficial de validação de C
 ## 🔑 CREDENCIAIS DE ACESSO
 
 ### Login Principal (Empregador)
+
 ```
 📧 Email: francisco@flpbusiness.com
 🔒 Senha: senha123
@@ -122,6 +126,7 @@ A função `gerarCPFValido()` implementa o algoritmo oficial de validação de C
 ```
 
 ### Login Secundário (Empregado)
+
 ```
 📧 Email: maria.santos@email.com
 🔒 Senha: senha123
@@ -129,6 +134,7 @@ A função `gerarCPFValido()` implementa o algoritmo oficial de validação de C
 ```
 
 ### Outros Logins
+
 ```
 Emails: joao.silva@email.com, ana.santos@email.com, etc
 Senha: senha123 (todos)
@@ -140,21 +146,25 @@ CPFs: Válidos e gerados automaticamente
 ## 🛠️ COMANDOS ESSENCIAIS
 
 ### Executar Seed
+
 ```powershell
 npx tsx prisma/seed.ts
 ```
 
 ### Verificar Dados
+
 ```powershell
 psql -h localhost -p 5433 -U postgres -d dom -c "SELECT cpf, nome_completo, email FROM usuarios;"
 ```
 
 ### Abrir Prisma Studio
+
 ```powershell
 npm run db:studio
 ```
 
 ### Iniciar Sistema
+
 ```powershell
 npm run dev
 ```
@@ -218,4 +228,3 @@ npm run dev
 **Sistema:** DOM v1.0.0  
 **Banco:** PostgreSQL 18 - Porta 5433  
 **CPFs:** ✅ Todos validados e corretos!
-

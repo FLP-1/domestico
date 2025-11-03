@@ -43,7 +43,7 @@ export const withOpacity = (color: string, opacity: number): string => {
   if (rgbaMatch) {
     return `rgba(${rgbaMatch[1]}, ${rgbaMatch[2]}, ${rgbaMatch[3]}, ${opacity})`;
   }
-  
+
   // Se for hex, converter para rgb
   const hexMatch = color.match(/^#([A-Fa-f\d]{6})$/);
   if (hexMatch) {
@@ -52,7 +52,6 @@ export const withOpacity = (color: string, opacity: number): string => {
     const b = parseInt(hexMatch[1].substring(4, 6), 16);
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
   }
-  
+
   return color; // Fallback se não conseguir parsear
 };
-

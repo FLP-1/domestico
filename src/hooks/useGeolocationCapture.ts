@@ -9,15 +9,23 @@ import logger from '../utils/logger';
  */
 export const useGeolocationCapture = () => {
   const { getCurrentPosition } = useGeolocation();
-  const { updateLastLocationIfBetter, setLastCaptureLocation, setLastCaptureStatus } = useGeolocationContext();
+  const {
+    updateLastLocationIfBetter,
+    setLastCaptureLocation,
+    setLastCaptureStatus,
+  } = useGeolocationContext();
 
   /**
    * Detectar se é dispositivo mobile
    */
   const isMobileDevice = useCallback((): boolean => {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-           ('ontouchstart' in window) ||
-           (navigator.maxTouchPoints > 0);
+    return (
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      ) ||
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0
+    );
   }, []);
 
   /**
@@ -37,32 +45,34 @@ export const useGeolocationCapture = () => {
       error?: string;
     }> => {
       logger.log(`🎯 Executando ação crítica: ${actionName}`);
-      
+
       const isMobile = isMobileDevice();
       logger.log(`📱 Dispositivo: ${isMobile ? 'Mobile' : 'Desktop'}`);
-      
+
       try {
         // 1. Capturar geolocalização
         logger.geo(`📍 Capturando geolocalização para: ${actionName}`);
-        
+
         // Usar mesma estratégia para mobile e desktop
         // O timeout já está configurado no captureRealTimeLocation (via banco de dados)
         let locationData;
         try {
           locationData = await getCurrentPosition();
         } catch (error) {
-          logger.warn(`⚠️ Captura de geolocalização falhou para ${actionName}, continuando sem localização`);
+          logger.warn(
+            `⚠️ Captura de geolocalização falhou para ${actionName}, continuando sem localização`
+          );
           locationData = null;
         }
-        
+
         if (locationData) {
           logger.geo(`✅ Geolocalização capturada para ${actionName}:`, {
             address: locationData.address,
             accuracy: `${locationData.accuracy}m`,
             wifiName: locationData.wifiName,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
-          
+
           // ✅ Salvar no contexto global para WelcomeSection
           updateLastLocationIfBetter({
             latitude: locationData.latitude,
@@ -71,16 +81,18 @@ export const useGeolocationCapture = () => {
             address: locationData.address,
             wifiName: locationData.wifiName,
             networkInfo: locationData.networkInfo,
-            timestamp: new Date()
+            timestamp: new Date(),
           });
         } else {
-          logger.warn(`⚠️ Geolocalização não disponível para ${actionName} (desktop ou falha)`);
+          logger.warn(
+            `⚠️ Geolocalização não disponível para ${actionName} (desktop ou falha)`
+          );
         }
 
         // 2. Executar a ação original COM dados de geolocalização
         logger.log(`⚡ Executando ação: ${actionName}`);
         const result = await action(locationData, ...args);
-        
+
         logger.log(`✅ Ação ${actionName} executada com sucesso`);
 
         // 3. Se a ação concluiu com sucesso, marcar a última captura usada para persistência
@@ -92,7 +104,7 @@ export const useGeolocationCapture = () => {
             address: locationData.address,
             wifiName: locationData.wifiName,
             networkInfo: locationData.networkInfo,
-            timestamp: new Date()
+            timestamp: new Date(),
           });
           // Reset meta até receber status do servidor no chamador
           setLastCaptureStatus && setLastCaptureStatus(null);
@@ -102,24 +114,25 @@ export const useGeolocationCapture = () => {
         return {
           success: true,
           result,
-          locationData: locationData ? {
-            latitude: locationData.latitude,
-            longitude: locationData.longitude,
-            accuracy: locationData.accuracy,
-            address: locationData.address,
-            addressComponents: locationData.addressComponents,
-            hasNumber: locationData.hasNumber,
-            wifiName: locationData.wifiName,
-            networkInfo: locationData.networkInfo,
-            actionName,
-            timestamp: new Date().toISOString(),
-            deviceType: isMobile ? 'mobile' : 'desktop'
-          } : null
+          locationData: locationData
+            ? {
+                latitude: locationData.latitude,
+                longitude: locationData.longitude,
+                accuracy: locationData.accuracy,
+                address: locationData.address,
+                addressComponents: locationData.addressComponents,
+                hasNumber: locationData.hasNumber,
+                wifiName: locationData.wifiName,
+                networkInfo: locationData.networkInfo,
+                actionName,
+                timestamp: new Date().toISOString(),
+                deviceType: isMobile ? 'mobile' : 'desktop',
+              }
+            : null,
         };
-
       } catch (error: any) {
         logger.error(`❌ Erro na ação ${actionName}:`, error);
-        
+
         // Mesmo com erro de geolocalização, tentar executar a ação
         try {
           const result = await action(null, ...args); // Passar null para locationData
@@ -127,17 +140,23 @@ export const useGeolocationCapture = () => {
             success: true,
             result,
             locationData: null, // Geolocalização falhou
-            error: `Geolocalização falhou: ${error.message}`
+            error: `Geolocalização falhou: ${error.message}`,
           };
         } catch (actionError: any) {
           return {
             success: false,
-            error: `Ação falhou: ${actionError.message}`
+            error: `Ação falhou: ${actionError.message}`,
           };
         }
       }
     },
-    [getCurrentPosition, isMobileDevice, updateLastLocationIfBetter, setLastCaptureLocation, setLastCaptureStatus]
+    [
+      getCurrentPosition,
+      isMobileDevice,
+      updateLastLocationIfBetter,
+      setLastCaptureLocation,
+      setLastCaptureStatus,
+    ]
   );
 
   /**
@@ -167,7 +186,7 @@ export const useGeolocationCapture = () => {
   return {
     executeWithLocationCapture,
     createCriticalButtonHandler,
-    createCriticalFormHandler
+    createCriticalFormHandler,
   };
 };
 

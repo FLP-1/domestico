@@ -9,9 +9,7 @@ export default async function handler(
     try {
       const { usuarioId } = req.query;
 
-      const whereClause = usuarioId 
-        ? { usuarioId: usuarioId as string }
-        : {};
+      const whereClause = usuarioId ? { usuarioId: usuarioId as string } : {};
 
       const membros = await prisma.membroFamilia.findMany({
         where: whereClause,
@@ -29,38 +27,38 @@ export default async function handler(
         },
       });
 
-      return res.status(200).json({ 
-        success: true, 
-        data: membros 
+      return res.status(200).json({
+        success: true,
+        data: membros,
       });
     } catch (error) {
       console.error('Erro ao buscar membros da família:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao buscar membros da família' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao buscar membros da família',
       });
     }
   }
 
   if (req.method === 'POST') {
     try {
-      const { 
-        usuarioId, 
-        nome, 
-        parentesco, 
-        cpf, 
-        dataNascimento, 
-        telefone, 
-        email, 
+      const {
+        usuarioId,
+        nome,
+        parentesco,
+        cpf,
+        dataNascimento,
+        telefone,
+        email,
         endereco,
         contatoEmergencia,
-        responsavelFinanceiro 
+        responsavelFinanceiro,
       } = req.body;
-      
+
       if (!usuarioId || !nome || !parentesco) {
         return res.status(400).json({
           success: false,
-          error: 'usuarioId, nome e parentesco são obrigatórios'
+          error: 'usuarioId, nome e parentesco são obrigatórios',
         });
       }
 
@@ -88,39 +86,39 @@ export default async function handler(
         },
       });
 
-      return res.status(201).json({ 
-        success: true, 
-        data: membro 
+      return res.status(201).json({
+        success: true,
+        data: membro,
       });
     } catch (error) {
       console.error('Erro ao criar membro da família:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao criar membro da família' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao criar membro da família',
       });
     }
   }
 
   if (req.method === 'PUT') {
     try {
-      const { 
-        id, 
-        nome, 
-        parentesco, 
-        cpf, 
-        dataNascimento, 
-        telefone, 
-        email, 
+      const {
+        id,
+        nome,
+        parentesco,
+        cpf,
+        dataNascimento,
+        telefone,
+        email,
         endereco,
         contatoEmergencia,
         responsavelFinanceiro,
-        ativo 
+        ativo,
       } = req.body;
-      
+
       if (!id) {
         return res.status(400).json({
           success: false,
-          error: 'id é obrigatório'
+          error: 'id é obrigatório',
         });
       }
 
@@ -149,15 +147,15 @@ export default async function handler(
         },
       });
 
-      return res.status(200).json({ 
-        success: true, 
-        data: membro 
+      return res.status(200).json({
+        success: true,
+        data: membro,
       });
     } catch (error) {
       console.error('Erro ao atualizar membro da família:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao atualizar membro da família' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao atualizar membro da família',
       });
     }
   }
@@ -165,11 +163,11 @@ export default async function handler(
   if (req.method === 'DELETE') {
     try {
       const { id } = req.query;
-      
+
       if (!id) {
         return res.status(400).json({
           success: false,
-          error: 'id é obrigatório'
+          error: 'id é obrigatório',
         });
       }
 
@@ -177,15 +175,15 @@ export default async function handler(
         where: { id: id as string },
       });
 
-      return res.status(200).json({ 
-        success: true, 
-        message: 'Membro da família removido com sucesso' 
+      return res.status(200).json({
+        success: true,
+        message: 'Membro da família removido com sucesso',
       });
     } catch (error) {
       console.error('Erro ao remover membro da família:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao remover membro da família' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao remover membro da família',
       });
     }
   }

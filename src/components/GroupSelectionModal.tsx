@@ -17,7 +17,7 @@ const ModalOverlay = styled.div<{ isOpen: boolean }>`
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  display: ${props => props.isOpen ? 'flex' : 'none'};
+  display: ${props => (props.isOpen ? 'flex' : 'none')};
   justify-content: center;
   align-items: center;
   z-index: 1000;
@@ -31,7 +31,9 @@ const ModalContent = styled.div<{ $theme?: any }>`
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
 `;
 
 const ModalHeader = styled.div<{ $theme?: any }>`
@@ -57,7 +59,7 @@ const CloseButton = styled.button<{ $theme?: any }>`
   cursor: pointer;
   color: ${props => props.$theme.colors.text.secondary};
   padding: 4px;
-  
+
   &:hover {
     color: ${props => props.$theme.colors.text.primary};
   }
@@ -73,14 +75,21 @@ const GroupItem = styled.button<{ selected?: boolean; $theme?: any }>`
   display: flex;
   align-items: center;
   padding: 16px;
-  border: 2px solid ${props => props.selected ? props.$theme.colors.navigation.active : props.$theme.colors.border.light};
+  border: 2px solid
+    ${props =>
+      props.selected
+        ? props.$theme.colors.navigation.active
+        : props.$theme.colors.border.light};
   border-radius: 8px;
-  background: ${props => props.selected ? props.$theme.colors.background.light : props.$theme.colors.background.primary};
+  background: ${props =>
+    props.selected
+      ? props.$theme.colors.background.light
+      : props.$theme.colors.background.primary};
   cursor: pointer;
   transition: all 0.2s;
   text-align: left;
   width: 100%;
-  
+
   &:hover {
     border-color: ${props => props.$theme.colors.navigation.active};
     background: ${props => props.$theme.colors.background.light};
@@ -134,11 +143,11 @@ const SelectButton = styled.button<{ $theme?: any }>`
   cursor: pointer;
   margin-top: 20px;
   width: 100%;
-  
+
   &:hover {
     background-color: ${props => props.theme?.navigation?.primary || '#2563eb'};
   }
-  
+
   &:disabled {
     background-color: ${props => props.theme?.text?.muted || '#9ca3af'};
     cursor: not-allowed;
@@ -148,15 +157,16 @@ const SelectButton = styled.button<{ $theme?: any }>`
 const GroupSelectionModal: React.FC<GroupSelectionModalProps> = ({
   isOpen,
   onClose,
-  onSelect
+  onSelect,
 }) => {
   const { currentProfile } = useUserProfile();
   const { colors: theme } = useTheme(currentProfile?.role.toLowerCase());
   const { availableGroups, selectedGroup } = useGroup();
-  
+
   // Validação robusta: garantir que availableGroups seja um array
   const safeGroups = Array.isArray(availableGroups) ? availableGroups : [];
-  const [tempSelectedGroup, setTempSelectedGroup] = React.useState<Group | null>(selectedGroup);
+  const [tempSelectedGroup, setTempSelectedGroup] =
+    React.useState<Group | null>(selectedGroup);
 
   React.useEffect(() => {
     if (isOpen) {
@@ -172,14 +182,14 @@ const GroupSelectionModal: React.FC<GroupSelectionModalProps> = ({
 
   const getGroupIcon = (icon: string) => {
     const iconMap: { [key: string]: string } = {
-      'building': '🏢',
-      'users': '👥',
-      'home': '🏠',
-      'briefcase': '💼',
-      'star': '⭐',
-      'heart': '❤️',
-      'shield': '🛡️',
-      'rocket': '🚀'
+      building: '🏢',
+      users: '👥',
+      home: '🏠',
+      briefcase: '💼',
+      star: '⭐',
+      heart: '❤️',
+      shield: '🛡️',
+      rocket: '🚀',
     };
     return iconMap[icon] || '📁';
   };
@@ -188,8 +198,15 @@ const GroupSelectionModal: React.FC<GroupSelectionModalProps> = ({
     <ModalOverlay isOpen={isOpen}>
       <ModalContent>
         <ModalHeader $theme={{}}>
-          <ModalTitle $theme={{}}><span role="img" aria-label="Grupos">👥</span> Selecionar Grupo</ModalTitle>
-          <CloseButton $theme={{}} onClick={onClose}>×</CloseButton>
+          <ModalTitle $theme={{}}>
+            <span role='img' aria-label='Grupos'>
+              👥
+            </span>{' '}
+            Selecionar Grupo
+          </ModalTitle>
+          <CloseButton $theme={{}} onClick={onClose}>
+            ×
+          </CloseButton>
         </ModalHeader>
 
         <GroupList>
@@ -200,13 +217,15 @@ const GroupSelectionModal: React.FC<GroupSelectionModalProps> = ({
               onClick={() => setTempSelectedGroup(group)}
             >
               <GroupIcon color={group.cor}>
-                <span role="img" aria-label={group.icone}>
+                <span role='img' aria-label={group.icone}>
                   {getGroupIcon(group.icone)}
                 </span>
               </GroupIcon>
               <GroupInfo>
                 <GroupName $theme={{}}>{group.nome}</GroupName>
-                <GroupDescription $theme={{}}>{group.descricao}</GroupDescription>
+                <GroupDescription $theme={{}}>
+                  {group.descricao}
+                </GroupDescription>
                 <GroupType $theme={{}}>{group.tipo}</GroupType>
               </GroupInfo>
             </GroupItem>

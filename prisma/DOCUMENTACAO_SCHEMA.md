@@ -23,37 +23,44 @@ Esta documentação descreve a estrutura de dados completa do Sistema DOM, imple
 ### Requisitos Atendidos
 
 ✅ **1. CPF Único + Tipo de Usuário**
+
 - Tabela `Usuario` com CPF único (`@unique`)
-- Tabela `UsuarioPerfil` com constraint `@@unique([usuarioId, perfilId])` 
+- Tabela `UsuarioPerfil` com constraint `@@unique([usuarioId, perfilId])`
 - Garante que 1 CPF só pode ter 1 perfil de cada tipo
 
 ✅ **2. Informações do CPF Não Repetidas**
+
 - Dados pessoais centralizados na tabela `Usuario`
 - Relacionamentos via chaves estrangeiras (normalização)
 - Sem duplicação de dados pessoais
 
 ✅ **3. Dados Sem Máscaras**
+
 - CPF: `VARCHAR(11)` - apenas números
-- Telefone: `VARCHAR(11)` - apenas números  
+- Telefone: `VARCHAR(11)` - apenas números
 - CEP: `VARCHAR(8)` - apenas números
 - Todos os campos validados na aplicação antes da inserção
 
 ✅ **4. Usuário em Múltiplos Grupos (Sem Duplicidade)**
+
 - Tabela `UsuarioGrupo` com constraint `@@unique([usuarioId, grupoId])`
 - Um usuário pode estar em N grupos
 - Impossível duplicar um usuário no mesmo grupo
 
 ✅ **5. Tipo de Usuário Determinado por Funcionalidades**
+
 - Tabela `Perfil` (EMPREGADO, EMPREGADOR, FAMILIA, ADMIN)
 - Tabela `Funcionalidade` (7+ funcionalidades principais)
 - Tabela `PerfilFuncionalidade` (relacionamento N:N com permissões)
 
 ✅ **6. Tabela de Log**
+
 - Tabela `LogAuditoria` completa
 - Registra todas operações sensíveis
 - Campos: ação, entidade, dados antes/depois, IP, etc.
 
 ✅ **7. Compliance e LGPD**
+
 - Campos de consentimento LGPD
 - Logs de auditoria detalhados
 - Criptografia de dados sensíveis (implementar na aplicação)
@@ -67,9 +74,11 @@ Esta documentação descreve a estrutura de dados completa do Sistema DOM, imple
 ### 1. 👤 Autenticação e Usuários
 
 #### `usuarios`
+
 **Propósito:** Tabela principal de usuários com dados pessoais
 
 **Campos Principais:**
+
 - `cpf` (VARCHAR(11), UNIQUE) - Identificador único sem máscara
 - `nomeCompleto`, `apelido`, `dataNascimento`
 - `email` (UNIQUE), `telefone`
@@ -78,6 +87,7 @@ Esta documentação descreve a estrutura de dados completa do Sistema DOM, imple
 - LGPD: `consentimentoLGPD`, `dataConsentimento`, `termosAceitos`
 
 **Índices:**
+
 ```sql
 @@index([cpf])
 @@index([email])
@@ -85,28 +95,35 @@ Esta documentação descreve a estrutura de dados completa do Sistema DOM, imple
 ```
 
 #### `perfis`
+
 **Propósito:** Tipos de usuário no sistema
 
 **Perfis Implementados:**
+
 1. **EMPREGADO** - Cor: #29ABE2
 2. **EMPREGADOR** - Cor: #E74C3C
 3. **FAMILIA** - Cor: #9B59B6
 4. **ADMIN** - Cor: #34495E
 
 **Campos:**
+
 - `codigo` (UNIQUE) - Código do perfil
 - `nome`, `descricao`, `cor`, `icone`
 
 #### `usuarios_perfis` (Pivot)
+
 **Propósito:** Relacionamento N:N entre usuários e perfis
 
 **Constraint Crítica:**
+
 ```prisma
 @@unique([usuarioId, perfilId])
 ```
+
 ✅ Garante que um usuário não pode ter o mesmo perfil duplicado
 
 **Campos:**
+
 - `avatar`, `apelido` - Dados específicos do perfil
 - `principal` - Perfil padrão do usuário
 
@@ -115,9 +132,11 @@ Esta documentação descreve a estrutura de dados completa do Sistema DOM, imple
 ### 2. 🔐 Segurança e Anti-Fraude
 
 #### `dispositivos`
+
 **Propósito:** Controle de dispositivos para anti-fraude
 
 **Campos de Segurança:**
+
 - `dispositivoId` (UNIQUE) - ID único do dispositivo
 - `modelo`, `versaoSO`, `tipo` (WEB, IOS, ANDROID)
 - `nomeRedeWiFi`, `enderecoIP`
@@ -127,17 +146,21 @@ Esta documentação descreve a estrutura de dados completa do Sistema DOM, imple
 **Uso:** Registro de ponto, autenticação
 
 #### `sessoes`
+
 **Propósito:** Gerenciamento de sessões JWT
 
 **Campos:**
+
 - `token` (UNIQUE), `refreshToken`
 - `enderecoIP`, `userAgent`
 - `expiraEm` - Controle de validade
 
 #### `registros_ponto`
+
 **Propósito:** Registro de ponto com anti-fraude
 
 **Recursos Anti-Fraude:**
+
 - `dataHora` - **SEMPRE do servidor** (não do dispositivo)
 - Geolocalização obrigatória
 - `dentroGeofence` - Validação de área permitida
@@ -146,6 +169,7 @@ Esta documentação descreve a estrutura de dados completa do Sistema DOM, imple
 - Aprovação por supervisor
 
 **Tipos de Registro:**
+
 - ENTRADA
 - SAIDA
 - INTERVALO_INICIO
@@ -156,9 +180,11 @@ Esta documentação descreve a estrutura de dados completa do Sistema DOM, imple
 ### 3. 🎯 Funcionalidades
 
 #### `funcionalidades`
+
 **Propósito:** Funcionalidades do sistema (7+ implementadas)
 
 **Funcionalidades Principais:**
+
 1. **dashboard** - Dashboard personalizado
 2. **time-clock** - Controle de ponto
 3. **task-management** - Gestão de tarefas
@@ -172,15 +198,18 @@ Esta documentação descreve a estrutura de dados completa do Sistema DOM, imple
 11. **monitoring** - Monitoramento
 
 #### `perfis_funcionalidades` (Pivot)
+
 **Propósito:** Define permissões de cada perfil
 
 **Permissões:**
+
 - `permissaoLeitura` - Pode visualizar
 - `permissaoEscrita` - Pode criar/editar
 - `permissaoExclusao` - Pode excluir
 - `permissaoAdmin` - Acesso administrativo
 
 **Exemplo:**
+
 ```typescript
 // Empregado tem acesso ao controle de ponto
 {
@@ -198,32 +227,40 @@ Esta documentação descreve a estrutura de dados completa do Sistema DOM, imple
 ### 4. 👥 Grupos e Comunicação
 
 #### `grupos`
+
 **Propósito:** Grupos de usuários para organização
 
 **Tipos de Grupo:**
+
 - COMUNICACAO
 - TRABALHO
 - FAMILIA
 - PROJETO
 
 #### `usuarios_grupos` (Pivot)
+
 **Propósito:** Membros de grupos
 
 **Constraint Crítica:**
+
 ```prisma
 @@unique([usuarioId, grupoId])
 ```
+
 ✅ Um usuário não pode estar duplicado no mesmo grupo
 
 **Papéis:**
+
 - ADMIN - Administrador do grupo
 - MEMBRO - Membro regular
 - MODERADOR - Moderador
 
 #### `mensagens`
+
 **Propósito:** Sistema de mensagens
 
 **Tipos de Mensagem:**
+
 - TEXT - Texto simples
 - IMAGE - Imagem
 - FILE - Arquivo
@@ -234,9 +271,11 @@ Esta documentação descreve a estrutura de dados completa do Sistema DOM, imple
 ### 5. 📄 Dados e Documentos
 
 #### `documentos`
+
 **Propósito:** Gestão de documentos
 
 **Recursos:**
+
 - Validação de documentos
 - Alertas de vencimento
 - Integração eSocial
@@ -245,24 +284,29 @@ Esta documentação descreve a estrutura de dados completa do Sistema DOM, imple
 - Hash para integridade
 
 #### `tarefas`
+
 **Propósito:** Gestão de tarefas
 
 **Campos:**
+
 - Prioridade: HIGH, MEDIUM, LOW
 - Status: PENDING, IN_PROGRESS, COMPLETED, CANCELLED
 - `checklist` (JSON) - Subitens da tarefa
 - `comentarios` (JSON) - Histórico de comentários
 
 #### `eventos_esocial`
+
 **Propósito:** Eventos eSocial
 
 **Tipos de Evento:**
+
 - S-1000 - Informações do Empregador
 - S-2200 - Admissão de Trabalhador
 - S-2300 - Trabalhador Sem Vínculo
 - S-1200 - Remuneração
 
 **Status:**
+
 - PENDING - Aguardando envio
 - SENT - Enviado
 - PROCESSED - Processado
@@ -273,9 +317,11 @@ Esta documentação descreve a estrutura de dados completa do Sistema DOM, imple
 ### 6. 💰 Financeiro
 
 #### `calculos_salariais`
+
 **Propósito:** Cálculos de folha de pagamento
 
 **Dados:**
+
 - `salarioBruto`, `salarioLiquido`
 - `descontos` (JSON) - Array de descontos
 - `proventos` (JSON) - Array de proventos
@@ -283,23 +329,29 @@ Esta documentação descreve a estrutura de dados completa do Sistema DOM, imple
 - Controle de pagamento
 
 **Constraint:**
+
 ```prisma
 @@unique([cpfEmpregado, mesReferencia, anoReferencia])
 ```
+
 Um cálculo único por empregado/mês/ano
 
 #### `emprestimos`
+
 **Propósito:** Gestão de empréstimos
 
 **Controle:**
+
 - Valores e parcelas
 - Parcelas pagas vs. total
 - Status: ATIVO, PAGO, CANCELADO
 
 #### `listas_compras`
+
 **Propósito:** Listas de compras
 
 **Dados:**
+
 - `itens` (JSON) - Array de itens
 - Totais e valores estimados
 - Controle de itens comprados
@@ -309,20 +361,24 @@ Um cálculo único por empregado/mês/ano
 ### 7. 🔔 Alertas e Notificações
 
 #### `alertas`
+
 **Propósito:** Sistema de alertas
 
 **Tipos de Alerta:**
+
 - VENCIMENTO_DOC - Vencimento de documento
 - PAGAMENTO - Pagamento pendente
 - TAREFA - Tarefa atrasada
 - MANUTENCAO - Manutenção preventiva
 
 **Prioridades:**
+
 - HIGH - Alta
 - MEDIUM - Média
 - LOW - Baixa
 
 **Recorrência:**
+
 - Alertas únicos ou recorrentes
 - Frequência: DIARIA, SEMANAL, MENSAL
 
@@ -331,9 +387,11 @@ Um cálculo único por empregado/mês/ano
 ### 8. 📋 Log e Auditoria (LGPD)
 
 #### `logs_auditoria`
+
 **Propósito:** Auditoria completa do sistema
 
 **Campos Principais:**
+
 - `acao` - Ação realizada (LOGIN, CREATE, UPDATE, DELETE, etc.)
 - `entidade` - Entidade afetada
 - `dadosAnteriores`, `dadosNovos` - Dados antes e depois (JSON)
@@ -342,6 +400,7 @@ Um cálculo único por empregado/mês/ano
 - `nivelSeveridade` - INFO, WARNING, ERROR, CRITICAL
 
 **Exemplo de Uso:**
+
 ```typescript
 // Log de acesso a dados pessoais (LGPD)
 {
@@ -367,7 +426,7 @@ Usuario (1) -----> (N) UsuarioPerfil (N) <----- (1) Perfil
    |                                               |
    |                                               |
    +---> (N) UsuarioGrupo (N) <----- (1) Grupo    +---> (N) PerfilFuncionalidade (N) <----- (1) Funcionalidade
-   |                                               
+   |
    +---> (N) Dispositivo
    +---> (N) Sessao
    +---> (N) LogAuditoria
@@ -398,6 +457,7 @@ Usuario (1) -----> (N) UsuarioPerfil (N) <----- (1) Perfil
 ### Dados Pessoais Sensíveis
 
 **Tabela `usuarios`:**
+
 - CPF (identificador único)
 - Nome completo
 - Data de nascimento
@@ -405,6 +465,7 @@ Usuario (1) -----> (N) UsuarioPerfil (N) <----- (1) Perfil
 - Endereço completo
 
 **Proteção:**
+
 ```prisma
 // Campos de consentimento
 consentimentoLGPD Boolean  @default(false)
@@ -416,6 +477,7 @@ versaoTermos      String?
 ### Log de Auditoria (LGPD)
 
 **Obrigatório registrar:**
+
 - ✅ Acessos a dados pessoais
 - ✅ Modificações de dados
 - ✅ Exclusões
@@ -423,27 +485,29 @@ versaoTermos      String?
 - ✅ Consentimentos
 
 **Exemplo:**
+
 ```typescript
 // Log de consentimento LGPD
 await prisma.logAuditoria.create({
   data: {
     usuarioId: usuario.id,
-    acao: "CONSENT",
-    entidade: "Usuario",
-    descricao: "Usuário aceitou termos LGPD",
-    tipoLog: "LGPD",
-    nivelSeveridade: "INFO",
+    acao: 'CONSENT',
+    entidade: 'Usuario',
+    descricao: 'Usuário aceitou termos LGPD',
+    tipoLog: 'LGPD',
+    nivelSeveridade: 'INFO',
     dadosNovos: {
       consentimento: true,
-      versaoTermos: "v2.1.0"
-    }
-  }
-})
+      versaoTermos: 'v2.1.0',
+    },
+  },
+});
 ```
 
 ### Direitos do Titular (LGPD)
 
 #### 1. Direito de Acesso
+
 ```typescript
 // Usuário pode acessar todos seus dados
 const meusDados = await prisma.usuario.findUnique({
@@ -453,33 +517,38 @@ const meusDados = await prisma.usuario.findUnique({
     documentos: true,
     tarefas: true,
     // ... outros dados
-  }
-})
+  },
+});
 ```
 
 #### 2. Direito de Retificação
+
 ```typescript
 // Usuário pode corrigir seus dados
 // Log automático na tabela logs_auditoria
 ```
 
 #### 3. Direito de Exclusão
+
 ```typescript
 // Soft delete ou hard delete
 // Logs mantidos por período legal
 await prisma.usuario.update({
   where: { id: usuarioId },
-  data: { ativo: false }
-})
+  data: { ativo: false },
+});
 ```
 
 #### 4. Direito de Portabilidade
+
 ```typescript
 // Exportar todos os dados do usuário
 const exportacao = await prisma.usuario.findUnique({
   where: { id: usuarioId },
-  include: { /* todos os relacionamentos */ }
-})
+  include: {
+    /* todos os relacionamentos */
+  },
+});
 ```
 
 ---
@@ -489,6 +558,7 @@ const exportacao = await prisma.usuario.findUnique({
 ### Índices Implementados
 
 **Tabela `usuarios`:**
+
 ```prisma
 @@index([cpf])      // Busca por CPF
 @@index([email])    // Busca por email
@@ -496,6 +566,7 @@ const exportacao = await prisma.usuario.findUnique({
 ```
 
 **Tabela `logs_auditoria`:**
+
 ```prisma
 @@index([usuarioId])  // Logs por usuário
 @@index([acao])       // Logs por ação
@@ -505,6 +576,7 @@ const exportacao = await prisma.usuario.findUnique({
 ```
 
 **Tabela `registros_ponto`:**
+
 ```prisma
 @@index([usuarioId])  // Pontos por usuário
 @@index([dataHora])   // Pontos por data
@@ -532,37 +604,41 @@ const exportacao = await prisma.usuario.findUnique({
 ### Criptografia
 
 **Na Aplicação (não no banco):**
+
 - Senhas: bcrypt ou argon2
 - Dados sensíveis: AES-256
 - Tokens: JWT assinados
 
 **Campos a criptografar:**
+
 ```typescript
 // Antes de salvar no banco
-usuario.senhaHash = await bcrypt.hash(senha, saltRounds)
-usuario.salt = generateSalt()
+usuario.senhaHash = await bcrypt.hash(senha, saltRounds);
+usuario.salt = generateSalt();
 ```
 
 ### Validação de Dados
 
 **Antes da inserção:**
+
 ```typescript
 // CPF sem máscara
-const cpfLimpo = cpf.replace(/\D/g, '')
-if (cpfLimpo.length !== 11) throw new Error('CPF inválido')
+const cpfLimpo = cpf.replace(/\D/g, '');
+if (cpfLimpo.length !== 11) throw new Error('CPF inválido');
 
-// Telefone sem máscara  
-const telefoneLimpo = telefone.replace(/\D/g, '')
-if (telefoneLimpo.length !== 11) throw new Error('Telefone inválido')
+// Telefone sem máscara
+const telefoneLimpo = telefone.replace(/\D/g, '');
+if (telefoneLimpo.length !== 11) throw new Error('Telefone inválido');
 
 // CEP sem máscara
-const cepLimpo = cep.replace(/\D/g, '')
-if (cepLimpo.length !== 8) throw new Error('CEP inválido')
+const cepLimpo = cep.replace(/\D/g, '');
+if (cepLimpo.length !== 8) throw new Error('CEP inválido');
 ```
 
 ### Rate Limiting
 
 **Recomendado:**
+
 - Login: 5 tentativas por minuto
 - API: 100 requisições por minuto
 - Registro de ponto: 1 por minuto
@@ -570,6 +646,7 @@ if (cepLimpo.length !== 8) throw new Error('CEP inválido')
 ### Anti-Fraude (Registro de Ponto)
 
 **Verificações Obrigatórias:**
+
 1. ✅ Horário do servidor (nunca do dispositivo)
 2. ✅ Geolocalização dentro do geofence
 3. ✅ Dispositivo registrado e confiável
@@ -582,28 +659,33 @@ if (cepLimpo.length !== 8) throw new Error('CEP inválido')
 ## 🚀 Próximos Passos
 
 ### 1. Instalação do Prisma
+
 ```bash
 npm install @prisma/client
 npm install -D prisma
 ```
 
 ### 2. Configuração
+
 ```bash
 # Criar arquivo .env
 DATABASE_URL="postgresql://user:password@localhost:5432/dom_db"
 ```
 
 ### 3. Gerar Cliente Prisma
+
 ```bash
 npx prisma generate
 ```
 
 ### 4. Executar Migrations
+
 ```bash
 npx prisma migrate dev --name init
 ```
 
 ### 5. Seed do Banco
+
 ```bash
 npx prisma db seed
 ```
@@ -645,4 +727,3 @@ npx prisma db seed
 **Versão:** 2.2.1  
 **Data:** 2024  
 **Autor:** Sistema DOM
-

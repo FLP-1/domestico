@@ -11,26 +11,27 @@
 ### **🔴 CORREÇÕES QUE PRECISAM DE FALLBACKS SEGUROS:**
 
 **📈 NÚMEROS REAIS ENCONTRADOS:**
+
 - **Cores hexadecimais com fallbacks**: 324 problemas
-- **Cores 'white' com fallbacks**: 33 problemas  
+- **Cores 'white' com fallbacks**: 33 problemas
 - **Cores 'black' com fallbacks**: 0 problemas
 - **Cores RGBA com fallbacks**: 49 problemas
 - **TOTAL REAL**: 406 problemas
 
 ### **🔴 ARQUIVOS COM MAIS PROBLEMAS:**
 
-| **Arquivo** | **Problemas Hexadecimais** | **Problemas White** | **Problemas RGBA** | **Total** |
-|-------------|----------------------------|---------------------|-------------------|-----------|
-| `esocial-integration.tsx` | 12 | 0 | 0 | 12 |
-| `terms-management.tsx` | 18 | 0 | 0 | 18 |
-| `admin/antifraude.tsx` | 12 | 2 | 0 | 14 |
-| `register.tsx` | 8 | 1 | 9 | 18 |
-| `subscription-plans.tsx` | 8 | 0 | 0 | 8 |
-| `communication.tsx` | 2 | 9 | 0 | 11 |
-| `alert-management.tsx` | 3 | 1 | 0 | 4 |
-| `welcome-tutorial.tsx` | 4 | 0 | 1 | 5 |
-| `payroll-management.tsx` | 1 | 1 | 0 | 2 |
-| **OUTROS ARQUIVOS** | **256** | **19** | **39** | **314** |
+| **Arquivo**               | **Problemas Hexadecimais** | **Problemas White** | **Problemas RGBA** | **Total** |
+| ------------------------- | -------------------------- | ------------------- | ------------------ | --------- |
+| `esocial-integration.tsx` | 12                         | 0                   | 0                  | 12        |
+| `terms-management.tsx`    | 18                         | 0                   | 0                  | 18        |
+| `admin/antifraude.tsx`    | 12                         | 2                   | 0                  | 14        |
+| `register.tsx`            | 8                          | 1                   | 9                  | 18        |
+| `subscription-plans.tsx`  | 8                          | 0                   | 0                  | 8         |
+| `communication.tsx`       | 2                          | 9                   | 0                  | 11        |
+| `alert-management.tsx`    | 3                          | 1                   | 0                  | 4         |
+| `welcome-tutorial.tsx`    | 4                          | 0                   | 1                  | 5         |
+| `payroll-management.tsx`  | 1                          | 1                   | 0                  | 2         |
+| **OUTROS ARQUIVOS**       | **256**                    | **19**              | **39**             | **314**   |
 
 ---
 
@@ -39,6 +40,7 @@
 ### **🔴 PRIORIDADE ALTA - ARQUIVOS COM MAIS PROBLEMAS**
 
 #### **✅ 1. terms-management.tsx (18 problemas)**
+
 - [ ] **Linha 109**: `props.$theme?.colors?.primary || '#29ABE2'` → `|| DEFAULT_COLORS.primary`
 - [ ] **Linha 121**: `props.$theme?.colors?.primary || '#29ABE2'` → `|| DEFAULT_COLORS.primary`
 - [ ] **Linha 122**: `props.$theme?.colors?.primary || '#29ABE2'` → `|| DEFAULT_COLORS.primary`
@@ -60,6 +62,7 @@
 - [ ] **Import**: Adicionar `import { DEFAULT_COLORS } from '../config/default-colors';`
 
 #### **✅ 2. register.tsx (18 problemas)**
+
 - [ ] **Linha 145**: `props.$theme?.colors?.border || '#e9ecef'` → `|| DEFAULT_COLORS.border.primary`
 - [ ] **Linha 159**: `props.$theme?.colors?.textSecondary || '#bdc3c7'` → `|| DEFAULT_COLORS.text.secondary`
 - [ ] **Linha 166**: `props.$theme?.colors?.border || '#e9ecef'` → `|| DEFAULT_COLORS.border.primary`
@@ -80,6 +83,7 @@
 - [ ] **Import**: Adicionar `import { DEFAULT_COLORS } from '../config/default-colors';`
 
 #### **✅ 3. admin/antifraude.tsx (14 problemas)**
+
 - [ ] **Linha 101**: `props.theme?.colors?.surface || '#f7fafc'` → `|| DEFAULT_COLORS.surface.secondary`
 - [ ] **Linha 102**: `props.theme?.colors?.border || '#e2e8f0'` → `|| DEFAULT_COLORS.border.primary`
 - [ ] **Linha 105**: `props.theme?.colors?.text || '#4a5568'` → `|| DEFAULT_COLORS.text.primary`
@@ -102,6 +106,7 @@
 - [ ] **Import**: Adicionar `import { DEFAULT_COLORS } from '../config/default-colors';`
 
 #### **✅ 4. esocial-integration.tsx (12 problemas)**
+
 - [ ] **Linha 233**: `props.$theme?.colors?.border || '#e9ecef'` → `|| DEFAULT_COLORS.border.primary`
 - [ ] **Linha 241**: `props.$theme?.colors?.primary || '#29ABE2'` → `|| DEFAULT_COLORS.primary`
 - [ ] **Linha 249**: `props.$theme?.colors?.border || '#e9ecef'` → `|| DEFAULT_COLORS.border.primary`
@@ -118,6 +123,7 @@
 - [ ] **Import**: Adicionar `import { DEFAULT_COLORS } from '../config/default-colors';`
 
 #### **✅ 5. communication.tsx (11 problemas)**
+
 - [ ] **Linha 852**: `'#9B59B6'` → `DEFAULT_COLORS.profiles.familia.primary`
 - [ ] **Linha 891**: `'#9B59B6'` → `DEFAULT_COLORS.profiles.familia.primary`
 - [ ] **Linha 81**: `props.$theme?.colors?.surface || 'white'` → `|| DEFAULT_COLORS.surface.primary`
@@ -136,23 +142,23 @@
 
 ### **📈 CORREÇÕES NECESSÁRIAS (NÚMEROS REAIS):**
 
-| **Categoria** | **Quantidade** | **Status** |
-|---------------|----------------|------------|
-| **Cores hexadecimais com fallbacks** | 324 | ⏳ **PENDENTE** |
-| **Cores 'white' com fallbacks** | 33 | ⏳ **PENDENTE** |
-| **Cores RGBA com fallbacks** | 49 | ⏳ **PENDENTE** |
-| **Total de correções** | 406 | ⏳ **PENDENTE** |
+| **Categoria**                        | **Quantidade** | **Status**      |
+| ------------------------------------ | -------------- | --------------- |
+| **Cores hexadecimais com fallbacks** | 324            | ⏳ **PENDENTE** |
+| **Cores 'white' com fallbacks**      | 33             | ⏳ **PENDENTE** |
+| **Cores RGBA com fallbacks**         | 49             | ⏳ **PENDENTE** |
+| **Total de correções**               | 406            | ⏳ **PENDENTE** |
 
 ### **📈 ARQUIVOS COM MAIS PROBLEMAS:**
 
-| **Arquivo** | **Problemas** | **Status** |
-|-------------|---------------|------------|
-| `terms-management.tsx` | 18 | ⏳ **PENDENTE** |
-| `register.tsx` | 18 | ⏳ **PENDENTE** |
-| `admin/antifraude.tsx` | 14 | ⏳ **PENDENTE** |
-| `esocial-integration.tsx` | 12 | ⏳ **PENDENTE** |
-| `communication.tsx` | 11 | ⏳ **PENDENTE** |
-| **OUTROS ARQUIVOS** | **333** | ⏳ **PENDENTE** |
+| **Arquivo**               | **Problemas** | **Status**      |
+| ------------------------- | ------------- | --------------- |
+| `terms-management.tsx`    | 18            | ⏳ **PENDENTE** |
+| `register.tsx`            | 18            | ⏳ **PENDENTE** |
+| `admin/antifraude.tsx`    | 14            | ⏳ **PENDENTE** |
+| `esocial-integration.tsx` | 12            | ⏳ **PENDENTE** |
+| `communication.tsx`       | 11            | ⏳ **PENDENTE** |
+| **OUTROS ARQUIVOS**       | **333**       | ⏳ **PENDENTE** |
 
 ---
 

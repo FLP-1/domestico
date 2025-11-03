@@ -26,7 +26,9 @@ export function verifyToken(token: string): JWTPayload | null {
   }
 }
 
-export async function getCurrentUser(req: NextApiRequest): Promise<JWTPayload | null> {
+export async function getCurrentUser(
+  req: NextApiRequest
+): Promise<JWTPayload | null> {
   try {
     // Try to get token from Authorization header
     const authHeader = req.headers.authorization;
@@ -45,12 +47,12 @@ export async function getCurrentUser(req: NextApiRequest): Promise<JWTPayload | 
     if (process.env.NODE_ENV === 'development') {
       try {
         const userId = await getCurrentUserId();
-        
+
         if (!userId) {
           console.error('Não foi possível obter ID do usuário');
           return null;
         }
-        
+
         // Buscar dados reais do usuário no banco
         const user = await prisma.usuario.findUnique({
           where: { id: userId },
@@ -58,25 +60,25 @@ export async function getCurrentUser(req: NextApiRequest): Promise<JWTPayload | 
             perfis: {
               where: { principal: true },
               include: {
-                perfil: true
-              }
-            }
-          }
+                perfil: true,
+              },
+            },
+          },
         });
-        
+
         await prisma.$disconnect();
-        
+
         if (!user || user.perfis.length === 0) {
           console.error('Usuário de desenvolvimento sem perfis válidos');
           return null;
         }
-        
+
         const primaryProfile = user.perfis[0].perfil;
-        
+
         return {
           userId: userId,
           email: user.email,
-          role: primaryProfile.codigo
+          role: primaryProfile.codigo,
         };
       } catch (error) {
         console.error('Erro ao obter usuário padrão:', error);
@@ -94,9 +96,11 @@ export async function getCurrentUser(req: NextApiRequest): Promise<JWTPayload | 
 export function requireAuth(handler: Function) {
   return async (req: NextApiRequest, res: any) => {
     const user = await getCurrentUser(req);
-    
+
     if (!user) {
-      return res.status(401).json({ message: 'Token de autenticação necessário' });
+      return res
+        .status(401)
+        .json({ message: 'Token de autenticação necessário' });
     }
 
     // Add user to request object

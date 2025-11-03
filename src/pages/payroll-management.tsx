@@ -154,7 +154,8 @@ const SummarySection = styled.section<{ $theme: any }>`
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 8px 32px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+  box-shadow: 0 8px 32px
+    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
 `;
 
 const SummaryTitle = styled.h2`
@@ -211,7 +212,8 @@ const SummaryCard = styled.div<{
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+    box-shadow: 0 4px 16px
+      ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
   }
 `;
 
@@ -244,7 +246,8 @@ const ChartSection = styled.div<{ $theme: any }>`
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 8px 32px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+  box-shadow: 0 8px 32px
+    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
 `;
 
 const ChartTitle = styled.h2`
@@ -318,7 +321,8 @@ const DocumentsSection = styled.section<{ $theme: any }>`
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 8px 32px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+  box-shadow: 0 8px 32px
+    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
 `;
 
 const DocumentsTitle = styled.h2`
@@ -360,7 +364,8 @@ const DocumentCard = styled.div<{
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+    box-shadow: 0 4px 16px
+      ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
   }
 `;
 
@@ -511,7 +516,8 @@ const PaymentSection = styled.section<{ $theme: any }>`
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 8px 32px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+  box-shadow: 0 8px 32px
+    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
 `;
 
 const PaymentTitle = styled.h2`
@@ -533,15 +539,22 @@ const EmployeeCard = styled.div<{ $theme: any; $selected: boolean }>`
   padding: 1rem;
   border-radius: 12px;
   border: 2px solid
-    ${props => (props.$selected ? (props.$theme?.colors?.primary || defaultColors.primary) : '#e0e0e0')};
+    ${props =>
+      props.$selected
+        ? props.$theme?.colors?.primary || defaultColors.primary
+        : '#e0e0e0'};
   background: ${props =>
-    props.$selected ? (props.$theme?.colors?.primary || defaultColors.primary) + '10' : 'white'};
+    props.$selected
+      ? (props.$theme?.colors?.primary || defaultColors.primary) + '10'
+      : 'white'};
   cursor: pointer;
   transition: all 0.3s ease;
 
   &:hover {
-    border-color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
-    background: ${props => (props.$theme?.colors?.primary || defaultColors.primary) + '05'};
+    border-color: ${props =>
+      props.$theme?.colors?.primary || defaultColors.primary};
+    background: ${props =>
+      (props.$theme?.colors?.primary || defaultColors.primary) + '05'};
   }
 `;
 
@@ -794,7 +807,7 @@ export default function PayrollManagement() {
   };
 
   return (
-        <PageContainer $theme={theme} sidebarCollapsed={sidebarCollapsed}>
+    <PageContainer $theme={theme} sidebarCollapsed={sidebarCollapsed}>
       <Sidebar
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -1124,9 +1137,7 @@ export default function PayrollManagement() {
           <div>
             <UnifiedModalSection>
               <SectionTitle>{selectedDocument.employeeName}</SectionTitle>
-              <SectionText>
-                Período: {selectedDocument.period}
-              </SectionText>
+              <SectionText>Período: {selectedDocument.period}</SectionText>
               <SectionText>
                 Valor: {formatCurrency(selectedDocument.amount)}
               </SectionText>

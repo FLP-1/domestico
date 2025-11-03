@@ -1,9 +1,11 @@
 # 📋 CHECKLIST DEFINITIVO - TODAS AS CORES HARDCODED
 
 ## 🎯 OBJETIVO
+
 Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referências dinâmicas ao sistema de temas.
 
 ## 📊 STATUS GERAL
+
 - **Total de arquivos com cores hexadecimais**: 36
 - **Total de arquivos com cores rgba**: 57
 - **Total de arquivos com cores rgb**: 1
@@ -17,6 +19,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 ## 🔥 PRIORIDADE CRÍTICA (Componentes principais)
 
 ### ❌ src/design-system/index.ts
+
 - **Status**: ❌ NÃO CORRIGIDO COMPLETAMENTE
 - **Cores hexadecimais**: 0 encontradas
 - **Cores rgba**: 0 encontradas
@@ -25,6 +28,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 - **Ação**: ✅ CONCLUÍDO
 
 ### ❌ src/components/TutorialComponent.tsx
+
 - **Status**: ❌ NÃO CORRIGIDO COMPLETAMENTE
 - **Cores hexadecimais**: 0 encontradas
 - **Cores rgba**: 17 encontradas ❌ PENDENTE
@@ -54,6 +58,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 ## 🚨 PRIORIDADE ALTA (Páginas principais)
 
 ### ❌ src/pages/esocial-domestico-completo.tsx
+
 - **Status**: ❌ NÃO CORRIGIDO COMPLETAMENTE
 - **Cores hexadecimais**: 0 encontradas
 - **Cores rgba**: 10 encontradas ❌ PENDENTE
@@ -72,6 +77,7 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 - **Ação**: CORREÇÃO COMPLETA NECESSÁRIA
 
 ### ⚠️ src/pages/time-clock.tsx
+
 - **Status**: ⚠️ PARCIALMENTE CORRIGIDO
 - **Cores hexadecimais**: 0 encontradas
 - **Cores rgba**: Múltiplas encontradas ❌ PENDENTE
@@ -84,7 +90,8 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 ## 🎯 METODOLOGIA DEFINITIVA
 
 ### Para cada arquivo:
-1. **Auditoria completa**: 
+
+1. **Auditoria completa**:
    - Buscar cores hexadecimais: `#[0-9A-Fa-f]{6}`
    - Buscar cores rgba: `rgba\([^)]+\)`
    - Buscar cores rgb: `rgb\([^)]+\)`
@@ -96,27 +103,29 @@ Eliminar TODAS as cores hardcoded em QUALQUER formato e substituir por referênc
 5. **Marcar como concluído**: ✅ no checklist
 
 ### Padrão de correção:
+
 ```typescript
 // ❌ ERRADO - TODOS OS FORMATOS DEVEM SER CORRIGIDOS
-color: '#29ABE2'
-background: 'rgba(41, 171, 226, 0.1)'
-border: 'rgb(255, 0, 0)'
-shadow: 'hsl(200, 50%, 50%)'
-gradient: 'hsla(200, 50%, 50%, 0.5)'
-textShadow: 'rgba(0, 0, 0, 0.5)'
-backdrop: 'rgba(255, 255, 255, 0.95)'
+color: '#29ABE2';
+background: 'rgba(41, 171, 226, 0.1)';
+border: 'rgb(255, 0, 0)';
+shadow: 'hsl(200, 50%, 50%)';
+gradient: 'hsla(200, 50%, 50%, 0.5)';
+textShadow: 'rgba(0, 0, 0, 0.5)';
+backdrop: 'rgba(255, 255, 255, 0.95)';
 
 // ✅ CORRETO - REFERÊNCIAS DINÂMICAS
-color: DEFAULT_COLORS.profiles.empregado.primary
-background: DEFAULT_COLORS.profiles.empregado.primaryLight
-border: DEFAULT_COLORS.profiles.empregado.border
-shadow: DEFAULT_COLORS.profiles.empregado.shadow
-gradient: DEFAULT_COLORS.profiles.empregado.primaryLight
-textShadow: DEFAULT_COLORS.profiles.empregado.shadow
-backdrop: DEFAULT_COLORS.profiles.empregado.surface
+color: DEFAULT_COLORS.profiles.empregado.primary;
+background: DEFAULT_COLORS.profiles.empregado.primaryLight;
+border: DEFAULT_COLORS.profiles.empregado.border;
+shadow: DEFAULT_COLORS.profiles.empregado.shadow;
+gradient: DEFAULT_COLORS.profiles.empregado.primaryLight;
+textShadow: DEFAULT_COLORS.profiles.empregado.shadow;
+backdrop: DEFAULT_COLORS.profiles.empregado.surface;
 ```
 
 ### Cores que DEVEM ser corrigidas (TODAS):
+
 - `#29ABE2` - cores hexadecimais
 - `rgba(0, 0, 0, 0.1)` - cores rgba (sombras)
 - `rgba(255, 255, 255, 0.95)` - cores rgba (transparências)
@@ -129,6 +138,7 @@ backdrop: DEFAULT_COLORS.profiles.empregado.surface
 ---
 
 ## 📊 PROGRESSO REAL
+
 - **Arquivos completamente corrigidos**: 0/36
 - **Arquivos parcialmente corrigidos**: 5/36
 - **Arquivos pendentes**: 31/36
@@ -137,6 +147,7 @@ backdrop: DEFAULT_COLORS.profiles.empregado.surface
 ---
 
 ## 🚀 PRÓXIMOS PASSOS
+
 1. Corrigir TODAS as cores rgba no TutorialComponent.tsx
 2. Corrigir TODAS as cores rgba no esocial-domestico-completo.tsx
 3. Continuar sistematicamente pela lista
@@ -146,6 +157,7 @@ backdrop: DEFAULT_COLORS.profiles.empregado.surface
 ---
 
 ## ⚠️ OBSERVAÇÕES IMPORTANTES
+
 - TODAS as cores hardcoded devem ser corrigidas
 - Não há exceções aceitáveis
 - Preciso ser consistente com o objetivo

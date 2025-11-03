@@ -108,17 +108,19 @@ export default function TimeClock() {
         const response = await fetch('/api/time-clock/records');
         if (response.ok) {
           const result = await response.json();
-          const formattedRecords: TimeRecord[] = result.data.map((record: any) => ({
-            id: record.id,
-            type: record.tipo,
-            time: new Date(record.dataHora).toLocaleTimeString('pt-BR', {
-              hour: '2-digit',
-              minute: '2-digit',
-            }),
-            location: record.enderecoCompleto || 'Escritório',
-            wifi: record.nomeRedeWiFi || 'WiFi',
-            timestamp: new Date(record.dataHora),
-          }));
+          const formattedRecords: TimeRecord[] = result.data.map(
+            (record: any) => ({
+              id: record.id,
+              type: record.tipo,
+              time: new Date(record.dataHora).toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit',
+              }),
+              location: record.enderecoCompleto || 'Escritório',
+              wifi: record.nomeRedeWiFi || 'WiFi',
+              timestamp: new Date(record.dataHora),
+            })
+          );
           setTimeRecords(formattedRecords);
         }
       } catch (error) {
@@ -148,7 +150,7 @@ export default function TimeClock() {
         },
         body: JSON.stringify({
           tipo: type,
-          observacao: `Registro via interface web - ${type}`
+          observacao: `Registro via interface web - ${type}`,
         }),
       });
 
@@ -170,7 +172,7 @@ export default function TimeClock() {
         };
 
         setTimeRecords(prev => [...prev, newRecord]);
-        
+
         toast.success(`Ponto registrado com sucesso: ${timeString}`, {
           position: 'top-center',
           autoClose: 3000,
@@ -212,20 +214,32 @@ export default function TimeClock() {
 
       {/* Botões de Registro */}
       <GridButtons>
-        <Btn $bg="#2E8B57" onClick={() => handleTimeRecord('entrada')}>
-          <span role="img" aria-label="Entrada">🕐</span> Entrada
+        <Btn $bg='#2E8B57' onClick={() => handleTimeRecord('entrada')}>
+          <span role='img' aria-label='Entrada'>
+            🕐
+          </span>{' '}
+          Entrada
         </Btn>
-        
-        <Btn $bg="#4682B4" onClick={() => handleTimeRecord('saida_almoco')}>
-          <span role="img" aria-label="Saída Almoço">🍽️</span> Saída Almoço
+
+        <Btn $bg='#4682B4' onClick={() => handleTimeRecord('saida_almoco')}>
+          <span role='img' aria-label='Saída Almoço'>
+            🍽️
+          </span>{' '}
+          Saída Almoço
         </Btn>
-        
-        <Btn $bg="#4682B4" onClick={() => handleTimeRecord('retorno_almoco')}>
-          <span role="img" aria-label="Retorno Almoço">🔄</span> Retorno Almoço
+
+        <Btn $bg='#4682B4' onClick={() => handleTimeRecord('retorno_almoco')}>
+          <span role='img' aria-label='Retorno Almoço'>
+            🔄
+          </span>{' '}
+          Retorno Almoço
         </Btn>
-        
-        <Btn $bg="#FF6347" onClick={() => handleTimeRecord('saida')}>
-          <span role="img" aria-label="Saída">🏠</span> Saída
+
+        <Btn $bg='#FF6347' onClick={() => handleTimeRecord('saida')}>
+          <span role='img' aria-label='Saída'>
+            🏠
+          </span>{' '}
+          Saída
         </Btn>
       </GridButtons>
 
@@ -233,7 +247,9 @@ export default function TimeClock() {
       <RecordsBox>
         <RecordsTitle>Registros de Hoje</RecordsTitle>
         {timeRecords.length === 0 ? (
-          <EmptyText>Nenhum registro ainda. Use os botões acima para registrar seu ponto.</EmptyText>
+          <EmptyText>
+            Nenhum registro ainda. Use os botões acima para registrar seu ponto.
+          </EmptyText>
         ) : (
           <div>
             {timeRecords.map((record: any) => (
@@ -248,9 +264,15 @@ export default function TimeClock() {
 
       {/* Informações do Sistema */}
       <InfoBox>
-        <p><strong>Localização:</strong> Escritório - Sala 101</p>
-        <p><strong>WiFi:</strong> Empresa_WiFi_5G</p>
-        <p><strong>Status:</strong> Sistema funcionando normalmente</p>
+        <p>
+          <strong>Localização:</strong> Escritório - Sala 101
+        </p>
+        <p>
+          <strong>WiFi:</strong> Empresa_WiFi_5G
+        </p>
+        <p>
+          <strong>Status:</strong> Sistema funcionando normalmente
+        </p>
       </InfoBox>
 
       <ToastContainer

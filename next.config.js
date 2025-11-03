@@ -1,11 +1,11 @@
 module.exports = {
   reactStrictMode: true,
-  
+
   // Configuração para styled-components (SSR)
   compiler: {
     styledComponents: true,
   },
-  
+
   // Otimização de imagens
   images: {
     formats: ['image/webp', 'image/avif'],
@@ -13,12 +13,12 @@ module.exports = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60,
   },
-  
+
   // Configurações para melhorar a navegação
   experimental: {
     scrollRestoration: true,
   },
-  
+
   // Configurações de cache otimizadas para produção
   async headers() {
     return [
@@ -84,11 +84,11 @@ module.exports = {
       },
     ];
   },
-  
+
   // Otimizações de build
   compress: true,
   poweredByHeader: false,
-  
+
   // Configuração de webpack para otimização adicional
   webpack: (config, { dev, isServer }) => {
     // Otimizações de produção
@@ -111,7 +111,10 @@ module.exports = {
             },
             lib: {
               test(module) {
-                return module.size() > 160000 && /node_modules[/\\]/.test(module.identifier());
+                return (
+                  module.size() > 160000 &&
+                  /node_modules[/\\]/.test(module.identifier())
+                );
               },
               name(module) {
                 const hash = require('crypto').createHash('sha1');
@@ -133,7 +136,8 @@ module.exports = {
                   require('crypto')
                     .createHash('sha1')
                     .update(chunks.reduce((acc, chunk) => acc + chunk.name, ''))
-                    .digest('hex') + (module.type === 'css/mini-extract' ? '_CSS' : '')
+                    .digest('hex') +
+                  (module.type === 'css/mini-extract' ? '_CSS' : '')
                 );
               },
               priority: 10,
@@ -146,7 +150,7 @@ module.exports = {
         },
       };
     }
-    
+
     return config;
   },
 };

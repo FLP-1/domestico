@@ -8,6 +8,7 @@
 ## 🗄️ BANCO DE DADOS
 
 ### Configuração PostgreSQL
+
 ```
 Host: localhost
 Porta: 5433
@@ -17,6 +18,7 @@ Senha: FLP*2025
 ```
 
 ### String de Conexão
+
 ```
 DATABASE_URL="postgresql://userdom:FLP*2025@localhost:5433/dom?schema=public"
 ```
@@ -26,6 +28,7 @@ DATABASE_URL="postgresql://userdom:FLP*2025@localhost:5433/dom?schema=public"
 ## 👥 USUÁRIOS DE TESTE
 
 ### 1️⃣ Francisco (Administrador Principal)
+
 ```
 CPF: 59876913700
 Nome: Francisco Jose Lattari Papaleo
@@ -36,6 +39,7 @@ Status: ✅ Ativo
 ```
 
 ### 2️⃣ Maria (Empregada)
+
 ```
 CPF: 12345678909
 Nome: Maria Santos Silva
@@ -46,6 +50,7 @@ Status: ✅ Ativo
 ```
 
 ### 3️⃣ Carlos (RH)
+
 ```
 CPF: 98765432100
 Nome: Carlos Oliveira Costa
@@ -56,6 +61,7 @@ Status: ✅ Ativo
 ```
 
 ### 4️⃣ Ana (Dependente)
+
 ```
 CPF: 11144477735
 Nome: Ana Paula Lattari
@@ -70,18 +76,21 @@ Status: ✅ Ativo
 ## 🔑 TOKENS E SECRETS
 
 ### JWT Configuration
+
 ```env
 JWT_SECRET=dom_secret_key_32_chars_min_2025
 JWT_EXPIRES_IN=7d
 ```
 
 ### NextAuth Configuration
+
 ```env
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=dom_nextauth_secret_key_2025
 ```
 
 ### Chave Mestra de Criptografia
+
 ```env
 CERTIFICATE_MASTER_KEY=dom_master_key_certificate_encryption_2025_secure_v1
 ```
@@ -90,22 +99,22 @@ CERTIFICATE_MASTER_KEY=dom_master_key_certificate_encryption_2025_secure_v1
 
 ## 📊 DADOS CRIADOS NO SEED
 
-| Tabela | Quantidade |
-|--------|-----------|
-| 👔 Perfis | 4 |
-| 👥 Usuários | 4 |
-| 🔗 Usuários-Perfis | 5 |
-| 👨‍👩‍👧‍👦 Membros Família | 2 |
-| 💬 Conversas | 2 |
-| 👥 Participantes | 4 |
-| 💬 Mensagens | 4 |
-| ✅ Tarefas | 3 |
-| 💰 Empréstimos | 3 |
-| 📄 Documentos | 2 |
-| 📊 Métricas | 4 |
-| 📈 Estatísticas | 3 |
-| ⚙️ Configurações | 5 |
-| 📋 Termos | 1 |
+| Tabela             | Quantidade |
+| ------------------ | ---------- |
+| 👔 Perfis          | 4          |
+| 👥 Usuários        | 4          |
+| 🔗 Usuários-Perfis | 5          |
+| 👨‍👩‍👧‍👦 Membros Família | 2          |
+| 💬 Conversas       | 2          |
+| 👥 Participantes   | 4          |
+| 💬 Mensagens       | 4          |
+| ✅ Tarefas         | 3          |
+| 💰 Empréstimos     | 3          |
+| 📄 Documentos      | 2          |
+| 📊 Métricas        | 4          |
+| 📈 Estatísticas    | 3          |
+| ⚙️ Configurações   | 5          |
+| 📋 Termos          | 1          |
 
 **Total:** ✅ **46 registros** criados com sucesso!
 
@@ -124,12 +133,14 @@ CERTIFICATE_MASTER_KEY=dom_master_key_certificate_encryption_2025_secure_v1
 ## 🔐 CERTIFICADOS eSocial (Referência)
 
 ### Caminho do Certificado
+
 ```env
 ESOCIAL_CERTIFICATE_PATH=./certificados/eCPF A1 24940271 (senha 456587).pfx
 ESOCIAL_CERTIFICATE_PASSWORD=456587
 ```
 
 ### URLs eSocial
+
 ```env
 ESOCIAL_URL_PRODUCAO=https://webservices.envio.esocial.gov.br
 ESOCIAL_URL_HOMOLOGACAO=https://webservices.producaorestrita.esocial.gov.br
@@ -140,6 +151,7 @@ ESOCIAL_URL_HOMOLOGACAO=https://webservices.producaorestrita.esocial.gov.br
 ## 🚀 COMO TESTAR
 
 ### 1. Verificar usuários no banco
+
 ```powershell
 cd E:\DOM
 $env:PGPASSWORD='FLP*2025'
@@ -147,18 +159,21 @@ psql -h localhost -p 5433 -U postgres -d dom -c 'SELECT cpf, \"nomeCompleto\", e
 ```
 
 ### 2. Iniciar o servidor
+
 ```powershell
 cd E:\DOM
 npm run dev
 ```
 
 ### 3. Fazer login
+
 1. Acesse: http://localhost:3000
 2. Use qualquer uma das credenciais acima
 3. Email: `francisco@email.com`
 4. Senha: `senha123`
 
 ### 4. Abrir Prisma Studio
+
 ```powershell
 cd E:\DOM
 npx prisma studio
@@ -181,24 +196,28 @@ npx prisma db seed
 ## 📋 PERFIS DISPONÍVEIS
 
 ### Administrador
+
 - ✅ Acesso total ao sistema
 - ✅ Gerenciamento de usuários
 - ✅ Configurações do sistema
 - **Usuário:** francisco@email.com
 
 ### Empregado
+
 - ✅ Acesso às próprias informações
 - ✅ Documentos pessoais
 - ✅ Tarefas atribuídas
 - **Usuários:** francisco@email.com, maria.santos@email.com
 
 ### RH
+
 - ✅ Gestão de funcionários
 - ✅ Documentos de RH
 - ✅ Relatórios
 - **Usuário:** carlos.oliveira@email.com
 
 ### Dependente
+
 - ✅ Visualização de informações
 - ✅ Acesso limitado
 - **Usuário:** ana.lattari@email.com
@@ -212,11 +231,13 @@ npx prisma db seed
 Estas credenciais são apenas para **DESENVOLVIMENTO/TESTE**!
 
 **NUNCA use em produção:**
+
 - ❌ Senhas simples como "senha123"
 - ❌ Secrets genéricos
 - ❌ CPFs de teste
 
 ### 🔒 Para Produção, utilize:
+
 - ✅ Senhas fortes e únicas
 - ✅ Secrets gerados aleatoriamente (min. 32 caracteres)
 - ✅ CPFs reais apenas quando necessário
@@ -238,19 +259,25 @@ Estas credenciais são apenas para **DESENVOLVIMENTO/TESTE**!
 ## 🆘 PROBLEMAS COMUNS
 
 ### Login não funciona
+
 **Solução:** Verifique se o seed foi executado com sucesso
+
 ```powershell
 psql -h localhost -p 5433 -U postgres -d dom -c 'SELECT COUNT(*) FROM usuarios;'
 ```
+
 Deve retornar: `4`
 
 ### Erro de conexão com banco
+
 **Solução:** Verifique se o PostgreSQL está rodando na porta 5433
+
 ```powershell
 netstat -ano | findstr :5433
 ```
 
 ### Senha incorreta
+
 **Solução:** A senha de todos os usuários de teste é: `senha123`
 
 ---
@@ -274,4 +301,3 @@ netstat -ano | findstr :5433
 **🎉 TUDO PRONTO PARA COMEÇAR A TESTAR!**
 
 **Última atualização:** 08/10/2025
-

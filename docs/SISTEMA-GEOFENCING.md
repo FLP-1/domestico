@@ -44,6 +44,7 @@ O Sistema de Geofencing do DOM é uma solução completa para controle de presen
 ### **1. 🏢 Gestão de Locais de Trabalho**
 
 #### **Criar Local:**
+
 ```typescript
 POST /api/geofencing/locais
 {
@@ -55,12 +56,14 @@ POST /api/geofencing/locais
 ```
 
 #### **Listar Locais:**
+
 ```typescript
-GET /api/geofencing/locais
+GET / api / geofencing / locais;
 // Retorna locais do grupo do usuário
 ```
 
 #### **Atualizar Local:**
+
 ```typescript
 PUT /api/geofencing/locais
 {
@@ -72,6 +75,7 @@ PUT /api/geofencing/locais
 ```
 
 #### **Excluir Local:**
+
 ```typescript
 DELETE /api/geofencing/locais
 {
@@ -82,6 +86,7 @@ DELETE /api/geofencing/locais
 ### **2. 🎯 Validação de Geofencing**
 
 #### **Validação Automática:**
+
 ```typescript
 POST /api/geofencing/validar
 {
@@ -94,6 +99,7 @@ POST /api/geofencing/validar
 ```
 
 #### **Resposta:**
+
 ```typescript
 {
   "dentroGeofence": true,
@@ -115,14 +121,16 @@ POST /api/geofencing/validar
 ### **3. 🔍 Auditoria**
 
 #### **Logs de Ações:**
+
 ```typescript
-GET /api/geofencing/auditoria/logs
+GET / api / geofencing / auditoria / logs;
 // Retorna logs de CREATE, UPDATE, DELETE, VALIDATE
 ```
 
 #### **Validações:**
+
 ```typescript
-GET /api/geofencing/auditoria/validacoes
+GET / api / geofencing / auditoria / validacoes;
 // Retorna histórico de validações
 ```
 
@@ -213,13 +221,13 @@ const geofencingResponse = await fetch('/api/geofencing/validar', {
     longitude: position.coords.longitude,
     precisao: position.coords.accuracy,
     endereco: address,
-    wifiName: realSSID || wifiName
-  })
+    wifiName: realSSID || wifiName,
+  }),
 });
 
 if (geofencingResponse.ok) {
   const geofencingData = await geofencingResponse.json();
-  
+
   if (!geofencingData.dentroGeofence) {
     // Rejeitar coordenadas fora do geofence
     return;

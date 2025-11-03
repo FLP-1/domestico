@@ -18,7 +18,7 @@ export interface SystemConfig {
     error: string;
     info: string;
   };
-  
+
   // Tipografia
   typography: {
     fontFamily: string;
@@ -40,7 +40,7 @@ export interface SystemConfig {
       bold: number;
     };
   };
-  
+
   // Espaçamento
   spacing: {
     xs: string;
@@ -50,7 +50,7 @@ export interface SystemConfig {
     xl: string;
     '2xl': string;
   };
-  
+
   // URLs e endpoints
   urls: {
     api: string;
@@ -65,14 +65,14 @@ export interface SystemConfig {
       positionstack: string;
     };
   };
-  
+
   // Configurações de geolocalização
   geolocation: {
     maxDistance: number;
     accuracyThreshold: number;
     timeout: number;
   };
-  
+
   // Configurações de antifraude
   antifraud: {
     maxAttempts: number;
@@ -94,7 +94,7 @@ const DEFAULT_CONFIG: SystemConfig = {
     error: '#EF4444',
     info: '#3B82F6',
   },
-  
+
   typography: {
     fontFamily: 'Inter, system-ui, sans-serif',
     fontSize: {
@@ -115,7 +115,7 @@ const DEFAULT_CONFIG: SystemConfig = {
       bold: 700,
     },
   },
-  
+
   spacing: {
     xs: '0.25rem',
     sm: '0.5rem',
@@ -124,12 +124,16 @@ const DEFAULT_CONFIG: SystemConfig = {
     xl: '2rem',
     '2xl': '3rem',
   },
-  
+
   urls: {
     api: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
     esocial: {
-      homologacao: process.env.ESOCIAL_HOMOLOGACAO_URL || 'https://webservices.producaorestrita.esocial.gov.br',
-      producao: process.env.ESOCIAL_PRODUCAO_URL || 'https://webservices.envio.esocial.gov.br',
+      homologacao:
+        process.env.ESOCIAL_HOMOLOGACAO_URL ||
+        'https://webservices.producaorestrita.esocial.gov.br',
+      producao:
+        process.env.ESOCIAL_PRODUCAO_URL ||
+        'https://webservices.envio.esocial.gov.br',
     },
     geocoding: {
       nominatim: 'https://nominatim.openstreetmap.org/reverse',
@@ -138,16 +142,20 @@ const DEFAULT_CONFIG: SystemConfig = {
       positionstack: 'https://api.positionstack.com/v1/reverse',
     },
   },
-  
+
   geolocation: {
     maxDistance: parseInt(process.env.GEOLOCATION_MAX_DISTANCE || '200'),
-    accuracyThreshold: parseInt(process.env.GEOLOCATION_ACCURACY_THRESHOLD || '100'),
+    accuracyThreshold: parseInt(
+      process.env.GEOLOCATION_ACCURACY_THRESHOLD || '100'
+    ),
     timeout: parseInt(process.env.GEOLOCATION_TIMEOUT || '10000'),
   },
-  
+
   antifraud: {
     maxAttempts: parseInt(process.env.ANTIFRAUD_MAX_ATTEMPTS || '3'),
-    lockoutDuration: parseInt(process.env.ANTIFRAUD_LOCKOUT_DURATION || '300000'),
+    lockoutDuration: parseInt(
+      process.env.ANTIFRAUD_LOCKOUT_DURATION || '300000'
+    ),
     riskThreshold: parseFloat(process.env.ANTIFRAUD_RISK_THRESHOLD || '0.7'),
   },
 };
@@ -165,7 +173,7 @@ export async function loadSystemConfig(): Promise<SystemConfig> {
     // Buscar configurações do banco
     const configs = await prisma.configuracaoSistema.findMany({
       where: { editavel: true },
-      orderBy: { criadoEm: 'asc' }
+      orderBy: { criadoEm: 'asc' },
     });
 
     if (configs.length === 0) {
@@ -176,10 +184,10 @@ export async function loadSystemConfig(): Promise<SystemConfig> {
 
     // Converter configurações do banco para objeto
     const config: SystemConfig = { ...DEFAULT_CONFIG };
-    
+
     for (const cfg of configs) {
       const value = JSON.parse(cfg.valor);
-      
+
       switch (cfg.categoria) {
         case 'colors':
           Object.assign(config.colors, value);
@@ -348,9 +356,12 @@ export async function loadProfileConfigs(): Promise<ProfileConfig> {
     for (const config of configs) {
       const perfilCodigo = config.perfil.codigo.toLowerCase();
       const valor = JSON.parse(config.valor);
-      
+
       if (profileConfigs[perfilCodigo as keyof ProfileConfig]) {
-        Object.assign(profileConfigs[perfilCodigo as keyof ProfileConfig], valor);
+        Object.assign(
+          profileConfigs[perfilCodigo as keyof ProfileConfig],
+          valor
+        );
       }
     }
 

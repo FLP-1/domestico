@@ -136,7 +136,11 @@ const PopularBadge = styled.div<{ $theme: any }>`
   top: -12px;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(135deg, ${publicColors.success}, ${publicColors.success});
+  background: linear-gradient(
+    135deg,
+    ${publicColors.success},
+    ${publicColors.success}
+  );
   color: ${publicColors.surface};
   padding: 0.5rem 1.5rem;
   border-radius: 20px;
@@ -151,7 +155,11 @@ const RecommendedBadge = styled.div<{ $theme: any }>`
   top: -12px;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(135deg, ${publicColors.warning}, ${publicColors.warning});
+  background: linear-gradient(
+    135deg,
+    ${publicColors.warning},
+    ${publicColors.warning}
+  );
   color: ${publicColors.surface};
   padding: 0.5rem 1.5rem;
   border-radius: 20px;
@@ -449,7 +457,8 @@ const Rating = styled.div`
 `;
 
 const Star = styled.span<{ $filled: boolean }>`
-  color: ${props => (props.$filled ? publicColors.warning : publicColors.border)};
+  color: ${props =>
+    props.$filled ? publicColors.warning : publicColors.border};
   font-size: 1rem;
 `;
 
@@ -719,7 +728,7 @@ export default function SubscriptionPlans() {
   };
 
   return (
-      <PageContainer $theme={theme} sidebarCollapsed={sidebarCollapsed}>
+    <PageContainer $theme={theme} sidebarCollapsed={sidebarCollapsed}>
       <Sidebar
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}

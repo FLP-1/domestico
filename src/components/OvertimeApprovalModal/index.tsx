@@ -3,7 +3,11 @@ import styled from 'styled-components';
 import AccessibleEmoji from '../AccessibleEmoji';
 import { UnifiedModal, UnifiedButton } from '../unified';
 import { FormGroup, Input, Label, Select } from '../FormComponents';
-import { OptimizedFormRow, OptimizedLabel, OptimizedHelpText } from '../shared/optimized-styles';
+import {
+  OptimizedFormRow,
+  OptimizedLabel,
+  OptimizedHelpText,
+} from '../shared/optimized-styles';
 
 // Styled Components
 const ApprovalForm = styled.form<{ $theme?: any }>`
@@ -43,18 +47,18 @@ const ApprovalStatus = styled.div<{ $theme?: any; $approved: boolean }>`
   align-items: center;
   gap: 0.5rem;
   padding: 1rem;
-  background: ${props => props.$approved ? '#d4edda' : '#fff3cd'};
-  border: 1px solid ${props => props.$approved ? '#c3e6cb' : '#ffeaa7'};
+  background: ${props => (props.$approved ? '#d4edda' : '#fff3cd')};
+  border: 1px solid ${props => (props.$approved ? '#c3e6cb' : '#ffeaa7')};
   border-radius: 8px;
   margin-bottom: 1rem;
-  
+
   .status-icon {
     font-size: 1.5rem;
   }
-  
+
   .status-text {
     font-weight: 600;
-    color: ${props => props.$approved ? '#155724' : '#856404'};
+    color: ${props => (props.$approved ? '#155724' : '#856404')};
   }
 `;
 
@@ -127,8 +131,12 @@ export const OvertimeApprovalModal: React.FC<OvertimeApprovalModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!newRequest.startTime || !newRequest.endTime || !newRequest.justification) {
+
+    if (
+      !newRequest.startTime ||
+      !newRequest.endTime ||
+      !newRequest.justification
+    ) {
       return;
     }
 
@@ -150,7 +158,7 @@ export const OvertimeApprovalModal: React.FC<OvertimeApprovalModalProps> = ({
 
   const generateNotificationPreview = () => {
     if (!newRequest.justification) return 'Digite a justificativa...';
-    
+
     return `Solicitação de hora extra para ${newRequest.startTime} - ${newRequest.endTime}. Justificativa: ${newRequest.justification}`;
   };
 
@@ -160,61 +168,76 @@ export const OvertimeApprovalModal: React.FC<OvertimeApprovalModalProps> = ({
     <UnifiedModal
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditing ? 'Editar Solicitação de Hora Extra' : 'Solicitar Aprovação de Hora Extra'}
+      title={
+        isEditing
+          ? 'Editar Solicitação de Hora Extra'
+          : 'Solicitar Aprovação de Hora Extra'
+      }
     >
       <ApprovalForm onSubmit={handleSubmit}>
         {!isEditing && (
           <ApprovalInfo $theme={theme}>
             <ApprovalInfoTitle>
-              <AccessibleEmoji emoji="ℹ️" label="Informação" /> Informações Importantes
+              <AccessibleEmoji emoji='ℹ️' label='Informação' /> Informações
+              Importantes
             </ApprovalInfoTitle>
             <ApprovalInfoText>
-              A solicitação de horas extras será enviada para aprovação do seu empregador. 
-              Você receberá uma notificação quando a solicitação for analisada.
+              A solicitação de horas extras será enviada para aprovação do seu
+              empregador. Você receberá uma notificação quando a solicitação for
+              analisada.
             </ApprovalInfoText>
           </ApprovalInfo>
         )}
 
         {isEditing && request.status !== 'pending' && (
-          <ApprovalStatus $theme={theme} $approved={request.status === 'approved'}>
-            <span className="status-icon">
-              <AccessibleEmoji 
-                emoji={request.status === 'approved' ? '✅' : '❌'} 
-                label={request.status === 'approved' ? 'Aprovado' : 'Rejeitado'} 
+          <ApprovalStatus
+            $theme={theme}
+            $approved={request.status === 'approved'}
+          >
+            <span className='status-icon'>
+              <AccessibleEmoji
+                emoji={request.status === 'approved' ? '✅' : '❌'}
+                label={request.status === 'approved' ? 'Aprovado' : 'Rejeitado'}
               />
             </span>
-            <span className="status-text">
-              {request.status === 'approved' ? 'Hora extra aprovada' : 'Hora extra rejeitada'}
+            <span className='status-text'>
+              {request.status === 'approved'
+                ? 'Hora extra aprovada'
+                : 'Hora extra rejeitada'}
             </span>
           </ApprovalStatus>
         )}
 
         <OptimizedFormRow>
           <FormGroup>
-            <OptimizedLabel htmlFor="start-time">
-              <AccessibleEmoji emoji="🕐" label="Início" /> Início da Hora Extra
+            <OptimizedLabel htmlFor='start-time'>
+              <AccessibleEmoji emoji='🕐' label='Início' /> Início da Hora Extra
             </OptimizedLabel>
             <Input
               $theme={theme}
-              type="time"
-              id="start-time"
+              type='time'
+              id='start-time'
               value={newRequest.startTime}
-              onChange={(e: any) => setNewRequest(prev => ({ ...prev, startTime: e.target.value }))}
+              onChange={(e: any) =>
+                setNewRequest(prev => ({ ...prev, startTime: e.target.value }))
+              }
               required
               disabled={isEditing && request.status !== 'pending'}
             />
           </FormGroup>
 
           <FormGroup>
-            <OptimizedLabel htmlFor="end-time">
-              <AccessibleEmoji emoji="🕐" label="Fim" /> Fim da Hora Extra
+            <OptimizedLabel htmlFor='end-time'>
+              <AccessibleEmoji emoji='🕐' label='Fim' /> Fim da Hora Extra
             </OptimizedLabel>
             <Input
               $theme={theme}
-              type="time"
-              id="end-time"
+              type='time'
+              id='end-time'
               value={newRequest.endTime}
-              onChange={(e: any) => setNewRequest(prev => ({ ...prev, endTime: e.target.value }))}
+              onChange={(e: any) =>
+                setNewRequest(prev => ({ ...prev, endTime: e.target.value }))
+              }
               required
               disabled={isEditing && request.status !== 'pending'}
             />
@@ -222,16 +245,21 @@ export const OvertimeApprovalModal: React.FC<OvertimeApprovalModalProps> = ({
         </OptimizedFormRow>
 
         <FormGroup>
-          <OptimizedLabel htmlFor="justification">
-            <AccessibleEmoji emoji="📝" label="Justificativa" /> Justificativa
+          <OptimizedLabel htmlFor='justification'>
+            <AccessibleEmoji emoji='📝' label='Justificativa' /> Justificativa
           </OptimizedLabel>
           <Input
             $theme={theme}
-            type="text"
-            id="justification"
+            type='text'
+            id='justification'
             value={newRequest.justification}
-            onChange={(e: any) => setNewRequest(prev => ({ ...prev, justification: e.target.value }))}
-            placeholder="Descreva o motivo da hora extra..."
+            onChange={(e: any) =>
+              setNewRequest(prev => ({
+                ...prev,
+                justification: e.target.value,
+              }))
+            }
+            placeholder='Descreva o motivo da hora extra...'
             required
             disabled={isEditing && request.status !== 'pending'}
           />
@@ -250,14 +278,15 @@ export const OvertimeApprovalModal: React.FC<OvertimeApprovalModalProps> = ({
         {isEditing && request.status === 'pending' && (
           <JustificationSection>
             <FormGroup>
-              <OptimizedLabel htmlFor="review-comment">
-                <AccessibleEmoji emoji="💬" label="Comentário" /> Comentário do Empregador
+              <OptimizedLabel htmlFor='review-comment'>
+                <AccessibleEmoji emoji='💬' label='Comentário' /> Comentário do
+                Empregador
               </OptimizedLabel>
               <Input
                 $theme={theme}
-                type="text"
-                id="review-comment"
-                placeholder="Adicione um comentário sobre a solicitação..."
+                type='text'
+                id='review-comment'
+                placeholder='Adicione um comentário sobre a solicitação...'
               />
             </FormGroup>
           </JustificationSection>
@@ -265,23 +294,27 @@ export const OvertimeApprovalModal: React.FC<OvertimeApprovalModalProps> = ({
 
         <ButtonGroup>
           <UnifiedButton
-            type="button"
-            $variant="secondary"
+            type='button'
+            $variant='secondary'
             $theme={theme}
             onClick={onClose}
           >
-            <AccessibleEmoji emoji="❌" label="Cancelar" /> Cancelar
+            <AccessibleEmoji emoji='❌' label='Cancelar' /> Cancelar
           </UnifiedButton>
-          
+
           <UnifiedButton
-            type="submit"
-            $variant="primary"
+            type='submit'
+            $variant='primary'
             $theme={theme}
-            $disabled={!newRequest.startTime || !newRequest.endTime || !newRequest.justification}
+            $disabled={
+              !newRequest.startTime ||
+              !newRequest.endTime ||
+              !newRequest.justification
+            }
           >
-            <AccessibleEmoji 
-              emoji={isEditing ? "💾" : "📤"} 
-              label={isEditing ? "Salvar" : "Enviar"} 
+            <AccessibleEmoji
+              emoji={isEditing ? '💾' : '📤'}
+              label={isEditing ? 'Salvar' : 'Enviar'}
             />
             {isEditing ? 'Salvar Alterações' : 'Enviar Solicitação'}
           </UnifiedButton>

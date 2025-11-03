@@ -3,7 +3,8 @@ import styled from 'styled-components';
 
 const Container = styled.div`
   padding: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 `;
 
 const Title = styled.h1`
@@ -29,7 +30,7 @@ export default function TestAPI() {
         const configResponse = await fetch('/api/config/system');
         const configData = await configResponse.json();
         const empresaConfig = configData.data;
-        
+
         const response = await fetch('/api/auth/login', {
           method: 'POST',
           headers: {
@@ -37,10 +38,10 @@ export default function TestAPI() {
           },
           body: JSON.stringify({
             cpf: empresaConfig.empresa_cpf_principal,
-            senha: empresaConfig.sistema_senha_padrao || 'senha123'
-          })
+            senha: empresaConfig.sistema_senha_padrao || 'senha123',
+          }),
         });
-        
+
         const data = await response.json();
         setResult(`Status: ${response.status} - ${data.message || 'OK'}`);
       } catch (error) {

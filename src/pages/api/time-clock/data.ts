@@ -2,7 +2,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../lib/prisma';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Método não permitido' });
   }
@@ -20,18 +23,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Buscar registros de ponto do dia atual
     const hoje = new Date();
-    const inicioDia = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
-    const fimDia = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 1);
+    const inicioDia = new Date(
+      hoje.getFullYear(),
+      hoje.getMonth(),
+      hoje.getDate()
+    );
+    const fimDia = new Date(
+      hoje.getFullYear(),
+      hoje.getMonth(),
+      hoje.getDate() + 1
+    );
 
     const registrosHoje = await prisma.registroPonto.findMany({
       where: {
         usuarioId,
         dataHora: {
           gte: inicioDia,
-          lt: fimDia
-        }
+          lt: fimDia,
+        },
       },
-      orderBy: { dataHora: 'asc' }
+      orderBy: { dataHora: 'asc' },
     });
 
     // Buscar solicitações de hora extra pendentes
@@ -44,9 +55,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const registros30Dias = await prisma.registroPonto.findMany({
       where: {
         usuarioId,
-        dataHora: { gte: ultimos30Dias }
+        dataHora: { gte: ultimos30Dias },
       },
-      orderBy: { dataHora: 'asc' }
+      orderBy: { dataHora: 'asc' },
     });
     const resumosHoras = [] as any[];
 
@@ -55,22 +66,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       where: {
         usuarioId,
         dataHora: {
-          gte: new Date(hoje.getTime() - 30 * 24 * 60 * 60 * 1000)
-        }
+          gte: new Date(hoje.getTime() - 30 * 24 * 60 * 60 * 1000),
+        },
       },
       orderBy: { dataHora: 'desc' },
-      take: 100
+      take: 100,
     });
 
     // Calcular resumo do dia
-    const hojeResumo = resumosHoras.find(r => 
-      r.dataReferencia.toDateString() === hoje.toDateString() && 
-      r.periodo === 'DIA'
+    const hojeResumo = resumosHoras.find(
+      r =>
+        r.dataReferencia.toDateString() === hoje.toDateString() &&
+        r.periodo === 'DIA'
     );
 
     // Calcular horário oficial do dia
     const diaSemana = hoje.getDay();
-    const horarioOficialHoje = horariosOficiais.find(h => h.diaSemana === diaSemana);
+    const horarioOficialHoje = horariosOficiais.find(
+      h => h.diaSemana === diaSemana
+    );
 
     const response = {
       horariosOficiais,
@@ -87,13 +101,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         diferenca: 0,
         registrosPonto: registrosHoje.length,
         faltas: 0,
-        atrasos: 0
+        atrasos: 0,
       },
-      horarioOficialHoje
+      horarioOficialHoje,
     };
 
     res.status(200).json(response);
-
   } catch (error) {
     console.error('Erro ao buscar dados do time-clock:', error);
     res.status(500).json({ message: 'Erro interno do servidor' });

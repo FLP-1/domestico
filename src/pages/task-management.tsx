@@ -45,9 +45,9 @@ const TaskAssignee = styled.div`
 
 const TaskDueDate = styled.div<{ $isOverdue: boolean }>`
   font-size: 0.8rem;
-  color: ${props => props.$isOverdue ? '#e74c3c' : '#7f8c8d'};
+  color: ${props => (props.$isOverdue ? '#e74c3c' : '#7f8c8d')};
   margin-top: 0.5rem;
-  font-weight: ${props => props.$isOverdue ? '600' : '400'};
+  font-weight: ${props => (props.$isOverdue ? '600' : '400')};
 `;
 
 // Interfaces
@@ -81,8 +81,10 @@ interface ChecklistItem {
 // Styled Components
 
 const TaskCreationSection = styled.section<{ $theme: any }>`
-  background: ${props => props.$theme?.colors?.background || defaultColors.background};
-  border: 1px solid ${props => props.$theme?.colors?.border || defaultColors.border};
+  background: ${props =>
+    props.$theme?.colors?.background || defaultColors.background};
+  border: 1px solid
+    ${props => props.$theme?.colors?.border || defaultColors.border};
   border-radius: 12px;
   padding: 2rem;
   margin-bottom: 2rem;
@@ -90,7 +92,10 @@ const TaskCreationSection = styled.section<{ $theme: any }>`
 `;
 
 const SectionTitle = styled.h2<{ $theme: any }>`
-  color: ${props => props.$theme?.colors?.text?.primary || props.$theme?.colors?.text || defaultColors.text.primary};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    defaultColors.text.primary};
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
@@ -127,8 +132,10 @@ const TaskBoard = styled.div`
 `;
 
 const TaskColumn = styled.div<{ $theme: any }>`
-  background: ${props => props.$theme?.colors?.background || defaultColors.background};
-  border: 1px solid ${props => props.$theme?.colors?.border || defaultColors.border};
+  background: ${props =>
+    props.$theme?.colors?.background || defaultColors.background};
+  border: 1px solid
+    ${props => props.$theme?.colors?.border || defaultColors.border};
   border-radius: 12px;
   padding: 1.5rem;
   min-height: 500px;
@@ -156,7 +163,10 @@ const ColumnHeader = styled.div<{ $theme: any; $status: string }>`
     }};
 
   h3 {
-    color: ${props => props.$theme?.colors?.text?.primary || props.$theme?.colors?.text || defaultColors.text.primary};
+    color: ${props =>
+      props.$theme?.colors?.text?.primary ||
+      props.$theme?.colors?.text ||
+      defaultColors.text.primary};
     font-size: 1.2rem;
     font-weight: 600;
     margin: 0;
@@ -184,7 +194,11 @@ const ColumnHeader = styled.div<{ $theme: any; $status: string }>`
         case 'completed':
           return '#065f46';
         default:
-          return props.$theme?.colors?.text?.primary || props.$theme?.colors?.text || defaultColors.text.primary;
+          return (
+            props.$theme?.colors?.text?.primary ||
+            props.$theme?.colors?.text ||
+            defaultColors.text.primary
+          );
       }
     }};
     padding: 0.25rem 0.75rem;
@@ -195,7 +209,8 @@ const ColumnHeader = styled.div<{ $theme: any; $status: string }>`
 `;
 
 const TaskCard = styled.div<{ $theme: any; $priority: string }>`
-  background: ${props => props.$theme?.colors?.background || defaultColors.background};
+  background: ${props =>
+    props.$theme?.colors?.background || defaultColors.background};
   border: 1px solid
     ${props => {
       switch (props.$priority) {
@@ -235,14 +250,20 @@ const TaskCard = styled.div<{ $theme: any; $priority: string }>`
   }
 
   h4 {
-    color: ${props => props.$theme?.colors?.text?.primary || props.$theme?.colors?.text || defaultColors.text.primary};
+    color: ${props =>
+      props.$theme?.colors?.text?.primary ||
+      props.$theme?.colors?.text ||
+      defaultColors.text.primary};
     font-size: 1rem;
     font-weight: 600;
     margin: 0 0 0.5rem 0;
   }
 
   p {
-    color: ${props => props.$theme?.colors?.text?.secondary || props.$theme?.colors?.textSecondary || defaultColors.text.secondary};
+    color: ${props =>
+      props.$theme?.colors?.text?.secondary ||
+      props.$theme?.colors?.textSecondary ||
+      defaultColors.text.secondary};
     font-size: 0.875rem;
     margin: 0 0 0.75rem 0;
     line-height: 1.4;
@@ -254,7 +275,10 @@ const TaskMeta = styled.div<{ $theme: any }>`
   justify-content: space-between;
   align-items: center;
   font-size: 0.75rem;
-  color: ${props => props.$theme?.colors?.text?.secondary || props.$theme?.colors?.textSecondary || defaultColors.text.secondary};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.colors?.textSecondary ||
+    defaultColors.text.secondary};
 
   .assignee {
     font-weight: 500;
@@ -312,8 +336,10 @@ const CommentForm = styled.form<{ $theme: any }>`
 `;
 
 const CommentItem = styled.div<{ $theme: any }>`
-  background: ${props => props.$theme?.colors?.background || defaultColors.background};
-  border: 1px solid ${props => props.$theme?.colors?.border || defaultColors.border};
+  background: ${props =>
+    props.$theme?.colors?.background || defaultColors.background};
+  border: 1px solid
+    ${props => props.$theme?.colors?.border || defaultColors.border};
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
@@ -330,7 +356,8 @@ const CommentAvatar = styled.div<{ $theme: any }>`
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: ${props => props.$theme?.colors?.primary || defaultColors.primary};
+  background: ${props =>
+    props.$theme?.colors?.primary || defaultColors.primary};
   color: white;
   display: flex;
   align-items: center;
@@ -340,13 +367,19 @@ const CommentAvatar = styled.div<{ $theme: any }>`
 `;
 
 const CommentText = styled.p<{ $theme: any }>`
-  color: ${props => props.$theme?.colors?.text?.primary || props.$theme?.colors?.text || defaultColors.text.primary};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    defaultColors.text.primary};
   margin: 0;
   line-height: 1.4;
 `;
 
 const CommentTime = styled.span<{ $theme: any }>`
-  color: ${props => props.$theme?.colors?.text?.secondary || props.$theme?.colors?.textSecondary || defaultColors.text.secondary};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.colors?.textSecondary ||
+    defaultColors.text.secondary};
   font-size: 0.75rem;
 `;
 
@@ -365,7 +398,8 @@ const ChecklistItem = styled.div<{ $theme: any }>`
   align-items: center;
   gap: 0.75rem;
   padding: 0.5rem 0;
-  border-bottom: 1px solid ${props => props.$theme?.colors?.border || defaultColors.border};
+  border-bottom: 1px solid
+    ${props => props.$theme?.colors?.border || defaultColors.border};
 
   &:last-child {
     border-bottom: none;
@@ -374,25 +408,35 @@ const ChecklistItem = styled.div<{ $theme: any }>`
   input[type='checkbox'] {
     width: 18px;
     height: 18px;
-    accent-color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
+    accent-color: ${props =>
+      props.$theme?.colors?.primary || defaultColors.primary};
   }
 
   label {
-    color: ${props => props.$theme?.colors?.text?.primary || props.$theme?.colors?.text || defaultColors.text.primary};
+    color: ${props =>
+      props.$theme?.colors?.text?.primary ||
+      props.$theme?.colors?.text ||
+      defaultColors.text.primary};
     font-size: 0.875rem;
     cursor: pointer;
     flex: 1;
 
     &.completed {
       text-decoration: line-through;
-      color: ${props => props.$theme?.colors?.text?.secondary || props.$theme?.colors?.textSecondary || defaultColors.text.secondary};
+      color: ${props =>
+        props.$theme?.colors?.text?.secondary ||
+        props.$theme?.colors?.textSecondary ||
+        defaultColors.text.secondary};
     }
   }
 `;
 
 const CommentAuthor = styled.div<{ $theme: any }>`
   font-weight: 600;
-  color: ${props => props.$theme?.colors?.text?.primary || props.$theme?.colors?.text || defaultColors.text.primary};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    defaultColors.text.primary};
 `;
 
 // Interface para dados de tarefas
@@ -449,7 +493,7 @@ const TaskManagement: React.FC = () => {
     try {
       const response = await fetch('/api/tasks');
       const result = await response.json();
-      
+
       if (result.success && result.data) {
         setTasks(result.data);
       } else {
@@ -501,25 +545,26 @@ const TaskManagement: React.FC = () => {
           descricao: '',
           prioridade: newTask.priority.toUpperCase(),
           atribuidoPara: newTask.assignee || currentProfile?.id,
-          dataVencimento: newTask.dueDate || new Date().toISOString().split('T')[0],
+          dataVencimento:
+            newTask.dueDate || new Date().toISOString().split('T')[0],
           tags: [],
         }),
       });
 
       const result = await response.json();
-      
+
       if (result.success) {
         // Recarregar a lista de tarefas
         await loadTasks();
-        
+
         // Limpar formulário
-        setNewTask({ 
-          title: '', 
-          priority: 'medium', 
-          assignee: '', 
-          dueDate: ''
+        setNewTask({
+          title: '',
+          priority: 'medium',
+          assignee: '',
+          dueDate: '',
         });
-        
+
         toast.success('Tarefa criada com sucesso!');
       } else {
         toast.error(result.error || 'Erro ao criar tarefa');
@@ -609,7 +654,9 @@ const TaskManagement: React.FC = () => {
     );
   };
 
-  const getTasksByStatus = (status: 'pending' | 'in_progress' | 'completed') => {
+  const getTasksByStatus = (
+    status: 'pending' | 'in_progress' | 'completed'
+  ) => {
     return tasks.filter(task => task.status === status);
   };
 
@@ -626,7 +673,7 @@ const TaskManagement: React.FC = () => {
   };
 
   return (
-      <PageContainer $theme={theme} sidebarCollapsed={sidebarCollapsed}>
+    <PageContainer $theme={theme} sidebarCollapsed={sidebarCollapsed}>
       <Sidebar
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -634,14 +681,16 @@ const TaskManagement: React.FC = () => {
       />
 
       <TopBar $theme={theme}>
-        <WelcomeSection $theme={theme}
+        <WelcomeSection
+          $theme={theme}
           userAvatar='U'
           userName='Usuário'
           userRole='Usuário'
         />
       </TopBar>
 
-      <PageHeader $theme={theme}
+      <PageHeader
+        $theme={theme}
         title='Gestão de Tarefas'
         subtitle='Organize e acompanhe as tarefas da sua equipe de forma colaborativa'
       />
@@ -671,7 +720,7 @@ const TaskManagement: React.FC = () => {
               id='task-priority'
               $theme={theme}
               value={newTask.priority}
-              title="Prioridade da Tarefa"
+              title='Prioridade da Tarefa'
               onChange={e =>
                 setNewTask(prev => ({
                   ...prev,
@@ -692,7 +741,7 @@ const TaskManagement: React.FC = () => {
               id='task-assignee'
               $theme={theme}
               value={newTask.assignee}
-              title="Responsável pela Tarefa"
+              title='Responsável pela Tarefa'
               onChange={e =>
                 setNewTask(prev => ({ ...prev, assignee: e.target.value }))
               }
@@ -731,7 +780,7 @@ const TaskManagement: React.FC = () => {
             id='filter-status-select'
             $theme={theme}
             aria-label='Filtrar tarefas por status'
-            title="Filtrar por Status"
+            title='Filtrar por Status'
             value={filters.status}
             onChange={e =>
               setFilters(prev => ({ ...prev, status: e.target.value }))
@@ -752,7 +801,7 @@ const TaskManagement: React.FC = () => {
             id='filter-priority-select'
             $theme={theme}
             aria-label='Filtrar tarefas por prioridade'
-            title="Filtrar por Prioridade"
+            title='Filtrar por Prioridade'
             value={filters.priority}
             onChange={e =>
               setFilters(prev => ({ ...prev, priority: e.target.value }))
@@ -773,7 +822,7 @@ const TaskManagement: React.FC = () => {
             id='filter-assignee-select'
             $theme={theme}
             aria-label='Filtrar tarefas por responsável'
-            title="Filtrar por Responsável"
+            title='Filtrar por Responsável'
             value={filters.assignee}
             onChange={e =>
               setFilters(prev => ({ ...prev, assignee: e.target.value }))

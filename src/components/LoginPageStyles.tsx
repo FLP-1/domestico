@@ -7,10 +7,11 @@ interface LoginPageStylesProps {
 
 export const LoginPageStyles: React.FC<LoginPageStylesProps> = ({ config }) => {
   const { colors } = config;
-  
+
   return (
-    <style dangerouslySetInnerHTML={{
-      __html: `
+    <style
+      dangerouslySetInnerHTML={{
+        __html: `
         * {
           margin: 0;
           padding: 0;
@@ -45,7 +46,8 @@ export const LoginPageStyles: React.FC<LoginPageStylesProps> = ({ config }) => {
         body, html, #__next, [data-page-container] {
           background-attachment: fixed !important;
         }
-      `
-    }} />
+      `,
+      }}
+    />
   );
 };

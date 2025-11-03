@@ -5,25 +5,29 @@
 ### ✅ **CONCLUÍDO:**
 
 #### **1. Análise Completa de Dados Mockados**
+
 - ✅ Identificados todos os arquivos com dados mockados/hardcoded
 - ✅ Mapeadas 17 arquivos que contêm dados simulados
 - ✅ Catalogados dados centralizados em `src/data/centralized.ts`
 
 #### **2. Estrutura do Banco de Dados**
+
 - ✅ **Tabelas JÁ EXISTEM**: `termos`, `grupos`, `perfis`, `empregadores`, `alertas`, `conversas`, `mensagens`, `planos_assinatura`, `assinaturas`, `registros_ponto`, `logs_auditoria`, `configuracoes`
-- ✅ **Novas Tabelas CRIADAS**: 
+- ✅ **Novas Tabelas CRIADAS**:
   - `estatisticas_sistema` - Para métricas gerais
   - `membros_familia` - Para familiares
   - `dados_paginas` - Para conteúdo de páginas
   - `notificacoes` - Para sistema de notificações
 
 #### **3. Schema Atualizado**
+
 - ✅ Adicionadas 4 novas tabelas ao `prisma/schema.prisma`
 - ✅ Relações configuradas corretamente
 - ✅ Índices criados para performance
 - ✅ Schema aplicado no banco (`npx prisma db push`)
 
 #### **4. Seed Atualizado**
+
 - ✅ Dados para estatísticas do sistema
 - ✅ Membros da família de exemplo
 - ✅ Dados de páginas iniciais
@@ -36,6 +40,7 @@
 ### **APIs Necessárias para Substituir Dados Mockados**
 
 #### **APIs que JÁ EXISTEM:**
+
 - ✅ `/api/tasks` - Tarefas (já conectada)
 - ✅ `/api/alerts` - Alertas
 - ✅ `/api/subscriptions/plans` - Planos de assinatura
@@ -48,6 +53,7 @@
 - ✅ `/api/documents` - Documentos
 
 #### **APIs que PRECISAM SER CRIADAS:**
+
 - ❌ `/api/statistics` - Estatísticas do sistema
 - ❌ `/api/family-members` - Membros da família
 - ❌ `/api/page-data` - Dados de páginas
@@ -58,6 +64,7 @@
 ## 📋 **Dados Mockados Identificados**
 
 ### **1. Arquivo Centralizado (`src/data/centralized.ts`)**
+
 ```typescript
 // ❌ DADOS MOCKADOS QUE DEVEM SER REMOVIDOS:
 export const MOCK_TERMOS: DocumentVersion[] = [...]
@@ -75,11 +82,13 @@ export const MOCK_PAGE_DATA = {...}
 ```
 
 ### **2. Serviços com Dados Mockados**
+
 - ❌ `notificationService.ts` - Notificações simuladas
 - ❌ `webhookService.ts` - Webhooks mock
 - ❌ `exportService.ts` - Dados de exportação hardcoded
 
 ### **3. Páginas com Dados Hardcoded**
+
 - ❌ `esocial-domestico-completo.tsx` - Folha de pagamento simulada
 - ❌ `esocial-integration.tsx` - Eventos eSocial mock
 - ❌ `monitoring-dashboard.tsx` - Métricas simuladas
@@ -89,6 +98,7 @@ export const MOCK_PAGE_DATA = {...}
 ## 🎯 **Próximos Passos**
 
 ### **1. Criar APIs Faltantes**
+
 ```bash
 # APIs que precisam ser criadas:
 src/pages/api/statistics/index.ts
@@ -98,16 +108,19 @@ src/pages/api/notifications/index.ts
 ```
 
 ### **2. Atualizar Páginas Frontend**
+
 - Substituir imports de `MOCK_*` por chamadas às APIs
 - Implementar loading states
 - Adicionar tratamento de erros
 
 ### **3. Atualizar Serviços**
+
 - Remover dados mockados dos serviços
 - Conectar aos endpoints reais
 - Implementar cache quando necessário
 
 ### **4. Remover Arquivo Centralizado**
+
 - Deletar `src/data/centralized.ts`
 - Verificar se não há outras dependências
 
@@ -116,6 +129,7 @@ src/pages/api/notifications/index.ts
 ## 🗄️ **Estrutura das Novas Tabelas**
 
 ### **Estatísticas do Sistema**
+
 ```sql
 CREATE TABLE estatisticas_sistema (
   id UUID PRIMARY KEY,
@@ -130,6 +144,7 @@ CREATE TABLE estatisticas_sistema (
 ```
 
 ### **Membros da Família**
+
 ```sql
 CREATE TABLE membros_familia (
   id UUID PRIMARY KEY,
@@ -150,6 +165,7 @@ CREATE TABLE membros_familia (
 ```
 
 ### **Dados de Páginas**
+
 ```sql
 CREATE TABLE dados_paginas (
   id UUID PRIMARY KEY,
@@ -170,6 +186,7 @@ CREATE TABLE dados_paginas (
 ```
 
 ### **Notificações**
+
 ```sql
 CREATE TABLE notificacoes (
   id UUID PRIMARY KEY,
@@ -214,10 +231,12 @@ npx prisma db push
 ## ⚠️ **Problemas Identificados**
 
 ### **1. Seed com Erro de Email Duplicado**
+
 - **Problema**: Conflito de emails únicos ao criar usuários extras
 - **Solução**: Usar `upsert` em vez de `create` ou gerar emails únicos
 
 ### **2. Dependências de Dados Mockados**
+
 - **Problema**: Páginas ainda importam dados de `centralized.ts`
 - **Solução**: Criar APIs e atualizar imports
 
@@ -226,18 +245,21 @@ npx prisma db push
 ## 🎉 **Benefícios Alcançados**
 
 ### **Dados Reais no Banco:**
+
 - ✅ Persistência entre sessões
 - ✅ Sincronização entre usuários
 - ✅ Auditoria completa
 - ✅ Backup e recuperação
 
 ### **Estrutura Escalável:**
+
 - ✅ Relacionamentos corretos
 - ✅ Índices para performance
 - ✅ Validações de integridade
 - ✅ LGPD compliance
 
 ### **APIs Padronizadas:**
+
 - ✅ CRUD completo
 - ✅ Tratamento de erros
 - ✅ Validação de dados

@@ -18,14 +18,14 @@ Sistema completo de **device fingerprinting** e **análise de risco** implementa
 ✅ **3 APIs REST** para validação e monitoramento  
 ✅ **Hook React** para integração com login  
 ✅ **Dashboard Admin** para visualização de estatísticas  
-✅ **Migration Prisma** executada com sucesso  
+✅ **Migration Prisma** executada com sucesso
 
 ### POR QUE NÃO IMPLEMENTAMOS CAPTURA DE SSID:
 
 ❌ **Incompatível com arquitetura web** (DOM é Next.js, não desktop app)  
 ❌ **Exigiria instalação de software** (péssima UX)  
 ❌ **Valor antifraude baixo** comparado às alternativas  
-❌ **Não funciona em mobile/tablet**  
+❌ **Não funciona em mobile/tablet**
 
 ### O QUE IMPLEMENTAMOS É SUPERIOR:
 
@@ -33,7 +33,7 @@ Sistema completo de **device fingerprinting** e **análise de risco** implementa
 ✅ **Funciona 100% em navegador**  
 ✅ **Efetividade comprovada** em sistemas antifraude  
 ✅ **Mobile-friendly**  
-✅ **LGPD compliant**  
+✅ **LGPD compliant**
 
 ---
 
@@ -42,9 +42,11 @@ Sistema completo de **device fingerprinting** e **análise de risco** implementa
 ### CAMADA 1: Schema Prisma (Banco de Dados)
 
 #### **Tabela: DeviceFingerprint**
+
 Armazena fingerprints únicos de dispositivos.
 
 **Dados coletados:**
+
 - Canvas fingerprint
 - WebGL fingerprint (GPU)
 - Audio fingerprint
@@ -54,15 +56,18 @@ Armazena fingerprints únicos de dispositivos.
 - Touch support
 
 **Campos importantes:**
+
 - `fingerprintHash` (único)
 - `confiavel` (dispositivo já verificado)
 - `bloqueado` (dispositivo banido)
 - `vezesVisto` (quantas vezes usado)
 
 #### **Tabela: RiskAnalysis**
+
 Cada tentativa de login/ação gera uma análise de risco.
 
 **Scores calculados:**
+
 - `scoreFinal` (0.0 a 1.0)
 - `scoreFingerprint` (dispositivo novo/conhecido)
 - `scoreIP` (VPN/proxy/datacenter)
@@ -71,6 +76,7 @@ Cada tentativa de login/ação gera uma análise de risco.
 - `scoreTemporal` (horário atípico)
 
 **Flags de alerta:**
+
 - `dispositivoNovo`
 - `velocidadeImpossivel` (teleporte)
 - `vpnDetectado`
@@ -78,17 +84,21 @@ Cada tentativa de login/ação gera uma análise de risco.
 - `bloqueado`
 
 #### **Tabela: GeolocationHistory**
+
 Histórico de localizações para detectar impossibilidades.
 
 **Detecta:**
+
 - Usuário em SP às 10h e em NY às 10:05h = **ALERTA**
 - Calcula distância e velocidade necessária
 - Marca como `suspeita` se impossível
 
 #### **Tabela: IPAnalysis**
+
 Cache de análises de IP (atualiza a cada 7 dias).
 
 **Detecta:**
+
 - VPN (NordVPN, ExpressVPN, etc.)
 - Proxy
 - Tor
@@ -98,9 +108,11 @@ Cache de análises de IP (atualiza a cada 7 dias).
 **API usada:** `ipapi.co` (1000 requests/dia grátis)
 
 #### **Tabela: BehaviorAnalysis**
+
 Análise comportamental do usuário.
 
 **Detecta bots através de:**
+
 - Velocidade de digitação muito regular
 - Ações em intervalos perfeitos
 - Ausência de movimento de mouse
@@ -118,6 +130,7 @@ Gera fingerprint único do dispositivo.
 **Técnicas:**
 
 1. **Canvas Fingerprint**
+
 ```typescript
 // Cada dispositivo renderiza canvas diferente
 // Diferenças microscópicas na GPU
@@ -127,6 +140,7 @@ return canvas.toDataURL(); // Hash único
 ```
 
 2. **WebGL Fingerprint**
+
 ```typescript
 // Detecta GPU (vendor e modelo)
 const renderer = gl.getParameter(UNMASKED_RENDERER_WEBGL);
@@ -134,6 +148,7 @@ const renderer = gl.getParameter(UNMASKED_RENDERER_WEBGL);
 ```
 
 3. **Audio Fingerprint**
+
 ```typescript
 // Cada dispositivo processa áudio diferente
 const oscillator = context.createOscillator();
@@ -141,6 +156,7 @@ const oscillator = context.createOscillator();
 ```
 
 4. **Hardware Detection**
+
 ```typescript
 {
   cpuCores: navigator.hardwareConcurrency, // 8
@@ -160,6 +176,7 @@ const oscillator = context.createOscillator();
 Monitora comportamento do usuário em tempo real.
 
 **Eventos rastreados:**
+
 - Digitação (velocidade e padrão)
 - Cliques (frequência e regularidade)
 - Movimento de mouse
@@ -167,6 +184,7 @@ Monitora comportamento do usuário em tempo real.
 - Copy/paste
 
 **Detecção de bot:**
+
 ```typescript
 // Humano: velocidade varia (desvio padrão alto)
 // Bot: velocidade constante (desvio padrão baixo)
@@ -176,6 +194,7 @@ if (desvioVelocidade < 10) {
 ```
 
 **Score de normalidade:**
+
 - Movimento de mouse: +20%
 - Scrolls: +10%
 - Variação na digitação: +30%
@@ -192,7 +211,7 @@ Calcula score de risco baseado em múltiplos fatores.
 **Algoritmo:**
 
 ```typescript
-scoreFinal = 
+scoreFinal =
   scoreFingerprint × 0.25 +  // Peso 25%
   scoreIP          × 0.30 +  // Peso 30%
   scoreGeo         × 0.20 +  // Peso 20%
@@ -201,6 +220,7 @@ scoreFinal =
 ```
 
 **Níveis de risco:**
+
 - `scoreFinal >= 0.8` → **CRÍTICO** (bloquear)
 - `scoreFinal >= 0.6` → **ALTO** (exigir 2FA)
 - `scoreFinal >= 0.4` → **MÉDIO** (monitorar)
@@ -209,6 +229,7 @@ scoreFinal =
 **Exemplos:**
 
 **Caso 1: Login legítimo**
+
 ```
 Dispositivo conhecido: 0.0
 IP residencial: 0.0
@@ -220,6 +241,7 @@ SCORE FINAL: 0.0 → BAIXO RISCO ✅
 ```
 
 **Caso 2: Login suspeito**
+
 ```
 Dispositivo novo: 0.3
 IP de datacenter: 0.5
@@ -232,6 +254,7 @@ AÇÃO: Solicitar 2FA
 ```
 
 **Caso 3: Ataque de bot**
+
 ```
 Dispositivo novo: 0.3
 VPN detectada: 0.4
@@ -249,10 +272,15 @@ AÇÃO: BLOQUEAR
 Analisa IP e detecta características suspeitas.
 
 **Detecção de VPN/Proxy:**
+
 ```typescript
 const keywordsVPN = [
-  'nordvpn', 'expressvpn', 'surfshark',
-  'vpn', 'proxy', 'anonymizer'
+  'nordvpn',
+  'expressvpn',
+  'surfshark',
+  'vpn',
+  'proxy',
+  'anonymizer',
 ];
 
 if (org.includes('nordvpn')) {
@@ -261,10 +289,15 @@ if (org.includes('nordvpn')) {
 ```
 
 **Detecção de Datacenter:**
+
 ```typescript
 const keywordsDatacenter = [
-  'amazon', 'aws', 'google cloud',
-  'digitalocean', 'azure', 'hosting'
+  'amazon',
+  'aws',
+  'google cloud',
+  'digitalocean',
+  'azure',
+  'hosting',
 ];
 
 // IP de AWS = bot provável
@@ -274,6 +307,7 @@ if (org.includes('amazon web services')) {
 ```
 
 **Cache inteligente:**
+
 - Armazena análise por 7 dias
 - Evita consultas repetidas à API
 - Atualiza `vezesVisto` a cada acesso
@@ -287,6 +321,7 @@ if (org.includes('amazon web services')) {
 Valida uma ação (login, transferência, etc.)
 
 **Request:**
+
 ```json
 {
   "usuarioId": "uuid-123",
@@ -306,6 +341,7 @@ Valida uma ação (login, transferência, etc.)
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -331,6 +367,7 @@ Valida uma ação (login, transferência, etc.)
 Histórico de análises de um usuário.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -361,6 +398,7 @@ Histórico de análises de um usuário.
 Estatísticas globais do sistema (admin).
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -457,6 +495,7 @@ Adicionado em `_app.tsx` para rastrear comportamento globalmente.
 Dashboard visual com:
 
 **Cards de estatísticas:**
+
 - Total de análises
 - Taxa de bloqueio
 - Dispositivos únicos
@@ -464,11 +503,13 @@ Dashboard visual com:
 - Bots bloqueados
 
 **Gráficos:**
+
 - Distribuição por nível de risco
 - Top 10 IPs mais vistos
 - Evolução temporal
 
 **Exemplo visual:**
+
 ```
 ┌─────────────────────────────────────┐
 │ 🛡️ Dashboard Antifraude            │
@@ -506,11 +547,12 @@ console.log('WebGL Vendor:', fp.webglVendor);
 console.log('Hardware:', {
   cpu: fp.cpuCores,
   memoria: fp.memoria,
-  tela: fp.telaResolucao
+  tela: fp.telaResolucao,
 });
 ```
 
 **Resultado esperado:**
+
 ```
 Fingerprint Hash: a3f8b9c2d1e4f5g6h7i8j9k0l1m2n3o4p5q6r7s8t9u0
 Canvas: data:image/png;base64,iVBORw0KGgoAAAANSUhEUg...
@@ -565,6 +607,7 @@ curl -X POST http://localhost:3000/api/antifraude/validar \
 ```
 
 **Response esperada:**
+
 ```json
 {
   "success": true,
@@ -582,6 +625,7 @@ curl -X POST http://localhost:3000/api/antifraude/validar \
 Use uma VPN (NordVPN, ExpressVPN, etc.) e faça login.
 
 **Resultado esperado:**
+
 ```json
 {
   "risco": "MEDIO",
@@ -604,10 +648,10 @@ Simule login de SP, depois de NY em 5 minutos:
 await fetch('/api/antifraude/validar', {
   body: JSON.stringify({
     geolocalizacao: {
-      latitude: -23.550,
-      longitude: -46.633
-    }
-  })
+      latitude: -23.55,
+      longitude: -46.633,
+    },
+  }),
 });
 
 // Login 2 (5min depois): Nova York
@@ -615,13 +659,14 @@ await fetch('/api/antifraude/validar', {
   body: JSON.stringify({
     geolocalizacao: {
       latitude: 40.712,
-      longitude: -74.006
-    }
-  })
+      longitude: -74.006,
+    },
+  }),
 });
 ```
 
 **Resultado esperado:**
+
 ```json
 {
   "risco": "CRITICO",
@@ -634,6 +679,7 @@ await fetch('/api/antifraude/validar', {
 ```
 
 **Cálculo:**
+
 - Distância SP → NY: ~7,700 km
 - Tempo: 5 minutos
 - Velocidade necessária: 92,400 km/h
@@ -645,21 +691,25 @@ await fetch('/api/antifraude/validar', {
 ## 📈 MÉTRICAS DE SUCESSO
 
 ### **Taxa de Detecção:**
+
 - Bots: **>90%**
 - VPNs: **>85%**
 - Datacenters: **>95%**
 - Velocidades impossíveis: **100%**
 
 ### **Falsos Positivos:**
+
 - Taxa aceitável: **<2%**
 - Não bloqueia usuários legítimos
 
 ### **Performance:**
+
 - Fingerprinting: **<200ms**
 - Análise de risco: **<300ms**
 - Total overhead: **<500ms**
 
 ### **Compatibilidade:**
+
 - ✅ Chrome, Firefox, Safari, Edge
 - ✅ Desktop, mobile, tablet
 - ✅ iOS, Android
@@ -670,22 +720,25 @@ await fetch('/api/antifraude/validar', {
 ## 🔒 LGPD E PRIVACIDADE
 
 ### **Dados Anonimizados:**
+
 - Fingerprints são **hashes** (não identificam pessoa)
 - Geolocalização é **aproximada** (cidade, não endereço)
 - IPs são **mascarados** após análise
 
 ### **Consentimento:**
+
 - Informar usuário sobre coleta
 - Opção de opt-out disponível
 - Dados podem ser deletados
 
 ### **Exemplo de política:**
+
 ```
-"Para sua segurança, coletamos dados técnicos do 
-dispositivo (resolução de tela, idioma, timezone) 
-e localização aproximada. Esses dados são 
-anonimizados e usados apenas para detecção de 
-fraude. Você pode solicitar exclusão a qualquer 
+"Para sua segurança, coletamos dados técnicos do
+dispositivo (resolução de tela, idioma, timezone)
+e localização aproximada. Esses dados são
+anonimizados e usados apenas para detecção de
+fraude. Você pode solicitar exclusão a qualquer
 momento."
 ```
 
@@ -776,8 +829,8 @@ await prisma.deviceFingerprint.update({
   where: { fingerprintHash: 'abc123' },
   data: {
     bloqueado: true,
-    motivoBloqueio: 'Atividade suspeita detectada'
-  }
+    motivoBloqueio: 'Atividade suspeita detectada',
+  },
 });
 ```
 
@@ -788,6 +841,7 @@ await prisma.deviceFingerprint.update({
 Sistema antifraude **profissional** e **completo** implementado com sucesso.
 
 **Diferencial competitivo alcançado** através de:
+
 - ✅ Detecção multicamadas
 - ✅ Zero fricção para usuário
 - ✅ Performance otimizada
@@ -795,6 +849,7 @@ Sistema antifraude **profissional** e **completo** implementado com sucesso.
 - ✅ Dashboard visual
 
 **Superior à captura de SSID** porque:
+
 - Funciona 100% em web/mobile
 - Não requer instalação
 - Mais efetivo contra fraudes
@@ -803,4 +858,3 @@ Sistema antifraude **profissional** e **completo** implementado com sucesso.
 ---
 
 **Sistema pronto para produção! 🚀**
-

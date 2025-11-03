@@ -40,19 +40,21 @@ export default async function handler(
         updatedAt: emp.atualizadoEm.toISOString(),
       }));
 
-      return res.status(200).json({ success: true, data: emprestimosFormatados });
+      return res
+        .status(200)
+        .json({ success: true, data: emprestimosFormatados });
     } catch (error) {
       console.error('Erro ao buscar empréstimos:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao buscar empréstimos' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao buscar empréstimos',
       });
     }
   }
 
   if (req.method === 'POST') {
     try {
-      const { 
+      const {
         usuarioId,
         valor,
         quantidadeParcelas,
@@ -63,7 +65,7 @@ export default async function handler(
       const valorParcela = valor / quantidadeParcelas;
       const dataVencimento = new Date(dataConcessao);
       dataVencimento.setMonth(dataVencimento.getMonth() + quantidadeParcelas);
-      
+
       const novoEmprestimo = await prisma.emprestimo.create({
         data: {
           usuarioId,
@@ -89,13 +91,12 @@ export default async function handler(
       return res.status(201).json({ success: true, data: novoEmprestimo });
     } catch (error) {
       console.error('Erro ao criar empréstimo:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao criar empréstimo' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao criar empréstimo',
       });
     }
   }
 
   return res.status(405).json({ error: 'Method not allowed' });
 }
-

@@ -44,12 +44,13 @@ const ButtonGroup = styled.div`
 const WiFiConfigurationModal: React.FC<WiFiConfigurationModalProps> = ({
   isOpen,
   onClose,
-  theme
+  theme,
 }) => {
   const { currentProfile } = useUserProfile();
   const { colors: themeColors } = useTheme(currentProfile?.role.toLowerCase());
   const [networkName, setNetworkName] = useState('');
-  const { wifiConfig, saveWiFiConfiguration, clearWiFiConfiguration } = useWiFiConfiguration();
+  const { wifiConfig, saveWiFiConfiguration, clearWiFiConfiguration } =
+    useWiFiConfiguration();
 
   const handleSave = () => {
     if (networkName.trim()) {
@@ -68,55 +69,57 @@ const WiFiConfigurationModal: React.FC<WiFiConfigurationModalProps> = ({
     <UnifiedModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Configurar Nome da Rede WiFi"
+      title='Configurar Nome da Rede WiFi'
     >
       <ModalContent>
         <InfoBox>
           <InfoText>
-            <AccessibleEmoji emoji="ℹ️" label="Informação" />
-            <strong> Nota:</strong> Navegadores web têm limitações de segurança para detectar automaticamente o nome da rede WiFi. 
-            Você pode configurar manualmente o nome da sua rede para uma melhor experiência.
+            <AccessibleEmoji emoji='ℹ️' label='Informação' />
+            <strong> Nota:</strong> Navegadores web têm limitações de segurança
+            para detectar automaticamente o nome da rede WiFi. Você pode
+            configurar manualmente o nome da sua rede para uma melhor
+            experiência.
           </InfoText>
         </InfoBox>
 
         {wifiConfig.isConfigured && (
           <InfoBox>
             <InfoText>
-              <AccessibleEmoji emoji="✅" label="Configurado" />
+              <AccessibleEmoji emoji='✅' label='Configurado' />
               <strong> Rede configurada:</strong> {wifiConfig.networkName}
             </InfoText>
           </InfoBox>
         )}
 
         <FormGroup>
-          <Label htmlFor="wifi-name">Nome da Rede WiFi</Label>
+          <Label htmlFor='wifi-name'>Nome da Rede WiFi</Label>
           <Input
-            id="wifi-name"
-            type="text"
-            placeholder="Ex: XikoTeka-5G, MinhaRede, etc."
+            id='wifi-name'
+            type='text'
+            placeholder='Ex: XikoTeka-5G, MinhaRede, etc.'
             value={networkName}
             onChange={(e: any) => setNetworkName(e.target.value)}
             $theme={theme}
-            title="Digite o nome da sua rede WiFi"
+            title='Digite o nome da sua rede WiFi'
           />
         </FormGroup>
 
         <ButtonGroup>
           <UnifiedButton
-            $variant="secondary"
+            $variant='secondary'
             onClick={handleClear}
             $disabled={!wifiConfig.isConfigured}
           >
-            <AccessibleEmoji emoji="🗑️" label="Limpar" />
+            <AccessibleEmoji emoji='🗑️' label='Limpar' />
             Limpar
           </UnifiedButton>
-          
+
           <UnifiedButton
-            $variant="primary"
+            $variant='primary'
             onClick={handleSave}
             $disabled={!networkName.trim()}
           >
-            <AccessibleEmoji emoji="💾" label="Salvar" />
+            <AccessibleEmoji emoji='💾' label='Salvar' />
             Salvar
           </UnifiedButton>
         </ButtonGroup>

@@ -103,31 +103,38 @@ npx prisma generate
 ## ✅ Requisitos Atendidos
 
 ✅ **1 CPF + Tipo de Usuário Único**
+
 - Constraint: `@@unique([usuarioId, perfilId])`
 
 ✅ **Informações do CPF Não Repetidas**
+
 - Dados centralizados na tabela `usuarios`
 - Normalização completa (3NF)
 
 ✅ **Dados Sem Máscaras**
+
 - CPF: 11 dígitos
 - Telefone: 11 dígitos
 - CEP: 8 dígitos
 
 ✅ **Usuário em Múltiplos Grupos**
+
 - Constraint: `@@unique([usuarioId, grupoId])`
 - Sem duplicidade no mesmo grupo
 
 ✅ **Tipo de Usuário por Funcionalidades**
+
 - 4 perfis: Empregado, Empregador, Família, Admin
 - 11+ funcionalidades
 - Permissões granulares
 
 ✅ **Tabela de Log**
+
 - `logs_auditoria` completa
 - Rastreamento de todas operações
 
 ✅ **Compliance LGPD**
+
 - Consentimento explícito
 - Logs de auditoria
 - Exportação de dados
@@ -181,9 +188,9 @@ npx prisma format
 ### Criar Usuário
 
 ```typescript
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 const usuario = await prisma.usuario.create({
   data: {
@@ -196,8 +203,8 @@ const usuario = await prisma.usuario.create({
     salt: 'salt_aqui',
     consentimentoLGPD: true,
     termosAceitos: true,
-  }
-})
+  },
+});
 ```
 
 ### Buscar Usuário com Perfis
@@ -208,11 +215,11 @@ const usuario = await prisma.usuario.findUnique({
   include: {
     perfis: {
       include: {
-        perfil: true
-      }
-    }
-  }
-})
+        perfil: true,
+      },
+    },
+  },
+});
 ```
 
 ### Verificar Permissão
@@ -223,17 +230,17 @@ const permissoes = await prisma.perfilFuncionalidade.findFirst({
     perfil: {
       usuarios: {
         some: {
-          usuarioId: 'user-id'
-        }
-      }
+          usuarioId: 'user-id',
+        },
+      },
     },
     funcionalidade: {
-      codigo: 'time-clock'
-    }
-  }
-})
+      codigo: 'time-clock',
+    },
+  },
+});
 
-const podeRegistrarPonto = permissoes?.permissaoEscrita
+const podeRegistrarPonto = permissoes?.permissaoEscrita;
 ```
 
 Mais exemplos em: [exemplos-uso.ts](./exemplos-uso.ts)
@@ -248,10 +255,10 @@ Mais exemplos em: [exemplos-uso.ts](./exemplos-uso.ts)
 
 ```typescript
 // ❌ ERRADO
-cpf: '123.456.789-01'
+cpf: '123.456.789-01';
 
-// ✅ CORRETO  
-cpf: '12345678901'
+// ✅ CORRETO
+cpf: '12345678901';
 ```
 
 ### Criptografia
@@ -259,10 +266,10 @@ cpf: '12345678901'
 **Senhas:**
 
 ```typescript
-import * as bcrypt from 'bcrypt'
+import * as bcrypt from 'bcrypt';
 
-const saltRounds = 10
-const senhaHash = await bcrypt.hash(senha, saltRounds)
+const saltRounds = 10;
+const senhaHash = await bcrypt.hash(senha, saltRounds);
 ```
 
 **Dados Sensíveis:**
@@ -270,17 +277,17 @@ const senhaHash = await bcrypt.hash(senha, saltRounds)
 Use criptografia AES-256 para dados muito sensíveis:
 
 ```typescript
-import * as crypto from 'crypto'
+import * as crypto from 'crypto';
 
-const algorithm = 'aes-256-cbc'
-const key = crypto.randomBytes(32)
-const iv = crypto.randomBytes(16)
+const algorithm = 'aes-256-cbc';
+const key = crypto.randomBytes(32);
+const iv = crypto.randomBytes(16);
 
 function encrypt(text: string): string {
-  const cipher = crypto.createCipheriv(algorithm, key, iv)
-  let encrypted = cipher.update(text, 'utf8', 'hex')
-  encrypted += cipher.final('hex')
-  return encrypted
+  const cipher = crypto.createCipheriv(algorithm, key, iv);
+  let encrypted = cipher.update(text, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  return encrypted;
 }
 ```
 
@@ -289,15 +296,15 @@ function encrypt(text: string): string {
 ```typescript
 function validarCPF(cpf: string): boolean {
   // Remover máscara
-  const cpfLimpo = cpf.replace(/\D/g, '')
-  
+  const cpfLimpo = cpf.replace(/\D/g, '');
+
   // Validar tamanho
-  if (cpfLimpo.length !== 11) return false
-  
+  if (cpfLimpo.length !== 11) return false;
+
   // Validar dígitos verificadores
   // ... implementar lógica
-  
-  return true
+
+  return true;
 }
 ```
 
@@ -317,8 +324,8 @@ await prisma.logAuditoria.create({
     descricao: 'Acesso aos dados pessoais',
     tipoLog: 'LGPD',
     nivelSeveridade: 'INFO',
-  }
-})
+  },
+});
 ```
 
 ### Exportar Dados (LGPD)
@@ -332,8 +339,8 @@ const meusDados = await prisma.usuario.findUnique({
     documentos: true,
     tarefas: true,
     // ... todos os relacionamentos
-  }
-})
+  },
+});
 ```
 
 ### Excluir Dados (LGPD)
@@ -341,8 +348,8 @@ const meusDados = await prisma.usuario.findUnique({
 ```typescript
 // Direito ao esquecimento
 await prisma.usuario.delete({
-  where: { id: usuarioId }
-})
+  where: { id: usuarioId },
+});
 // Cascade irá excluir relacionamentos
 ```
 
@@ -392,6 +399,7 @@ npx prisma generate
 ### Backup
 
 **Recomendado:**
+
 - Backup diário automático
 - Retenção de 30 dias
 - Criptografia dos backups
@@ -408,11 +416,13 @@ psql -U postgres dom_db < backup_20240101.sql
 ### Performance
 
 **Índices:**
+
 - Todos os campos de busca têm índices
 - CPF, email, telefone indexados
 - Logs indexados por data e tipo
 
 **Otimizações:**
+
 - Use `select` para limitar campos
 - Use paginação em listas grandes
 - Implemente cache com Redis
@@ -429,10 +439,10 @@ const usuarios = await prisma.usuario.findMany({
   },
   take: 20,
   skip: page * 20,
-})
+});
 
 // ❌ RUIM - Traz tudo
-const usuarios = await prisma.usuario.findMany()
+const usuarios = await prisma.usuario.findMany();
 ```
 
 ---
@@ -440,4 +450,3 @@ const usuarios = await prisma.usuario.findMany()
 **Versão:** 1.0.0  
 **Última Atualização:** 2024  
 **Autor:** Sistema DOM
-

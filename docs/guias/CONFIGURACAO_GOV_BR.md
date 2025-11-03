@@ -38,6 +38,7 @@ NODE_TLS_REJECT_UNAUTHORIZED=0
 ### **3. TESTAR A CONFIGURAÇÃO**
 
 1. **Inicie o servidor:**
+
    ```bash
    npm run dev
    ```
@@ -60,10 +61,12 @@ NODE_TLS_REJECT_UNAUTHORIZED=0
 ## 🔧 **ENDPOINTS DISPONÍVEIS**
 
 ### **API de Autorização:**
+
 - `POST /api/esocial-real-govbr` - Gerar URL de autorização
 - `GET /api/esocial-real-govbr/callback` - Callback OAuth2
 
 ### **API de Consulta:**
+
 - `POST /api/esocial-real-govbr` com action:
   - `consultarEmpregador` - Dados do empregador
   - `consultarEmpregados` - Lista de empregados
@@ -79,8 +82,8 @@ const authResponse = await fetch('/api/esocial-real-govbr', {
   body: JSON.stringify({
     action: 'getAuthUrl',
     cpfCnpj: '59876913700',
-    environment: 'homologacao'
-  })
+    environment: 'homologacao',
+  }),
 });
 
 // 2. Usar token para consultar dados
@@ -91,8 +94,8 @@ const dataResponse = await fetch('/api/esocial-real-govbr', {
     action: 'consultarEmpregador',
     cpfCnpj: '59876913700',
     environment: 'homologacao',
-    accessToken: 'SEU_TOKEN_AQUI'
-  })
+    accessToken: 'SEU_TOKEN_AQUI',
+  }),
 });
 ```
 

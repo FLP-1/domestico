@@ -9,6 +9,7 @@ O sistema DOM implementa geolocalização **manual e opcional** que funciona **i
 ## ✅ **O Que Está Implementado (Correto)**
 
 ### 1. Captura Manual (Apenas ao Clicar)
+
 - ✅ **NÃO** pede permissão ao carregar páginas
 - ✅ **SÓ** captura ao clicar em cards de registro de ponto
 - ✅ Sistema funciona MESMO se usuário negar permissão
@@ -16,11 +17,13 @@ O sistema DOM implementa geolocalização **manual e opcional** que funciona **i
 ### 2. Estratégia por Dispositivo
 
 **Mobile (GPS disponível):**
+
 ```
 Captura → GPS nativo → Precisão: 5-50m
 ```
 
 **Desktop (sem GPS):**
+
 ```
 Tenta captura (3s timeout)
   ↓
@@ -29,6 +32,7 @@ Tenta captura (3s timeout)
 ```
 
 ### 3. Sistema Sempre Funciona
+
 - ✅ COM geolocalização: registra com localização
 - ✅ SEM geolocalização: registra SEM localização
 - ✅ Permissão negada: continua funcionando
@@ -41,18 +45,19 @@ Tenta captura (3s timeout)
 
 ### 1. Precisão Depende do Hardware
 
-| Dispositivo | Método | Precisão Típica |
-|-------------|--------|-----------------|
-| **Mobile + GPS ativo** | GPS satelital | 5-50 metros ✅ |
-| **Desktop + WiFi** | WiFi triangulation | 50-200 metros ⚠️ |
-| **Desktop + Ethernet** | Localização por IP | 500m-5km ❌ |
-| **Sem permissão** | N/A | Sem dados (null) |
+| Dispositivo            | Método             | Precisão Típica  |
+| ---------------------- | ------------------ | ---------------- |
+| **Mobile + GPS ativo** | GPS satelital      | 5-50 metros ✅   |
+| **Desktop + WiFi**     | WiFi triangulation | 50-200 metros ⚠️ |
+| **Desktop + Ethernet** | Localização por IP | 500m-5km ❌      |
+| **Sem permissão**      | N/A                | Sem dados (null) |
 
 ### 2. Por Que Desktop Tem Precisão Pior?
 
-**Desktop não tem GPS!** 
+**Desktop não tem GPS!**
 
 O navegador usa:
+
 1. **WiFi triangulation**: Se houver adaptadores WiFi ativos
    - Envia MACs de redes próximas para Google/Microsoft
    - Retorna localização aproximada
@@ -72,12 +77,14 @@ O navegador usa:
 ### 1. Não Depende de Configurações Específicas
 
 ❌ **NÃO requer:**
+
 - Chrome configurado em "Permitir"
 - Windows Location Service ativo
 - GPS ligado
 - Permissões específicas
 
 ✅ **Funciona em qualquer cenário:**
+
 - Permissão concedida → captura com melhor precisão disponível
 - Permissão negada → continua SEM geolocalização
 - Timeout → continua SEM geolocalização (3s máximo)
@@ -88,11 +95,12 @@ O navegador usa:
 // Desktop: não trava esperando GPS que não existe
 await Promise.race([
   captureRealTimeLocation(),
-  new Promise((_, reject) => setTimeout(() => reject(), 3000))
+  new Promise((_, reject) => setTimeout(() => reject(), 3000)),
 ]);
 ```
 
 **Por quê?**
+
 - Desktop geralmente não tem GPS
 - Evita espera longa (10-30s) por algo que não vai melhorar
 - Usuário não fica esperando
@@ -106,6 +114,7 @@ locationData = await captureRealTimeLocation();
 ```
 
 **Por quê?**
+
 - Mobile tem GPS real
 - Precisão melhora com tempo (GPS estabiliza)
 - Vale esperar 5-10s para ter 10-20m de precisão
@@ -124,12 +133,14 @@ locationData = await captureRealTimeLocation();
 5. Sistema registra ponto com essa localização
 
 **Resultado:**
+
 - ✅ Ponto registrado
 - ✅ Localização aproximada (968m)
 - ✅ Não travou
 - ✅ Funcionou
 
 **É suficiente para anti-fraude?**
+
 - ✅ SIM! 968m detecta se está em casa/escritório/outra cidade
 - ✅ Não precisa precisão de rua (não é GPS de carro)
 - ✅ Objetivo: validar presença aproximada, não endereço exato
@@ -141,27 +152,32 @@ locationData = await captureRealTimeLocation();
 ### 1. API Externa de Geolocalização
 
 **Google Geolocation API** (pago):
+
 - Precisão melhor em desktop (30-100m)
 - Custo: ~$5 por 1000 requisições
 - Requer chave API
 
 **Implementação:**
+
 ```typescript
 if (!isMobile) {
   // Tentar Google API primeiro (se chave configurada)
-  locationData = await getGoogleGeolocation() || await captureBrowserLocation();
+  locationData =
+    (await getGoogleGeolocation()) || (await captureBrowserLocation());
 }
 ```
 
 ### 2. Validação por WiFi SSID
 
 **Se precisão geográfica não importa:**
+
 - Capturar SSID da rede WiFi
 - Validar se é rede conhecida (casa/escritório)
 - Não precisa coordenadas GPS
 - Mais confiável em desktop
 
 **Já implementado parcialmente:**
+
 ```typescript
 networkInfo.wifiName = 'WiFi: Conectado';
 ```
@@ -195,4 +211,3 @@ O código atual **já segue a documentação** e funciona conforme esperado.
 **Referência:** `DECISAO_GEOLOCALIZACAO_MANUAL.md`  
 **Hook Principal:** `src/hooks/useGeolocationCapture.ts` (linhas 47-63)  
 **Status:** ✅ Implementado e Funcionando
-

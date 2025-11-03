@@ -35,7 +35,12 @@ const MotivationCarousel = dynamic(
 // Styled Components
 const LoadingContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, ${publicColors.primary} 0%, ${publicColors.secondary} 50%, ${publicColors.tertiary} 100%);
+  background: linear-gradient(
+    135deg,
+    ${publicColors.primary} 0%,
+    ${publicColors.secondary} 50%,
+    ${publicColors.tertiary} 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -67,7 +72,12 @@ const shimmer = keyframes`
 // Styled Components
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, ${publicColors.primary} 0%, ${publicColors.secondary} 50%, ${publicColors.tertiary} 100%);
+  background: linear-gradient(
+    135deg,
+    ${publicColors.primary} 0%,
+    ${publicColors.secondary} 50%,
+    ${publicColors.tertiary} 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -126,9 +136,14 @@ const Title = styled.h1`
   font-family: 'Montserrat', sans-serif;
   font-size: 2rem;
   font-weight: 700;
-  color: ${props => props.$theme?.colors?.text?.primary || publicColors.text.primary};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary || publicColors.text.primary};
   margin: 0 0 0.5rem 0;
-  background: linear-gradient(135deg, ${publicColors.secondary}, ${publicColors.tertiary});
+  background: linear-gradient(
+    135deg,
+    ${publicColors.secondary},
+    ${publicColors.tertiary}
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -163,7 +178,8 @@ const FloatingLabel = styled.label<{ $focused: boolean; $hasValue: boolean }>`
   padding: ${props => (props.$focused || props.$hasValue ? '0 0.5rem' : '0')};
   font-size: ${props =>
     props.$focused || props.$hasValue ? '0.75rem' : '1rem'};
-  color: ${props => (props.$focused ? publicColors.primary : publicColors.text.secondary)};
+  color: ${props =>
+    props.$focused ? publicColors.primary : publicColors.text.secondary};
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -175,7 +191,10 @@ const Input = styled.input<{ $hasError?: boolean }>`
   width: 100%;
   padding: 1rem;
   border: 2px solid
-    ${props => (props.$hasError ? publicColors.error : addOpacity(publicColors.primary, 0.2))};
+    ${props =>
+      props.$hasError
+        ? publicColors.error
+        : addOpacity(publicColors.primary, 0.2)};
   border-radius: 12px;
   font-size: 1rem;
   font-family: 'Roboto', sans-serif;
@@ -205,7 +224,8 @@ const PasswordToggle = styled.button`
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: ${props => props.$theme?.colors?.text?.secondary || publicColors.text.secondary};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary || publicColors.text.secondary};
   cursor: pointer;
   font-size: 1.2rem;
   transition: color 0.3s ease;
@@ -275,7 +295,11 @@ const Link = styled.a`
     left: 0;
     width: 0;
     height: 2px;
-    background: linear-gradient(90deg, ${publicColors.secondary}, ${publicColors.tertiary});
+    background: linear-gradient(
+      90deg,
+      ${publicColors.secondary},
+      ${publicColors.tertiary}
+    );
     transition: width 0.3s ease;
   }
 
@@ -318,7 +342,8 @@ const BiometricSection = styled.div`
 const BiometricTitle = styled.h3`
   font-family: 'Roboto', sans-serif;
   font-size: 0.9rem;
-  color: ${props => props.$theme?.colors?.text?.secondary || publicColors.text.secondary};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary || publicColors.text.secondary};
   margin: 0 0 0.5rem 0;
   font-weight: 500;
 `;
@@ -349,7 +374,8 @@ const BiometricButton = styled.button<{ $variant?: 'primary' | 'secondary' }>`
   transition: all 0.3s ease;
   min-width: 60px;
   flex: 1;
-  color: ${props => (props.$variant === 'primary' ? publicColors.surface : 'inherit')};
+  color: ${props =>
+    props.$variant === 'primary' ? publicColors.surface : 'inherit'};
 
   &:hover {
     border-color: ${publicColors.primary};
@@ -368,13 +394,19 @@ const BiometricButton = styled.button<{ $variant?: 'primary' | 'secondary' }>`
 
   .icon {
     font-size: 1.25rem;
-    color: ${props => (props.$variant === 'primary' ? publicColors.surface : publicColors.primary)};
+    color: ${props =>
+      props.$variant === 'primary'
+        ? publicColors.surface
+        : publicColors.primary};
   }
 
   .label {
     font-family: 'Roboto', sans-serif;
     font-size: 0.7rem;
-    color: ${props => (props.$variant === 'primary' ? publicColors.surface : publicColors.text.secondary)};
+    color: ${props =>
+      props.$variant === 'primary'
+        ? publicColors.surface
+        : publicColors.text.secondary};
     font-weight: 500;
   }
 `;
@@ -406,8 +438,7 @@ export default function LoginBiometric() {
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isEmployerModalNewOpen, setIsEmployerModalNewOpen] =
-    useState(false);
+  const [isEmployerModalNewOpen, setIsEmployerModalNewOpen] = useState(false);
   const [errors, setErrors] = useState<{
     cpf?: string;
     password?: string;
@@ -415,18 +446,11 @@ export default function LoginBiometric() {
   }>({});
 
   // Hook do contexto de perfil
-  const {
-    setAvailableProfiles,
-    handleProfileSelection,
-    setShowProfileModal,
-  } = useUserProfile();
+  const { setAvailableProfiles, handleProfileSelection, setShowProfileModal } =
+    useUserProfile();
 
   // Hook do contexto de grupo
-  const {
-    setAvailableGroups,
-    selectGroup,
-    setShowGroupModal,
-  } = useGroup();
+  const { setAvailableGroups, selectGroup, setShowGroupModal } = useGroup();
 
   const motivationalPhrases = [
     'Transforme sua casa em um lar organizado e acolhedor',
@@ -458,10 +482,10 @@ export default function LoginBiometric() {
   const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const maskedValue = applyCpfMask(e.target.value);
     setCpf(maskedValue);
-    
+
     // Validação em tempo real do CPF
     const cleanCpf = removeCpfMask(maskedValue);
-    
+
     // Limpar erro anterior
     if (errors.cpf) {
       setErrors(prev => {
@@ -470,20 +494,20 @@ export default function LoginBiometric() {
         return newErrors;
       });
     }
-    
+
     // Validar CPF apenas se tiver 11 dígitos (CPF completo)
     if (cleanCpf.length === 11) {
       if (!validateCpf(cleanCpf)) {
         setErrors(prev => ({
           ...prev,
-          cpf: 'CPF inválido'
+          cpf: 'CPF inválido',
         }));
       }
     } else if (cleanCpf.length > 0 && cleanCpf.length < 11) {
       // Mostrar erro apenas se o usuário começou a digitar mas não completou
       setErrors(prev => ({
         ...prev,
-        cpf: 'CPF incompleto'
+        cpf: 'CPF incompleto',
       }));
     }
   };
@@ -491,21 +515,21 @@ export default function LoginBiometric() {
   // Função para validar CPF quando o campo perde o foco
   const handleCpfBlur = () => {
     const cleanCpf = removeCpfMask(cpf);
-    
+
     if (cleanCpf.length === 11) {
       if (!validateCpf(cleanCpf)) {
         setErrors(prev => ({
           ...prev,
-          cpf: 'CPF inválido'
+          cpf: 'CPF inválido',
         }));
       }
     } else if (cleanCpf.length > 0 && cleanCpf.length < 11) {
       setErrors(prev => ({
         ...prev,
-        cpf: 'CPF incompleto'
+        cpf: 'CPF incompleto',
       }));
     }
-    
+
     setFocusedField(null);
   };
 
@@ -559,18 +583,21 @@ export default function LoginBiometric() {
               address: '', // Será preenchido posteriormente
               wifiName: '', // Será preenchido posteriormente
               networkInfo: {}, // Será preenchido posteriormente
-              timestamp: new Date()
+              timestamp: new Date(),
             });
           } catch {}
         },
         (error: any) => {
-          console.warn('⚠️ Permissão de geolocalização negada ou falhou:', error.message);
+          console.warn(
+            '⚠️ Permissão de geolocalização negada ou falhou:',
+            error.message
+          );
           // Não bloqueia o login se usuário negar
         },
         {
           enableHighAccuracy: false, // Não precisa de alta precisão aqui
           timeout: 5000, // Timeout curto (só queremos disparar o popup)
-          maximumAge: Infinity // Aceita cache (só queremos a permissão)
+          maximumAge: Infinity, // Aceita cache (só queremos a permissão)
         }
       );
     } catch (error) {
@@ -602,41 +629,43 @@ export default function LoginBiometric() {
         cpf: removeCpfMask(cpf),
         senha: password,
         // Incluir dados de geolocalização no login
-        locationData: locationData ? {
-          latitude: locationData.latitude,
-          longitude: locationData.longitude,
-          accuracy: locationData.accuracy,
-          address: locationData.address,
-          wifiName: locationData.wifiName,
-          timestamp: new Date().toISOString()
-        } : null
-      })
+        locationData: locationData
+          ? {
+              latitude: locationData.latitude,
+              longitude: locationData.longitude,
+              accuracy: locationData.accuracy,
+              address: locationData.address,
+              wifiName: locationData.wifiName,
+              timestamp: new Date().toISOString(),
+            }
+          : null,
+      }),
     })
       .then(response => response.json())
       .then(result => {
         setIsLoading(false);
-        
+
         if (result.success && result.data) {
           alertManager.showSuccess('Login realizado com sucesso!');
-          
+
           // ✅ Solicitar permissão de geolocalização logo após login bem-sucedido
           // Popup aparece aqui (primeira vez) para que não apareça nos registros de ponto
           requestGeolocationPermission();
-          
+
           const rawProfiles = result.data.userProfiles;
           const rawGroups = result.data.userGroups;
 
           const userProfiles = normalizeArray<UserProfile>(rawProfiles);
           const userGroups = normalizeArray<Group>(rawGroups);
-          
+
           // Define os perfis disponíveis no contexto
           setAvailableProfiles(userProfiles);
-          
+
           // Define os grupos disponíveis no contexto
           setAvailableGroups(userGroups);
 
           // FLUXO DE SELEÇÃO: Grupo -> Perfil -> Dashboard
-          
+
           // 1. Seleção de Grupo
           if (userGroups && userGroups.length > 1) {
             // Múltiplos grupos: mostrar modal de seleção
@@ -644,7 +673,7 @@ export default function LoginBiometric() {
           } else if (userGroups && userGroups.length === 1) {
             // Um grupo: selecionar automaticamente
             selectGroup(userGroups[0]);
-            
+
             // 2. Seleção de Perfil
             if (userProfiles.length === 1) {
               // Um perfil: selecionar automaticamente
@@ -691,24 +720,24 @@ export default function LoginBiometric() {
         },
         body: JSON.stringify({
           cpf: removeCpfMask(cpf),
-          senha: password
-        })
+          senha: password,
+        }),
       })
         .then(response => response.json())
         .then(result => {
           setIsLoading(false);
-          
+
           if (result.success && result.data) {
             alertManager.showSuccess('Login realizado com sucesso!');
-            
+
             // ✅ Solicitar permissão de geolocalização logo após login bem-sucedido
             // Popup aparece aqui (primeira vez) para que não apareça nos registros de ponto
             requestGeolocationPermission();
-            
+
             const rawData = result.data;
             const rawProfiles = rawData?.userProfiles ?? rawData;
             const userProfiles = normalizeArray<UserProfile>(rawProfiles);
-            
+
             // Define os perfis disponíveis no contexto
             setAvailableProfiles(userProfiles);
 
@@ -752,210 +781,202 @@ export default function LoginBiometric() {
 
   // Mostrar loading enquanto carrega as configurações
   if (configLoading || !config) {
-    return (
-      <LoadingContainer>
-        Carregando...
-      </LoadingContainer>
-    );
+    return <LoadingContainer>Carregando...</LoadingContainer>;
   }
 
   return (
     <>
       <LoginPageStyles config={config} />
       <PageContainer data-page-container>
-      <LoginCard>
-        <LogoSection>
-          <Logo src='/Logo.png' alt='Logo DOM' />
-          <Title>DOM</Title>
-        </LogoSection>
+        <LoginCard>
+          <LogoSection>
+            <Logo src='/Logo.png' alt='Logo DOM' />
+            <Title>DOM</Title>
+          </LogoSection>
 
-        <CarouselWrapper>
-          <MotivationCarousel phrases={motivationalPhrases} />
-        </CarouselWrapper>
+          <CarouselWrapper>
+            <MotivationCarousel phrases={motivationalPhrases} />
+          </CarouselWrapper>
 
-        <Form onSubmit={handleSubmit}>
-          <InputGroup>
-            <FloatingLabel
-              htmlFor='cpf'
-              $focused={focusedField === 'cpf'}
-              $hasValue={!!cpf}
-            >
-              CPF
-            </FloatingLabel>
-            <Input
-              id='cpf'
-              type='text'
-              value={cpf}
-              onChange={handleCpfChange}
-              onFocus={() => setFocusedField('cpf')}
-              onBlur={handleCpfBlur}
-              placeholder='000.000.000-00'
-              autoComplete='username'
-              $hasError={!!errors.cpf}
-            />
-            {errors.cpf && (
-              <OptimizedErrorMessage>{errors.cpf}</OptimizedErrorMessage>
-            )}
-          </InputGroup>
-
-          <InputGroup>
-            <FloatingLabel
-              htmlFor='password'
-              $focused={focusedField === 'password'}
-              $hasValue={!!password}
-            >
-              Senha
-            </FloatingLabel>
-            <Input
-              id='password'
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              onFocus={() => setFocusedField('password')}
-              onBlur={() => setFocusedField(null)}
-              placeholder='••••••••'
-              $hasError={!!errors.password}
-              autoComplete='current-password'
-            />
-            <PasswordToggle
-              type='button'
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? (
-                <AccessibleEmoji emoji='👁' label='Mostrar' />
-              ) : (
-                <AccessibleEmoji emoji='👁' label='Ocultar' />
+          <Form onSubmit={handleSubmit}>
+            <InputGroup>
+              <FloatingLabel
+                htmlFor='cpf'
+                $focused={focusedField === 'cpf'}
+                $hasValue={!!cpf}
+              >
+                CPF
+              </FloatingLabel>
+              <Input
+                id='cpf'
+                type='text'
+                value={cpf}
+                onChange={handleCpfChange}
+                onFocus={() => setFocusedField('cpf')}
+                onBlur={handleCpfBlur}
+                placeholder='000.000.000-00'
+                autoComplete='username'
+                $hasError={!!errors.cpf}
+              />
+              {errors.cpf && (
+                <OptimizedErrorMessage>{errors.cpf}</OptimizedErrorMessage>
               )}
-            </PasswordToggle>
-            {errors.password && (
-              <OptimizedErrorMessage>{errors.password}</OptimizedErrorMessage>
-            )}
-          </InputGroup>
+            </InputGroup>
 
-          <RememberMeContainer>
+            <InputGroup>
+              <FloatingLabel
+                htmlFor='password'
+                $focused={focusedField === 'password'}
+                $hasValue={!!password}
+              >
+                Senha
+              </FloatingLabel>
+              <Input
+                id='password'
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                onFocus={() => setFocusedField('password')}
+                onBlur={() => setFocusedField(null)}
+                placeholder='••••••••'
+                $hasError={!!errors.password}
+                autoComplete='current-password'
+              />
+              <PasswordToggle
+                type='button'
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <AccessibleEmoji emoji='👁' label='Mostrar' />
+                ) : (
+                  <AccessibleEmoji emoji='👁' label='Ocultar' />
+                )}
+              </PasswordToggle>
+              {errors.password && (
+                <OptimizedErrorMessage>{errors.password}</OptimizedErrorMessage>
+              )}
+            </InputGroup>
+
+            <RememberMeContainer>
+              <CheckboxRow>
+                <Checkbox
+                  id='remember'
+                  type='checkbox'
+                  checked={rememberMe}
+                  onChange={e => setRememberMe(e.target.checked)}
+                />
+                <CheckboxLabel htmlFor='remember'>Lembrar de mim</CheckboxLabel>
+              </CheckboxRow>
+              <Link href='/forgot-password'>Esqueci minha senha</Link>
+            </RememberMeContainer>
+
             <CheckboxRow>
               <Checkbox
-                id='remember'
+                id='terms'
                 type='checkbox'
-                checked={rememberMe}
-                onChange={e => setRememberMe(e.target.checked)}
+                checked={acceptedTerms}
+                onChange={async e => {
+                  const checked = e.target.checked;
+                  setAcceptedTerms(checked);
+                  if (checked) {
+                    try {
+                      await requestGeolocationPermission();
+                    } catch {}
+                  }
+                }}
               />
-              <CheckboxLabel htmlFor='remember'>
-                Lembrar de mim
+              <CheckboxLabel htmlFor='terms'>
+                Li e aceito os{' '}
+                <Link href='/terms' onClick={e => e.stopPropagation()}>
+                  Termos de Uso
+                </Link>{' '}
+                e as{' '}
+                <Link href='/privacy' onClick={e => e.stopPropagation()}>
+                  Políticas de Privacidade
+                </Link>
               </CheckboxLabel>
             </CheckboxRow>
-            <Link href='/forgot-password'>Esqueci minha senha</Link>
-          </RememberMeContainer>
+            {errors.terms && (
+              <OptimizedErrorMessage>{errors.terms}</OptimizedErrorMessage>
+            )}
+          </Form>
 
-          <CheckboxRow>
-            <Checkbox
-              id='terms'
-              type='checkbox'
-              checked={acceptedTerms}
-              onChange={async e => {
-                const checked = e.target.checked;
-                setAcceptedTerms(checked);
-                if (checked) {
-                  try {
-                    await requestGeolocationPermission();
-                  } catch {}
-                }
-              }}
-            />
-            <CheckboxLabel htmlFor='terms'>
-              Li e aceito os{' '}
-              <Link href='/terms' onClick={e => e.stopPropagation()}>
-                Termos de Uso
-              </Link>{' '}
-              e as{' '}
-              <Link href='/privacy' onClick={e => e.stopPropagation()}>
-                Políticas de Privacidade
-              </Link>
-            </CheckboxLabel>
-          </CheckboxRow>
-          {errors.terms && (
-            <OptimizedErrorMessage>{errors.terms}</OptimizedErrorMessage>
-          )}
-        </Form>
+          <BiometricSection>
+            <BiometricContainer>
+              <BiometricTitleContainer>
+                <BiometricTitle>Escolha sua forma de acesso</BiometricTitle>
+              </BiometricTitleContainer>
+              <BiometricOrContainer>
+                <BiometricTitle>Ou</BiometricTitle>
+              </BiometricOrContainer>
+            </BiometricContainer>
+            <BiometricOptions>
+              <BiometricButton
+                $variant='primary'
+                onClick={() => handleBiometricLogin('password')}
+                disabled={isLoading}
+              >
+                <span className='icon'>
+                  <AccessibleEmoji emoji='🔑' label='Chave' />
+                </span>
+                <span className='label'>Entrar</span>
+              </BiometricButton>
+              <BiometricButton onClick={() => handleBiometricLogin('face')}>
+                <span className='icon'>
+                  <AccessibleEmoji emoji='👤' label='Perfil' />
+                </span>
+                <span className='label'>Face ID</span>
+              </BiometricButton>
+              <BiometricButton
+                onClick={() => handleBiometricLogin('fingerprint')}
+              >
+                <span className='icon'>
+                  <AccessibleEmoji emoji='👆' label='Dedo' />
+                </span>
+                <span className='label'>Digital</span>
+              </BiometricButton>
+              <BiometricButton onClick={() => setIsEmployerModalNewOpen(true)}>
+                <span className='icon'>
+                  <AccessibleEmoji emoji='📝' label='Formulário' />
+                </span>
+                <span className='label'>Cadastre-se</span>
+              </BiometricButton>
+            </BiometricOptions>
+          </BiometricSection>
+        </LoginCard>
 
-        <BiometricSection>
-          <BiometricContainer>
-            <BiometricTitleContainer>
-              <BiometricTitle>Escolha sua forma de acesso</BiometricTitle>
-            </BiometricTitleContainer>
-            <BiometricOrContainer>
-              <BiometricTitle>Ou</BiometricTitle>
-            </BiometricOrContainer>
-          </BiometricContainer>
-          <BiometricOptions>
-            <BiometricButton
-              $variant='primary'
-              onClick={() => handleBiometricLogin('password')}
-              disabled={isLoading}
-            >
-              <span className='icon'>
-                <AccessibleEmoji emoji='🔑' label='Chave' />
-              </span>
-              <span className='label'>Entrar</span>
-            </BiometricButton>
-            <BiometricButton onClick={() => handleBiometricLogin('face')}>
-              <span className='icon'>
-                <AccessibleEmoji emoji='👤' label='Perfil' />
-              </span>
-              <span className='label'>Face ID</span>
-            </BiometricButton>
-            <BiometricButton
-              onClick={() => handleBiometricLogin('fingerprint')}
-            >
-              <span className='icon'>
-                <AccessibleEmoji emoji='👆' label='Dedo' />
-              </span>
-              <span className='label'>Digital</span>
-            </BiometricButton>
-            <BiometricButton
-              onClick={() => setIsEmployerModalNewOpen(true)}
-            >
-              <span className='icon'>
-                <AccessibleEmoji emoji='📝' label='Formulário' />
-              </span>
-              <span className='label'>Cadastre-se</span>
-            </BiometricButton>
-          </BiometricOptions>
-        </BiometricSection>
-      </LoginCard>
+        <EmployerModalNew
+          isOpen={isEmployerModalNewOpen}
+          onClose={() => setIsEmployerModalNewOpen(false)}
+          onSave={handleSaveEmployer}
+          $theme={{
+            colors: {
+              primary: publicColors.primary,
+              secondary: publicColors.secondary,
+              success: publicColors.success,
+              warning: publicColors.warning,
+              error: publicColors.error,
+              text: publicColors.text,
+              background: publicColors.background,
+              surface: publicColors.surface,
+              border: publicColors.border,
+            },
+          }}
+        />
 
-      <EmployerModalNew
-        isOpen={isEmployerModalNewOpen}
-        onClose={() => setIsEmployerModalNewOpen(false)}
-        onSave={handleSaveEmployer}
-        $theme={{
-          colors: {
-            primary: publicColors.primary,
-            secondary: publicColors.secondary,
-            success: publicColors.success,
-            warning: publicColors.warning,
-            error: publicColors.error,
-            text: publicColors.text,
-            background: publicColors.background,
-            surface: publicColors.surface,
-            border: publicColors.border,
-          },
-        }}
-      />
-
-      <ToastContainer
-        position='top-center'
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
-    </PageContainer>
+        <ToastContainer
+          position='top-center'
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme='light'
+        />
+      </PageContainer>
     </>
   );
 }

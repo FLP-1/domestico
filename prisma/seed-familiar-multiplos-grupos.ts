@@ -10,34 +10,36 @@ const prisma = new PrismaClient();
  */
 
 async function main() {
-  console.log('🌱 Iniciando criação de dados para familiar em múltiplos grupos...\n');
+  console.log(
+    '🌱 Iniciando criação de dados para familiar em múltiplos grupos...\n'
+  );
 
   // ============================================
   // 1. LIMPAR DADOS EXISTENTES (se necessário)
   // ============================================
   console.log('🧹 Limpando dados existentes...');
-  
+
   // Limpar apenas os dados relacionados ao CPF específico
   await prisma.usuarioPerfil.deleteMany({
     where: {
       usuario: {
-        cpf: '59876913700'
-      }
-    }
+        cpf: '59876913700',
+      },
+    },
   });
-  
+
   await prisma.usuarioGrupo.deleteMany({
     where: {
       usuario: {
-        cpf: '59876913700'
-      }
-    }
+        cpf: '59876913700',
+      },
+    },
   });
-  
+
   await prisma.usuario.deleteMany({
     where: {
-      cpf: '59876913700'
-    }
+      cpf: '59876913700',
+    },
   });
 
   console.log('✅ Dados limpos\n');
@@ -46,7 +48,7 @@ async function main() {
   // 2. CRIAR USUÁRIO FAMILIAR
   // ============================================
   console.log('👤 Criando usuário familiar...');
-  
+
   const senhaHash = await bcrypt.hash('123456', 10);
   const salt = await bcrypt.genSalt(10);
 
@@ -80,8 +82,8 @@ async function main() {
       dataConsentimento: new Date(),
       termosAceitos: true,
       versaoTermos: '1.0',
-      ativo: true
-    }
+      ativo: true,
+    },
   });
 
   console.log(`✅ Usuário familiar criado: ${familiar.nomeCompleto}\n`);
@@ -90,17 +92,19 @@ async function main() {
   // 3. BUSCAR PERFIS EXISTENTES
   // ============================================
   console.log('🔍 Buscando perfis existentes...');
-  
+
   const perfilFamilia = await prisma.perfil.findUnique({
-    where: { codigo: 'FAMILIA' }
+    where: { codigo: 'FAMILIA' },
   });
 
   const perfilEmpregado = await prisma.perfil.findUnique({
-    where: { codigo: 'EMPREGADO' }
+    where: { codigo: 'EMPREGADO' },
   });
 
   if (!perfilFamilia || !perfilEmpregado) {
-    throw new Error('Perfis FAMILIA ou EMPREGADO não encontrados. Execute o seed principal primeiro.');
+    throw new Error(
+      'Perfis FAMILIA ou EMPREGADO não encontrados. Execute o seed principal primeiro.'
+    );
   }
 
   console.log('✅ Perfis encontrados\n');
@@ -118,8 +122,8 @@ async function main() {
       icone: '👨‍👩‍👧‍👦',
       tipo: 'familia',
       privado: true,
-      ativo: true
-    }
+      ativo: true,
+    },
   });
 
   const grupoTrabalho = await prisma.grupo.create({
@@ -130,8 +134,8 @@ async function main() {
       icone: '🏢',
       tipo: 'empresa',
       privado: false,
-      ativo: true
-    }
+      ativo: true,
+    },
   });
 
   console.log('✅ 2 grupos criados\n');
@@ -147,15 +151,15 @@ async function main() {
         usuarioId: familiar.id,
         grupoId: grupoFamilia.id,
         papel: 'admin',
-        ativo: true
+        ativo: true,
       },
       {
         usuarioId: familiar.id,
         grupoId: grupoTrabalho.id,
         papel: 'membro',
-        ativo: true
-      }
-    ]
+        ativo: true,
+      },
+    ],
   });
 
   console.log('✅ Usuário associado aos grupos\n');
@@ -166,28 +170,28 @@ async function main() {
   console.log('👔 Criando perfis por grupo...');
 
   // Perfil FAMILIA no grupo familiar
-    await prisma.usuarioPerfil.create({
-      data: {
-        usuarioId: familiar.id,
-        perfilId: perfilFamilia.id,
-        avatar: 'JS',
-        apelido: 'João Família',
-        principal: true,
-        ativo: true
-      }
-    });
+  await prisma.usuarioPerfil.create({
+    data: {
+      usuarioId: familiar.id,
+      perfilId: perfilFamilia.id,
+      avatar: 'JS',
+      apelido: 'João Família',
+      principal: true,
+      ativo: true,
+    },
+  });
 
-    // Perfil EMPREGADO no grupo de trabalho
-    await prisma.usuarioPerfil.create({
-      data: {
-        usuarioId: familiar.id,
-        perfilId: perfilEmpregado.id,
-        avatar: 'JS',
-        apelido: 'João Trabalho',
-        principal: false,
-        ativo: true
-      }
-    });
+  // Perfil EMPREGADO no grupo de trabalho
+  await prisma.usuarioPerfil.create({
+    data: {
+      usuarioId: familiar.id,
+      perfilId: perfilEmpregado.id,
+      avatar: 'JS',
+      apelido: 'João Trabalho',
+      principal: false,
+      ativo: true,
+    },
+  });
 
   console.log('✅ Perfis criados por grupo\n');
 
@@ -205,8 +209,8 @@ async function main() {
       avatar: '👨‍👩‍👧‍👦',
       ativa: true,
       arquivada: false,
-      ultimaMensagemEm: new Date()
-    }
+      ultimaMensagemEm: new Date(),
+    },
   });
 
   const conversaTrabalho = await prisma.conversa.create({
@@ -217,8 +221,8 @@ async function main() {
       avatar: '🏢',
       ativa: true,
       arquivada: false,
-      ultimaMensagemEm: new Date()
-    }
+      ultimaMensagemEm: new Date(),
+    },
   });
 
   // Participar das conversas
@@ -233,7 +237,7 @@ async function main() {
         notificacoes: true,
         ultimaLeitura: new Date(),
         entradaEm: new Date(),
-        ativo: true
+        ativo: true,
       },
       {
         conversaId: conversaTrabalho.id,
@@ -244,9 +248,9 @@ async function main() {
         notificacoes: true,
         ultimaLeitura: new Date(),
         entradaEm: new Date(),
-        ativo: true
-      }
-    ]
+        ativo: true,
+      },
+    ],
   });
 
   // Mensagens de exemplo
@@ -261,7 +265,7 @@ async function main() {
         lida: true,
         editada: false,
         excluida: false,
-        fixada: false
+        fixada: false,
       },
       {
         conversaId: conversaTrabalho.id,
@@ -272,9 +276,9 @@ async function main() {
         lida: false,
         editada: false,
         excluida: false,
-        fixada: false
-      }
-    ]
+        fixada: false,
+      },
+    ],
   });
 
   console.log('✅ Dados adicionais criados\n');
@@ -290,15 +294,15 @@ async function main() {
     include: {
       perfis: {
         include: {
-          perfil: true
-        }
+          perfil: true,
+        },
       },
       gruposUsuario: {
         include: {
-          grupo: true
-        }
-      }
-    }
+          grupo: true,
+        },
+      },
+    },
   });
 
   if (usuario) {
@@ -309,7 +313,9 @@ async function main() {
     console.log('');
     console.log('  📋 Perfis:');
     usuario.perfis.forEach((perfil: any) => {
-      console.log(`    • ${perfil.perfil.nome} (${perfil.principal ? 'Principal' : 'Secundário'})`);
+      console.log(
+        `    • ${perfil.perfil.nome} (${perfil.principal ? 'Principal' : 'Secundário'})`
+      );
     });
     console.log('');
     console.log('  🏢 Grupos:');
@@ -322,7 +328,7 @@ async function main() {
   console.log('  ✅ USUÁRIO COM MÚLTIPLOS PERFIS E GRUPOS');
   console.log('  ✅ PRONTO PARA TESTE DE SELEÇÃO');
   console.log('  ✅ DADOS REALISTAS E COMPLETOS\n');
-  
+
   console.log('✅ Criação concluída com sucesso!');
   console.log('\n🔐 Para testar o login:');
   console.log('  CPF: 59876913700');
@@ -333,7 +339,7 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
+  .catch(e => {
     console.error('❌ Erro ao criar dados:', e);
     process.exit(1);
   })

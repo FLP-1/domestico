@@ -59,6 +59,7 @@ psql -h localhost -p 5433 -U postgres -d dom -c "SELECT cpf, nome_completo, emai
 Após executar o seed, use estas credenciais para fazer login:
 
 ### Opção 1: Empregador (Acesso Completo)
+
 ```
 📧 Email: francisco@flpbusiness.com
 🔒 Senha: senha123
@@ -66,6 +67,7 @@ Após executar o seed, use estas credenciais para fazer login:
 ```
 
 ### Opção 2: Empregado
+
 ```
 📧 Email: maria.santos@email.com
 🔒 Senha: senha123
@@ -73,6 +75,7 @@ Após executar o seed, use estas credenciais para fazer login:
 ```
 
 ### Opção 3: Outros usuários
+
 ```
 📧 Emails disponíveis:
    - joao.silva@email.com
@@ -92,22 +95,22 @@ Após executar o seed, use estas credenciais para fazer login:
 
 O seed irá criar:
 
-| Item | Quantidade | Detalhes |
-|------|------------|----------|
-| **Usuários** | 8 | Todos com CPF válido |
-| **Perfis** | 4 | Admin, Empregador, Empregado, Família |
-| **Funcionalidades** | 11 | Todas as funcionalidades do sistema |
-| **Permissões** | 30+ | Configuradas por perfil |
-| **Grupos** | 1 | Família Papaleo |
-| **Dispositivos** | 5 | Smartphones com geolocalização |
-| **Documentos** | 15 | RG, CPF, CNH, etc. |
-| **Tarefas** | 20 | Distribuídas entre usuários |
-| **Planos** | 3 | Gratuito, Básico, Premium |
-| **Assinaturas** | 1 | Francisco com Plano Básico |
-| **Listas de Compras** | 1 | 6 itens de supermercado |
-| **Alertas** | 5 | Vencimentos e pagamentos |
-| **Termos** | 1 | Versão v2.1.0 |
-| **Configurações** | 6 | Sistema e eSocial |
+| Item                  | Quantidade | Detalhes                              |
+| --------------------- | ---------- | ------------------------------------- |
+| **Usuários**          | 8          | Todos com CPF válido                  |
+| **Perfis**            | 4          | Admin, Empregador, Empregado, Família |
+| **Funcionalidades**   | 11         | Todas as funcionalidades do sistema   |
+| **Permissões**        | 30+        | Configuradas por perfil               |
+| **Grupos**            | 1          | Família Papaleo                       |
+| **Dispositivos**      | 5          | Smartphones com geolocalização        |
+| **Documentos**        | 15         | RG, CPF, CNH, etc.                    |
+| **Tarefas**           | 20         | Distribuídas entre usuários           |
+| **Planos**            | 3          | Gratuito, Básico, Premium             |
+| **Assinaturas**       | 1          | Francisco com Plano Básico            |
+| **Listas de Compras** | 1          | 6 itens de supermercado               |
+| **Alertas**           | 5          | Vencimentos e pagamentos              |
+| **Termos**            | 1          | Versão v2.1.0                         |
+| **Configurações**     | 6          | Sistema e eSocial                     |
 
 ---
 
@@ -135,6 +138,7 @@ Todos os CPFs são gerados com a **validação oficial brasileira**:
 ### Problema 1: "Prisma Client not found"
 
 **Solução:**
+
 ```powershell
 npx prisma generate
 ```
@@ -142,6 +146,7 @@ npx prisma generate
 ### Problema 2: "Cannot find module 'tsx'"
 
 **Solução:**
+
 ```powershell
 npm install --save-dev tsx
 ```
@@ -149,6 +154,7 @@ npm install --save-dev tsx
 ### Problema 3: "Cannot find module 'bcryptjs'"
 
 **Solução:**
+
 ```powershell
 npm install bcryptjs @types/bcryptjs
 ```
@@ -158,12 +164,14 @@ npm install bcryptjs @types/bcryptjs
 Isso significa que o seed já foi executado antes. Para reexecutar:
 
 **Solução 1 - Limpar apenas os dados:**
+
 ```powershell
 psql -h localhost -p 5433 -U postgres -d dom -c "TRUNCATE TABLE usuarios CASCADE;"
 npx tsx prisma/seed.ts
 ```
 
 **Solução 2 - Resetar banco completo:**
+
 ```powershell
 npm run db:reset
 npx tsx prisma/seed.ts
@@ -172,6 +180,7 @@ npx tsx prisma/seed.ts
 ### Problema 5: Seed executado mas não aparece nada
 
 **Verificar se os dados foram criados:**
+
 ```powershell
 psql -h localhost -p 5433 -U postgres -d dom -c "SELECT * FROM usuarios LIMIT 3;"
 ```
@@ -218,7 +227,7 @@ psql -h localhost -p 5433 -U postgres -d dom -c "SELECT cpf, nome_completo, emai
 
 # Contar registros em cada tabela
 psql -h localhost -p 5433 -U postgres -d dom -c "
-SELECT 
+SELECT
   'usuarios' as tabela, COUNT(*) as total FROM usuarios
 UNION ALL
 SELECT 'perfis', COUNT(*) FROM perfis
@@ -274,4 +283,3 @@ psql -h localhost -p 5433 -U postgres -d dom -c "\dt" 2>&1 | Select-String "usua
 **Última atualização:** 02/10/2025  
 **Versão:** DOM v1.0.0  
 **Banco:** PostgreSQL 18 - Porta 5433
-

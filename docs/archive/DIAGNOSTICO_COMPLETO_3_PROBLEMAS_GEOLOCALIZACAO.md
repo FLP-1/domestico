@@ -7,15 +7,18 @@
 ## 🚨 **PROBLEMAS REPORTADOS PELO USUÁRIO**
 
 ### 1. Localização no WelcomeSection não atualizada e errada
+
 - **Sintoma:** WelcomeSection mostra texto fixo e não reflete a localização real
 - **Impacto:** Usuário não vê informações úteis de localização
 
 ### 2. Popup de permissão aparece ao clicar no card de entrada (indevidamente)
+
 - **Sintoma:** Navegador solicita permissão toda vez que clica no card
 - **Impacto:** UX ruim, repetitivo, quebra fluxo de trabalho
 - **Esperado:** Permissão só deve ser solicitada UMA VEZ
 
 ### 3. Registros de ponto não sendo gravados no banco de dados
+
 - **Sintoma:** Ao clicar nos cards, registros não salvam
 - **Impacto:** Dados de geolocalização perdidos, sistema não funcional
 
@@ -29,17 +32,17 @@
 
 ```tsx
 // LINHA 226-228
-<LocationInfo>
-  Localização capturada no registro de ponto
-</LocationInfo>
+<LocationInfo>Localização capturada no registro de ponto</LocationInfo>
 ```
 
 **❌ PROBLEMA:**
+
 - Texto **FIXO** (hardcoded)
 - Não há estado ou prop para localização real
 - Não há integração com `useGeolocation`
 
 **✅ SOLUÇÃO:**
+
 - Criar contexto global para armazenar última localização capturada
 - WelcomeSection ler deste contexto e exibir dinamicamente
 
@@ -64,11 +67,13 @@ navigator.geolocation.getCurrentPosition()
 ```
 
 **❌ PROBLEMA:**
+
 - `getCurrentPosition()` **SEMPRE** solicita permissão
 - Navegador não guarda permissão entre chamadas (comportamento normal do browser)
 - Sistema não valida se permissão já foi concedida antes de chamar
 
 **✅ SOLUÇÃO:**
+
 - Verificar se permissão já foi concedida antes de chamar `getCurrentPosition`
 - Usar `navigator.permissions.query({ name: 'geolocation' })`
 - Cache de permissão em sessionStorage/localStorage
@@ -83,7 +88,7 @@ navigator.geolocation.getCurrentPosition()
 // LINHA 389-404
 const handleTimeRecord = async (type: TimeRecord['type']) => {
   // ❌ NÃO CAPTURA GEOLOCALIZAÇÃO!
-  
+
   const response = await fetch('/api/time-clock/records', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -102,6 +107,7 @@ const handleTimeRecord = async (type: TimeRecord['type']) => {
 ```
 
 **❌ PROBLEMA:**
+
 1. `handleTimeRecord` **NÃO** captura geolocalização
 2. `handleTimeRecord` **NÃO** envia dados de geolocalização para API
 3. A API espera estes campos (linha 34-44 de `records.ts`):
@@ -112,6 +118,7 @@ const handleTimeRecord = async (type: TimeRecord['type']) => {
 **Onde os dados DEVERIAM vir?**
 
 O `TimeRecordCard` captura geolocalização via `createCriticalButtonHandler()`, mas:
+
 - ❌ Dados **NÃO são retornados** para `handleTimeRecord`
 - ❌ Dados **NÃO são armazenados** em estado global
 - ❌ `handleTimeRecord` executa **ANTES** da captura terminar
@@ -128,13 +135,14 @@ createCriticalButtonHandler(onClick, actionName)  ← CAPTURA GEOLOCALIZAÇÃO
   ↓
 onClick()  ← handleTimeRecord() ❌ SEM DADOS!
   ↓
-fetch('/api/time-clock/records', { 
-  tipo: 'entrada', 
+fetch('/api/time-clock/records', {
+  tipo: 'entrada',
   // ❌ latitude/longitude/precisao/endereco AUSENTES
 })
 ```
 
 **✅ SOLUÇÃO:**
+
 1. `createCriticalButtonHandler` deve **RETORNAR** dados capturados
 2. `handleTimeRecord` deve **RECEBER** dados de geolocalização
 3. Enviar estes dados no `body` do POST para API
@@ -240,7 +248,7 @@ const handleTimeRecord = async (type: TimeRecord['type']) => {
 
 ```tsx
 const handleTimeRecord = async (
-  type: TimeRecord['type'], 
+  type: TimeRecord['type'],
   locationData: any // ✅ RECEBE dados de geolocalização
 ) => {
   const response = await fetch('/api/time-clock/records', {
@@ -259,7 +267,7 @@ const handleTimeRecord = async (
       downlink: locationData?.networkInfo?.downlink,
       rtt: locationData?.networkInfo?.rtt,
       userAgent: navigator.userAgent,
-      networkTimestamp: new Date().toISOString()
+      networkTimestamp: new Date().toISOString(),
     }),
   });
 };
@@ -279,7 +287,13 @@ const handleClick = useCallback(async () => {
       await criticalHandler(); // ❌ NÃO PASSA locationData para onClick
     }
   }
-}, [clickable, onClick, $criticalAction, actionName, createCriticalButtonHandler]);
+}, [
+  clickable,
+  onClick,
+  $criticalAction,
+  actionName,
+  createCriticalButtonHandler,
+]);
 ```
 
 **DEPOIS:**
@@ -290,13 +304,19 @@ const handleClick = useCallback(async () => {
     if ($criticalAction) {
       // ✅ CAPTURA retorna locationData
       const criticalHandler = createCriticalButtonHandler(
-        (locationData) => onClick(locationData), // ✅ PASSA locationData
+        locationData => onClick(locationData), // ✅ PASSA locationData
         actionName
       );
       await criticalHandler();
     }
   }
-}, [clickable, onClick, $criticalAction, actionName, createCriticalButtonHandler]);
+}, [
+  clickable,
+  onClick,
+  $criticalAction,
+  actionName,
+  createCriticalButtonHandler,
+]);
 ```
 
 ---
@@ -330,7 +350,9 @@ const GeolocationContext = createContext<GeolocationContextType>({
 export const useGeolocationContext = () => useContext(GeolocationContext);
 
 export const GeolocationProvider = ({ children }: { children: ReactNode }) => {
-  const [lastLocation, setLastLocation] = useState<GeolocationData | null>(null);
+  const [lastLocation, setLastLocation] = useState<GeolocationData | null>(
+    null
+  );
 
   return (
     <GeolocationContext.Provider value={{ lastLocation, setLastLocation }}>
@@ -347,9 +369,7 @@ export const GeolocationProvider = ({ children }: { children: ReactNode }) => {
 **ANTES:**
 
 ```tsx
-<LocationInfo>
-  Localização capturada no registro de ponto
-</LocationInfo>
+<LocationInfo>Localização capturada no registro de ponto</LocationInfo>
 ```
 
 **DEPOIS:**
@@ -373,7 +393,7 @@ const { lastLocation } = useGeolocationContext();
   ) : (
     'Localização capturada no registro de ponto'
   )}
-</LocationInfo>
+</LocationInfo>;
 ```
 
 ---
@@ -386,12 +406,14 @@ const { lastLocation } = useGeolocationContext();
 const captureRealTimeLocation = useCallback(async () => {
   // ✅ VERIFICAR PERMISSÃO PRIMEIRO
   try {
-    const permission = await navigator.permissions.query({ name: 'geolocation' });
-    
+    const permission = await navigator.permissions.query({
+      name: 'geolocation',
+    });
+
     if (permission.state === 'denied') {
       throw new Error('Permissão de geolocalização negada');
     }
-    
+
     // Se 'granted', não solicita novamente
     // Se 'prompt', solicita pela primeira vez
   } catch (error) {
@@ -401,8 +423,12 @@ const captureRealTimeLocation = useCallback(async () => {
   // Continua com getCurrentPosition...
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
-      async (position) => { /* ... */ },
-      (error) => { /* ... */ },
+      async position => {
+        /* ... */
+      },
+      error => {
+        /* ... */
+      },
       { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
     );
   });
@@ -413,20 +439,21 @@ const captureRealTimeLocation = useCallback(async () => {
 
 ## 📝 **RESUMO DAS CORREÇÕES**
 
-| Problema | Arquivo | Correção |
-|----------|---------|----------|
-| 1. WelcomeSection não atualiza | `WelcomeSection/index.tsx` | Usar contexto global, exibir localização dinâmica |
-| 2. Popup de permissão repetido | `useGeolocation.ts` | Verificar permissão antes de chamar API |
-| 3. Registros não salvam no banco | `time-clock.tsx` | `handleTimeRecord` receber e enviar locationData |
-| 3. Dados não passam para ação | `useGeolocationCapture.ts` | Passar locationData para action() |
-| 3. TimeRecordCard não passa dados | `TimeRecordCard/index.tsx` | onClick recebe locationData |
-| 1. Sem estado global | **NOVO:** `GeolocationContext.tsx` | Criar contexto global |
+| Problema                          | Arquivo                            | Correção                                          |
+| --------------------------------- | ---------------------------------- | ------------------------------------------------- |
+| 1. WelcomeSection não atualiza    | `WelcomeSection/index.tsx`         | Usar contexto global, exibir localização dinâmica |
+| 2. Popup de permissão repetido    | `useGeolocation.ts`                | Verificar permissão antes de chamar API           |
+| 3. Registros não salvam no banco  | `time-clock.tsx`                   | `handleTimeRecord` receber e enviar locationData  |
+| 3. Dados não passam para ação     | `useGeolocationCapture.ts`         | Passar locationData para action()                 |
+| 3. TimeRecordCard não passa dados | `TimeRecordCard/index.tsx`         | onClick recebe locationData                       |
+| 1. Sem estado global              | **NOVO:** `GeolocationContext.tsx` | Criar contexto global                             |
 
 ---
 
 ## 🧪 **VALIDAÇÃO PÓS-CORREÇÃO**
 
 ### Teste 1: Verificar Registro Salva no Banco
+
 1. Acessar `/time-clock`
 2. Clicar em card "Entrada"
 3. Aguardar captura (5-30s)
@@ -435,6 +462,7 @@ const captureRealTimeLocation = useCallback(async () => {
 6. **Validar:** `latitude`, `longitude`, `precisao`, `enderecoCompleto`, `nomeRedeWiFi` devem estar preenchidos
 
 ### Teste 2: Verificar Popup Permissão Única
+
 1. Limpar permissões do navegador (F12 → Site Settings)
 2. Acessar `/time-clock`
 3. Clicar em card "Entrada"
@@ -444,6 +472,7 @@ const captureRealTimeLocation = useCallback(async () => {
 7. **Segunda vez:** Popup NÃO deve aparecer ✅
 
 ### Teste 3: Verificar WelcomeSection Atualiza
+
 1. Acessar `/time-clock`
 2. **Antes do registro:** WelcomeSection mostra texto padrão
 3. Clicar em card "Entrada" e aguardar captura
@@ -455,16 +484,19 @@ const captureRealTimeLocation = useCallback(async () => {
 ## ⚠️ **PONTOS DE ATENÇÃO**
 
 ### 1. Performance
+
 - Captura de geolocalização demora 5-30s
 - Usuário deve ver feedback visual (loading spinner)
 - Toast com mensagem: "Capturando localização, aguarde..."
 
 ### 2. Fallback
+
 - Se captura falhar, registro deve salvar com valores padrão:
   - `latitude: 0`, `longitude: 0`, `precisao: 0`
   - Sistema continua funcional
 
 ### 3. Privacidade
+
 - Permissão de geolocalização é **MANUAL**
 - Usuário pode negar, sistema deve lidar gracefully
 - Dados de localização **NÃO** são capturados automaticamente
@@ -474,4 +506,3 @@ const captureRealTimeLocation = useCallback(async () => {
 **Status:** 📋 Diagnóstico Completo  
 **Próximo Passo:** Aplicar correções nos 6 arquivos listados  
 **Data:** 09/10/2025
-

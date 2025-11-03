@@ -222,7 +222,10 @@ export const profileThemes: Record<string, ProfileTheme> = {
   },
 };
 
-export const useTheme = (profileId?: string, useCentralizedConfig: boolean = true) => {
+export const useTheme = (
+  profileId?: string,
+  useCentralizedConfig: boolean = true
+) => {
   const { config, loading, error } = useSystemConfig();
   const [currentTheme, setCurrentTheme] = useState<ProfileTheme>(() => {
     return (
@@ -249,7 +252,7 @@ export const useTheme = (profileId?: string, useCentralizedConfig: boolean = tru
   useEffect(() => {
     if (profileId && profileThemes[profileId]) {
       const baseTheme = profileThemes[profileId];
-      
+
       // Se usar configuração centralizada, mesclar com cores do banco
       if (useCentralizedConfig && config) {
         const mergedTheme: ProfileTheme = {

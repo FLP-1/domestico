@@ -33,20 +33,22 @@ export const useUserGroups = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await fetch('/api/user/groups');
       if (!response.ok) {
         throw new Error('Erro ao carregar grupos do usuário');
       }
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         setGroups(data.data.grupos);
         setProfile(data.data.perfilPrincipal);
-        
+
         // ✅ Selecionar automaticamente o grupo principal se existir
-        const grupoPrincipal = data.data.grupos.find((g: UserGroup) => g.principal);
+        const grupoPrincipal = data.data.grupos.find(
+          (g: UserGroup) => g.principal
+        );
         if (grupoPrincipal) {
           setSelectedGroup(grupoPrincipal);
         } else if (data.data.grupos.length > 0) {
@@ -86,7 +88,7 @@ export const useUserGroups = () => {
     isEmpregador,
     hasMultipleGroups,
     selectGroup,
-    reloadGroups: loadUserGroups
+    reloadGroups: loadUserGroups,
   };
 };
 

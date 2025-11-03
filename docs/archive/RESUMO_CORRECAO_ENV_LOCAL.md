@@ -19,7 +19,7 @@ NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=dom_nextauth_secret_key_2025
 ESOCIAL_EMPREGADOR_CPF=59876913700              ← ❌ NÃO DEVE ESTAR AQUI
 ESOCIAL_EMPREGADOR_NOME=FLP Business Strategy   ← ❌ NÃO DEVE ESTAR AQUI
-ESOCIAL_CERTIFICATE_PATH=./certificados/...     
+ESOCIAL_CERTIFICATE_PATH=./certificados/...
 ESOCIAL_CERTIFICATE_PASSWORD=456587
 ESOCIAL_URL_PRODUCAO=https://webservices.envio.esocial.gov.br
 ```
@@ -61,7 +61,7 @@ ESOCIAL_URL_HOMOLOGACAO=https://webservices.producaorestrita.esocial.gov.br
 -- ✅ Dados do empregador agora estão no banco
 SELECT * FROM empregadores;
 
- id | cpfCnpj     | nome                    | email                  
+ id | cpfCnpj     | nome                    | email
 ----+-------------+-------------------------+-----------------------
  ...| 59876913700 | FLP Business Strategy   | contato@flpbusiness.com
 ```
@@ -70,37 +70,42 @@ SELECT * FROM empregadores;
 
 ## 🔄 Mudanças Implementadas
 
-| # | Alteração | Status |
-|---|-----------|--------|
-| 1 | Nome do banco: `dom` (PostgreSQL 18) | ✅ |
-| 2 | Criada tabela `empregadores` no schema | ✅ |
-| 3 | Dados movidos do `env.local` para o banco | ✅ |
-| 4 | Arquivo `env.local` limpo e corrigido | ✅ |
-| 5 | Seed atualizado com dados de empregador | ✅ |
-| 6 | API REST criada (`/api/employers`) | ✅ |
+| #   | Alteração                                 | Status |
+| --- | ----------------------------------------- | ------ |
+| 1   | Nome do banco: `dom` (PostgreSQL 18)      | ✅     |
+| 2   | Criada tabela `empregadores` no schema    | ✅     |
+| 3   | Dados movidos do `env.local` para o banco | ✅     |
+| 4   | Arquivo `env.local` limpo e corrigido     | ✅     |
+| 5   | Seed atualizado com dados de empregador   | ✅     |
+| 6   | API REST criada (`/api/employers`)        | ✅     |
 
 ---
 
 ## 🎯 Vantagens da Nova Estrutura
 
 ### ✅ Separação Clara
+
 ```
 env.local          → Configurações técnicas (URLs, certificados, segredos)
 Banco de Dados     → Dados de negócio (empregadores, usuários, etc)
 ```
 
 ### ✅ Múltiplos Empregadores
+
 Agora é possível cadastrar quantos empregadores quiser:
+
 ```sql
 INSERT INTO empregadores (...) VALUES (...);
 ```
 
 ### ✅ Segurança
+
 - Dados sensíveis protegidos no banco
 - Controle de acesso via API
 - Auditoria de alterações
 
 ### ✅ Flexibilidade
+
 - Alterações sem redeploy
 - Interface administrativa futura
 - Histórico de mudanças
@@ -160,4 +165,3 @@ curl http://localhost:3000/api/employers
 ```
 
 **Tudo pronto e funcionando!** 🎉
-

@@ -11,10 +11,13 @@ const SummaryContainer = styled.div<{ $theme?: any }>`
   margin-bottom: 2rem;
 `;
 
-const SummaryCard = styled.div<{ $theme?: any; $variant: 'worked' | 'expected' | 'difference' }>`
+const SummaryCard = styled.div<{
+  $theme?: any;
+  $variant: 'worked' | 'expected' | 'difference';
+}>`
   position: relative;
   overflow: hidden;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -43,7 +46,7 @@ const TimeRow = styled.div<{ $theme?: any }>`
   align-items: center;
   padding: 0.5rem 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  
+
   &:last-child {
     border-bottom: none;
   }
@@ -55,7 +58,10 @@ const TimeLabel = styled.span<{ $theme?: any }>`
   font-weight: 500;
 `;
 
-const TimeValue = styled.span<{ $theme?: any; $variant: 'worked' | 'expected' | 'difference' }>`
+const TimeValue = styled.span<{
+  $theme?: any;
+  $variant: 'worked' | 'expected' | 'difference';
+}>`
   font-size: 1.1rem;
   font-weight: 700;
   color: ${props => {
@@ -78,10 +84,9 @@ const DifferenceIndicator = styled.span<{ $positive: boolean }>`
   gap: 0.25rem;
   font-size: 0.8rem;
   font-weight: 600;
-  color: ${props => props.$positive ? '#27ae60' : '#e74c3c'};
+  color: ${props => (props.$positive ? '#27ae60' : '#e74c3c')};
   margin-left: 0.5rem;
 `;
-
 
 // Interfaces
 export interface TimeSummary {
@@ -113,11 +118,14 @@ const formatTime = (minutes: number): string => {
 };
 
 // Helper function para calcular diferença
-const calculateDifference = (worked: number, expected: number): { value: number; positive: boolean } => {
+const calculateDifference = (
+  worked: number,
+  expected: number
+): { value: number; positive: boolean } => {
   const diff = worked - expected;
   return {
     value: Math.abs(diff),
-    positive: diff >= 0
+    positive: diff >= 0,
   };
 };
 
@@ -127,35 +135,41 @@ export const TimeSummaryCard: React.FC<TimeSummaryCardProps> = ({
   overtimeData,
 }) => {
   const dayDiff = calculateDifference(summary.day.worked, summary.day.expected);
-  const weekDiff = calculateDifference(summary.week.worked, summary.week.expected);
-  const monthDiff = calculateDifference(summary.month.worked, summary.month.expected);
+  const weekDiff = calculateDifference(
+    summary.week.worked,
+    summary.week.expected
+  );
+  const monthDiff = calculateDifference(
+    summary.month.worked,
+    summary.month.expected
+  );
 
   return (
     <SummaryContainer>
       {/* Horas Trabalhadas */}
-      <SummaryCard $theme={theme} $variant="worked">
+      <SummaryCard $theme={theme} $variant='worked'>
         <UnifiedCard
           theme={theme}
-          variant="default"
-          size="md"
-          icon={<AccessibleEmoji emoji="⏱️" label="Trabalhado" />}
-          title="Horas Trabalhadas"
+          variant='default'
+          size='md'
+          icon={<AccessibleEmoji emoji='⏱️' label='Trabalhado' />}
+          title='Horas Trabalhadas'
         >
           <TimeRow>
             <TimeLabel>Hoje:</TimeLabel>
-            <TimeValue $theme={theme} $variant="worked">
+            <TimeValue $theme={theme} $variant='worked'>
               {formatTime(summary.day.worked)}
             </TimeValue>
           </TimeRow>
           <TimeRow>
             <TimeLabel>Esta Semana:</TimeLabel>
-            <TimeValue $theme={theme} $variant="worked">
+            <TimeValue $theme={theme} $variant='worked'>
               {formatTime(summary.week.worked)}
             </TimeValue>
           </TimeRow>
           <TimeRow>
             <TimeLabel>Este Mês:</TimeLabel>
-            <TimeValue $theme={theme} $variant="worked">
+            <TimeValue $theme={theme} $variant='worked'>
               {formatTime(summary.month.worked)}
             </TimeValue>
           </TimeRow>
@@ -163,29 +177,29 @@ export const TimeSummaryCard: React.FC<TimeSummaryCardProps> = ({
       </SummaryCard>
 
       {/* Horas Esperadas */}
-      <SummaryCard $theme={theme} $variant="expected">
+      <SummaryCard $theme={theme} $variant='expected'>
         <UnifiedCard
           theme={theme}
-          variant="default"
-          size="md"
-          icon={<AccessibleEmoji emoji="📅" label="Esperado" />}
-          title="Horas Esperadas"
+          variant='default'
+          size='md'
+          icon={<AccessibleEmoji emoji='📅' label='Esperado' />}
+          title='Horas Esperadas'
         >
           <TimeRow>
             <TimeLabel>Hoje:</TimeLabel>
-            <TimeValue $theme={theme} $variant="expected">
+            <TimeValue $theme={theme} $variant='expected'>
               {formatTime(summary.day.expected)}
             </TimeValue>
           </TimeRow>
           <TimeRow>
             <TimeLabel>Esta Semana:</TimeLabel>
-            <TimeValue $theme={theme} $variant="expected">
+            <TimeValue $theme={theme} $variant='expected'>
               {formatTime(summary.week.expected)}
             </TimeValue>
           </TimeRow>
           <TimeRow>
             <TimeLabel>Este Mês:</TimeLabel>
-            <TimeValue $theme={theme} $variant="expected">
+            <TimeValue $theme={theme} $variant='expected'>
               {formatTime(summary.month.expected)}
             </TimeValue>
           </TimeRow>
@@ -193,46 +207,46 @@ export const TimeSummaryCard: React.FC<TimeSummaryCardProps> = ({
       </SummaryCard>
 
       {/* Diferenças */}
-      <SummaryCard $theme={theme} $variant="difference">
+      <SummaryCard $theme={theme} $variant='difference'>
         <UnifiedCard
           theme={theme}
-          variant="default"
-          size="md"
-          icon={<AccessibleEmoji emoji="📊" label="Diferença" />}
-          title="Diferenças"
+          variant='default'
+          size='md'
+          icon={<AccessibleEmoji emoji='📊' label='Diferença' />}
+          title='Diferenças'
         >
           <TimeRow>
             <TimeLabel>Hoje:</TimeLabel>
-            <TimeValue $theme={theme} $variant="difference">
+            <TimeValue $theme={theme} $variant='difference'>
               {formatTime(dayDiff.value)}
               <DifferenceIndicator $positive={dayDiff.positive}>
-                <AccessibleEmoji 
-                  emoji={dayDiff.positive ? "📈" : "📉"} 
-                  label={dayDiff.positive ? "Acima" : "Abaixo"} 
+                <AccessibleEmoji
+                  emoji={dayDiff.positive ? '📈' : '📉'}
+                  label={dayDiff.positive ? 'Acima' : 'Abaixo'}
                 />
               </DifferenceIndicator>
             </TimeValue>
           </TimeRow>
           <TimeRow>
             <TimeLabel>Esta Semana:</TimeLabel>
-            <TimeValue $theme={theme} $variant="difference">
+            <TimeValue $theme={theme} $variant='difference'>
               {formatTime(weekDiff.value)}
               <DifferenceIndicator $positive={weekDiff.positive}>
-                <AccessibleEmoji 
-                  emoji={weekDiff.positive ? "📈" : "📉"} 
-                  label={weekDiff.positive ? "Acima" : "Abaixo"} 
+                <AccessibleEmoji
+                  emoji={weekDiff.positive ? '📈' : '📉'}
+                  label={weekDiff.positive ? 'Acima' : 'Abaixo'}
                 />
               </DifferenceIndicator>
             </TimeValue>
           </TimeRow>
           <TimeRow>
             <TimeLabel>Este Mês:</TimeLabel>
-            <TimeValue $theme={theme} $variant="difference">
+            <TimeValue $theme={theme} $variant='difference'>
               {formatTime(monthDiff.value)}
               <DifferenceIndicator $positive={monthDiff.positive}>
-                <AccessibleEmoji 
-                  emoji={monthDiff.positive ? "📈" : "📉"} 
-                  label={monthDiff.positive ? "Acima" : "Abaixo"} 
+                <AccessibleEmoji
+                  emoji={monthDiff.positive ? '📈' : '📉'}
+                  label={monthDiff.positive ? 'Acima' : 'Abaixo'}
                 />
               </DifferenceIndicator>
             </TimeValue>
@@ -242,35 +256,35 @@ export const TimeSummaryCard: React.FC<TimeSummaryCardProps> = ({
 
       {/* Horas Extras */}
       {overtimeData && (
-        <SummaryCard $theme={theme} $variant="worked">
+        <SummaryCard $theme={theme} $variant='worked'>
           <UnifiedCard
             theme={theme}
-            variant="default"
-            size="md"
-            icon={<AccessibleEmoji emoji="⏰" label="Horas Extras" />}
-            title="Horas Extras"
+            variant='default'
+            size='md'
+            icon={<AccessibleEmoji emoji='⏰' label='Horas Extras' />}
+            title='Horas Extras'
           >
             <TimeRow>
               <TimeLabel>Hoje:</TimeLabel>
-              <TimeValue $theme={theme} $variant="worked">
+              <TimeValue $theme={theme} $variant='worked'>
                 {overtimeData.overtime?.day?.overtime || '0.0'}h
               </TimeValue>
             </TimeRow>
             <TimeRow>
               <TimeLabel>Esta Semana:</TimeLabel>
-              <TimeValue $theme={theme} $variant="worked">
+              <TimeValue $theme={theme} $variant='worked'>
                 {overtimeData.overtime?.week?.overtime || '0.0'}h
               </TimeValue>
             </TimeRow>
             <TimeRow>
               <TimeLabel>Este Mês:</TimeLabel>
-              <TimeValue $theme={theme} $variant="worked">
+              <TimeValue $theme={theme} $variant='worked'>
                 {overtimeData.overtime?.month?.overtime || '0.0'}h
               </TimeValue>
             </TimeRow>
             <TimeRow>
               <TimeLabel>Total:</TimeLabel>
-              <TimeValue $theme={theme} $variant="worked">
+              <TimeValue $theme={theme} $variant='worked'>
                 {overtimeData.totalOvertime || '0.0'}h
               </TimeValue>
             </TimeRow>

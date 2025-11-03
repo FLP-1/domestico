@@ -10,7 +10,11 @@ import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
 import WelcomeSection from '../components/WelcomeSection';
 import { WidgetGrid } from '../components/WidgetGrid';
-import { UnifiedButton, UnifiedModal, UnifiedCard } from '../components/unified';
+import {
+  UnifiedButton,
+  UnifiedModal,
+  UnifiedCard,
+} from '../components/unified';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
 
@@ -361,7 +365,11 @@ export default function Dashboard() {
       <TopBar $theme={theme}>
         <WelcomeSection
           $theme={theme}
-          userAvatar={currentProfile?.avatar || (currentProfile?.name?.substring(0,2).toUpperCase() || 'U')}
+          userAvatar={
+            currentProfile?.avatar ||
+            currentProfile?.name?.substring(0, 2).toUpperCase() ||
+            'U'
+          }
           userName={currentProfile?.name || 'Usuário'}
           userRole={currentProfile?.role || 'Usuário'}
           notificationCount={3}

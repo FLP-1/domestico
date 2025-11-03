@@ -11,7 +11,12 @@ const spin = keyframes`
 
 const LoadingContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, ${publicColors.primary} 0%, ${publicColors.secondary} 50%, ${publicColors.tertiary} 100%);
+  background: linear-gradient(
+    135deg,
+    ${publicColors.primary} 0%,
+    ${publicColors.secondary} 50%,
+    ${publicColors.tertiary} 100%
+  );
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -59,22 +64,29 @@ const LoadingText = styled.div`
 `;
 
 // Carregar componente apenas no cliente para evitar FOUC
-const TutorialComponent = dynamic(() => import('../components/TutorialComponent'), {
-  ssr: false,
-  loading: () => (
-    <LoadingContainer>
-      <LogoContainer>
-        <SpinningRing />
-        <LogoImage>
-          <Image src="/Logo.png" alt="Logo DOM" width={60} height={60} priority />
-        </LogoImage>
-      </LogoContainer>
-      <LoadingText>
-        Carregando...
-      </LoadingText>
-    </LoadingContainer>
-  )
-});
+const TutorialComponent = dynamic(
+  () => import('../components/TutorialComponent'),
+  {
+    ssr: false,
+    loading: () => (
+      <LoadingContainer>
+        <LogoContainer>
+          <SpinningRing />
+          <LogoImage>
+            <Image
+              src='/Logo.png'
+              alt='Logo DOM'
+              width={60}
+              height={60}
+              priority
+            />
+          </LogoImage>
+        </LogoContainer>
+        <LoadingText>Carregando...</LoadingText>
+      </LoadingContainer>
+    ),
+  }
+);
 
 export default function Home() {
   return <TutorialComponent isLandingPage={true} />;

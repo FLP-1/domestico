@@ -40,7 +40,9 @@ const TimeRecordContainer = styled.div<{
   transition: all 0.3s ease;
   animation: ${fadeIn} 0.6s ease-out;
 
-  ${props => props.$clickable && `
+  ${props =>
+    props.$clickable &&
+    `
     cursor: pointer;
     
     &:hover {
@@ -53,11 +55,17 @@ const TimeRecordContainer = styled.div<{
     }
   `}
 
-  ${props => props.$status === 'completed' && css`
-    animation: ${fadeIn} 0.6s ease-out, ${pulse} 2s infinite;
-  `}
+  ${props =>
+    props.$status === 'completed' &&
+    css`
+      animation:
+        ${fadeIn} 0.6s ease-out,
+        ${pulse} 2s infinite;
+    `}
 
-  ${props => props.$status === 'disabled' && `
+  ${props =>
+    props.$status === 'disabled' &&
+    `
     opacity: 0.6;
     cursor: not-allowed;
     pointer-events: none;
@@ -116,7 +124,7 @@ const TimeDisplay = styled.div<{ $theme?: any; $status: string }>`
   .time-icon {
     font-size: 2rem;
     margin-bottom: 0.5rem;
-    opacity: ${props => props.$status === 'disabled' ? 0.5 : 1};
+    opacity: ${props => (props.$status === 'disabled' ? 0.5 : 1)};
   }
 `;
 
@@ -156,7 +164,7 @@ const LocationInfo = styled.div<{ $theme?: any }>`
   background: ${props => props.$theme.colors.primary}10;
   border-radius: 8px;
   border: 1px solid ${props => props.$theme.colors.primary}20;
-  
+
   .location-text {
     font-size: 0.8rem;
     color: ${props => props.$theme.colors.textSecondary || '#7f8c8d'};
@@ -165,7 +173,7 @@ const LocationInfo = styled.div<{ $theme?: any }>`
     align-items: center;
     gap: 0.5rem;
   }
-  
+
   .wifi-text {
     font-size: 0.8rem;
     color: ${props => props.$theme.colors.textSecondary || '#7f8c8d'};
@@ -182,14 +190,14 @@ const ObservationSection = styled.div<{ $theme?: any }>`
   background: ${props => props.$theme?.background?.secondary || '#f8f9fa'};
   border-radius: 8px;
   border: 1px solid ${props => props.$theme?.border?.secondary || '#e9ecef'};
-  
+
   .observation-label {
     font-size: 0.8rem;
     font-weight: 600;
     color: ${props => props.$theme?.text?.dark || '#2c3e50'};
     margin: 0 0 0.5rem 0;
   }
-  
+
   .observation-text {
     font-size: 0.8rem;
     color: ${props => props.$theme?.text?.secondary || '#7f8c8d'};
@@ -206,7 +214,10 @@ const ApprovalBadge = styled.div<{ $theme?: any; $approved: boolean }>`
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
-  background: ${props => props.$approved ? (props.$theme?.status?.success?.color || '#27ae60') : (props.$theme?.status?.warning?.color || '#f39c12')};
+  background: ${props =>
+    props.$approved
+      ? props.$theme?.status?.success?.color || '#27ae60'
+      : props.$theme?.status?.warning?.color || '#f39c12'};
   color: white;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -215,7 +226,13 @@ const ApprovalBadge = styled.div<{ $theme?: any; $approved: boolean }>`
 // Interfaces
 export interface TimeRecord {
   id: string;
-  type: 'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida' | 'inicio_extra' | 'fim_extra';
+  type:
+    | 'entrada'
+    | 'saida_almoco'
+    | 'retorno_almoco'
+    | 'saida'
+    | 'inicio_extra'
+    | 'fim_extra';
   time?: string;
   location?: string;
   addressNumber?: string; // Número do endereço capturado
@@ -270,132 +287,157 @@ const recordConfig = {
   },
 };
 
-export const TimeRecordCard: React.FC<TimeRecordCardProps> = memo(function TimeRecordCard({
-  record,
-  theme,
-  onClick,
-  isDisabled = false,
-  $criticalAction = true, // Por padrão, registros de ponto são críticos
-  $actionName,
-}) {
-  const { currentProfile } = useUserProfile();
-  const { colors: centralizedTheme } = useTheme(currentProfile?.role.toLowerCase());
-  const { createCriticalButtonHandler } = useGeolocationCapture();
-  const { captureLocation, isCapturing, isDataRecent, isDataAccurate } = useSmartGeolocation(
-    getGeolocationConfig('timeRecordCard')
-  );
-  
-  const config = recordConfig[record.type];
-  const status = record.time ? 'completed' : isDisabled ? 'disabled' : 'available';
-  const clickable = !isDisabled && !record.time;
-  
-  // Nome da ação baseado no tipo de registro
-  const actionName = $actionName || `Registro de ${config.label}`;
+export const TimeRecordCard: React.FC<TimeRecordCardProps> = memo(
+  function TimeRecordCard({
+    record,
+    theme,
+    onClick,
+    isDisabled = false,
+    $criticalAction = true, // Por padrão, registros de ponto são críticos
+    $actionName,
+  }) {
+    const { currentProfile } = useUserProfile();
+    const { colors: centralizedTheme } = useTheme(
+      currentProfile?.role.toLowerCase()
+    );
+    const { createCriticalButtonHandler } = useGeolocationCapture();
+    const { captureLocation, isCapturing, isDataRecent, isDataAccurate } =
+      useSmartGeolocation(getGeolocationConfig('timeRecordCard'));
 
-  const isProcessingRef = useRef(false);
+    const config = recordConfig[record.type];
+    const status = record.time
+      ? 'completed'
+      : isDisabled
+        ? 'disabled'
+        : 'available';
+    const clickable = !isDisabled && !record.time;
 
-  const handleClick = useCallback(async () => {
-    if (!clickable || !onClick) return;
-    if (isProcessingRef.current) return;
-    isProcessingRef.current = true;
-    
-    try {
-      if ($criticalAction) {
-        logger.geo(`🎯 Registro de ponto crítico: ${actionName}`);
-        
-        // ✅ Capturar localização atualizada antes de registrar
-        if (!isDataRecent || !isDataAccurate) {
-          logger.geo(`🔄 Atualizando localização antes do registro: ${actionName}`);
-          await captureLocation();
+    // Nome da ação baseado no tipo de registro
+    const actionName = $actionName || `Registro de ${config.label}`;
+
+    const isProcessingRef = useRef(false);
+
+    const handleClick = useCallback(async () => {
+      if (!clickable || !onClick) return;
+      if (isProcessingRef.current) return;
+      isProcessingRef.current = true;
+
+      try {
+        if ($criticalAction) {
+          logger.geo(`🎯 Registro de ponto crítico: ${actionName}`);
+
+          // ✅ Capturar localização atualizada antes de registrar
+          if (!isDataRecent || !isDataAccurate) {
+            logger.geo(
+              `🔄 Atualizando localização antes do registro: ${actionName}`
+            );
+            await captureLocation();
+          }
+
+          const criticalHandler = createCriticalButtonHandler(
+            onClick,
+            actionName
+          );
+          await criticalHandler();
+        } else {
+          onClick();
         }
-        
-        const criticalHandler = createCriticalButtonHandler(onClick, actionName);
-        await criticalHandler();
-      } else {
-        onClick();
+      } finally {
+        isProcessingRef.current = false;
       }
-    } finally {
-      isProcessingRef.current = false;
-    }
-  }, [clickable, onClick, $criticalAction, actionName, createCriticalButtonHandler, captureLocation, isDataRecent, isDataAccurate]);
+    }, [
+      clickable,
+      onClick,
+      $criticalAction,
+      actionName,
+      createCriticalButtonHandler,
+      captureLocation,
+      isDataRecent,
+      isDataAccurate,
+    ]);
 
-  return (
-    <TimeRecordContainer
-      $theme={theme}
-      $status={status}
-      $clickable={clickable}
-      onClick={handleClick}
-    >
-      <UnifiedCard
-        theme={theme}
-        variant="default"
-        size="md"
-        aria-label={`${config.label} - ${record.time || 'Clique para registrar'}`}
+    return (
+      <TimeRecordContainer
+        $theme={theme}
+        $status={status}
+        $clickable={clickable}
+        onClick={handleClick}
       >
-        {record.type.includes('extra') && record.approved !== undefined && (
-          <ApprovalBadge $theme={theme} $approved={record.approved}>
-            {record.approved ? 'Aprovado' : 'Pendente'}
-          </ApprovalBadge>
-        )}
+        <UnifiedCard
+          theme={theme}
+          variant='default'
+          size='md'
+          aria-label={`${config.label} - ${record.time || 'Clique para registrar'}`}
+        >
+          {record.type.includes('extra') && record.approved !== undefined && (
+            <ApprovalBadge $theme={theme} $approved={record.approved}>
+              {record.approved ? 'Aprovado' : 'Pendente'}
+            </ApprovalBadge>
+          )}
 
-        {status === 'completed' && (
-          <StatusIndicator $status={status} $theme={theme}>
-            Registrado
-          </StatusIndicator>
-        )}
+          {status === 'completed' && (
+            <StatusIndicator $status={status} $theme={theme}>
+              Registrado
+            </StatusIndicator>
+          )}
 
-        <TimeDisplay $theme={theme} $status={status}>
-          <div className="time-icon">
-            <AccessibleEmoji emoji={config.icon} label={config.label} />
-          </div>
-          <div className="time-value">
-            {record.time || '--:--'}
-          </div>
-          <div className="time-label">
-            {config.label}
-          </div>
-        </TimeDisplay>
+          <TimeDisplay $theme={theme} $status={status}>
+            <div className='time-icon'>
+              <AccessibleEmoji emoji={config.icon} label={config.label} />
+            </div>
+            <div className='time-value'>{record.time || '--:--'}</div>
+            <div className='time-label'>{config.label}</div>
+          </TimeDisplay>
 
-        {record.time && (
-          <>
-            {(record.location || record.wifi) && (
-              <LocationInfo $theme={theme}>
-                {record.location && (
-                  <p className="location-text">
-                    <AccessibleEmoji emoji="📍" label="Localização" />
-                    {record.location}
-                  </p>
-                )}
-                {record.wifi && (
-                  <p className="wifi-text">
-                    <AccessibleEmoji emoji="📶" label="WiFi" />
-                    {record.wifi}
-                  </p>
-                )}
-              </LocationInfo>
-            )}
+          {record.time && (
+            <>
+              {(record.location || record.wifi) && (
+                <LocationInfo $theme={theme}>
+                  {record.location && (
+                    <p className='location-text'>
+                      <AccessibleEmoji emoji='📍' label='Localização' />
+                      {record.location}
+                    </p>
+                  )}
+                  {record.wifi && (
+                    <p className='wifi-text'>
+                      <AccessibleEmoji emoji='📶' label='WiFi' />
+                      {record.wifi}
+                    </p>
+                  )}
+                </LocationInfo>
+              )}
 
-            {(record.employeeObservation || record.employerObservation) && (
-              <ObservationSection $theme={theme}>
-                {record.employeeObservation && (
-                  <>
-                    <p className="observation-label">Observação do Empregado:</p>
-                    <p className="observation-text">{record.employeeObservation}</p>
-                  </>
-                )}
-                {record.employerObservation && (
-                  <>
-                    <p className="observation-label">Observação do Empregador:</p>
-                    <p className="observation-text">{record.employerObservation}</p>
-                  </>
-                )}
-              </ObservationSection>
-            )}
-          </>
-        )}
-      </UnifiedCard>
-    </TimeRecordContainer>
-  );
-});
+              {(record.employeeObservation || record.employerObservation) && (
+                <ObservationSection $theme={theme}>
+                  {record.employeeObservation && (
+                    <>
+                      <p className='observation-label'>
+                        Observação do Empregado:
+                      </p>
+                      <p className='observation-text'>
+                        {record.employeeObservation}
+                      </p>
+                    </>
+                  )}
+                  {record.employerObservation && (
+                    <>
+                      <p className='observation-label'>
+                        Observação do Empregador:
+                      </p>
+                      <p className='observation-text'>
+                        {record.employerObservation}
+                      </p>
+                    </>
+                  )}
+                </ObservationSection>
+              )}
+            </>
+          )}
+        </UnifiedCard>
+      </TimeRecordContainer>
+    );
+  }
+);
 
 export default TimeRecordCard;

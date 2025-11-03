@@ -337,9 +337,15 @@ const TermsManagement: React.FC = () => {
   const [isEditUnifiedModalOpen, setIsEditUnifiedModalOpen] = useState(false);
   const [editingDocument, setEditingDocument] =
     useState<DocumentVersion | null>(null);
-  const [documents, setDocuments] = useState<TermsData>({ termsOfUse: [], privacyPolicy: [] });
+  const [documents, setDocuments] = useState<TermsData>({
+    termsOfUse: [],
+    privacyPolicy: [],
+  });
   const [isLoading, setIsLoading] = useState(true);
-  const [statistics, setStatistics] = useState<Statistics>({ totalUsers: 0, acceptanceRate: 0 });
+  const [statistics, setStatistics] = useState<Statistics>({
+    totalUsers: 0,
+    acceptanceRate: 0,
+  });
 
   // Função para carregar dados da API
   const loadData = useCallback(async () => {
@@ -348,16 +354,20 @@ const TermsManagement: React.FC = () => {
       // Carregar termos e políticas
       const termsResponse = await fetch('/api/terms');
       const termsResult = await termsResponse.json();
-      
+
       if (termsResult.success && termsResult.data) {
-        const terms = termsResult.data.filter((t: any) => t.tipo === 'TERMOS_USO');
-        const policies = termsResult.data.filter((t: any) => t.tipo === 'POLITICA_PRIVACIDADE');
-        
+        const terms = termsResult.data.filter(
+          (t: any) => t.tipo === 'TERMOS_USO'
+        );
+        const policies = termsResult.data.filter(
+          (t: any) => t.tipo === 'POLITICA_PRIVACIDADE'
+        );
+
         setDocuments({
           termsOfUse: terms,
-          privacyPolicy: policies
+          privacyPolicy: policies,
         });
-        
+
         // Definir primeira versão como selecionada
         if (terms.length > 0 && !selectedVersion) {
           setSelectedVersion(terms[0].id);
@@ -367,14 +377,20 @@ const TermsManagement: React.FC = () => {
       // Carregar estatísticas
       const statsResponse = await fetch('/api/statistics');
       const statsResult = await statsResponse.json();
-      
+
       if (statsResult.success && statsResult.data) {
-        const usuarios = statsResult.data.usuarios?.find((s: any) => s.chave === 'total_usuarios')?.valor || '0';
-        const aceite = statsResult.data.compliance?.find((s: any) => s.chave === 'taxa_aceite_termos')?.valor || '0';
-        
+        const usuarios =
+          statsResult.data.usuarios?.find(
+            (s: any) => s.chave === 'total_usuarios'
+          )?.valor || '0';
+        const aceite =
+          statsResult.data.compliance?.find(
+            (s: any) => s.chave === 'taxa_aceite_termos'
+          )?.valor || '0';
+
         setStatistics({
           totalUsers: parseInt(usuarios),
-          acceptanceRate: parseInt(aceite)
+          acceptanceRate: parseInt(aceite),
         });
       }
     } catch (error) {
@@ -463,22 +479,24 @@ const TermsManagement: React.FC = () => {
           onToggle={() => setCollapsed(!collapsed)}
           currentPath={router.pathname}
         />
-        
+
         <TopBar $theme={theme}>
-          <WelcomeSection 
+          <WelcomeSection
             $theme={theme}
             userAvatar={currentProfile?.avatar || 'U'}
             userName={currentProfile?.name || 'Usuário'}
             userRole={currentProfile?.role || 'Usuário'}
             notificationCount={0}
-            onNotificationClick={() => toast.info('Notificações em desenvolvimento')}
+            onNotificationClick={() =>
+              toast.info('Notificações em desenvolvimento')
+            }
           />
         </TopBar>
 
         <PageHeader
           $theme={theme}
-          title="Gestão de Termos e Políticas"
-          subtitle="Gerencie os Termos de Uso e Políticas de Privacidade do Sistema DOM"
+          title='Gestão de Termos e Políticas'
+          subtitle='Gerencie os Termos de Uso e Políticas de Privacidade do Sistema DOM'
         />
 
         {isLoading ? (
@@ -486,7 +504,7 @@ const TermsManagement: React.FC = () => {
             <p>Carregando dados...</p>
           </LoadingContainer>
         ) : (
-          <WidgetGrid 
+          <WidgetGrid
             widgets={[
               {
                 id: 'terms-versions',
@@ -496,7 +514,8 @@ const TermsManagement: React.FC = () => {
                 theme,
                 metric: documents.termsOfUse.length,
                 description: 'versões disponíveis',
-                content: 'Histórico completo de todas as versões dos Termos de Uso.'
+                content:
+                  'Histórico completo de todas as versões dos Termos de Uso.',
               },
               {
                 id: 'privacy-versions',
@@ -506,7 +525,8 @@ const TermsManagement: React.FC = () => {
                 theme,
                 metric: documents.privacyPolicy.length,
                 description: 'versões disponíveis',
-                content: 'Histórico completo de todas as versões das Políticas de Privacidade.'
+                content:
+                  'Histórico completo de todas as versões das Políticas de Privacidade.',
               },
               {
                 id: 'active-users',
@@ -516,7 +536,7 @@ const TermsManagement: React.FC = () => {
                 theme,
                 metric: statistics.totalUsers,
                 description: 'usuários ativos',
-                content: 'Total de usuários ativos no sistema DOM.'
+                content: 'Total de usuários ativos no sistema DOM.',
               },
               {
                 id: 'acceptance-rate',
@@ -526,212 +546,215 @@ const TermsManagement: React.FC = () => {
                 theme,
                 metric: `${statistics.acceptanceRate}%`,
                 description: 'taxa de aceite',
-                content: 'Percentual de aceite dos termos pelos usuários.'
-              }
-            ]} 
+                content: 'Percentual de aceite dos termos pelos usuários.',
+              },
+            ]}
             onWidgetClick={(widgetId: any) => {
               toast.info(`Detalhes do widget ${widgetId} em desenvolvimento`);
             }}
           />
         )}
 
-          <ContentGrid>
-            <DocumentSection>
-              <DocumentTabs>
-                <TabButton
-                  $active={activeTab === 'terms'}
-                  $theme={theme}
-                  onClick={() => setActiveTab('terms')}
-                >
-                  <AccessibleEmoji emoji='📋' label='Checklist' /> Termos de Uso
-                </TabButton>
-                <TabButton
-                  $active={activeTab === 'privacy'}
-                  $theme={theme}
-                  onClick={() => setActiveTab('privacy')}
-                >
-                  <AccessibleEmoji emoji='🔒' label='Privado' /> Políticas de
-                  Privacidade
-                </TabButton>
-              </DocumentTabs>
+        <ContentGrid>
+          <DocumentSection>
+            <DocumentTabs>
+              <TabButton
+                $active={activeTab === 'terms'}
+                $theme={theme}
+                onClick={() => setActiveTab('terms')}
+              >
+                <AccessibleEmoji emoji='📋' label='Checklist' /> Termos de Uso
+              </TabButton>
+              <TabButton
+                $active={activeTab === 'privacy'}
+                $theme={theme}
+                onClick={() => setActiveTab('privacy')}
+              >
+                <AccessibleEmoji emoji='🔒' label='Privado' /> Políticas de
+                Privacidade
+              </TabButton>
+            </DocumentTabs>
 
-              <DocumentHeader>
-                <div>
-                  <DocumentTitle>
-                    {activeTab === 'terms'
-                      ? 'Termos de Uso'
-                      : 'Políticas de Privacidade'}
-                  </DocumentTitle>
-                  {activeVersion && (
-                    <VersionInfo>
-                      <VersionBadge $theme={theme}>
-                        {activeVersion.versao} - Atual
-                      </VersionBadge>
-                      <EffectiveDate>
-                        Vigente desde:{' '}
-                        {new Date(
-                          activeVersion.dataVigencia
-                        ).toLocaleDateString('pt-BR')}
-                      </EffectiveDate>
-                    </VersionInfo>
-                  )}
-                </div>
-              </DocumentHeader>
-
-              <DocumentContent
-                dangerouslySetInnerHTML={{
-                  __html: currentDocument?.conteudo || '',
-                }}
-              />
-
-              <DocumentActions>
-                <UnifiedButton
-                  $variant='primary'
-                  $theme={theme}
-                  onClick={handleDownloadPDF}
-                >
-                  <AccessibleEmoji emoji='📄' label='Documento' /> Baixar PDF
-                </UnifiedButton>
-                <UnifiedButton
-                  $variant='secondary'
-                  $theme={theme}
-                  onClick={handlePrint}
-                >
-                  <AccessibleEmoji emoji='🖨' label='Impressora' /> Imprimir
-                </UnifiedButton>
-                {isAdmin && (
-                  <UnifiedButton
-                    $variant='warning'
-                    $theme={theme}
-                    onClick={handleEditDocument}
-                  >
-                    <AccessibleEmoji emoji='✏' label='Lápis' /> Editar
-                    Documento
-                  </UnifiedButton>
-                )}
-              </DocumentActions>
-            </DocumentSection>
-
-            <SidebarSection>
-              <SidebarTitle>Histórico de Versões</SidebarTitle>
-              <VersionList>
-                {currentVersions.map(version => (
-                  <VersionItem
-                    key={version.id}
-                    $active={version.id === selectedVersion}
-                    $theme={theme}
-                    onClick={() => setSelectedVersion(version.id)}
-                  >
-                    <VersionNumber>{version.versao}</VersionNumber>
-                    <VersionDate>
-                      {new Date(version.dataVigencia).toLocaleDateString(
+            <DocumentHeader>
+              <div>
+                <DocumentTitle>
+                  {activeTab === 'terms'
+                    ? 'Termos de Uso'
+                    : 'Políticas de Privacidade'}
+                </DocumentTitle>
+                {activeVersion && (
+                  <VersionInfo>
+                    <VersionBadge $theme={theme}>
+                      {activeVersion.versao} - Atual
+                    </VersionBadge>
+                    <EffectiveDate>
+                      Vigente desde:{' '}
+                      {new Date(activeVersion.dataVigencia).toLocaleDateString(
                         'pt-BR'
                       )}
-                    </VersionDate>
-                    {version.ativo && (
-                      <VersionStatus $theme={theme}>Atual</VersionStatus>
-                    )}
-                  </VersionItem>
-                ))}
-              </VersionList>
+                    </EffectiveDate>
+                  </VersionInfo>
+                )}
+              </div>
+            </DocumentHeader>
 
+            <DocumentContent
+              dangerouslySetInnerHTML={{
+                __html: currentDocument?.conteudo || '',
+              }}
+            />
+
+            <DocumentActions>
+              <UnifiedButton
+                $variant='primary'
+                $theme={theme}
+                onClick={handleDownloadPDF}
+              >
+                <AccessibleEmoji emoji='📄' label='Documento' /> Baixar PDF
+              </UnifiedButton>
+              <UnifiedButton
+                $variant='secondary'
+                $theme={theme}
+                onClick={handlePrint}
+              >
+                <AccessibleEmoji emoji='🖨' label='Impressora' /> Imprimir
+              </UnifiedButton>
               {isAdmin && (
-                <AdminSection>
-                  <AdminTitle>Área Administrativa</AdminTitle>
-                  <UnifiedButton
-                    $variant='success'
-                    $theme={theme}
-                    onClick={() => {
-                      const newDoc: DocumentVersion = {
-                        id: Date.now().toString(),
-                        versao: `v${parseFloat(activeVersion?.versao.substring(1) || '1') + 0.1}`,
-                        tipo: activeTab === 'terms' ? 'TERMOS_USO' : 'POLITICA_PRIVACIDADE',
-                        titulo: activeTab === 'terms' ? 'Termos de Uso' : 'Política de Privacidade',
-                        conteudo: '',
-                        ativo: false,
-                        dataVigencia: new Date().toISOString().split('T')[0]!,
-                        mudancas: [],
-                      };
-                      setEditingDocument(newDoc);
-                      setIsEditUnifiedModalOpen(true);
-                    }}
-                  >
-                    <AccessibleEmoji emoji='➕' label='Novo' /> Nova Versão
-                  </UnifiedButton>
-                </AdminSection>
-              )}
-            </SidebarSection>
-          </ContentGrid>
-
-          {/* UnifiedModal de Edição */}
-          <UnifiedModal
-            isOpen={isEditUnifiedModalOpen}
-            onClose={() => setIsEditUnifiedModalOpen(false)}
-          >
-            <div>
-              <div>
-                <h2>Editar Documento</h2>
-              </div>
-              <div>
-                <Form onSubmit={e => e.preventDefault()}>
-                  <FormGroup>
-                    <label htmlFor='document-version'>Versão:</label>
-                    <Input
-                      id='document-version'
-                      $theme={theme}
-                      value={editingDocument?.versao || ''}
-                      readOnly
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <label htmlFor='document-effective-date'>
-                      Data de Vigência:
-                    </label>
-                    <Input
-                      id='document-effective-date'
-                      $theme={theme}
-                      type='date'
-                      value={editingDocument?.dataVigencia || ''}
-                      readOnly
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <label htmlFor='document-content'>
-                      Conteúdo do Documento:
-                    </label>
-                    <DocumentTextarea
-                      id='document-content'
-                      value={editingDocument?.conteudo || ''}
-                      onChange={e =>
-                        setEditingDocument(prev =>
-                          prev ? { ...prev, conteudo: e.target.value } : null
-                        )
-                      }
-                      placeholder='Digite o conteúdo do documento...'
-                    />
-                  </FormGroup>
-                </Form>
-              </div>
-              <div>
                 <UnifiedButton
-                  $variant='secondary'
+                  $variant='warning'
                   $theme={theme}
-                  onClick={() => setIsEditUnifiedModalOpen(false)}
+                  onClick={handleEditDocument}
                 >
-                  Cancelar
+                  <AccessibleEmoji emoji='✏' label='Lápis' /> Editar Documento
                 </UnifiedButton>
+              )}
+            </DocumentActions>
+          </DocumentSection>
+
+          <SidebarSection>
+            <SidebarTitle>Histórico de Versões</SidebarTitle>
+            <VersionList>
+              {currentVersions.map(version => (
+                <VersionItem
+                  key={version.id}
+                  $active={version.id === selectedVersion}
+                  $theme={theme}
+                  onClick={() => setSelectedVersion(version.id)}
+                >
+                  <VersionNumber>{version.versao}</VersionNumber>
+                  <VersionDate>
+                    {new Date(version.dataVigencia).toLocaleDateString('pt-BR')}
+                  </VersionDate>
+                  {version.ativo && (
+                    <VersionStatus $theme={theme}>Atual</VersionStatus>
+                  )}
+                </VersionItem>
+              ))}
+            </VersionList>
+
+            {isAdmin && (
+              <AdminSection>
+                <AdminTitle>Área Administrativa</AdminTitle>
                 <UnifiedButton
                   $variant='success'
                   $theme={theme}
-                  onClick={() =>
-                    handleSaveDocument(editingDocument?.conteudo || '')
-                  }
+                  onClick={() => {
+                    const newDoc: DocumentVersion = {
+                      id: Date.now().toString(),
+                      versao: `v${parseFloat(activeVersion?.versao.substring(1) || '1') + 0.1}`,
+                      tipo:
+                        activeTab === 'terms'
+                          ? 'TERMOS_USO'
+                          : 'POLITICA_PRIVACIDADE',
+                      titulo:
+                        activeTab === 'terms'
+                          ? 'Termos de Uso'
+                          : 'Política de Privacidade',
+                      conteudo: '',
+                      ativo: false,
+                      dataVigencia: new Date().toISOString().split('T')[0]!,
+                      mudancas: [],
+                    };
+                    setEditingDocument(newDoc);
+                    setIsEditUnifiedModalOpen(true);
+                  }}
                 >
-                  Salvar Documento
+                  <AccessibleEmoji emoji='➕' label='Novo' /> Nova Versão
                 </UnifiedButton>
-              </div>
+              </AdminSection>
+            )}
+          </SidebarSection>
+        </ContentGrid>
+
+        {/* UnifiedModal de Edição */}
+        <UnifiedModal
+          isOpen={isEditUnifiedModalOpen}
+          onClose={() => setIsEditUnifiedModalOpen(false)}
+        >
+          <div>
+            <div>
+              <h2>Editar Documento</h2>
             </div>
-          </UnifiedModal>
+            <div>
+              <Form onSubmit={e => e.preventDefault()}>
+                <FormGroup>
+                  <label htmlFor='document-version'>Versão:</label>
+                  <Input
+                    id='document-version'
+                    $theme={theme}
+                    value={editingDocument?.versao || ''}
+                    readOnly
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <label htmlFor='document-effective-date'>
+                    Data de Vigência:
+                  </label>
+                  <Input
+                    id='document-effective-date'
+                    $theme={theme}
+                    type='date'
+                    value={editingDocument?.dataVigencia || ''}
+                    readOnly
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <label htmlFor='document-content'>
+                    Conteúdo do Documento:
+                  </label>
+                  <DocumentTextarea
+                    id='document-content'
+                    value={editingDocument?.conteudo || ''}
+                    onChange={e =>
+                      setEditingDocument(prev =>
+                        prev ? { ...prev, conteudo: e.target.value } : null
+                      )
+                    }
+                    placeholder='Digite o conteúdo do documento...'
+                  />
+                </FormGroup>
+              </Form>
+            </div>
+            <div>
+              <UnifiedButton
+                $variant='secondary'
+                $theme={theme}
+                onClick={() => setIsEditUnifiedModalOpen(false)}
+              >
+                Cancelar
+              </UnifiedButton>
+              <UnifiedButton
+                $variant='success'
+                $theme={theme}
+                onClick={() =>
+                  handleSaveDocument(editingDocument?.conteudo || '')
+                }
+              >
+                Salvar Documento
+              </UnifiedButton>
+            </div>
+          </div>
+        </UnifiedModal>
       </PageContainer>
     </>
   );

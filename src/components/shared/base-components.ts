@@ -50,7 +50,15 @@ export const BaseContainer = styled.div<{
     `1px solid ${getColor('border.primary', props.$theme?.colors?.border)}`};
   border-radius: ${props => {
     const radius = (props.$borderRadius as any) || 'md';
-    return radius === 'sm' ? '0.25rem' : radius === 'md' ? '0.5rem' : radius === 'lg' ? '1rem' : radius === 'full' ? '9999px' : radius;
+    return radius === 'sm'
+      ? '0.25rem'
+      : radius === 'md'
+        ? '0.5rem'
+        : radius === 'lg'
+          ? '1rem'
+          : radius === 'full'
+            ? '9999px'
+            : radius;
   }};
   ${props => props.$shadow && shadowMixin(props.$shadow)}
   ${themedMixin}
@@ -222,8 +230,8 @@ export const BaseSuccessMessage = styled.div<{
     getColor('successLight', props.$theme?.colors?.successLight)};
   padding: ${getSpacing('md')};
   border-radius: 0.5rem;
-  border: 1px solid ${props =>
-    getColor('success', props.$theme?.colors?.success)};
+  border: 1px solid
+    ${props => getColor('success', props.$theme?.colors?.success)};
   font-weight: ${tokens.fontWeight.medium};
   margin-top: ${getSpacing('sm')};
   display: flex;
@@ -290,7 +298,15 @@ export const BaseCard = styled.div<{
     `1px solid ${getColor('border.primary', props.$theme?.colors?.border)}`};
   border-radius: ${props => {
     const radius = (props.$borderRadius as any) || 'md';
-    return radius === 'sm' ? '0.25rem' : radius === 'md' ? '0.5rem' : radius === 'lg' ? '1rem' : radius === 'full' ? '9999px' : radius;
+    return radius === 'sm'
+      ? '0.25rem'
+      : radius === 'md'
+        ? '0.5rem'
+        : radius === 'lg'
+          ? '1rem'
+          : radius === 'full'
+            ? '9999px'
+            : radius;
   }};
   ${props => props.$shadow && shadowMixin(props.$shadow)}
   ${transitionMixin}
@@ -305,7 +321,7 @@ export const BaseModal = styled.div<{
 }>`
   background: ${props =>
     getColor('surface.primary', props.$theme?.colors?.background)};
-  border-radius: ${props => props.$fullscreen ? '0.25rem' : '1rem'};
+  border-radius: ${props => (props.$fullscreen ? '0.25rem' : '1rem')};
   ${props => shadowMixin('lg')}
   ${transitionMixin}
   ${animationMixin}
@@ -480,7 +496,11 @@ export const BaseBadge = styled.span<{
   padding: ${getSpacing('xs')} ${getSpacing('sm')};
   border-radius: 9999px;
   font-weight: ${tokens.fontWeight.medium};
-  ${props => statusColorMixin((props.$variant === 'neutral' ? 'info' : props.$variant) || 'info', props.$theme)}
+  ${props =>
+    statusColorMixin(
+      (props.$variant === 'neutral' ? 'info' : props.$variant) || 'info',
+      props.$theme
+    )}
   ${transitionMixin}
 `;
 

@@ -329,7 +329,9 @@ class AuditService {
 
   private getUserAgent(): string {
     try {
-      return typeof navigator !== 'undefined' ? navigator.userAgent : 'UserAgent indisponível';
+      return typeof navigator !== 'undefined'
+        ? navigator.userAgent
+        : 'UserAgent indisponível';
     } catch {
       return 'UserAgent indisponível';
     }
@@ -337,7 +339,10 @@ class AuditService {
 
   private getSessionId(): string {
     try {
-      let sessionId = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('session_id') : null;
+      let sessionId =
+        typeof sessionStorage !== 'undefined'
+          ? sessionStorage.getItem('session_id')
+          : null;
       if (!sessionId) {
         sessionId = this.generateId();
         if (typeof sessionStorage !== 'undefined') {
@@ -370,7 +375,10 @@ class AuditService {
   }
 
   private async saveCriticalLog(log: AuditLog): Promise<void> {
-    const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('critical_audit_logs') : null;
+    const stored =
+      typeof localStorage !== 'undefined'
+        ? localStorage.getItem('critical_audit_logs')
+        : null;
     const criticalLogs = stored ? JSON.parse(stored) : [];
 
     criticalLogs.unshift(log);
@@ -427,12 +435,18 @@ class AuditService {
   }
 
   private loadLogs(): void {
-    const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('audit_logs') : null;
+    const stored =
+      typeof localStorage !== 'undefined'
+        ? localStorage.getItem('audit_logs')
+        : null;
     if (stored) {
       this.logs = JSON.parse(stored);
     }
 
-    const enabled = typeof localStorage !== 'undefined' ? localStorage.getItem('audit_enabled') : null;
+    const enabled =
+      typeof localStorage !== 'undefined'
+        ? localStorage.getItem('audit_enabled')
+        : null;
     this.isEnabled = enabled !== 'false';
   }
 

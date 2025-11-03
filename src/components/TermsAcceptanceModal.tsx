@@ -10,12 +10,14 @@ const TermsContent = styled.div<{ $theme?: any }>`
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: ${props => props.$theme?.colors?.background?.primary || '#ffffff'};
+  background: ${props =>
+    props.$theme?.colors?.background?.primary || '#ffffff'};
 `;
 
 const TermsHeader = styled.div<{ $theme?: any }>`
   padding: 2rem;
-  border-bottom: 1px solid ${props => props.$theme?.colors?.border?.light || '#e0e0e0'};
+  border-bottom: 1px solid
+    ${props => props.$theme?.colors?.border?.light || '#e0e0e0'};
   text-align: center;
 `;
 
@@ -45,23 +47,23 @@ const TermsBody = styled.div<{ $theme?: any }>`
 
 const TermsTabs = styled.div<{ $theme?: any }>`
   display: flex;
-  border-bottom: 1px solid ${props => props.$theme?.colors?.border?.light || '#e0e0e0'};
-  background: ${props => props.$theme?.colors?.background?.secondary || '#f8f9fa'};
+  border-bottom: 1px solid
+    ${props => props.$theme?.colors?.border?.light || '#e0e0e0'};
+  background: ${props =>
+    props.$theme?.colors?.background?.secondary || '#f8f9fa'};
 `;
 
 const TabButton = styled.button<{ $active: boolean; $theme?: any }>`
   flex: 1;
   padding: 1rem;
   border: none;
-  background: ${props => props.$active 
-    ? props.$theme?.colors?.navigation?.active || '#007bff'
-    : 'transparent'
-  };
-  color: ${props => props.$active 
-    ? '#ffffff'
-    : props.$theme?.colors?.text?.primary || '#333'
-  };
-  font-weight: ${props => props.$active ? '600' : '400'};
+  background: ${props =>
+    props.$active
+      ? props.$theme?.colors?.navigation?.active || '#007bff'
+      : 'transparent'};
+  color: ${props =>
+    props.$active ? '#ffffff' : props.$theme?.colors?.text?.primary || '#333'};
+  font-weight: ${props => (props.$active ? '600' : '400')};
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
@@ -70,10 +72,10 @@ const TabButton = styled.button<{ $active: boolean; $theme?: any }>`
   gap: 0.5rem;
 
   &:hover {
-    background: ${props => props.$active 
-      ? props.$theme?.colors?.primary || '#007bff'
-      : props.$theme?.colors?.primary + '20' || '#007bff20'
-    };
+    background: ${props =>
+      props.$active
+        ? props.$theme?.colors?.primary || '#007bff'
+        : props.$theme?.colors?.primary + '20' || '#007bff20'};
   }
 `;
 
@@ -188,7 +190,10 @@ const RetryButton = styled.button<{ $theme?: any }>`
   }
 `;
 
-const Button = styled.button<{ $variant: 'primary' | 'secondary'; $theme?: any }>`
+const Button = styled.button<{
+  $variant: 'primary' | 'secondary';
+  $theme?: any;
+}>`
   padding: 0.75rem 2rem;
   border: none;
   border-radius: 0.5rem;
@@ -197,7 +202,9 @@ const Button = styled.button<{ $variant: 'primary' | 'secondary'; $theme?: any }
   transition: all 0.2s ease;
   min-width: 120px;
 
-  ${props => props.$variant === 'primary' ? `
+  ${props =>
+    props.$variant === 'primary'
+      ? `
     background: ${props.$theme?.colors?.primary || '#007bff'};
     color: white;
     
@@ -205,7 +212,8 @@ const Button = styled.button<{ $variant: 'primary' | 'secondary'; $theme?: any }
       background: ${props.$theme?.colors?.primaryDark || '#0056b3'};
       transform: translateY(-1px);
     }
-  ` : `
+  `
+      : `
     background: transparent;
     color: ${props.$theme?.colors?.text || '#333'};
     border: 1px solid ${props.$theme?.colors?.border || '#e0e0e0'};
@@ -262,12 +270,14 @@ const TermsAcceptanceModal: React.FC<TermsAcceptanceModalProps> = ({
   theme,
 }) => {
   const { currentProfile } = useUserProfile();
-  const { colors: centralizedTheme } = useTheme(currentProfile?.role.toLowerCase());
+  const { colors: centralizedTheme } = useTheme(
+    currentProfile?.role.toLowerCase()
+  );
   const [activeTab, setActiveTab] = useState<'terms' | 'privacy'>('terms');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
-  
+
   // ✅ CORRIGIDO: Estados para dados dinâmicos do banco
   const [termsData, setTermsData] = useState<TermsData | null>(null);
   const [privacyData, setPrivacyData] = useState<TermsData | null>(null);
@@ -284,15 +294,15 @@ const TermsAcceptanceModal: React.FC<TermsAcceptanceModalProps> = ({
   const loadTermsData = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch('/api/termos/ativos');
       const result = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(result.message || 'Erro ao carregar termos');
       }
-      
+
       setTermsData(result.data.termosUso);
       setPrivacyData(result.data.politicaPrivacidade);
     } catch (err) {
@@ -303,18 +313,18 @@ const TermsAcceptanceModal: React.FC<TermsAcceptanceModalProps> = ({
     }
   };
 
-  const currentContent = activeTab === 'terms' 
-    ? (termsData?.conteudo || '') 
-    : (privacyData?.conteudo || '');
+  const currentContent =
+    activeTab === 'terms'
+      ? termsData?.conteudo || ''
+      : privacyData?.conteudo || '';
 
-  const currentAccepted = activeTab === 'terms' ? termsAccepted : privacyAccepted;
-  const currentVersion = activeTab === 'terms' 
-    ? termsData?.versao 
-    : privacyData?.versao;
+  const currentAccepted =
+    activeTab === 'terms' ? termsAccepted : privacyAccepted;
+  const currentVersion =
+    activeTab === 'terms' ? termsData?.versao : privacyData?.versao;
 
-  const currentDate = activeTab === 'terms' 
-    ? termsData?.dataVigencia 
-    : privacyData?.dataVigencia;
+  const currentDate =
+    activeTab === 'terms' ? termsData?.dataVigencia : privacyData?.dataVigencia;
 
   useEffect(() => {
     // Reset states when modal opens
@@ -367,8 +377,8 @@ const TermsAcceptanceModal: React.FC<TermsAcceptanceModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl h-[90vh] flex flex-col">
+    <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+      <div className='bg-white rounded-lg shadow-xl w-full max-w-4xl h-[90vh] flex flex-col'>
         <TermsContent theme={theme}>
           <TermsHeader>
             <TermsTitle>
@@ -405,7 +415,8 @@ const TermsAcceptanceModal: React.FC<TermsAcceptanceModalProps> = ({
               </LoadingSpinner>
             ) : error ? (
               <ErrorMessage>
-                <strong>Erro ao carregar documentos:</strong><br />
+                <strong>Erro ao carregar documentos:</strong>
+                <br />
                 {error}
                 <br />
                 <RetryButton onClick={loadTermsData}>
@@ -427,10 +438,9 @@ const TermsAcceptanceModal: React.FC<TermsAcceptanceModalProps> = ({
                       </VersionBadge>
                       <EffectiveDate>
                         Vigente desde:{' '}
-                        {currentDate 
+                        {currentDate
                           ? new Date(currentDate).toLocaleDateString('pt-BR')
-                          : 'Carregando...'
-                        }
+                          : 'Carregando...'}
                       </EffectiveDate>
                     </VersionInfo>
                   </div>
@@ -445,21 +455,24 @@ const TermsAcceptanceModal: React.FC<TermsAcceptanceModalProps> = ({
             <TermsFooter>
               <AcceptCheckbox>
                 <CheckboxInput
-                  type="checkbox"
-                  id="acceptTerms"
+                  type='checkbox'
+                  id='acceptTerms'
                   checked={currentAccepted}
                   onChange={() => handleCheckboxChange(activeTab)}
                   disabled={loading || !!error}
                 />
-                <CheckboxLabel htmlFor="acceptTerms">
-                  Li e aceito os {activeTab === 'terms' ? 'Termos de Uso' : 'Políticas de Privacidade'} 
+                <CheckboxLabel htmlFor='acceptTerms'>
+                  Li e aceito os{' '}
+                  {activeTab === 'terms'
+                    ? 'Termos de Uso'
+                    : 'Políticas de Privacidade'}
                   {currentVersion && ` (versão ${currentVersion})`}
                 </CheckboxLabel>
               </AcceptCheckbox>
 
               <ActionButtons>
                 <Button
-                  $variant="secondary"
+                  $variant='secondary'
                   $theme={theme}
                   onClick={handleDecline}
                   disabled={loading}
@@ -467,10 +480,12 @@ const TermsAcceptanceModal: React.FC<TermsAcceptanceModalProps> = ({
                   Recusar
                 </Button>
                 <Button
-                  $variant="primary"
+                  $variant='primary'
                   $theme={theme}
                   onClick={handleAccept}
-                  disabled={!termsAccepted || !privacyAccepted || loading || !!error}
+                  disabled={
+                    !termsAccepted || !privacyAccepted || loading || !!error
+                  }
                 >
                   Aceitar e Continuar
                 </Button>

@@ -245,7 +245,8 @@ const TutorialHeader = styled.header<{ $theme: any }>`
   backdrop-filter: blur(20px);
   padding: 1.5rem 2rem;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid ${props => (props.$theme?.colors?.primary || publicColors.primary) + '33'};
+  border-bottom: 1px solid
+    ${props => (props.$theme?.colors?.primary || publicColors.primary) + '33'};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -391,7 +392,9 @@ const NavigationContainer = styled.div`
 
 const NavigationButton = styled.button<{ $theme: any; $disabled?: boolean }>`
   background: ${props =>
-    props.$disabled ? '#e0e0e0' : (props.$theme?.colors?.primary || publicColors.primary)};
+    props.$disabled
+      ? '#e0e0e0'
+      : props.$theme?.colors?.primary || publicColors.primary};
   color: ${props => (props.$disabled ? '#9e9e9e' : 'white')};
   border: none;
   border-radius: 12px;
@@ -406,7 +409,8 @@ const NavigationButton = styled.button<{ $theme: any; $disabled?: boolean }>`
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px ${props => (props.$theme?.colors?.primary || publicColors.primary) + '66'};
+    box-shadow: 0 8px 20px
+      ${props => (props.$theme?.colors?.primary || publicColors.primary) + '66'};
   }
 
   &:disabled {
@@ -521,7 +525,9 @@ const DotIndicator = styled.div<{ $active: boolean; $theme: any }>`
   height: 12px;
   border-radius: 50%;
   background: ${props =>
-    props.$active ? (props.$theme?.colors?.primary || publicColors.primary) : '#e0e0e0'};
+    props.$active
+      ? props.$theme?.colors?.primary || publicColors.primary
+      : '#e0e0e0'};
   cursor: pointer;
   transition: all 0.3s ease;
 `;
@@ -751,7 +757,13 @@ export default function WelcomeTutorial() {
         <WelcomeContent>
           <LogoContainer>
             <Logo $theme={theme}>
-              <Image src='/Logo.png' alt='Logo DOM' width={80} height={80} priority />
+              <Image
+                src='/Logo.png'
+                alt='Logo DOM'
+                width={80}
+                height={80}
+                priority
+              />
             </Logo>
           </LogoContainer>
 

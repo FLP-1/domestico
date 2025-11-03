@@ -61,12 +61,12 @@ export const DEFAULT_COLORS = {
 
   // Sistema de espaçamento
   spacing: {
-    xs: '0.25rem',    // 4px
-    sm: '0.5rem',     // 8px
-    md: '1rem',       // 16px
-    lg: '1.5rem',     // 24px
-    xl: '2rem',       // 32px
-    '2xl': '3rem',    // 48px
+    xs: '0.25rem', // 4px
+    sm: '0.5rem', // 8px
+    md: '1rem', // 16px
+    lg: '1.5rem', // 24px
+    xl: '2rem', // 32px
+    '2xl': '3rem', // 48px
   },
 
   // Cores específicas por perfil com variações
@@ -206,7 +206,8 @@ export const DEFAULT_COLORS = {
     light: 'props.theme?.colors?.textSecondary',
     primary: 'props.theme?.colors?.surfacefff',
     secondary: 'props.theme?.colors?.surface',
-    gradient: 'linear-gradient(45deg, props.theme?.colors?.surfacefff, #f0f8ff)',
+    gradient:
+      'linear-gradient(45deg, props.theme?.colors?.surfacefff, #f0f8ff)',
   },
 
   // Cores de email

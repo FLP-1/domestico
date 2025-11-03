@@ -49,6 +49,7 @@ git push origin --tags
 ### 4. Verificar Upload
 
 Após o upload, verifique:
+
 - ✅ Código foi enviado corretamente
 - ✅ Tag v2.0.0 foi criada
 - ✅ README.md está visível
@@ -62,7 +63,7 @@ Após o upload, verifique:
 4. Release title: `Sistema DOM - Release Inicial`
 5. Descrição:
 
-```markdown
+````markdown
 ## 🎉 Sistema DOM - Release Inicial
 
 ### ✨ Funcionalidades Principais
@@ -89,6 +90,7 @@ Após o upload, verifique:
 npm install
 npm run dev
 ```
+````
 
 ### 📊 Estatísticas
 
@@ -97,7 +99,8 @@ npm run dev
 - 15 páginas geradas
 - Build otimizado
 - Zero erros de compilação
-```
+
+````
 
 6. Marque como "Set as the latest release"
 7. Clique em "Publish release"
@@ -109,9 +112,10 @@ npm run dev
 git status
 git log --oneline
 git tag -l
-```
+````
 
 ### Atualizar Repositório
+
 ```bash
 git add .
 git commit -m "feat: nova funcionalidade"
@@ -119,6 +123,7 @@ git push origin master
 ```
 
 ### Criar Nova Tag
+
 ```bash
 git tag -a v2.1.0 -m "Nova versão"
 git push origin v2.1.0
@@ -135,6 +140,7 @@ git push origin v2.1.0
 ## 🎯 Próximos Passos
 
 Após o upload:
+
 1. ✅ Configurar GitHub Pages (se desejar)
 2. ✅ Configurar CI/CD com GitHub Actions
 3. ✅ Adicionar badges de status

@@ -11,7 +11,7 @@ const WIFI_CONFIG_KEY = 'wifi_network_config';
 export const useWiFiConfiguration = () => {
   const [wifiConfig, setWifiConfig] = useState<WiFiConfiguration>({
     networkName: '',
-    isConfigured: false
+    isConfigured: false,
   });
 
   // Carregar configuração salva
@@ -33,11 +33,11 @@ export const useWiFiConfiguration = () => {
   const saveWiFiConfiguration = useCallback((networkName: string) => {
     const config: WiFiConfiguration = {
       networkName,
-      isConfigured: true
+      isConfigured: true,
     };
-    
+
     setWifiConfig(config);
-    
+
     if (typeof window !== 'undefined') {
       localStorage.setItem(WIFI_CONFIG_KEY, JSON.stringify(config));
       // Também salvar no localStorage do useNetworkDetection
@@ -48,7 +48,7 @@ export const useWiFiConfiguration = () => {
   // Limpar configuração
   const clearWiFiConfiguration = useCallback(() => {
     setWifiConfig({ networkName: '', isConfigured: false });
-    
+
     if (typeof window !== 'undefined') {
       localStorage.removeItem(WIFI_CONFIG_KEY);
       localStorage.removeItem('detected_wifi_name');
@@ -67,6 +67,6 @@ export const useWiFiConfiguration = () => {
     wifiConfig,
     saveWiFiConfiguration,
     clearWiFiConfiguration,
-    getFormattedNetworkName
+    getFormattedNetworkName,
   };
 };

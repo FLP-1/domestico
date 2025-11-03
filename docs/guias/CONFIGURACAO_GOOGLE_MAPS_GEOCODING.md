@@ -3,11 +3,13 @@
 ## Por Que Usar Google Maps?
 
 **Problema identificado:**
+
 - ✅ **Coordenadas corretas** (Nominatim funciona bem)
 - ❌ **Endereços de baixa qualidade** (Nominatim tem limitações)
 - ❌ **Dados desatualizados** (Nominatim é open source, menos atualizado)
 
 **Solução:**
+
 - ✅ **Google Maps tem banco de dados MASSIVO e atualizado**
 - ✅ **Endereços precisos e formatados consistentemente**
 - ✅ **Melhor cobertura global**
@@ -17,13 +19,14 @@
 
 ## 💰 Custo
 
-| Item | Valor |
-|------|-------|
-| **Preço por requisição** | $5 por 1000 requisições |
-| **Grátis por mês** | 500 requisições |
-| **Custo para 1000 funcionários/mês** | ~$5-10 USD |
+| Item                                 | Valor                   |
+| ------------------------------------ | ----------------------- |
+| **Preço por requisição**             | $5 por 1000 requisições |
+| **Grátis por mês**                   | 500 requisições         |
+| **Custo para 1000 funcionários/mês** | ~$5-10 USD              |
 
 **Exemplo prático:**
+
 - 50 empregados × 2 registros/dia × 22 dias = 2.200 requisições/mês
 - Custo: ~$11 USD/mês
 - Benefício: **Anti-fraude confiável com endereços precisos**
@@ -42,12 +45,14 @@
 ### 2️⃣ Ativar APIs Necessárias
 
 **Geocoding API:**
+
 1. Menu lateral → "APIs e serviços" → "Biblioteca"
 2. Busque: "Geocoding API"
 3. Clique em "Geocoding API"
 4. Clique "Ativar"
 
 **Maps JavaScript API (opcional, para mapas):**
+
 1. Busque: "Maps JavaScript API"
 2. Clique "Ativar"
 
@@ -61,6 +66,7 @@
 ### 4️⃣ Restringir API Key (Segurança)
 
 **Restrições de aplicativo:**
+
 - Selecione "Referenciadores HTTP (sites)"
 - Adicione:
   - `http://localhost:3000/*`
@@ -68,6 +74,7 @@
   - `https://seudominio.com.br/*` (quando em produção)
 
 **Restrições de API:**
+
 - Selecione "Restringir chave"
 - Marque APENAS: "Geocoding API"
 
@@ -81,6 +88,7 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=SuaChaveAqui
 ```
 
 **Exemplo:**
+
 ```bash
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIzaSyC1234567890abcdefghijklmnopqrstu
 ```
@@ -130,12 +138,14 @@ npm run dev
 ## 🔒 Segurança
 
 **✅ Fazer:**
+
 - Restringir API key a domínios específicos
 - Usar HTTPS em produção
 - Monitorar uso no Google Cloud Console
 - Configurar alertas de custo
 
 **❌ NÃO fazer:**
+
 - Commit da API key no GitHub (já está no .gitignore)
 - Usar mesma key em múltiplos projetos
 - Deixar sem restrições
@@ -145,6 +155,7 @@ npm run dev
 ## 📊 Monitoramento
 
 **Ver uso e custos:**
+
 1. Google Cloud Console
 2. Menu → "APIs e serviços" → "Painel"
 3. Selecione "Geocoding API"
@@ -154,6 +165,7 @@ npm run dev
    - Erros
 
 **Configurar alerta:**
+
 1. Menu → "Faturamento" → "Orçamentos e alertas"
 2. Criar orçamento: Ex: $50/mês
 3. Alerta quando atingir: 80% ($40)
@@ -163,11 +175,13 @@ npm run dev
 ## 🚀 Modo Híbrido (Recomendado)
 
 **Como funciona:**
+
 1. **Se API key configurada** → Usa Google Maps (melhor qualidade)
 2. **Se não configurada** → Usa Nominatim (gratuito)
 3. **Se tudo falhar** → Mostra coordenadas
 
 **Vantagem:**
+
 - Desenvolvimento: Grátis (Nominatim)
 - Produção: Preciso (Google Maps)
 - Sempre funciona (fallbacks)

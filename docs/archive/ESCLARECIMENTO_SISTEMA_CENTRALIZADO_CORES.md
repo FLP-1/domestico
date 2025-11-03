@@ -54,12 +54,12 @@ export const DEFAULT_COLORS = {
   primary: '#29ABE2',
   primaryLight: 'rgba(41, 171, 226, 0.1)',
   primaryDark: '#1E8BC3',
-  
+
   // Cores secundárias
   secondary: '#90EE90',
   secondaryLight: 'rgba(144, 238, 144, 0.1)',
   secondaryDark: '#7ED321',
-  
+
   // Cores de status
   success: '#10B981',
   successLight: '#D1FAE5',
@@ -69,7 +69,7 @@ export const DEFAULT_COLORS = {
   errorLight: '#FEE2E2',
   info: '#3B82F6',
   infoLight: '#DBEAFE',
-  
+
   // Cores dos perfis (sincronizadas com banco)
   profiles: {
     empregado: {
@@ -83,7 +83,7 @@ export const DEFAULT_COLORS = {
       // ... outras cores
     },
     // ... outros perfis
-  }
+  },
 };
 ```
 
@@ -93,16 +93,16 @@ export const DEFAULT_COLORS = {
 // src/hooks/useTheme.ts
 export const useTheme = (profileId: string) => {
   const { config } = useSystemConfig(); // ← Busca do banco de dados
-  
+
   // Mescla configuração do banco com tema hardcoded
   const theme = {
     ...profileThemes[profileId], // ← Tema hardcoded (fallback)
     colors: {
       ...profileThemes[profileId].colors,
       ...config?.colors, // ← Cores do banco de dados (prioridade)
-    }
+    },
   };
-  
+
   return theme;
 };
 ```
@@ -112,7 +112,7 @@ export const useTheme = (profileId: string) => {
 ```typescript
 // 1. Banco de dados (fonte única de verdade)
 const perfil = await prisma.perfil.findUnique({
-  where: { codigo: 'EMPREGADOR' }
+  where: { codigo: 'EMPREGADOR' },
 });
 // perfil.cor = "#2E8B57"
 
@@ -122,7 +122,8 @@ const theme = useTheme('empregador');
 
 // 3. Componente (usa tema centralizado)
 const Button = styled.button`
-  background: ${props => props.$theme?.colors?.primary}; // ← SEM FALLBACK HARDCODED
+  background: ${props =>
+    props.$theme?.colors?.primary}; // ← SEM FALLBACK HARDCODED
   color: white;
 `;
 ```
@@ -134,6 +135,7 @@ const Button = styled.button`
 ### **✅ CORREÇÃO 1: GeofencingModal - Hover de Botão**
 
 **❌ ANTES (INCORRETO):**
+
 ```tsx
 &:hover {
   background-color: #2563eb; // ← COR HARDCODED
@@ -141,6 +143,7 @@ const Button = styled.button`
 ```
 
 **✅ DEPOIS (CORRETO):**
+
 ```tsx
 &:hover {
   background-color: ${props => props.$theme?.colors?.primary}; // ← SEM FALLBACK
@@ -150,6 +153,7 @@ const Button = styled.button`
 ### **✅ CORREÇÃO 2: GeofencingModal - Botão Desabilitado**
 
 **❌ ANTES (INCORRETO):**
+
 ```tsx
 &:disabled {
   background-color: #9ca3af; // ← COR HARDCODED
@@ -158,6 +162,7 @@ const Button = styled.button`
 ```
 
 **✅ DEPOIS (CORRETO):**
+
 ```tsx
 &:disabled {
   background-color: ${props => props.$theme?.colors?.textDisabled}; // ← SEM FALLBACK
@@ -168,11 +173,13 @@ const Button = styled.button`
 ### **✅ CORREÇÃO 3: GeofencingModal - Texto de Botão**
 
 **❌ ANTES (INCORRETO):**
+
 ```tsx
 color: #374151; // ← COR HARDCODED
 ```
 
 **✅ DEPOIS (CORRETO):**
+
 ```tsx
 color: ${props => props.$theme?.colors?.text}; // ← SEM FALLBACK
 ```
@@ -180,11 +187,13 @@ color: ${props => props.$theme?.colors?.text}; // ← SEM FALLBACK
 ### **✅ CORREÇÃO 4: Overlay de Modal**
 
 **❌ ANTES (INCORRETO):**
+
 ```tsx
 background-color: rgba(0, 0, 0, 0.5); // ← COR HARDCODED
 ```
 
 **✅ DEPOIS (CORRETO):**
+
 ```tsx
 background-color: ${props => props.$theme?.colors?.shadowDark}; // ← SEM FALLBACK
 ```
@@ -192,11 +201,13 @@ background-color: ${props => props.$theme?.colors?.shadowDark}; // ← SEM FALLB
 ### **✅ CORREÇÃO 5: Box-shadow de Modal**
 
 **❌ ANTES (INCORRETO):**
+
 ```tsx
 box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); // ← COR HARDCODED
 ```
 
 **✅ DEPOIS (CORRETO):**
+
 ```tsx
 box-shadow: ${props => props.$theme?.colors?.elevation?.xl}; // ← SEM FALLBACK
 ```

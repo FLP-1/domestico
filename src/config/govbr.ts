@@ -13,8 +13,9 @@ export const GOV_BR_CONFIG: GovBrConfig = {
   // Configurações do gov.br
   clientId: process.env.GOV_BR_CLIENT_ID || '',
   clientSecret: process.env.GOV_BR_CLIENT_SECRET || '',
-  redirectUri: process.env.GOV_BR_REDIRECT_URI || 
-    (process.env.NODE_ENV === 'production' 
+  redirectUri:
+    process.env.GOV_BR_REDIRECT_URI ||
+    (process.env.NODE_ENV === 'production'
       ? 'https://seu-dominio.com/api/esocial-real-govbr/callback'
       : 'http://localhost:3000/api/esocial-real-govbr/callback'),
   scope: 'openid profile email esocial:read',
@@ -24,7 +25,8 @@ export const GOV_BR_CONFIG: GovBrConfig = {
   tokenUrl: process.env.GOV_BR_TOKEN_URL || 'https://sso.acesso.gov.br/token',
 
   // URL da API do eSocial (via gov.br)
-  apiUrl: process.env.GOV_BR_API_URL || 
+  apiUrl:
+    process.env.GOV_BR_API_URL ||
     (process.env.NODE_ENV === 'production'
       ? 'https://api.esocial.gov.br'
       : 'https://api-hom.esocial.gov.br'),

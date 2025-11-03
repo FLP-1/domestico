@@ -27,19 +27,22 @@ src/data/centralized/
 
 ### ✅ 1. **dataService.ts** - Métodos Atualizados
 
-#### **getEmpregadosData()** 
+#### **getEmpregadosData()**
+
 - **Antes:** Retornava array estático de MOCK_EMPREGADOS
 - **Agora:** Busca via `/api/users` (dados reais do Prisma)
 - **Fonte:** `DATABASE (postgresql-prisma)`
 - **Fallback:** Dados mockados em caso de erro
 
 #### **getTarefas()**
-- **Antes:** Retornava array estático de MOCK_TAREFAS  
+
+- **Antes:** Retornava array estático de MOCK_TAREFAS
 - **Agora:** Busca via `/api/tasks` (dados reais do Prisma)
 - **Fonte:** `DATABASE (postgresql-prisma)`
 - **Fallback:** Dados mockados em caso de erro
 
 #### **getDocumentos()**
+
 - **Antes:** Retornava array estático de MOCK_DOCUMENTOS
 - **Agora:** Busca via `/api/documents` (dados reais do Prisma)
 - **Fonte:** `DATABASE (postgresql-prisma)`
@@ -47,6 +50,7 @@ src/data/centralized/
 - **Fallback:** Dados mockados em caso de erro
 
 #### **getShoppingLists()**
+
 - **Antes:** Retornava array estático de MOCK_SHOPPING_LISTS
 - **Agora:** Busca via `/api/shopping/lists` (dados reais do Prisma)
 - **Fonte:** `DATABASE (postgresql-prisma)`
@@ -58,14 +62,14 @@ src/data/centralized/
 
 Para suportar os dados reais, foram criadas **6 APIs REST**:
 
-| API | Endpoint | Função |
-|-----|----------|--------|
-| 👤 Usuários | `/api/users` | Lista usuários com perfis |
-| ✅ Tarefas | `/api/tasks` | Lista tarefas com comentários |
-| 📄 Documentos | `/api/documents` | Lista documentos com compartilhamentos |
-| 🛒 Compras | `/api/shopping/lists` | Lista de compras com itens |
-| 🔔 Alertas | `/api/alerts` | Lista alertas com histórico |
-| 💰 Empréstimos | `/api/loans` | Lista empréstimos |
+| API            | Endpoint              | Função                                 |
+| -------------- | --------------------- | -------------------------------------- |
+| 👤 Usuários    | `/api/users`          | Lista usuários com perfis              |
+| ✅ Tarefas     | `/api/tasks`          | Lista tarefas com comentários          |
+| 📄 Documentos  | `/api/documents`      | Lista documentos com compartilhamentos |
+| 🛒 Compras     | `/api/shopping/lists` | Lista de compras com itens             |
+| 🔔 Alertas     | `/api/alerts`         | Lista alertas com histórico            |
+| 💰 Empréstimos | `/api/loans`          | Lista empréstimos                      |
 
 ---
 
@@ -104,8 +108,11 @@ return MOCK_EMPREGADOS; // Dados estáticos como backup
 Estas páginas **já estavam** usando o `dataService` centralizado e agora automaticamente recebem **dados reais**:
 
 ### ✅ **shopping-management.tsx**
+
 ```typescript
-const { dataService } = await import('../data/centralized/services/dataService');
+const { dataService } = await import(
+  '../data/centralized/services/dataService'
+);
 
 // Busca categorias (ainda mockadas)
 const categoriesResult = await dataService.getShoppingCategories();
@@ -116,6 +123,7 @@ const listsResult = await dataService.getShoppingLists();
 ```
 
 ### ✅ **esocial-domestico-completo.tsx**
+
 ```typescript
 const esocialApi = getESocialApiService(esocialConfig);
 
@@ -129,6 +137,7 @@ const dadosEmpregados = await esocialApi.consultarDadosEmpregados();
 ## 🎯 BENEFÍCIOS DA ATUALIZAÇÃO
 
 ### ✅ **1. Dados Reais do Banco**
+
 - 8 usuários com CPFs válidos (gerados com validação)
 - 20 tarefas reais distribuídas
 - 15 documentos diversos
@@ -136,16 +145,19 @@ const dadosEmpregados = await esocialApi.consultarDadosEmpregados();
 - Tudo vindo do PostgreSQL!
 
 ### ✅ **2. Fallback Automático**
+
 - Se API falhar → usa dados mockados
 - Sistema nunca quebra
 - Experiência de usuário preservada
 
 ### ✅ **3. Cache Inteligente**
+
 - Dados são cacheados após primeira busca
 - Performance otimizada
 - Reduz chamadas ao banco
 
 ### ✅ **4. Fonte Identificada**
+
 ```typescript
 {
   success: true,
@@ -161,6 +173,7 @@ const dadosEmpregados = await esocialApi.consultarDadosEmpregados();
 ```
 
 ### ✅ **5. Compatibilidade Total**
+
 - Nenhuma página precisa ser alterada
 - Mesmo formato de retorno
 - Transição transparente
@@ -170,14 +183,16 @@ const dadosEmpregados = await esocialApi.consultarDadosEmpregados();
 ## 🚀 TESTAR OS DADOS REAIS
 
 ### 1. Iniciar o servidor
+
 ```powershell
 npm run dev
 ```
 
 ### 2. Acessar as páginas
+
 ```
 http://localhost:3000/shopping-management
-http://localhost:3000/esocial-domestico-completo  
+http://localhost:3000/esocial-domestico-completo
 http://localhost:3000/task-management
 http://localhost:3000/document-management
 ```
@@ -185,17 +200,21 @@ http://localhost:3000/document-management
 ### 3. Verificar os dados
 
 **Shopping Management:**
+
 - Deve mostrar "Compras do Mês" com 6 itens reais
 - Arroz, Feijão, Macarrão, Leite, Sabonete, Detergente
 
 **eSocial:**
+
 - Deve mostrar 8 empregados reais
 - Com CPFs válidos gerados pelo seed
 
 **Tasks:**
+
 - Deve mostrar 20 tarefas reais do banco
 
 ### 4. Verificar a fonte no console
+
 ```typescript
 const result = await dataService.getShoppingLists();
 console.log(result.source);
@@ -210,16 +229,16 @@ console.log(result.source);
 
 ## 📊 DADOS DISPONÍVEIS NO BANCO
 
-| Tipo | Quantidade | Status |
-|------|------------|--------|
-| 👤 Usuários | 8 | ✅ Com CPFs válidos |
-| 👔 Perfis | 4 | ✅ Admin, Empregador, etc |
-| ✅ Tarefas | 20 | ✅ Com comentários |
-| 📄 Documentos | 15 | ✅ Diversos tipos |
-| 🛒 Listas | 1 | ✅ Com 6 itens |
-| 📦 Itens | 6 | ✅ Reais (Arroz, Feijão...) |
-| 🔔 Alertas | 5 | ✅ Diversos tipos |
-| 💰 Empréstimos | 0 | ⚠️ Criar via seed |
+| Tipo           | Quantidade | Status                      |
+| -------------- | ---------- | --------------------------- |
+| 👤 Usuários    | 8          | ✅ Com CPFs válidos         |
+| 👔 Perfis      | 4          | ✅ Admin, Empregador, etc   |
+| ✅ Tarefas     | 20         | ✅ Com comentários          |
+| 📄 Documentos  | 15         | ✅ Diversos tipos           |
+| 🛒 Listas      | 1          | ✅ Com 6 itens              |
+| 📦 Itens       | 6          | ✅ Reais (Arroz, Feijão...) |
+| 🔔 Alertas     | 5          | ✅ Diversos tipos           |
+| 💰 Empréstimos | 0          | ⚠️ Criar via seed           |
 
 ---
 
@@ -272,7 +291,7 @@ Já foi criada `/api/alerts` mas ainda não integrada ao `dataService`
 ✅ **Cache inteligente** para performance  
 ✅ **Compatibilidade total** - nenhuma página quebra  
 ✅ **8 usuários reais** com CPFs válidos no banco  
-✅ **20 tarefas, 15 documentos, 1 lista** de compras reais  
+✅ **20 tarefas, 15 documentos, 1 lista** de compras reais
 
 **🎉 Agora o sistema usa DADOS REAIS do banco de dados PostgreSQL!**
 
@@ -282,4 +301,3 @@ Já foi criada `/api/alerts` mas ainda não integrada ao `dataService`
 **Versão:** DOM v1.0.0  
 **Banco:** PostgreSQL 18 - Porta 5433  
 **CPFs:** Todos válidos com dígitos verificadores corretos ✅
-

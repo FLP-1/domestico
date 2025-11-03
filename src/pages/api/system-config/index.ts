@@ -1,7 +1,10 @@
 import prisma from '@/lib/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
     switch (req.method) {
       case 'GET':
@@ -13,11 +16,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       case 'DELETE':
         return await deleteSystemConfig(req, res);
       default:
-        return res.status(405).json({ success: false, error: 'Método não permitido' });
+        return res
+          .status(405)
+          .json({ success: false, error: 'Método não permitido' });
     }
   } catch (error) {
     console.error('Erro na API de configuração do sistema:', error);
-    return res.status(500).json({ success: false, error: 'Erro interno do servidor' });
+    return res
+      .status(500)
+      .json({ success: false, error: 'Erro interno do servidor' });
   } finally {
     await prisma.$disconnect();
   }
@@ -44,7 +51,7 @@ async function getSystemConfig(req: NextApiRequest, res: NextApiResponse) {
   // Converter valores baseado no tipo
   const mappedConfigs = configs.map(config => {
     let valor: any = config.valor;
-    
+
     switch (config.tipo) {
       case 'number':
         valor = parseFloat(config.valor);
@@ -133,7 +140,9 @@ async function updateSystemConfig(req: NextApiRequest, res: NextApiResponse) {
   });
 
   if (!existingConfig) {
-    return res.status(404).json({ success: false, error: 'Configuração não encontrada' });
+    return res
+      .status(404)
+      .json({ success: false, error: 'Configuração não encontrada' });
   }
 
   // Converter valor para string baseado no tipo existente
@@ -187,5 +196,7 @@ async function deleteSystemConfig(req: NextApiRequest, res: NextApiResponse) {
     where: { id: id as string },
   });
 
-  return res.status(200).json({ success: true, message: 'Configuração excluída com sucesso' });
+  return res
+    .status(200)
+    .json({ success: true, message: 'Configuração excluída com sucesso' });
 }

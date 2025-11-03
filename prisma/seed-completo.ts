@@ -4,8 +4,18 @@ import * as bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 type CreatedUsers = {
-  alex: { id: string; cpf: string; perfilEmpregadorId: string; perfilAdminId: string };
-  helena: { id: string; cpf: string; perfilEmpregadorId: string; perfilAdminId: string };
+  alex: {
+    id: string;
+    cpf: string;
+    perfilEmpregadorId: string;
+    perfilAdminId: string;
+  };
+  helena: {
+    id: string;
+    cpf: string;
+    perfilEmpregadorId: string;
+    perfilAdminId: string;
+  };
   beatriz: { id: string; cpf: string; perfilEmpregadoId: string };
   carlos: { id: string; cpf: string; perfilEmpregadoId: string };
   daniela: { id: string; cpf: string; perfilFamiliaId: string };
@@ -33,7 +43,8 @@ type CreatedDevices = {
 };
 
 const now = new Date();
-const daysAgo = (qty: number) => new Date(Date.now() - qty * 24 * 60 * 60 * 1000);
+const daysAgo = (qty: number) =>
+  new Date(Date.now() - qty * 24 * 60 * 60 * 1000);
 const hoursAgo = (qty: number) => new Date(Date.now() - qty * 60 * 60 * 1000);
 
 function gerarCpfValido(base: number): string {
@@ -582,7 +593,10 @@ async function createUsers(perfis: Awaited<ReturnType<typeof createProfiles>>) {
   } satisfies CreatedUsers;
 }
 
-async function createGroups(primaryEmployerId: string, secondaryEmployerId: string) {
+async function createGroups(
+  primaryEmployerId: string,
+  secondaryEmployerId: string
+) {
   console.log('👥 Criando grupos de trabalho e família...');
 
   const homeGroup = await prisma.grupo.create({
@@ -652,7 +666,12 @@ async function createGroups(primaryEmployerId: string, secondaryEmployerId: stri
     },
   });
 
-  return { homeGroup, serviceGroup, familyGroup, veranoGroup } satisfies CreatedGroups;
+  return {
+    homeGroup,
+    serviceGroup,
+    familyGroup,
+    veranoGroup,
+  } satisfies CreatedGroups;
 }
 
 async function relateUsersToGroups(users: CreatedUsers, groups: CreatedGroups) {
@@ -718,7 +737,10 @@ async function relateUsersToGroups(users: CreatedUsers, groups: CreatedGroups) {
   });
 }
 
-async function seedLocationsAndGeofencing(users: CreatedUsers, groups: CreatedGroups) {
+async function seedLocationsAndGeofencing(
+  users: CreatedUsers,
+  groups: CreatedGroups
+) {
   console.log('📍 Criando locais de trabalho e registros de geofencing...');
 
   const auroraMain = await prisma.localTrabalho.create({
@@ -769,7 +791,11 @@ async function seedLocationsAndGeofencing(users: CreatedUsers, groups: CreatedGr
         usuarioId: users.alex.id,
         grupoId: null,
         chave: 'geolocation_config',
-        valor: JSON.stringify({ maxDistance: 180, accuracyThreshold: 60, timeout: 12000 }),
+        valor: JSON.stringify({
+          maxDistance: 180,
+          accuracyThreshold: 60,
+          timeout: 12000,
+        }),
         descricao: 'Configuração personalizada para o gestor principal',
         ativo: true,
       },
@@ -777,15 +803,24 @@ async function seedLocationsAndGeofencing(users: CreatedUsers, groups: CreatedGr
         usuarioId: null,
         grupoId: groups.serviceGroup.id,
         chave: 'geolocation_config',
-        valor: JSON.stringify({ maxDistance: 200, accuracyThreshold: 80, timeout: 15000 }),
-        descricao: 'Parâmetros padrão do grupo de serviços da residência Aurora',
+        valor: JSON.stringify({
+          maxDistance: 200,
+          accuracyThreshold: 80,
+          timeout: 15000,
+        }),
+        descricao:
+          'Parâmetros padrão do grupo de serviços da residência Aurora',
         ativo: true,
       },
       {
         usuarioId: null,
         grupoId: groups.veranoGroup.id,
         chave: 'geolocation_config',
-        valor: JSON.stringify({ maxDistance: 220, accuracyThreshold: 75, timeout: 14000 }),
+        valor: JSON.stringify({
+          maxDistance: 220,
+          accuracyThreshold: 75,
+          timeout: 14000,
+        }),
         descricao: 'Configuração padrão da residência Verano para plantões',
         ativo: true,
       },
@@ -798,15 +833,24 @@ async function seedLocationsAndGeofencing(users: CreatedUsers, groups: CreatedGr
         usuarioId: users.beatriz.id,
         grupoId: null,
         chave: 'antifraud_config',
-        valor: JSON.stringify({ maxAttempts: 3, lockoutDuration: 900000, riskThreshold: 0.65 }),
-        descricao: 'Parâmetros de antifraude individuais para colaboradora Beatriz',
+        valor: JSON.stringify({
+          maxAttempts: 3,
+          lockoutDuration: 900000,
+          riskThreshold: 0.65,
+        }),
+        descricao:
+          'Parâmetros de antifraude individuais para colaboradora Beatriz',
         ativo: true,
       },
       {
         usuarioId: null,
         grupoId: groups.serviceGroup.id,
         chave: 'antifraud_config',
-        valor: JSON.stringify({ maxAttempts: 5, lockoutDuration: 600000, riskThreshold: 0.7 }),
+        valor: JSON.stringify({
+          maxAttempts: 5,
+          lockoutDuration: 600000,
+          riskThreshold: 0.7,
+        }),
         descricao: 'Antifraude padrão aplicado ao grupo de serviços Aurora',
         ativo: true,
       },
@@ -814,7 +858,11 @@ async function seedLocationsAndGeofencing(users: CreatedUsers, groups: CreatedGr
         usuarioId: null,
         grupoId: groups.veranoGroup.id,
         chave: 'antifraud_config',
-        valor: JSON.stringify({ maxAttempts: 4, lockoutDuration: 780000, riskThreshold: 0.68 }),
+        valor: JSON.stringify({
+          maxAttempts: 4,
+          lockoutDuration: 780000,
+          riskThreshold: 0.68,
+        }),
         descricao: 'Configuração de antifraude para residência Verano',
         ativo: true,
       },
@@ -971,7 +1019,14 @@ async function seedDevicesAndTimeClock(
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
   const horario = (hora: number, minuto: number) =>
-    new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), hora, minuto, 0);
+    new Date(
+      hoje.getFullYear(),
+      hoje.getMonth(),
+      hoje.getDate(),
+      hora,
+      minuto,
+      0
+    );
 
   await prisma.registroPonto.createMany({
     data: [
@@ -1137,7 +1192,8 @@ async function seedDevicesAndTimeClock(
         data: now,
         inicio: '18:00',
         fim: '21:00',
-        justificativa: 'Organização adicional do arquivo físico da residência Aurora',
+        justificativa:
+          'Organização adicional do arquivo físico da residência Aurora',
         status: 'PENDENTE',
         grupoId: groups.serviceGroup.id,
         usuarioPerfilId: users.beatriz.perfilEmpregadoId,
@@ -1213,7 +1269,8 @@ async function seedCommunication(
     data: {
       conversaId: conversaAurora.id,
       remetenteId: users.alex.id,
-      conteudo: 'Bom dia, Bia! Não esqueça de registrar a inspeção semanal de equipamentos.',
+      conteudo:
+        'Bom dia, Bia! Não esqueça de registrar a inspeção semanal de equipamentos.',
       tipo: 'texto',
       respostaParaId: null,
       lida: true,
@@ -1307,7 +1364,8 @@ async function seedCommunication(
     data: {
       conversaId: conversaVerano.id,
       remetenteId: users.helena.id,
-      conteudo: 'Beatriz, hoje teremos um plantão estendido. Confirme quando chegar.',
+      conteudo:
+        'Beatriz, hoje teremos um plantão estendido. Confirme quando chegar.',
       tipo: 'texto',
       respostaParaId: null,
       lida: false,
@@ -1343,14 +1401,18 @@ async function seedCommunication(
   });
 }
 
-async function seedDocumentsAndTasks(users: CreatedUsers, groups: CreatedGroups) {
+async function seedDocumentsAndTasks(
+  users: CreatedUsers,
+  groups: CreatedGroups
+) {
   console.log('📄 Criando documentos, tarefas e alertas...');
 
   const contratoBeatriz = await prisma.documento.create({
     data: {
       usuarioId: users.alex.id,
       nome: 'Contrato de Prestação de Serviços - Beatriz',
-      descricao: 'Contrato atualizado para colaboradora Beatriz Lima (Residência Aurora)',
+      descricao:
+        'Contrato atualizado para colaboradora Beatriz Lima (Residência Aurora)',
       categoria: 'contrato',
       tipo: 'pdf',
       tamanho: 245_678,
@@ -1430,7 +1492,8 @@ async function seedDocumentsAndTasks(users: CreatedUsers, groups: CreatedGroups)
         usuarioId: users.alex.id,
         tipo: 'ALERTA',
         titulo: 'Solicitação de hora extra',
-        mensagem: 'Beatriz Lima solicitou hora extra das 18h às 21h na residência Aurora.',
+        mensagem:
+          'Beatriz Lima solicitou hora extra das 18h às 21h na residência Aurora.',
         categoria: 'gestao',
         prioridade: 'alta',
         lida: false,
@@ -1439,7 +1502,8 @@ async function seedDocumentsAndTasks(users: CreatedUsers, groups: CreatedGroups)
         usuarioId: users.helena.id,
         tipo: 'ALERTA',
         titulo: 'Plantão Verano pendente',
-        mensagem: 'Hora extra de Beatriz na residência Verano aguarda aprovação.',
+        mensagem:
+          'Hora extra de Beatriz na residência Verano aguarda aprovação.',
         categoria: 'gestao',
         prioridade: 'alta',
         lida: false,
@@ -1479,7 +1543,8 @@ async function seedDocumentsAndTasks(users: CreatedUsers, groups: CreatedGroups)
   const tarefaAurora = await prisma.tarefa.create({
     data: {
       titulo: 'Revisar dossiê de colaboradores',
-      descricao: 'Validar documentação obrigatória e registros de admissão no eSocial (Residência Aurora).',
+      descricao:
+        'Validar documentação obrigatória e registros de admissão no eSocial (Residência Aurora).',
       prioridade: 'alta',
       status: 'pendente',
       atribuidoPara: users.alex.id,
@@ -1501,7 +1566,8 @@ async function seedDocumentsAndTasks(users: CreatedUsers, groups: CreatedGroups)
   const tarefaVerano = await prisma.tarefa.create({
     data: {
       titulo: 'Planejar escala de plantões Verano',
-      descricao: 'Ajustar escala de plantões noturnos para cobertura completa da residência Verano.',
+      descricao:
+        'Ajustar escala de plantões noturnos para cobertura completa da residência Verano.',
       prioridade: 'media',
       status: 'em_andamento',
       atribuidoPara: users.helena.id,
@@ -1709,7 +1775,8 @@ async function seedFinancialAndPayroll(users: CreatedUsers) {
         adicionais: new Prisma.Decimal('200.00'),
         salarioLiquido: new Prisma.Decimal('2698.00'),
         status: 'PROCESSADA',
-        observacoes: 'Folha processada com base no cálculo salarial gerado pela seed (Aurora).',
+        observacoes:
+          'Folha processada com base no cálculo salarial gerado pela seed (Aurora).',
       },
       {
         usuarioId: users.helena.id,
@@ -1769,7 +1836,10 @@ async function seedFinancialAndPayroll(users: CreatedUsers) {
   });
 }
 
-async function seedSecurityAndAudit(users: CreatedUsers, devices: CreatedDevices) {
+async function seedSecurityAndAudit(
+  users: CreatedUsers,
+  devices: CreatedDevices
+) {
   console.log('🔐 Criando registros de antifraude, auditoria e logs...');
 
   const fingerprint = await prisma.deviceFingerprint.create({
@@ -1900,7 +1970,8 @@ async function seedSecurityAndAudit(users: CreatedUsers, devices: CreatedDevices
       {
         tipo: 'ponto',
         titulo: 'Registro de ponto confirmado',
-        descricao: 'Beatriz Lima registrou entrada às 08h30 na residência Aurora.',
+        descricao:
+          'Beatriz Lima registrou entrada às 08h30 na residência Aurora.',
         usuarioId: users.beatriz.id,
         dados: { tipo: 'ENTRADA', horario: '08:30', grupo: 'Aurora' },
       },
@@ -1934,7 +2005,10 @@ async function seedTerms(users: CreatedUsers) {
         'Estes termos regem o uso da plataforma DOM Suite para gestão de residência e colaboradores.',
       ativo: true,
       dataVigencia: daysAgo(60),
-      mudancas: ['Atualização de políticas de privacidade', 'Inclusão de módulo antifraude'],
+      mudancas: [
+        'Atualização de políticas de privacidade',
+        'Inclusão de módulo antifraude',
+      ],
     },
     create: {
       versao: '2025.01',
@@ -2013,18 +2087,25 @@ async function main() {
   await seedTerms(users);
 
   console.log('\n✅ Seed concluída com sucesso!');
-  console.log(' - Usuários criados: 6 (Alex, Helena, Beatriz, Carlos, Daniela, Eva)');
-  console.log(' - Grupos configurados: Residência Aurora, Equipe Serviços DOM, Família Ribeiro, Residência Verano');
-  console.log(' - Empregado compartilhado entre dois empregadores/grupos com múltiplos locais');
-  console.log(' - Jornada completa com hora extra pendente e dados para todos os formulários principais');
+  console.log(
+    ' - Usuários criados: 6 (Alex, Helena, Beatriz, Carlos, Daniela, Eva)'
+  );
+  console.log(
+    ' - Grupos configurados: Residência Aurora, Equipe Serviços DOM, Família Ribeiro, Residência Verano'
+  );
+  console.log(
+    ' - Empregado compartilhado entre dois empregadores/grupos com múltiplos locais'
+  );
+  console.log(
+    ' - Jornada completa com hora extra pendente e dados para todos os formulários principais'
+  );
 }
 
 main()
-  .catch((error) => {
+  .catch(error => {
     console.error('❌ Erro durante execução do seed:', error);
     process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();
   });
-

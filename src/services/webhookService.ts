@@ -189,7 +189,7 @@ class WebhookService {
     try {
       const response = await fetch('/api/webhooks/events');
       const result = await response.json();
-      
+
       if (result.success && result.data) {
         this.eventQueue = result.data;
       }
@@ -205,7 +205,8 @@ class WebhookService {
       tipo: eventData.tipo,
       protocolo: eventData.protocolo,
       status: eventData.status,
-      dataProcessamento: eventData.dataProcessamento || new Date().toISOString(),
+      dataProcessamento:
+        eventData.dataProcessamento || new Date().toISOString(),
       mensagem: eventData.mensagem,
       erro: eventData.erro,
       empresaId: eventData.empresaId,

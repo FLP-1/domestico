@@ -827,14 +827,18 @@ const EmployerModal: React.FC<EmployerModalProps> = ({
     <UnifiedModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Cadastro do Empregador"
+      title='Cadastro do Empregador'
       maxWidth='800px'
       footer={
         <>
           <UnifiedButton $variant='secondary' $theme={theme} onClick={onClose}>
             Cancelar
           </UnifiedButton>
-          <UnifiedButton $variant='primary' $theme={theme} onClick={handleSubmit}>
+          <UnifiedButton
+            $variant='primary'
+            $theme={theme}
+            onClick={handleSubmit}
+          >
             <AccessibleEmoji emoji='💾' label='Salvar' />{' '}
             {employer ? 'Atualizar' : 'Cadastrar'}
           </UnifiedButton>
@@ -1312,7 +1316,10 @@ const EmployerModal: React.FC<EmployerModalProps> = ({
                 checked={formData.enviarParaEsocial}
                 aria-label='Enviar dados para eSocial'
                 onChange={e =>
-                  handleInputChange('enviarParaEsocial', e.target.checked.toString())
+                  handleInputChange(
+                    'enviarParaEsocial',
+                    e.target.checked.toString()
+                  )
                 }
               />
               <OptimizedLabel htmlFor='enviarParaEsocial'>
@@ -1344,9 +1351,7 @@ const EmployerModal: React.FC<EmployerModalProps> = ({
         onClose={() => setShowValidationModal(false)}
         onSuccess={validationType === 'email' ? validarEmail : validarTelefone}
         tipo={validationType === 'email' ? 'email' : 'telefone'}
-        valor={
-          validationType === 'email' ? formData.email : formData.telefone
-        }
+        valor={validationType === 'email' ? formData.email : formData.telefone}
       />
     </UnifiedModal>
   );

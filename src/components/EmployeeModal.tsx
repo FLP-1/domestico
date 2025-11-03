@@ -180,9 +180,9 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
         salario: employee.salario.toString(),
         dataAdmissao: employee.dataAdmissao,
         status: employee.status,
-        endereco: { 
+        endereco: {
           ...employee.endereco,
-          complemento: employee.endereco.complemento || ''
+          complemento: employee.endereco.complemento || '',
         },
         contato: { ...employee.contato },
       });
@@ -548,7 +548,11 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
           <UnifiedButton $variant='secondary' $theme={theme} onClick={onClose}>
             Cancelar
           </UnifiedButton>
-          <UnifiedButton $variant='primary' $theme={theme} onClick={() => handleSubmit({} as React.FormEvent)}>
+          <UnifiedButton
+            $variant='primary'
+            $theme={theme}
+            onClick={() => handleSubmit({} as React.FormEvent)}
+          >
             <AccessibleEmoji emoji='💾' label='Salvar' />{' '}
             {employee ? 'Atualizar' : 'Adicionar'}
           </UnifiedButton>
@@ -810,7 +814,9 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
                 $variant='secondary'
                 type='button'
                 onClick={() => consultarCEP(formData.endereco.cep)}
-                $disabled={formData.endereco.cep.replace(/\D/g, '').length !== 8}
+                $disabled={
+                  formData.endereco.cep.replace(/\D/g, '').length !== 8
+                }
               >
                 <AccessibleEmoji emoji='🔍' label='Buscar' /> Buscar
               </UnifiedButtonStyled>
@@ -825,8 +831,8 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
             <OptimizedSelectStyled
               id='uf'
               value={formData.endereco.uf}
-              aria-label="Estado (UF)"
-              title="Estado (UF)"
+              aria-label='Estado (UF)'
+              title='Estado (UF)'
               onChange={e => handleInputChange('endereco.uf', e.target.value)}
               $hasError={!!errors['uf']}
             >

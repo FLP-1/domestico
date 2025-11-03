@@ -4,7 +4,10 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { gerarFingerprint, type FingerprintData } from '@/lib/antifraude/fingerprint';
+import {
+  gerarFingerprint,
+  type FingerprintData,
+} from '@/lib/antifraude/fingerprint';
 import { obterTracker, limparTracker } from '@/lib/antifraude/behavior-tracker';
 
 export interface ResultadoAntifraude {
@@ -76,7 +79,7 @@ export function useAntifraude() {
       const response = await fetch('/api/antifraude/validar', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           usuarioId,
@@ -84,8 +87,8 @@ export function useAntifraude() {
           fingerprintData: fingerprint,
           geolocalizacao,
           comportamento,
-          tipoEvento
-        })
+          tipoEvento,
+        }),
       });
 
       if (!response.ok) {
@@ -134,7 +137,6 @@ export function useAntifraude() {
     validarAcao,
     validarLogin,
     registrarPagina,
-    obterComportamento
+    obterComportamento,
   };
 }
-

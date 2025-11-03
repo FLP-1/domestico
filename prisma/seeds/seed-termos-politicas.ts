@@ -1,6 +1,6 @@
 /**
  * SEED DE TERMOS E POLÍTICAS
- * 
+ *
  * Este seed popula os termos de uso e políticas de privacidade
  * para substituir dados hardcoded
  */
@@ -128,7 +128,7 @@ async function seedTermosPoliticas() {
   try {
     // Verificar se já existem termos
     const existingTerms = await prisma.termo.count();
-    
+
     if (existingTerms > 0) {
       console.log('⚠️  Termos já existem. Pulando seed...');
       return;
@@ -145,8 +145,8 @@ async function seedTermosPoliticas() {
         ativo: true,
         dataVigencia: new Date('2024-01-15'),
         mudancas: ['Versão inicial dos termos de uso'],
-        notificarUsuarios: false
-      }
+        notificarUsuarios: false,
+      },
     });
 
     console.log(`✅ Termos de Uso criados: ${termosUsoCriado.id}`);
@@ -162,14 +162,13 @@ async function seedTermosPoliticas() {
         ativo: true,
         dataVigencia: new Date('2024-01-15'),
         mudancas: ['Versão inicial da política de privacidade'],
-        notificarUsuarios: false
-      }
+        notificarUsuarios: false,
+      },
     });
 
     console.log(`✅ Política de Privacidade criada: ${politicaCriada.id}`);
 
     console.log('🎉 Seed de termos e políticas concluído!');
-
   } catch (error) {
     console.error('❌ Erro no seed de termos e políticas:', error);
     throw error;
@@ -181,7 +180,7 @@ export default seedTermosPoliticas;
 // Executar se chamado diretamente
 if (require.main === module) {
   seedTermosPoliticas()
-    .catch((error) => {
+    .catch(error => {
       console.error(error);
       process.exit(1);
     })

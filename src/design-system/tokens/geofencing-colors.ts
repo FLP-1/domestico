@@ -9,7 +9,7 @@ export const geofencingColors = {
     medium: '#5a6c7d',
     light: '#7f8c8d',
   },
-  
+
   // Cores de fundo
   background: {
     primary: '#ffffff',
@@ -18,7 +18,7 @@ export const geofencingColors = {
     light: '#f0f8ff',
     gradient: 'linear-gradient(45deg, #ffffff, #f0f8ff)',
   },
-  
+
   // Cores de borda
   border: {
     primary: '#dddddd',
@@ -27,7 +27,7 @@ export const geofencingColors = {
     light: '#dee2e6',
     muted: '#e0e0e0',
   },
-  
+
   // Cores de status
   status: {
     success: {
@@ -55,7 +55,7 @@ export const geofencingColors = {
       color: '#29ABE2',
     },
   },
-  
+
   // Cores de botões
   button: {
     primary: {
@@ -78,7 +78,7 @@ export const geofencingColors = {
       text: '#9e9e9e',
     },
   },
-  
+
   // Cores de navegação
   navigation: {
     active: '#007bff',
@@ -86,7 +86,7 @@ export const geofencingColors = {
     hover: '#007bff',
     primary: '#29abe2',
   },
-  
+
   // Cores de destaque
   accent: {
     blue: '#29ABE2',

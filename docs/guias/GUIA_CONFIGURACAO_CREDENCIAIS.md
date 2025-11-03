@@ -3,12 +3,14 @@
 ## 📋 **CREDENCIAIS RECUPERADAS**
 
 ### **📧 Email - SendGrid**
+
 ```
 API Key: [Sua chave SendGrid]
 From Email: [Seu email de envio]
 ```
 
 ### **📱 SMS - Twilio**
+
 ```
 Account SID: ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 Auth Token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -16,6 +18,7 @@ Phone Number: +12183668060
 ```
 
 ### **🔐 Certificado eCPF**
+
 ```
 Arquivo: certificados/eCPF A1 24940271 (senha 456587).pfx
 Senha: 456587
@@ -24,12 +27,14 @@ Senha: 456587
 ## 🚀 **COMO CONFIGURAR**
 
 ### **1. Criar arquivo .env.local**
+
 ```bash
 # Copie o arquivo de exemplo
 cp config-local-example.env .env.local
 ```
 
 ### **2. Editar .env.local**
+
 ```bash
 # Abra o arquivo e configure suas credenciais
 nano .env.local
@@ -38,6 +43,7 @@ code .env.local
 ```
 
 ### **3. Configurar certificado**
+
 ```bash
 # Certifique-se de que o certificado está na pasta correta
 ls certificados/
@@ -45,6 +51,7 @@ ls certificados/
 ```
 
 ### **4. Testar configurações**
+
 ```bash
 # Teste as configurações
 npm run dev
@@ -53,11 +60,13 @@ npm run dev
 ## 🛡️ **SEGURANÇA**
 
 ### **✅ O que fazer:**
+
 - Use variáveis de ambiente
 - Mantenha credenciais em .env.local
 - Teste em ambiente local primeiro
 
 ### **❌ O que NÃO fazer:**
+
 - Nunca commite .env.local
 - Nunca commite certificados
 - Nunca compartilhe credenciais por email
@@ -76,6 +85,7 @@ DOM/
 ## 🔧 **CONFIGURAÇÃO RÁPIDA**
 
 ### **Para desenvolvimento:**
+
 ```bash
 # 1. Copie o exemplo
 cp config-local-example.env .env.local
@@ -86,6 +96,7 @@ npm run dev
 ```
 
 ### **Para produção:**
+
 ```bash
 # 1. Configure as variáveis no servidor
 # 2. Faça upload do certificado
@@ -95,6 +106,7 @@ npm run dev
 ## 📞 **SUPORTE**
 
 Se tiver problemas:
+
 1. Verifique se o arquivo .env.local existe
 2. Confirme se as variáveis estão corretas
 3. Teste as conexões individualmente

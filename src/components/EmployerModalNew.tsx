@@ -118,7 +118,7 @@ export const EmployerModalNew: React.FC<EmployerModalNewProps> = ({
     } else {
       setFormData(prev => ({ ...prev, [field]: value }));
     }
-    
+
     // Limpar erro do campo
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
@@ -180,7 +180,7 @@ export const EmployerModalNew: React.FC<EmployerModalNewProps> = ({
     if (!validateForm()) {
       showAlert({
         type: 'error',
-        message: 'Por favor, corrija os erros no formulário.'
+        message: 'Por favor, corrija os erros no formulário.',
       });
       return;
     }
@@ -188,7 +188,7 @@ export const EmployerModalNew: React.FC<EmployerModalNewProps> = ({
     onSave(formData);
     showAlert({
       type: 'success',
-      message: `Empregador ${employer ? 'atualizado' : 'cadastrado'} com sucesso!`
+      message: `Empregador ${employer ? 'atualizado' : 'cadastrado'} com sucesso!`,
     });
     onClose();
   };
@@ -211,15 +211,37 @@ export const EmployerModalNew: React.FC<EmployerModalNewProps> = ({
   };
 
   const formatCEP = (value: string) => {
-    return value
-      .replace(/\D/g, '')
-      .replace(/(\d{5})(\d)/, '$1-$2');
+    return value.replace(/\D/g, '').replace(/(\d{5})(\d)/, '$1-$2');
   };
 
   const ufOptions = [
-    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
-    'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
-    'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+    'AC',
+    'AL',
+    'AP',
+    'AM',
+    'BA',
+    'CE',
+    'DF',
+    'ES',
+    'GO',
+    'MA',
+    'MT',
+    'MS',
+    'MG',
+    'PA',
+    'PB',
+    'PR',
+    'PE',
+    'PI',
+    'RJ',
+    'RN',
+    'RS',
+    'RO',
+    'RR',
+    'SC',
+    'SP',
+    'SE',
+    'TO',
   ];
 
   return (
@@ -227,36 +249,40 @@ export const EmployerModalNew: React.FC<EmployerModalNewProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title={`${employer ? 'Editar' : 'Adicionar'} Empregador`}
-      maxWidth="900px"
+      maxWidth='900px'
       $theme={$theme}
     >
       <ModalContent>
         <Form onSubmit={e => e.preventDefault()}>
           <h3>Dados da Empresa</h3>
-          
+
           <FormRow>
             <FormGroup>
-              <label htmlFor="razaoSocial">Razão Social *</label>
+              <label htmlFor='razaoSocial'>Razão Social *</label>
               <Input
-                id="razaoSocial"
-                type="text"
+                id='razaoSocial'
+                type='text'
                 value={formData.razaoSocial}
                 onChange={e => handleInputChange('razaoSocial', e.target.value)}
-                placeholder="Digite a razão social"
+                placeholder='Digite a razão social'
                 $theme={$theme}
                 $hasError={!!errors.razaoSocial}
               />
-              {errors.razaoSocial && <ErrorText>{errors.razaoSocial}</ErrorText>}
+              {errors.razaoSocial && (
+                <ErrorText>{errors.razaoSocial}</ErrorText>
+              )}
             </FormGroup>
 
             <FormGroup>
-              <label htmlFor="cnpj">CNPJ *</label>
+              <label htmlFor='cnpj'>CNPJ *</label>
               <Input
-                id="cnpj"
-                type="text"
+                id='cnpj'
+                type='text'
                 value={formData.cnpj}
-                onChange={e => handleInputChange('cnpj', formatCNPJ(e.target.value))}
-                placeholder="00.000.000/0000-00"
+                onChange={e =>
+                  handleInputChange('cnpj', formatCNPJ(e.target.value))
+                }
+                placeholder='00.000.000/0000-00'
                 maxLength={18}
                 $theme={$theme}
                 $hasError={!!errors.cnpj}
@@ -267,13 +293,13 @@ export const EmployerModalNew: React.FC<EmployerModalNewProps> = ({
 
           <FormRow>
             <FormGroup>
-              <label htmlFor="email">Email *</label>
+              <label htmlFor='email'>Email *</label>
               <Input
-                id="email"
-                type="email"
+                id='email'
+                type='email'
                 value={formData.email}
                 onChange={e => handleInputChange('email', e.target.value)}
-                placeholder="email@exemplo.com"
+                placeholder='email@exemplo.com'
                 $theme={$theme}
                 $hasError={!!errors.email}
               />
@@ -281,13 +307,15 @@ export const EmployerModalNew: React.FC<EmployerModalNewProps> = ({
             </FormGroup>
 
             <FormGroup>
-              <label htmlFor="telefone">Telefone *</label>
+              <label htmlFor='telefone'>Telefone *</label>
               <Input
-                id="telefone"
-                type="tel"
+                id='telefone'
+                type='tel'
                 value={formData.telefone}
-                onChange={e => handleInputChange('telefone', formatPhone(e.target.value))}
-                placeholder="(11) 99999-9999"
+                onChange={e =>
+                  handleInputChange('telefone', formatPhone(e.target.value))
+                }
+                placeholder='(11) 99999-9999'
                 $theme={$theme}
                 $hasError={!!errors.telefone}
               />
@@ -296,114 +324,138 @@ export const EmployerModalNew: React.FC<EmployerModalNewProps> = ({
           </FormRow>
 
           <h3>Endereço</h3>
-          
+
           <FormRow>
             <FormGroup>
-              <label htmlFor="cep">CEP *</label>
+              <label htmlFor='cep'>CEP *</label>
               <Input
-                id="cep"
-                type="text"
+                id='cep'
+                type='text'
                 value={formData.endereco.cep}
-                onChange={e => handleInputChange('endereco.cep', formatCEP(e.target.value))}
-                placeholder="00000-000"
+                onChange={e =>
+                  handleInputChange('endereco.cep', formatCEP(e.target.value))
+                }
+                placeholder='00000-000'
                 maxLength={9}
                 $theme={$theme}
                 $hasError={!!errors['endereco.cep']}
               />
-              {errors['endereco.cep'] && <ErrorText>{errors['endereco.cep']}</ErrorText>}
+              {errors['endereco.cep'] && (
+                <ErrorText>{errors['endereco.cep']}</ErrorText>
+              )}
             </FormGroup>
 
             <FormGroup>
-              <label htmlFor="uf">UF *</label>
+              <label htmlFor='uf'>UF *</label>
               <Select
-                id="uf"
+                id='uf'
                 value={formData.endereco.uf}
                 onChange={e => handleInputChange('endereco.uf', e.target.value)}
                 $theme={$theme}
               >
-                <option value="">Selecione a UF</option>
+                <option value=''>Selecione a UF</option>
                 {ufOptions.map(uf => (
-                  <option key={uf} value={uf}>{uf}</option>
+                  <option key={uf} value={uf}>
+                    {uf}
+                  </option>
                 ))}
               </Select>
-              {errors['endereco.uf'] && <ErrorText>{errors['endereco.uf']}</ErrorText>}
+              {errors['endereco.uf'] && (
+                <ErrorText>{errors['endereco.uf']}</ErrorText>
+              )}
             </FormGroup>
           </FormRow>
 
           <FormRow>
             <FormGroup>
-              <label htmlFor="logradouro">Logradouro *</label>
+              <label htmlFor='logradouro'>Logradouro *</label>
               <Input
-                id="logradouro"
-                type="text"
+                id='logradouro'
+                type='text'
                 value={formData.endereco.logradouro}
-                onChange={e => handleInputChange('endereco.logradouro', e.target.value)}
-                placeholder="Rua, Avenida, etc."
+                onChange={e =>
+                  handleInputChange('endereco.logradouro', e.target.value)
+                }
+                placeholder='Rua, Avenida, etc.'
                 $theme={$theme}
                 $hasError={!!errors['endereco.logradouro']}
               />
-              {errors['endereco.logradouro'] && <ErrorText>{errors['endereco.logradouro']}</ErrorText>}
+              {errors['endereco.logradouro'] && (
+                <ErrorText>{errors['endereco.logradouro']}</ErrorText>
+              )}
             </FormGroup>
 
             <FormGroup>
-              <label htmlFor="numero">Número *</label>
+              <label htmlFor='numero'>Número *</label>
               <Input
-                id="numero"
-                type="text"
+                id='numero'
+                type='text'
                 value={formData.endereco.numero}
-                onChange={e => handleInputChange('endereco.numero', e.target.value)}
-                placeholder="123"
+                onChange={e =>
+                  handleInputChange('endereco.numero', e.target.value)
+                }
+                placeholder='123'
                 $theme={$theme}
                 $hasError={!!errors['endereco.numero']}
               />
-              {errors['endereco.numero'] && <ErrorText>{errors['endereco.numero']}</ErrorText>}
+              {errors['endereco.numero'] && (
+                <ErrorText>{errors['endereco.numero']}</ErrorText>
+              )}
             </FormGroup>
           </FormRow>
 
           <FormRow>
             <FormGroup>
-              <label htmlFor="bairro">Bairro *</label>
+              <label htmlFor='bairro'>Bairro *</label>
               <Input
-                id="bairro"
-                type="text"
+                id='bairro'
+                type='text'
                 value={formData.endereco.bairro}
-                onChange={e => handleInputChange('endereco.bairro', e.target.value)}
-                placeholder="Digite o bairro"
+                onChange={e =>
+                  handleInputChange('endereco.bairro', e.target.value)
+                }
+                placeholder='Digite o bairro'
                 $theme={$theme}
                 $hasError={!!errors['endereco.bairro']}
               />
-              {errors['endereco.bairro'] && <ErrorText>{errors['endereco.bairro']}</ErrorText>}
+              {errors['endereco.bairro'] && (
+                <ErrorText>{errors['endereco.bairro']}</ErrorText>
+              )}
             </FormGroup>
 
             <FormGroup>
-              <label htmlFor="cidade">Cidade *</label>
+              <label htmlFor='cidade'>Cidade *</label>
               <Input
-                id="cidade"
-                type="text"
+                id='cidade'
+                type='text'
                 value={formData.endereco.cidade}
-                onChange={e => handleInputChange('endereco.cidade', e.target.value)}
-                placeholder="Digite a cidade"
+                onChange={e =>
+                  handleInputChange('endereco.cidade', e.target.value)
+                }
+                placeholder='Digite a cidade'
                 $theme={$theme}
                 $hasError={!!errors['endereco.cidade']}
               />
-              {errors['endereco.cidade'] && <ErrorText>{errors['endereco.cidade']}</ErrorText>}
+              {errors['endereco.cidade'] && (
+                <ErrorText>{errors['endereco.cidade']}</ErrorText>
+              )}
             </FormGroup>
           </FormRow>
 
           <ButtonContainer>
             <UnifiedButton
-              $variant="secondary"
+              $variant='secondary'
               $theme={$theme}
               onClick={onClose}
             >
               Cancelar
             </UnifiedButton>
             <UnifiedButton
-              $variant="primary"
+              $variant='primary'
               $theme={$theme}
               onClick={handleSave}
             >
-              <AccessibleEmoji emoji="💾" label="Salvar" /> Salvar
+              <AccessibleEmoji emoji='💾' label='Salvar' /> Salvar
             </UnifiedButton>
           </ButtonContainer>
         </Form>

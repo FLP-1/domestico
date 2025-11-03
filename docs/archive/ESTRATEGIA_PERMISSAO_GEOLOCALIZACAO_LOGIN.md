@@ -78,14 +78,17 @@ const requestGeolocationPermission = async () => {
       () => {
         console.log('✅ Permissão de geolocalização concedida no login');
       },
-      (error) => {
-        console.warn('⚠️ Permissão de geolocalização negada ou falhou:', error.message);
+      error => {
+        console.warn(
+          '⚠️ Permissão de geolocalização negada ou falhou:',
+          error.message
+        );
         // Não bloqueia o login se usuário negar
       },
       {
         enableHighAccuracy: false, // Não precisa de alta precisão aqui
         timeout: 5000, // Timeout curto (só queremos disparar o popup)
-        maximumAge: Infinity // Aceita cache (só queremos a permissão)
+        maximumAge: Infinity, // Aceita cache (só queremos a permissão)
       }
     );
   } catch (error) {
@@ -100,13 +103,13 @@ const requestGeolocationPermission = async () => {
 ```typescript
 if (result.success && result.data) {
   alertManager.showSuccess('Login realizado com sucesso!');
-  
+
   // ✅ Solicitar permissão de geolocalização logo após login bem-sucedido
   // Popup aparece aqui (primeira vez) para que não apareça nos registros de ponto
   requestGeolocationPermission();
-  
+
   const userProfiles: UserProfile[] = result.data;
-  
+
   // ... resto do fluxo
 }
 ```
@@ -116,16 +119,19 @@ if (result.success && result.data) {
 ## 🎯 **BENEFÍCIOS**
 
 ### **1. UX Melhorada**
+
 - ✅ Popup aparece **UMA VEZ** durante o login
 - ✅ Registros de ponto posteriores: **SEM INTERRUPÇÃO**
 - ✅ Fluxo de trabalho mais fluido
 
 ### **2. Contexto Adequado**
+
 - ✅ Login é momento apropriado para solicitar permissões
 - ✅ Usuário está atento e disposto a interagir
 - ✅ Não interrompe tarefas críticas (registro de ponto)
 
 ### **3. Funcionamento Garantido**
+
 - ✅ Sistema funciona mesmo se usuário negar permissão
 - ✅ Não bloqueia login
 - ✅ Geolocalização fica disponível para próximos registros
@@ -137,8 +143,9 @@ if (result.success && result.data) {
 ### **Cenário 1: Usuário Concede Permissão no Login**
 
 **Sequência:**
+
 1. Login bem-sucedido
-2. Popup aparece: *"localhost:3000 deseja acessar sua localização"*
+2. Popup aparece: _"localhost:3000 deseja acessar sua localização"_
 3. Usuário clica em **"Permitir"**
 4. Navegador salva permissão
 5. Redireciona para dashboard
@@ -151,8 +158,9 @@ if (result.success && result.data) {
 ### **Cenário 2: Usuário Nega Permissão no Login**
 
 **Sequência:**
+
 1. Login bem-sucedido
-2. Popup aparece: *"localhost:3000 deseja acessar sua localização"*
+2. Popup aparece: _"localhost:3000 deseja acessar sua localização"_
 3. Usuário clica em **"Bloquear"**
 4. Navegador salva recusa
 5. Redireciona para dashboard (funciona normalmente)
@@ -165,9 +173,10 @@ if (result.success && result.data) {
 ### **Cenário 3: Navegador Não Suporta Geolocalização**
 
 **Sequência:**
+
 1. Login bem-sucedido
 2. `navigator.geolocation` não existe
-3. Console: *"⚠️ Geolocalização não suportada pelo navegador"*
+3. Console: _"⚠️ Geolocalização não suportada pelo navegador"_
 4. Redireciona para dashboard (funciona normalmente)
 5. Registros de ponto salvam com `latitude: 0, longitude: 0`
 
@@ -178,9 +187,10 @@ if (result.success && result.data) {
 ### **Cenário 4: Timeout ou Erro na Solicitação**
 
 **Sequência:**
+
 1. Login bem-sucedido
 2. Popup aparece mas timeout (5s)
-3. Console: *"⚠️ Permissão de geolocalização negada ou falhou"*
+3. Console: _"⚠️ Permissão de geolocalização negada ou falhou"_
 4. Redireciona para dashboard (não bloqueia)
 5. Próxima tentativa: popup aparece novamente
 
@@ -193,11 +203,13 @@ if (result.success && result.data) {
 ### **Teste 1: Primeira Vez (Sem Permissão Anterior)**
 
 **Pré-requisitos:**
+
 - Limpar permissões do navegador
 - Chrome: `chrome://settings/content/location`
 - Clicar em `localhost:3000` → Remover
 
 **Passos:**
+
 1. Acessar `/login`
 2. Inserir CPF e senha válidos
 3. Clicar em "Entrar"
@@ -217,6 +229,7 @@ if (result.success && result.data) {
 ### **Teste 2: Usuário Nega Permissão**
 
 **Passos:**
+
 1. Limpar permissões do navegador
 2. Acessar `/login`
 3. Fazer login
@@ -236,13 +249,15 @@ if (result.success && result.data) {
 ### **Teste 3: Permissão Já Concedida Anteriormente**
 
 **Pré-requisitos:**
+
 - Permissão de geolocalização já concedida para `localhost:3000`
 
 **Passos:**
+
 1. Acessar `/login`
 2. Fazer login
 3. **Observar:** **SEM POPUP** (permissão já existe)
-4. Console: *"✅ Permissão de geolocalização concedida no login"*
+4. Console: _"✅ Permissão de geolocalização concedida no login"_
 5. Redireciona para dashboard
 6. Acessar `/time-clock`
 7. Clicar em card "Entrada"
@@ -256,6 +271,7 @@ if (result.success && result.data) {
 ### **Teste 4: Janela Anônima**
 
 **Passos:**
+
 1. Abrir janela anônima (Ctrl+Shift+N no Chrome)
 2. Acessar `localhost:3000/login`
 3. Fazer login
@@ -285,6 +301,7 @@ if (result.success && result.data) {
 ```
 
 **Justificativa:**
+
 - **`enableHighAccuracy: false`:** Não precisamos capturar localização precisa aqui, apenas solicitar permissão. GPS de alta precisão demora mais.
 - **`timeout: 5000`:** Timeout curto porque não estamos esperando captura completa.
 - **`maximumAge: Infinity`:** Aceita qualquer cache porque o objetivo é só disparar o popup de permissão, não capturar dados.
@@ -302,6 +319,7 @@ if (result.success && result.data) {
 ```
 
 **Justificativa:**
+
 - **`enableHighAccuracy: true`:** Precisamos de precisão máxima para anti-fraude.
 - **`timeout: 30000`:** GPS precisa de tempo para estabilizar (5-30s).
 - **`maximumAge: 0`:** Sem cache, sempre captura nova localização (evita fraude).
@@ -311,18 +329,21 @@ if (result.success && result.data) {
 ## 🔒 **SEGURANÇA E PRIVACIDADE**
 
 ### **1. Conformidade LGPD**
+
 - ✅ Permissão solicitada explicitamente ao usuário
 - ✅ Sistema funciona mesmo se usuário negar
 - ✅ Não captura localização sem consentimento
 - ✅ Console logs informativos (transparência)
 
 ### **2. Fallback Gracioso**
+
 - ✅ Se navegador não suporta: sistema funciona
 - ✅ Se usuário nega: sistema funciona
 - ✅ Se timeout: sistema funciona
 - ✅ Dados salvos com valores padrão (0, 0) quando não há localização
 
 ### **3. Não Bloqueia Login**
+
 - ✅ Solicitação de permissão é **assíncrona**
 - ✅ Login completa independente da resposta
 - ✅ Erros são apenas logados, não impedem acesso
@@ -334,21 +355,25 @@ if (result.success && result.data) {
 ### **Console Logs Esperados**
 
 #### **Login Bem-Sucedido + Permissão Concedida**
+
 ```
 ✅ Permissão de geolocalização concedida no login
 ```
 
 #### **Login Bem-Sucedido + Permissão Negada**
+
 ```
 ⚠️ Permissão de geolocalização negada ou falhou: User denied Geolocation
 ```
 
 #### **Navegador Não Suporta**
+
 ```
 ⚠️ Geolocalização não suportada pelo navegador
 ```
 
 #### **Erro Inesperado**
+
 ```
 ⚠️ Erro ao solicitar permissão de geolocalização: [error details]
 ```
@@ -371,12 +396,14 @@ if (result.success && result.data) {
 ### **Impacto nos Registros de Ponto**
 
 **ANTES:**
+
 ```
 Usuário clica card → Popup aparece → Usuário permite → Captura GPS → Salva
                       ↑ INTERRUPÇÃO
 ```
 
 **DEPOIS:**
+
 ```
 Login → Popup aparece → Usuário permite → Dashboard
                                             ↓
@@ -409,4 +436,3 @@ Usuário clica card → Captura GPS → Salva (SEM POPUP)
 **Arquivo Modificado:** `src/pages/login.tsx`  
 **Linhas Adicionadas:** ~30 linhas  
 **Próxima Etapa:** 🧪 Testes funcionais pelo usuário
-

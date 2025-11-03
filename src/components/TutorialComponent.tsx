@@ -10,7 +10,12 @@ import { publicColors, addOpacity } from '../utils/themeHelpers';
 import { Card } from '../design-system/components';
 import { createThemedStyles, mediaQueries } from '../design-system';
 import { designConstants } from '../design-system/tokens/constants';
-import { fontFamily, fontSize, fontWeight, lineHeight } from '../design-system/tokens/typography';
+import {
+  fontFamily,
+  fontSize,
+  fontWeight,
+  lineHeight,
+} from '../design-system/tokens/typography';
 import { UnifiedButton } from '../components/unified';
 import PageContainer from './PageContainer';
 import PageHeader from './PageHeader';
@@ -110,7 +115,6 @@ const WelcomeContainer = styled.div<{ $theme?: any }>`
   overflow: hidden;
 `;
 
-
 const WelcomeContent = styled.div<{ $theme?: any }>`
   position: relative;
   z-index: 2;
@@ -157,7 +161,7 @@ const WelcomeTitle = styled.h1<{ $theme?: any }>`
   margin: 0 0 1rem 0;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   /* Removido gradiente do texto para melhorar legibilidade */
-  
+
   @media (max-width: 768px) {
     font-size: ${fontSize['4xl']};
   }
@@ -229,7 +233,8 @@ const TutorialHeader = styled.header<{ $theme?: any }>`
   /* backdrop-filter: blur(20px); - removido para melhorar legibilidade */
   padding: 1.5rem 2rem;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid ${props => props.$theme?.colors?.primary || '#29ABE2'}33;
+  border-bottom: 1px solid
+    ${props => props.$theme?.colors?.primary || '#29ABE2'}33;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -276,13 +281,13 @@ const TutorialContent = styled.div<{ $theme?: any }>`
   min-height: calc(100vh - 200px);
   max-height: calc(100vh - 200px);
   overflow-y: auto;
-  
+
   @media (max-height: 900px) {
     padding: 1rem 2rem;
     min-height: calc(100vh - 180px);
     max-height: calc(100vh - 180px);
   }
-  
+
   @media (max-height: 768px) {
     padding: 0.5rem 2rem;
     min-height: calc(100vh - 160px);
@@ -303,11 +308,11 @@ const SlideTitle = styled.h2<{ $color: string; $theme?: any }>`
   color: ${props => props.$theme?.colors?.primary || props.$color};
   margin: 0 0 0.75rem 0;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  
+
   @media (max-width: 768px) {
     font-size: ${fontSize['2xl']};
   }
-  
+
   @media (max-height: 900px) {
     font-size: ${fontSize['2xl']};
     margin: 0 0 0.5rem 0;
@@ -320,7 +325,7 @@ const SlideDescription = styled.p<{ $theme?: any }>`
   margin: 0 0 1.5rem 0;
   line-height: ${lineHeight.relaxed};
   font-family: ${fontFamily.body.join(', ')};
-  
+
   @media (max-height: 900px) {
     font-size: ${fontSize.base};
     margin: 0 0 1rem 0;
@@ -331,7 +336,7 @@ const FeaturesList = styled.ul<{ $theme?: any }>`
   list-style: none;
   padding: 0;
   margin: 0 0 1.5rem 0;
-  
+
   @media (max-height: 900px) {
     margin: 0 0 1rem 0;
   }
@@ -350,7 +355,7 @@ const FeatureItem = styled.li<{ $theme?: any }>`
     content: '✨';
     font-size: 1rem;
   }
-  
+
   @media (max-height: 900px) {
     font-size: ${fontSize.xs};
     margin-bottom: 0.25rem;
@@ -376,7 +381,7 @@ const BenefitItem = styled.li<{ $theme?: any }>`
     content: '🎯';
     font-size: 0.9rem;
   }
-  
+
   @media (max-height: 900px) {
     font-size: 0.75rem;
     margin-bottom: 0.25rem;
@@ -394,7 +399,7 @@ const SlideIllustration = styled.div<{ $color: string; $theme?: any }>`
     color: ${props => props.$theme?.colors?.primary || props.$color};
     filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
   }
-  
+
   @media (max-height: 900px) {
     .illustration-icon {
       font-size: 4rem;
@@ -429,7 +434,8 @@ const NavigationButton = styled.button<{ $theme?: any; $disabled?: boolean }>`
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px ${props => props.$theme?.colors?.primary || '#29ABE2'}66;
+    box-shadow: 0 8px 20px
+      ${props => props.$theme?.colors?.primary || '#29ABE2'}66;
   }
 
   &:disabled {
@@ -474,7 +480,7 @@ const CompletionTitle = styled.h1<{ $theme?: any }>`
   color: white;
   margin: 0 0 1rem 0;
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  
+
   @media (max-width: 768px) {
     font-size: ${fontSize['4xl']};
   }
@@ -496,10 +502,12 @@ const StatsContainer = styled.div<{ $theme?: any }>`
 `;
 
 const StatCard = styled.div<{ $theme?: any }>`
-  background: ${props => props.$theme?.colors?.primary || 'rgba(48, 71, 94, 0.9)'};
+  background: ${props =>
+    props.$theme?.colors?.primary || 'rgba(48, 71, 94, 0.9)'};
   border-radius: 16px;
   padding: 1.5rem;
-  border: 1px solid ${props => props.$theme?.colors?.primary || 'rgba(48, 71, 94, 0.3)'};
+  border: 1px solid
+    ${props => props.$theme?.colors?.primary || 'rgba(48, 71, 94, 0.3)'};
   text-align: center;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 `;
@@ -518,7 +526,6 @@ const StatLabel = styled.div<{ $theme?: any }>`
   font-weight: ${fontWeight.medium};
   font-family: ${fontFamily.body.join(', ')};
 `;
-
 
 const TutorialHeaderTitle = styled.h3<{ $theme?: any }>`
   margin: 0;
@@ -554,7 +561,9 @@ interface TutorialComponentProps {
   isLandingPage?: boolean;
 }
 
-export default function TutorialComponent({ isLandingPage = false }: TutorialComponentProps) {
+export default function TutorialComponent({
+  isLandingPage = false,
+}: TutorialComponentProps) {
   const router = useRouter();
   const { theme } = useTheme('empregado', true);
   const [currentStep, setCurrentStep] = useState<
@@ -760,21 +769,21 @@ export default function TutorialComponent({ isLandingPage = false }: TutorialCom
     if (isLandingPage) {
       return <>{children}</>;
     }
-    
+
     return (
       <PageContainer $theme={theme} sidebarCollapsed={sidebarCollapsed}>
         <Sidebar
           collapsed={sidebarCollapsed}
           onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-          currentPath="/tutorial"
+          currentPath='/tutorial'
         />
 
         <TopBar $theme={theme}>
           <WelcomeSection
             $theme={theme}
-            userAvatar="U"
-            userName="Usuário"
-            userRole="Visitante"
+            userAvatar='U'
+            userName='Usuário'
+            userRole='Visitante'
             notificationCount={0}
             onNotificationClick={() => {}}
           />
@@ -782,8 +791,8 @@ export default function TutorialComponent({ isLandingPage = false }: TutorialCom
 
         <PageHeader
           $theme={theme}
-          title="Tutorial do Sistema DOM"
-          subtitle="Conheça todas as funcionalidades do sistema"
+          title='Tutorial do Sistema DOM'
+          subtitle='Conheça todas as funcionalidades do sistema'
         />
         {children}
       </PageContainer>
@@ -793,54 +802,61 @@ export default function TutorialComponent({ isLandingPage = false }: TutorialCom
   if (currentStep === 'welcome') {
     return (
       <Wrapper>
-
         <WelcomeContainer $theme={theme}>
           <SkipButton onClick={handleSkipTutorial}>Pular Tour</SkipButton>
 
           <WelcomeContent>
-          <LogoContainer>
-            <Logo $theme={theme}>
-              <Image src='/Logo.png' alt='Logo DOM' width={80} height={80} priority />
-            </Logo>
-          </LogoContainer>
+            <LogoContainer>
+              <Logo $theme={theme}>
+                <Image
+                  src='/Logo.png'
+                  alt='Logo DOM'
+                  width={80}
+                  height={80}
+                  priority
+                />
+              </Logo>
+            </LogoContainer>
 
-          <WelcomeTitle $theme={theme}>Bem-vindo ao Sistema DOM!</WelcomeTitle>
+            <WelcomeTitle $theme={theme}>
+              Bem-vindo ao Sistema DOM!
+            </WelcomeTitle>
 
-          <WelcomeSubtitle>
-            A solução completa para a gestão do seu lar
-          </WelcomeSubtitle>
+            <WelcomeSubtitle>
+              A solução completa para a gestão do seu lar
+            </WelcomeSubtitle>
 
-          <WelcomeDescription>
-            Transforme sua casa em um ambiente organizado, seguro e eficiente.
-            Com tecnologia avançada e interface intuitiva, o DOM revoluciona a
-            forma como você gerencia sua rotina doméstica.
-          </WelcomeDescription>
+            <WelcomeDescription>
+              Transforme sua casa em um ambiente organizado, seguro e eficiente.
+              Com tecnologia avançada e interface intuitiva, o DOM revoluciona a
+              forma como você gerencia sua rotina doméstica.
+            </WelcomeDescription>
 
-          <ButtonContainer>
-            <UnifiedButton
-              $variant='secondary'
-              $size='xl'
-              $theme={theme}
-              onClick={handleStartTutorial}
-              icon={<AccessibleEmoji emoji='🚀' label='Iniciar' />}
-            >
-              Começar Tour
-            </UnifiedButton>
-          </ButtonContainer>
-        </WelcomeContent>
+            <ButtonContainer>
+              <UnifiedButton
+                $variant='secondary'
+                $size='xl'
+                $theme={theme}
+                onClick={handleStartTutorial}
+                icon={<AccessibleEmoji emoji='🚀' label='Iniciar' />}
+              >
+                Começar Tour
+              </UnifiedButton>
+            </ButtonContainer>
+          </WelcomeContent>
 
-        <ToastContainer
-          position='top-center'
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme='light'
-        />
+          <ToastContainer
+            position='top-center'
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme='light'
+          />
         </WelcomeContainer>
       </Wrapper>
     );
@@ -855,7 +871,6 @@ export default function TutorialComponent({ isLandingPage = false }: TutorialCom
 
     return (
       <Wrapper>
-
         <ProgressContainer>
           <ProgressText>
             {currentSlide + 1} de {tutorialSlides.length}
@@ -866,43 +881,49 @@ export default function TutorialComponent({ isLandingPage = false }: TutorialCom
         </ProgressContainer>
 
         <TutorialContent>
-          <div style={{ 
-            maxWidth: '1000px', 
-            width: '100%',
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '2rem',
-            alignItems: 'center',
-            maxHeight: 'calc(100vh - 300px)',
-            overflow: 'auto'
-          }}>
-          <Card 
-            variant="elevated" 
-            size="lg" 
-            theme={theme}
+          <div
+            style={{
+              maxWidth: '1000px',
+              width: '100%',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '2rem',
+              alignItems: 'center',
+              maxHeight: 'calc(100vh - 300px)',
+              overflow: 'auto',
+            }}
           >
-            <SlideContent>
-              <SlideTitle $color={slide.color} $theme={theme}>{slide.title}</SlideTitle>
+            <Card variant='elevated' size='lg' theme={theme}>
+              <SlideContent>
+                <SlideTitle $color={slide.color} $theme={theme}>
+                  {slide.title}
+                </SlideTitle>
 
-              <SlideDescription $theme={theme}>{slide.description}</SlideDescription>
+                <SlideDescription $theme={theme}>
+                  {slide.description}
+                </SlideDescription>
 
-              <FeaturesList>
-                {slide.features.map((feature: any, index: any) => (
-                  <FeatureItem key={index} $theme={theme}>{feature}</FeatureItem>
-                ))}
-              </FeaturesList>
+                <FeaturesList>
+                  {slide.features.map((feature: any, index: any) => (
+                    <FeatureItem key={index} $theme={theme}>
+                      {feature}
+                    </FeatureItem>
+                  ))}
+                </FeaturesList>
 
-              <BenefitsList>
-                {slide.benefits.map((benefit: any, index: any) => (
-                  <BenefitItem key={index} $theme={theme}>{benefit}</BenefitItem>
-                ))}
-              </BenefitsList>
-            </SlideContent>
+                <BenefitsList>
+                  {slide.benefits.map((benefit: any, index: any) => (
+                    <BenefitItem key={index} $theme={theme}>
+                      {benefit}
+                    </BenefitItem>
+                  ))}
+                </BenefitsList>
+              </SlideContent>
 
-            <SlideIllustration $color={slide.color} $theme={theme}>
-              <IllustrationIcon>{slide.illustration}</IllustrationIcon>
-            </SlideIllustration>
-          </Card>
+              <SlideIllustration $color={slide.color} $theme={theme}>
+                <IllustrationIcon>{slide.illustration}</IllustrationIcon>
+              </SlideIllustration>
+            </Card>
           </div>
         </TutorialContent>
 
@@ -929,14 +950,16 @@ export default function TutorialComponent({ isLandingPage = false }: TutorialCom
             ))}
           </DotsContainer>
 
-          <UnifiedButton 
+          <UnifiedButton
             $variant='primary'
             $size='medium'
-            $theme={theme} 
+            $theme={theme}
             onClick={handleNextSlide}
             icon={currentSlide === tutorialSlides.length - 1 ? '✓' : '→'}
           >
-            {currentSlide === tutorialSlides.length - 1 ? 'Finalizar' : 'Próximo'}
+            {currentSlide === tutorialSlides.length - 1
+              ? 'Finalizar'
+              : 'Próximo'}
           </UnifiedButton>
         </NavigationContainer>
       </Wrapper>
@@ -946,75 +969,74 @@ export default function TutorialComponent({ isLandingPage = false }: TutorialCom
   if (currentStep === 'completion') {
     return (
       <Wrapper>
-
         <CompletionContainer $theme={theme}>
           <CompletionContent>
-          <CompletionIcon>
-            <AccessibleEmoji emoji='🎉' label='Parabéns' />
-          </CompletionIcon>
+            <CompletionIcon>
+              <AccessibleEmoji emoji='🎉' label='Parabéns' />
+            </CompletionIcon>
 
-          <CompletionTitle>Pronto para começar?</CompletionTitle>
+            <CompletionTitle>Pronto para começar?</CompletionTitle>
 
-          <CompletionDescription>
-            Você agora conhece todas as funcionalidades do Sistema DOM! Sua
-            jornada rumo a uma casa mais organizada, segura e eficiente começa
-            agora.
-          </CompletionDescription>
+            <CompletionDescription>
+              Você agora conhece todas as funcionalidades do Sistema DOM! Sua
+              jornada rumo a uma casa mais organizada, segura e eficiente começa
+              agora.
+            </CompletionDescription>
 
-          <StatsContainer>
-            <StatCard $theme={theme}>
-              <StatNumber>7</StatNumber>
-              <StatLabel>Módulos Principais</StatLabel>
-            </StatCard>
-            <StatCard $theme={theme}>
-              <StatNumber>100%</StatNumber>
-              <StatLabel>Seguro e Conforme</StatLabel>
-            </StatCard>
-            <StatCard $theme={theme}>
-              <StatNumber>24/7</StatNumber>
-              <StatLabel>Disponível</StatLabel>
-            </StatCard>
-            <StatCard $theme={theme}>
-              <StatNumber>∞</StatNumber>
-              <StatLabel>Possibilidades</StatLabel>
-            </StatCard>
-          </StatsContainer>
+            <StatsContainer>
+              <StatCard $theme={theme}>
+                <StatNumber>7</StatNumber>
+                <StatLabel>Módulos Principais</StatLabel>
+              </StatCard>
+              <StatCard $theme={theme}>
+                <StatNumber>100%</StatNumber>
+                <StatLabel>Seguro e Conforme</StatLabel>
+              </StatCard>
+              <StatCard $theme={theme}>
+                <StatNumber>24/7</StatNumber>
+                <StatLabel>Disponível</StatLabel>
+              </StatCard>
+              <StatCard $theme={theme}>
+                <StatNumber>∞</StatNumber>
+                <StatLabel>Possibilidades</StatLabel>
+              </StatCard>
+            </StatsContainer>
 
-          <ButtonContainer>
-            <UnifiedButton
-              $variant='primary'
-              $size='xl'
-              $theme={theme}
-              onClick={handleGoToDashboard}
-              icon={<AccessibleEmoji emoji='🔐' label='Login' />}
-            >
-              Ir para o login
-            </UnifiedButton>
+            <ButtonContainer>
+              <UnifiedButton
+                $variant='primary'
+                $size='xl'
+                $theme={theme}
+                onClick={handleGoToDashboard}
+                icon={<AccessibleEmoji emoji='🔐' label='Login' />}
+              >
+                Ir para o login
+              </UnifiedButton>
 
-            <UnifiedButton
-              $variant='secondary'
-              $size='xl'
-              $theme={theme}
-              onClick={handleRevisitTutorial}
-              icon={<AccessibleEmoji emoji='🔄' label='Sincronizar' />}
-            >
-              Revisitar Tutorial
-            </UnifiedButton>
-          </ButtonContainer>
-        </CompletionContent>
+              <UnifiedButton
+                $variant='secondary'
+                $size='xl'
+                $theme={theme}
+                onClick={handleRevisitTutorial}
+                icon={<AccessibleEmoji emoji='🔄' label='Sincronizar' />}
+              >
+                Revisitar Tutorial
+              </UnifiedButton>
+            </ButtonContainer>
+          </CompletionContent>
 
-        <ToastContainer
-          position='top-center'
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme='light'
-        />
+          <ToastContainer
+            position='top-center'
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme='light'
+          />
         </CompletionContainer>
       </Wrapper>
     );

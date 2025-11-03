@@ -9,15 +9,18 @@ Foram criadas **6 APIs REST** que buscam dados reais do banco de dados PostgreSQ
 ## 📋 APIs CRIADAS
 
 ### 1. 👤 **API de Usuários**
+
 **Endpoint:** `GET /api/users`
 
 **Retorna:**
+
 - Lista de todos os usuários ativos
 - Dados pessoais (nome, CPF, email, telefone)
 - Perfis associados
 - Cidade e UF
 
 **Exemplo de uso:**
+
 ```typescript
 const response = await fetch('/api/users');
 const { success, data } = await response.json();
@@ -27,11 +30,14 @@ const { success, data } = await response.json();
 ---
 
 ### 2. ✅ **API de Tarefas**
+
 **Endpoints:**
+
 - `GET /api/tasks` - Lista todas as tarefas
 - `POST /api/tasks` - Cria nova tarefa
 
 **Retorna:**
+
 - Tarefas completas com responsável e criador
 - Comentários de cada tarefa
 - Anexos
@@ -39,6 +45,7 @@ const { success, data } = await response.json();
 - Status e prioridade
 
 **Dados incluídos:**
+
 - Título, descrição
 - Prioridade (baixa, media, alta, urgente)
 - Status (pendente, em andamento, concluída)
@@ -49,6 +56,7 @@ const { success, data } = await response.json();
 - Anexos
 
 **Exemplo de uso:**
+
 ```typescript
 // Buscar tarefas
 const response = await fetch('/api/tasks');
@@ -72,17 +80,21 @@ const novaTarefa = await fetch('/api/tasks', {
 ---
 
 ### 3. 🛒 **API de Listas de Compras**
+
 **Endpoints:**
+
 - `GET /api/shopping/lists` - Lista todas as listas
 - `POST /api/shopping/lists` - Cria nova lista
 
 **Retorna:**
+
 - Listas de compras ativas
 - Itens de cada lista (comprados/pendentes)
 - Valor estimado e final
 - Usuários com quem foi compartilhado
 
 **Dados incluídos:**
+
 - Nome e categoria da lista
 - Itens (nome, quantidade, preço, marca, loja)
 - Status de compra de cada item
@@ -91,6 +103,7 @@ const novaTarefa = await fetch('/api/tasks', {
 - Compartilhamentos (usuário e permissão)
 
 **Exemplo de uso:**
+
 ```typescript
 // Buscar listas
 const response = await fetch('/api/shopping/lists');
@@ -111,17 +124,21 @@ const novaLista = await fetch('/api/shopping/lists', {
 ---
 
 ### 4. 🔔 **API de Alertas**
+
 **Endpoints:**
+
 - `GET /api/alerts` - Lista todos os alertas
 - `POST /api/alerts` - Cria novo alerta
 
 **Retorna:**
+
 - Alertas ativos e resolvidos
 - Histórico de disparos
 - Configurações de notificação
 - Condições e gatilhos
 
 **Dados incluídos:**
+
 - Título e descrição
 - Tipo (vencimento, pagamento, tarefa, sistema)
 - Prioridade (baixa, media, alta)
@@ -132,6 +149,7 @@ const novaLista = await fetch('/api/shopping/lists', {
 - Histórico de disparos
 
 **Exemplo de uso:**
+
 ```typescript
 // Buscar alertas
 const response = await fetch('/api/alerts');
@@ -158,17 +176,21 @@ const novoAlerta = await fetch('/api/alerts', {
 ---
 
 ### 5. 📄 **API de Documentos**
+
 **Endpoints:**
+
 - `GET /api/documents` - Lista todos os documentos
 - `POST /api/documents` - Cria novo documento
 
 **Retorna:**
+
 - Documentos de todos os usuários
 - Status de validação
 - Data de vencimento
 - Compartilhamentos
 
 **Dados incluídos:**
+
 - Nome e descrição
 - Categoria (RG, CPF, CNH, etc)
 - Tipo e tamanho
@@ -181,6 +203,7 @@ const novoAlerta = await fetch('/api/alerts', {
 - Compartilhamentos
 
 **Exemplo de uso:**
+
 ```typescript
 // Buscar documentos
 const response = await fetch('/api/documents');
@@ -207,17 +230,21 @@ const novoDoc = await fetch('/api/documents', {
 ---
 
 ### 6. 💰 **API de Empréstimos**
+
 **Endpoints:**
+
 - `GET /api/loans` - Lista todos os empréstimos
 - `POST /api/loans` - Cria novo empréstimo
 
 **Retorna:**
+
 - Empréstimos concedidos
 - Status de pagamento
 - Parcelas pagas vs total
 - Dados do funcionário
 
 **Dados incluídos:**
+
 - Nome e CPF do funcionário
 - Valor total do empréstimo
 - Valor da parcela
@@ -228,6 +255,7 @@ const novoDoc = await fetch('/api/documents', {
 - Observações
 
 **Exemplo de uso:**
+
 ```typescript
 // Buscar empréstimos
 const response = await fetch('/api/loans');
@@ -252,6 +280,7 @@ const novoEmprestimo = await fetch('/api/loans', {
 ## 🔄 COMO SUBSTITUIR DADOS MOCKADOS
 
 ### Antes (Dados Mockados):
+
 ```typescript
 const [tasks, setTasks] = useState([
   { id: '1', title: 'Tarefa Mockada', status: 'pending' },
@@ -260,6 +289,7 @@ const [tasks, setTasks] = useState([
 ```
 
 ### Depois (Dados Reais):
+
 ```typescript
 const [tasks, setTasks] = useState([]);
 
@@ -268,7 +298,7 @@ useEffect(() => {
     try {
       const response = await fetch('/api/tasks');
       const { success, data } = await response.json();
-      
+
       if (success) {
         setTasks(data);
       }
@@ -276,7 +306,7 @@ useEffect(() => {
       console.error('Erro ao carregar tarefas:', error);
     }
   };
-  
+
   loadTasks();
 }, []);
 ```
@@ -288,6 +318,7 @@ useEffect(() => {
 Todas as APIs seguem o mesmo padrão de resposta:
 
 ### Sucesso:
+
 ```json
 {
   "success": true,
@@ -296,6 +327,7 @@ Todas as APIs seguem o mesmo padrão de resposta:
 ```
 
 ### Erro:
+
 ```json
 {
   "success": false,
@@ -321,6 +353,7 @@ Todas as APIs seguem o mesmo padrão de resposta:
 Substitua os dados mockados nas páginas:
 
 **Tarefas** (`src/pages/task-management.tsx`):
+
 ```typescript
 useEffect(() => {
   fetch('/api/tasks')
@@ -332,6 +365,7 @@ useEffect(() => {
 ```
 
 **Listas de Compras** (`src/pages/shopping-management.tsx`):
+
 ```typescript
 useEffect(() => {
   fetch('/api/shopping/lists')
@@ -343,6 +377,7 @@ useEffect(() => {
 ```
 
 **Alertas** (`src/pages/alert-management.tsx`):
+
 ```typescript
 useEffect(() => {
   fetch('/api/alerts')
@@ -354,6 +389,7 @@ useEffect(() => {
 ```
 
 **Documentos** (`src/pages/document-management.tsx`):
+
 ```typescript
 useEffect(() => {
   fetch('/api/documents')
@@ -365,6 +401,7 @@ useEffect(() => {
 ```
 
 **Empréstimos** (`src/pages/loan-management.tsx`):
+
 ```typescript
 useEffect(() => {
   fetch('/api/loans')
@@ -423,7 +460,7 @@ if (loading) return <LoadingSpinner />;
 ✅ **Estrutura padronizada** de resposta  
 ✅ **Validação de tipos** com TypeScript  
 ✅ **Tratamento de erros** completo  
-✅ **Pronto para uso** nas páginas  
+✅ **Pronto para uso** nas páginas
 
 ---
 
@@ -431,4 +468,3 @@ if (loading) return <LoadingSpinner />;
 **Versão:** DOM v1.0.0  
 **Banco:** PostgreSQL 18 - Porta 5433  
 **ORM:** Prisma v6.16.3
-

@@ -1,6 +1,6 @@
 /**
  * SEED DE CONFIGURAÇÕES OBRIGATÓRIAS
- * 
+ *
  * Este seed popula todas as configurações necessárias para eliminar
  * dados hardcoded do sistema
  */
@@ -26,7 +26,7 @@ const configuracoesObrigatorias: ConfiguracaoObrigatoria[] = [
     tipo: 'string',
     descricao: 'CPF principal da empresa para identificação',
     categoria: 'empresa',
-    sensivel: true
+    sensivel: true,
   },
   {
     chave: 'empresa_nome',
@@ -34,7 +34,7 @@ const configuracoesObrigatorias: ConfiguracaoObrigatoria[] = [
     tipo: 'string',
     descricao: 'Nome da empresa',
     categoria: 'empresa',
-    sensivel: true
+    sensivel: true,
   },
   {
     chave: 'empresa_razao_social',
@@ -42,7 +42,7 @@ const configuracoesObrigatorias: ConfiguracaoObrigatoria[] = [
     tipo: 'string',
     descricao: 'Razão social da empresa',
     categoria: 'empresa',
-    sensivel: true
+    sensivel: true,
   },
   {
     chave: 'empresa_cnpj',
@@ -50,7 +50,7 @@ const configuracoesObrigatorias: ConfiguracaoObrigatoria[] = [
     tipo: 'string',
     descricao: 'CNPJ da empresa',
     categoria: 'empresa',
-    sensivel: true
+    sensivel: true,
   },
   {
     chave: 'empresa_email',
@@ -58,7 +58,7 @@ const configuracoesObrigatorias: ConfiguracaoObrigatoria[] = [
     tipo: 'string',
     descricao: 'Email principal da empresa',
     categoria: 'empresa',
-    sensivel: true
+    sensivel: true,
   },
   {
     chave: 'empresa_telefone',
@@ -66,7 +66,7 @@ const configuracoesObrigatorias: ConfiguracaoObrigatoria[] = [
     tipo: 'string',
     descricao: 'Telefone principal da empresa',
     categoria: 'empresa',
-    sensivel: true
+    sensivel: true,
   },
 
   // === CONFIGURAÇÕES DO SISTEMA ===
@@ -76,7 +76,7 @@ const configuracoesObrigatorias: ConfiguracaoObrigatoria[] = [
     tipo: 'string',
     descricao: 'URL base do sistema',
     categoria: 'sistema',
-    sensivel: true
+    sensivel: true,
   },
   {
     chave: 'sistema_senha_padrao',
@@ -84,7 +84,7 @@ const configuracoesObrigatorias: ConfiguracaoObrigatoria[] = [
     tipo: 'string',
     descricao: 'Senha padrão para novos usuários',
     categoria: 'sistema',
-    sensivel: true
+    sensivel: true,
   },
 
   // === CONFIGURAÇÕES DE GEOLOCALIZAÇÃO ===
@@ -94,7 +94,7 @@ const configuracoesObrigatorias: ConfiguracaoObrigatoria[] = [
     tipo: 'number',
     descricao: 'Precisão máxima aceitável para geolocalização (metros)',
     categoria: 'geolocalizacao',
-    sensivel: true
+    sensivel: true,
   },
   {
     chave: 'geolocalizacao_idade_maxima_segundos',
@@ -102,7 +102,7 @@ const configuracoesObrigatorias: ConfiguracaoObrigatoria[] = [
     tipo: 'number',
     descricao: 'Idade máxima da localização em segundos',
     categoria: 'geolocalizacao',
-    sensivel: true
+    sensivel: true,
   },
   {
     chave: 'geolocalizacao_timeout',
@@ -110,7 +110,7 @@ const configuracoesObrigatorias: ConfiguracaoObrigatoria[] = [
     tipo: 'number',
     descricao: 'Timeout para obter geolocalização (milissegundos)',
     categoria: 'geolocalizacao',
-    sensivel: true
+    sensivel: true,
   },
   {
     chave: 'geocoding_precisao_casas',
@@ -118,7 +118,7 @@ const configuracoesObrigatorias: ConfiguracaoObrigatoria[] = [
     tipo: 'number',
     descricao: 'Número de casas decimais para precisão de geocoding',
     categoria: 'geolocalizacao',
-    sensivel: true
+    sensivel: true,
   },
 
   // === CONFIGURAÇÕES DE AUTENTICAÇÃO ===
@@ -128,7 +128,7 @@ const configuracoesObrigatorias: ConfiguracaoObrigatoria[] = [
     tipo: 'number',
     descricao: 'Tempo de sessão em milissegundos (1 hora)',
     categoria: 'autenticacao',
-    sensivel: true
+    sensivel: true,
   },
 
   // === CONFIGURAÇÕES DO ESOCIAL ===
@@ -138,7 +138,7 @@ const configuracoesObrigatorias: ConfiguracaoObrigatoria[] = [
     tipo: 'string',
     descricao: 'Ambiente padrão do eSocial (homologacao/producao)',
     categoria: 'esocial',
-    sensivel: true
+    sensivel: true,
   },
 
   // === CONFIGURAÇÕES DE REGISTRO DE PONTO ===
@@ -148,8 +148,8 @@ const configuracoesObrigatorias: ConfiguracaoObrigatoria[] = [
     tipo: 'json',
     descricao: 'Perfis que podem autorizar override de registro de ponto',
     categoria: 'ponto',
-    sensivel: true
-  }
+    sensivel: true,
+  },
 ];
 
 async function seedConfiguracoesObrigatorias() {
@@ -158,7 +158,7 @@ async function seedConfiguracoesObrigatorias() {
   try {
     // Verificar se já existem configurações
     const existingConfigs = await prisma.configuracao.count();
-    
+
     if (existingConfigs > 0) {
       console.log('⚠️  Configurações já existem. Pulando seed...');
       return;
@@ -167,13 +167,14 @@ async function seedConfiguracoesObrigatorias() {
     // Inserir todas as configurações
     for (const config of configuracoesObrigatorias) {
       await prisma.configuracao.create({
-        data: config
+        data: config,
       });
       console.log(`✅ Configuração criada: ${config.chave}`);
     }
 
-    console.log(`🎉 Seed concluído! ${configuracoesObrigatorias.length} configurações criadas.`);
-
+    console.log(
+      `🎉 Seed concluído! ${configuracoesObrigatorias.length} configurações criadas.`
+    );
   } catch (error) {
     console.error('❌ Erro no seed de configurações:', error);
     throw error;
@@ -185,7 +186,7 @@ export default seedConfiguracoesObrigatorias;
 // Executar se chamado diretamente
 if (require.main === module) {
   seedConfiguracoesObrigatorias()
-    .catch((error) => {
+    .catch(error => {
       console.error(error);
       process.exit(1);
     })

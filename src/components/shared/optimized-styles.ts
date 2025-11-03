@@ -125,7 +125,9 @@ export const OptimizedInputStyled = styled(BaseInput)`
 `;
 
 // SelectStyled otimizado
-export const OptimizedSelectStyled = styled(BaseSelect).attrs<{ title?: string }>((props: any) => ({
+export const OptimizedSelectStyled = styled(BaseSelect).attrs<{
+  title?: string;
+}>((props: any) => ({
   title: props.title || 'Selecionar opção',
 }))`
   width: 100%;
@@ -338,7 +340,12 @@ export const OptimizedCertificateStatus = styled.div<{
   font-size: ${getFontSize('sm')};
   font-weight: ${tokens.fontWeight.medium};
   ${props => {
-    const statusMap = { valid: 'success', invalid: 'error', expired: 'warning', pending: 'info' };
+    const statusMap = {
+      valid: 'success',
+      invalid: 'error',
+      expired: 'warning',
+      pending: 'info',
+    };
     const mappedStatus = statusMap[props.$status || 'pending'] || 'info';
     return statusColorMixin(mappedStatus as any, props.$theme);
   }}

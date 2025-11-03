@@ -49,28 +49,42 @@ const Label = styled.label`
 const Input = styled.input<{ hasError?: boolean }>`
   width: 100%;
   padding: 12px;
-  border: 2px solid ${props => props.hasError ? (props.theme?.status?.error?.color || '#e74c3c') : (props.theme?.border?.primary || '#ddd')};
+  border: 2px solid
+    ${props =>
+      props.hasError
+        ? props.theme?.status?.error?.color || '#e74c3c'
+        : props.theme?.border?.primary || '#ddd'};
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.3s;
 
   &:focus {
     outline: none;
-    border-color: ${props => props.hasError ? (props.theme?.status?.error?.color || '#e74c3c') : (props.theme?.navigation?.primary || '#3498db')};
+    border-color: ${props =>
+      props.hasError
+        ? props.theme?.status?.error?.color || '#e74c3c'
+        : props.theme?.navigation?.primary || '#3498db'};
   }
 `;
 
 const Select = styled.select<{ hasError?: boolean }>`
   width: 100%;
   padding: 12px;
-  border: 2px solid ${props => props.hasError ? (props.theme?.status?.error?.color || '#e74c3c') : (props.theme?.border?.primary || '#ddd')};
+  border: 2px solid
+    ${props =>
+      props.hasError
+        ? props.theme?.status?.error?.color || '#e74c3c'
+        : props.theme?.border?.primary || '#ddd'};
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.3s;
 
   &:focus {
     outline: none;
-    border-color: ${props => props.hasError ? (props.theme?.status?.error?.color || '#e74c3c') : (props.theme?.navigation?.primary || '#3498db')};
+    border-color: ${props =>
+      props.hasError
+        ? props.theme?.status?.error?.color || '#e74c3c'
+        : props.theme?.navigation?.primary || '#3498db'};
   }
 `;
 
@@ -102,7 +116,9 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
   cursor: pointer;
   transition: background-color 0.3s;
 
-  ${props => props.variant === 'primary' ? `
+  ${props =>
+    props.variant === 'primary'
+      ? `
     background: ${(props: any) => props.theme?.navigation?.primary || '#3498db'};
     color: white;
     
@@ -114,7 +130,8 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
       background: #bdc3c7;
       cursor: not-allowed;
     }
-  ` : `
+  `
+      : `
     background: #ecf0f1;
     color: #2c3e50;
     
@@ -130,28 +147,36 @@ const ValidationStatus = styled.div<{ isValid?: boolean }>`
   margin-top: 8px;
   font-size: 12px;
   font-weight: 500;
-  
-  ${props => props.isValid ? `
+
+  ${props =>
+    props.isValid
+      ? `
     background: #d5f4e6;
     color: ${(props: any) => props.theme?.status?.success?.color || '#27ae60'};
     border: 1px solid #27ae60;
-  ` : `
+  `
+      : `
     background: #fadbd8;
     color: ${(props: any) => props.theme?.status?.error?.color || '#e74c3c'};
     border: 1px solid #e74c3c;
   `}
 `;
 
-export default function UserManagementForm({ 
-  mode, 
-  initialData, 
-  onSuccess, 
-  onCancel 
+export default function UserManagementForm({
+  mode,
+  initialData,
+  onSuccess,
+  onCancel,
 }: UserManagementFormProps) {
   const { currentProfile } = useUserProfile();
   const { colors: theme } = useTheme(currentProfile?.role.toLowerCase());
-  const { loading, validateUserCreation, validateUserUpdate, validateUserGroupAssignment } = useValidation();
-  
+  const {
+    loading,
+    validateUserCreation,
+    validateUserUpdate,
+    validateUserGroupAssignment,
+  } = useValidation();
+
   const [formData, setFormData] = useState<FormData>({
     cpf: initialData?.cpf || '',
     email: initialData?.email || '',
@@ -159,10 +184,12 @@ export default function UserManagementForm({
     dataNascimento: initialData?.dataNascimento || '',
     telefone: initialData?.telefone || '',
     perfilId: initialData?.perfilId || '',
-    grupoId: initialData?.grupoId || ''
+    grupoId: initialData?.grupoId || '',
   });
 
-  const [validationErrors, setValidationErrors] = useState<Record<string, string[]>>({});
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string[]>
+  >({});
   const [isValidating, setIsValidating] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -172,7 +199,7 @@ export default function UserManagementForm({
       const result = await validateUserCreation(formData.cpf, formData.email);
       setValidationErrors(prev => ({
         ...prev,
-        cpf: result.errors.filter(error => error.includes('CPF'))
+        cpf: result.errors.filter(error => error.includes('CPF')),
       }));
     } catch (error) {
       console.error('Erro na validação do CPF:', error);
@@ -187,7 +214,7 @@ export default function UserManagementForm({
       const result = await validateUserCreation(formData.cpf, formData.email);
       setValidationErrors(prev => ({
         ...prev,
-        email: result.errors.filter(error => error.includes('Email'))
+        email: result.errors.filter(error => error.includes('Email')),
       }));
     } catch (error) {
       console.error('Erro na validação do email:', error);
@@ -212,7 +239,7 @@ export default function UserManagementForm({
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
+
     // Limpar erro do campo quando usuário começar a digitar
     if (validationErrors[field]) {
       setValidationErrors(prev => ({ ...prev, [field]: [] }));
@@ -228,12 +255,17 @@ export default function UserManagementForm({
 
       if (mode === 'create') {
         // Validar criação de usuário
-        validationResult = await validateUserCreation(formData.cpf, formData.email);
-        
+        validationResult = await validateUserCreation(
+          formData.cpf,
+          formData.email
+        );
+
         if (!validationResult.isValid) {
           setValidationErrors({
             cpf: validationResult.errors.filter(error => error.includes('CPF')),
-            email: validationResult.errors.filter(error => error.includes('Email'))
+            email: validationResult.errors.filter(error =>
+              error.includes('Email')
+            ),
           });
           return;
         }
@@ -242,12 +274,12 @@ export default function UserManagementForm({
         const groupValidation = await validateUserGroupAssignment({
           cpf: formData.cpf,
           grupoId: formData.grupoId,
-          perfilId: formData.perfilId
+          perfilId: formData.perfilId,
         });
 
         if (!groupValidation.isValid) {
           setValidationErrors({
-            grupo: groupValidation.errors
+            grupo: groupValidation.errors,
           });
           return;
         }
@@ -260,17 +292,17 @@ export default function UserManagementForm({
           },
           body: JSON.stringify({
             action: 'create-user',
-            data: formData
-          })
+            data: formData,
+          }),
         });
 
         const result = await response.json();
-        
+
         if (result.success) {
           onSuccess?.(result.data);
         } else {
           setValidationErrors({
-            general: [result.error]
+            general: [result.error],
           });
         }
       } else {
@@ -280,11 +312,13 @@ export default function UserManagementForm({
           formData.cpf,
           formData.email
         );
-        
+
         if (!validationResult.isValid) {
           setValidationErrors({
             cpf: validationResult.errors.filter(error => error.includes('CPF')),
-            email: validationResult.errors.filter(error => error.includes('Email'))
+            email: validationResult.errors.filter(error =>
+              error.includes('Email')
+            ),
           });
           return;
         }
@@ -299,47 +333,49 @@ export default function UserManagementForm({
             action: 'update-user',
             data: {
               usuarioId: initialData.id,
-              ...formData
-            }
-          })
+              ...formData,
+            },
+          }),
         });
 
         const result = await response.json();
-        
+
         if (result.success) {
           onSuccess?.(result.data);
         } else {
           setValidationErrors({
-            general: [result.error]
+            general: [result.error],
           });
         }
       }
     } catch (error: any) {
       setValidationErrors({
-        general: ['Erro interno do servidor']
+        general: ['Erro interno do servidor'],
       });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const hasErrors = Object.values(validationErrors).some(errors => errors.length > 0);
-  const hasFieldErrors = Object.keys(validationErrors).some(key => 
-    key !== 'general' && validationErrors[key].length > 0
+  const hasErrors = Object.values(validationErrors).some(
+    errors => errors.length > 0
+  );
+  const hasFieldErrors = Object.keys(validationErrors).some(
+    key => key !== 'general' && validationErrors[key].length > 0
   );
 
   return (
     <FormContainer>
       <h2>{mode === 'create' ? 'Criar Usuário' : 'Editar Usuário'}</h2>
-      
+
       <form onSubmit={handleSubmit}>
         <FormGroup>
           <Label>CPF *</Label>
           <Input
-            type="text"
+            type='text'
             value={formData.cpf}
             onChange={(e: any) => handleInputChange('cpf', e.target.value)}
-            placeholder="00000000000"
+            placeholder='00000000000'
             maxLength={11}
             hasError={!!validationErrors.cpf?.length}
           />
@@ -352,10 +388,10 @@ export default function UserManagementForm({
         <FormGroup>
           <Label>Email *</Label>
           <Input
-            type="email"
+            type='email'
             value={formData.email}
             onChange={(e: any) => handleInputChange('email', e.target.value)}
-            placeholder="usuario@exemplo.com"
+            placeholder='usuario@exemplo.com'
             hasError={!!validationErrors.email?.length}
           />
           {validationErrors.email?.map((error: any, index: any) => (
@@ -366,29 +402,33 @@ export default function UserManagementForm({
         <FormGroup>
           <Label>Nome Completo *</Label>
           <Input
-            type="text"
+            type='text'
             value={formData.nomeCompleto}
-            onChange={(e: any) => handleInputChange('nomeCompleto', e.target.value)}
-            placeholder="Nome completo do usuário"
+            onChange={(e: any) =>
+              handleInputChange('nomeCompleto', e.target.value)
+            }
+            placeholder='Nome completo do usuário'
           />
         </FormGroup>
 
         <FormGroup>
           <Label>Data de Nascimento *</Label>
           <Input
-            type="date"
+            type='date'
             value={formData.dataNascimento}
-            onChange={(e: any) => handleInputChange('dataNascimento', e.target.value)}
+            onChange={(e: any) =>
+              handleInputChange('dataNascimento', e.target.value)
+            }
           />
         </FormGroup>
 
         <FormGroup>
           <Label>Telefone *</Label>
           <Input
-            type="text"
+            type='text'
             value={formData.telefone}
             onChange={(e: any) => handleInputChange('telefone', e.target.value)}
-            placeholder="11999999999"
+            placeholder='11999999999'
             maxLength={11}
           />
         </FormGroup>
@@ -399,12 +439,14 @@ export default function UserManagementForm({
               <Label>Perfil *</Label>
               <Select
                 value={formData.perfilId}
-                onChange={(e: any) => handleInputChange('perfilId', e.target.value)}
+                onChange={(e: any) =>
+                  handleInputChange('perfilId', e.target.value)
+                }
                 hasError={!!validationErrors.perfil?.length}
               >
-                <option value="">Selecione um perfil</option>
-                <option value="empregador">Empregador</option>
-                <option value="funcionario">Funcionário</option>
+                <option value=''>Selecione um perfil</option>
+                <option value='empregador'>Empregador</option>
+                <option value='funcionario'>Funcionário</option>
               </Select>
             </FormGroup>
 
@@ -412,10 +454,12 @@ export default function UserManagementForm({
               <Label>Grupo *</Label>
               <Select
                 value={formData.grupoId}
-                onChange={(e: any) => handleInputChange('grupoId', e.target.value)}
+                onChange={(e: any) =>
+                  handleInputChange('grupoId', e.target.value)
+                }
                 hasError={!!validationErrors.grupo?.length}
               >
-                <option value="">Selecione um grupo</option>
+                <option value=''>Selecione um grupo</option>
                 {/* Grupos serão carregados dinamicamente */}
               </Select>
               {validationErrors.grupo?.map((error: any, index: any) => (
@@ -430,22 +474,25 @@ export default function UserManagementForm({
         ))}
 
         <ValidationStatus isValid={!hasFieldErrors}>
-          {hasFieldErrors 
-            ? '❌ Existem erros de validação' 
-            : '✅ Dados válidos'
-          }
+          {hasFieldErrors
+            ? '❌ Existem erros de validação'
+            : '✅ Dados válidos'}
         </ValidationStatus>
 
         <ButtonGroup>
-          <Button type="button" onClick={onCancel}>
+          <Button type='button' onClick={onCancel}>
             Cancelar
           </Button>
-          <Button 
-            type="submit" 
-            variant="primary"
+          <Button
+            type='submit'
+            variant='primary'
             disabled={isSubmitting || loading || hasFieldErrors}
           >
-            {isSubmitting ? 'Salvando...' : (mode === 'create' ? 'Criar' : 'Atualizar')}
+            {isSubmitting
+              ? 'Salvando...'
+              : mode === 'create'
+                ? 'Criar'
+                : 'Atualizar'}
           </Button>
         </ButtonGroup>
       </form>

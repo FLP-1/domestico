@@ -19,15 +19,23 @@ interface UseNetworkDetectionOptions {
   enableRealSSID?: boolean; // ✅ Capturar SSID real do sistema operacional
 }
 
-export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) => {
-  const { enableLogging = false, updateInterval = 5000, enableRealSSID = false } = options;
-  
+export const useNetworkDetection = (
+  options: UseNetworkDetectionOptions = {}
+) => {
+  const {
+    enableLogging = false,
+    updateInterval = 5000,
+    enableRealSSID = false,
+  } = options;
+
   // ✅ Proteções robustas para evitar travamentos
-  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
   const [isUpdating, setIsUpdating] = useState(false);
   const [lastUpdateTime, setLastUpdateTime] = useState(0);
   const [consecutiveErrors, setConsecutiveErrors] = useState(0);
-  
+
   const [networkInfo, setNetworkInfo] = useState<NetworkInfo>({
     wifiName: 'WiFi não detectado',
     connectionType: 'unknown',
@@ -38,7 +46,7 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
     realSSID: undefined,
     ssidPlatform: undefined,
     ssidLoading: false,
-    ssidError: null
+    ssidError: null,
   });
 
   const detectNetworkInfo = useCallback((): NetworkInfo => {
@@ -54,7 +62,7 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
           realSSID: undefined,
           ssidPlatform: undefined,
           ssidLoading: false,
-          ssidError: null
+          ssidError: null,
         };
       }
 
@@ -67,7 +75,7 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
       // Detectar informações de rede via navigator.connection
       if ('connection' in navigator) {
         const connection = (navigator as any).connection;
-        
+
         if (connection) {
           connectionType = connection.type || 'unknown';
           effectiveType = connection.effectiveType || 'unknown';
@@ -86,23 +94,26 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
             } else if (connectionType === 'cellular') {
               wifiName = `Dados Móveis: ${connection.effectiveType || '4G'}`;
             } else if (connection.downlink && connection.downlink > 10) {
-            // Conexão rápida provavelmente é WiFi
-            wifiName = `WiFi: ${connection.effectiveType || 'Conexão Rápida'} (${connection.downlink}Mbps)`;
-          } else if (connection.effectiveType) {
-            // Tentar determinar se é WiFi baseado na velocidade
-            if (connection.effectiveType.includes('4g') || connection.downlink > 5) {
-              wifiName = `WiFi: ${connection.effectiveType}`;
+              // Conexão rápida provavelmente é WiFi
+              wifiName = `WiFi: ${connection.effectiveType || 'Conexão Rápida'} (${connection.downlink}Mbps)`;
+            } else if (connection.effectiveType) {
+              // Tentar determinar se é WiFi baseado na velocidade
+              if (
+                connection.effectiveType.includes('4g') ||
+                connection.downlink > 5
+              ) {
+                wifiName = `WiFi: ${connection.effectiveType}`;
+              } else {
+                wifiName = `Conexão: ${connection.effectiveType}`;
+              }
             } else {
-              wifiName = `Conexão: ${connection.effectiveType}`;
+              // Fallback inteligente baseado na velocidade
+              if (connection.downlink && connection.downlink > 5) {
+                wifiName = 'WiFi: Conectado';
+              } else {
+                wifiName = 'WiFi: Conectado';
+              }
             }
-          } else {
-            // Fallback inteligente baseado na velocidade
-            if (connection.downlink && connection.downlink > 5) {
-              wifiName = 'WiFi: Conectado';
-            } else {
-              wifiName = 'WiFi: Conectado';
-            }
-          }
           }
         }
       }
@@ -122,7 +133,7 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
         if (effectiveType && effectiveType !== 'unknown') {
           wifiName = `WiFi: ${effectiveType}`;
         }
-        
+
         // Tentar usar informações de velocidade para inferir tipo de rede
         if (downlink > 0) {
           if (downlink > 50) {
@@ -141,20 +152,20 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
           // Tentar usar WebRTC para detectar informações de rede local
           if ('RTCPeerConnection' in window) {
             const pc = new RTCPeerConnection({
-              iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+              iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
             });
-            
+
             pc.createDataChannel('');
             pc.createOffer().then(offer => {
               pc.setLocalDescription(offer);
             });
-            
+
             // Tentar extrair informações da conexão
             setTimeout(() => {
               pc.close();
             }, 1000);
           }
-          
+
           // Tentar usar outras APIs se disponíveis
           if ('connection' in navigator) {
             const conn = (navigator as any).connection;
@@ -175,13 +186,13 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
       // ✅ Tentativa avançada de detectar nome da rede WiFi
       // Nota: Navegadores web têm limitações de segurança para detectar nomes de rede WiFi
       // Mas podemos tentar algumas abordagens:
-      
+
       // 1. Tentar usar WebRTC para obter informações de rede local
       if (wifiName === 'WiFi: Conectado' || wifiName.includes('WiFi:')) {
         try {
           // Tentar detectar se é uma rede específica baseada em padrões conhecidos
           // Esta é uma abordagem limitada, mas pode funcionar em alguns casos
-          
+
           // Verificar se há informações sobre a rede no localStorage (se já foi detectada antes)
           if (typeof window !== 'undefined') {
             const storedWifiName = localStorage.getItem('detected_wifi_name');
@@ -189,11 +200,11 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
               wifiName = storedWifiName;
             }
           }
-          
+
           // Tentar usar APIs experimentais (se disponíveis)
           if ('connection' in navigator) {
             const conn = (navigator as any).connection;
-            
+
             // Verificar se há informações específicas sobre a rede
             if (conn && conn.type === 'wifi') {
               // Tentar inferir nome da rede baseado em características
@@ -215,7 +226,7 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
         connectionType,
         effectiveType,
         downlink,
-        isOnline
+        isOnline,
       };
 
       // console.log removido para evitar warnings de linting
@@ -223,7 +234,7 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
       return info;
     } catch (error) {
       // console.error removido para evitar warnings de linting
-      
+
       return {
         wifiName: 'WiFi não detectado',
         connectionType: 'error',
@@ -233,7 +244,7 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
         realSSID: undefined,
         ssidPlatform: undefined,
         ssidLoading: false,
-        ssidError: null
+        ssidError: null,
       };
     }
   }, []);
@@ -247,24 +258,24 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
     try {
       const response = await fetch('/api/wifi/ssid');
       const data = await response.json();
-      
+
       if (data.success) {
         return {
           ssid: data.ssid,
-          platform: data.platform
+          platform: data.platform,
         };
       } else {
         return {
           ssid: 'Não detectado',
           platform: 'desconhecido',
-          error: data.error
+          error: data.error,
         };
       }
     } catch (error) {
       return {
         ssid: 'Erro ao capturar',
         platform: 'desconhecido',
-        error: error instanceof Error ? error.message : 'Erro desconhecido'
+        error: error instanceof Error ? error.message : 'Erro desconhecido',
       };
     }
   }, []);
@@ -273,48 +284,56 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
   const updateNetworkInfo = useCallback(async () => {
     // ✅ Proteção 1: Evitar múltiplas chamadas simultâneas
     if (isUpdating) {
-               // if (enableLogging) {
-               //   console.log('🔄 Atualização já em andamento, pulando...');
-               // }
+      // if (enableLogging) {
+      //   console.log('🔄 Atualização já em andamento, pulando...');
+      // }
       return;
     }
-    
+
     // ✅ Proteção 2: Rate limiting - máximo 1 chamada por segundo
     const now = Date.now();
     if (now - lastUpdateTime < 1000) {
-             // if (enableLogging) {
-             //   console.log('⏱️ Rate limiting ativo, aguardando...');
-             // }
+      // if (enableLogging) {
+      //   console.log('⏱️ Rate limiting ativo, aguardando...');
+      // }
       return;
     }
-    
+
     // ✅ Proteção 3: Backoff exponencial em caso de erros consecutivos
     if (consecutiveErrors > 3) {
-      const backoffTime = Math.min(30000, 1000 * Math.pow(2, consecutiveErrors - 3));
+      const backoffTime = Math.min(
+        30000,
+        1000 * Math.pow(2, consecutiveErrors - 3)
+      );
       if (now - lastUpdateTime < backoffTime) {
-               // if (enableLogging) {
-               //   console.log(`🚫 Backoff ativo por ${backoffTime}ms devido a ${consecutiveErrors} erros consecutivos`);
-               // }
+        // if (enableLogging) {
+        //   console.log(`🚫 Backoff ativo por ${backoffTime}ms devido a ${consecutiveErrors} erros consecutivos`);
+        // }
         return;
       }
     }
-    
+
     // ✅ Debounce: cancelar timeout anterior se existir
     if (debounceTimeout) {
       clearTimeout(debounceTimeout);
     }
-    
+
     const timeout = setTimeout(async () => {
       setIsUpdating(true);
       setLastUpdateTime(now);
-      
+
       try {
         const basicInfo = detectNetworkInfo();
-        
+
         // ✅ Capturar SSID real se habilitado
         if (enableRealSSID) {
-          setNetworkInfo(prev => ({ ...prev, ...basicInfo, ssidLoading: true, ssidError: null }));
-          
+          setNetworkInfo(prev => ({
+            ...prev,
+            ...basicInfo,
+            ssidLoading: true,
+            ssidError: null,
+          }));
+
           try {
             const ssidData = await fetchRealSSID();
             setNetworkInfo(prev => ({
@@ -323,19 +342,21 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
               realSSID: ssidData.ssid,
               ssidPlatform: ssidData.platform,
               ssidLoading: false,
-              ssidError: ssidData.error || null
+              ssidError: ssidData.error || null,
             }));
-            
+
             // ✅ Reset contador de erros em caso de sucesso
             setConsecutiveErrors(0);
-            
           } catch (error) {
             setConsecutiveErrors(prev => prev + 1);
             setNetworkInfo(prev => ({
               ...prev,
               ...basicInfo,
               ssidLoading: false,
-              ssidError: error instanceof Error ? error.message : 'Erro ao capturar SSID'
+              ssidError:
+                error instanceof Error
+                  ? error.message
+                  : 'Erro ao capturar SSID',
             }));
           }
         } else {
@@ -350,9 +371,18 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
         setIsUpdating(false);
       }
     }, 2000); // 2 segundos de debounce para maior estabilidade
-    
+
     setDebounceTimeout(timeout);
-  }, [enableRealSSID, debounceTimeout, isUpdating, lastUpdateTime, consecutiveErrors, detectNetworkInfo, enableLogging, fetchRealSSID]);
+  }, [
+    enableRealSSID,
+    debounceTimeout,
+    isUpdating,
+    lastUpdateTime,
+    consecutiveErrors,
+    detectNetworkInfo,
+    enableLogging,
+    fetchRealSSID,
+  ]);
 
   // Configurar listeners e atualizações periódicas
   useEffect(() => {
@@ -403,7 +433,7 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
     return () => {
       // ✅ Cleanup do timeout de inicialização
       clearTimeout(initTimeout);
-      
+
       if ('connection' in navigator) {
         const connection = (navigator as any).connection;
         if (connection && connection.removeEventListener) {
@@ -417,20 +447,26 @@ export const useNetworkDetection = (options: UseNetworkDetectionOptions = {}) =>
       if (intervalId) {
         clearInterval(intervalId);
       }
-      
+
       // ✅ Cleanup do debounce timeout
       if (debounceTimeout) {
         clearTimeout(debounceTimeout);
       }
     };
-  }, [updateInterval, enableRealSSID, debounceTimeout, isUpdating, updateNetworkInfo]);
+  }, [
+    updateInterval,
+    enableRealSSID,
+    debounceTimeout,
+    isUpdating,
+    updateNetworkInfo,
+  ]);
 
   return {
     ...networkInfo,
     updateNetworkInfo,
     detectNetworkInfo,
     // ✅ Função para atualizar SSID real manualmente
-    refreshRealSSID: enableRealSSID ? fetchRealSSID : undefined
+    refreshRealSSID: enableRealSSID ? fetchRealSSID : undefined,
   };
 };
 

@@ -39,20 +39,28 @@ const StatsGrid = styled.div`
   margin-bottom: 2rem;
 `;
 
-const StatCard = styled.div<{ variant?: 'success' | 'warning' | 'danger' | 'info' }>`
+const StatCard = styled.div<{
+  variant?: 'success' | 'warning' | 'danger' | 'info';
+}>`
   background: white;
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  border-left: 4px solid ${props => {
-    switch (props.variant) {
-      case 'success': return props.theme?.status?.success?.color || '#48bb78';
-      case 'warning': return props.theme?.status?.warning?.color || '#ed8936';
-      case 'danger': return props.theme?.status?.error?.color || '#f56565';
-      case 'info': return props.theme?.status?.info?.color || '#4299e1';
-      default: return props.theme?.text?.secondary || '#cbd5e0';
-    }
-  }};
+  border-left: 4px solid
+    ${props => {
+      switch (props.variant) {
+        case 'success':
+          return props.theme?.status?.success?.color || '#48bb78';
+        case 'warning':
+          return props.theme?.status?.warning?.color || '#ed8936';
+        case 'danger':
+          return props.theme?.status?.error?.color || '#f56565';
+        case 'info':
+          return props.theme?.status?.info?.color || '#4299e1';
+        default:
+          return props.theme?.text?.secondary || '#cbd5e0';
+      }
+    }};
 `;
 
 const StatLabel = styled.div`
@@ -112,7 +120,9 @@ const Td = styled.td`
   color: #2d3748;
 `;
 
-const Badge = styled.span<{ variant?: 'success' | 'warning' | 'danger' | 'info' }>`
+const Badge = styled.span<{
+  variant?: 'success' | 'warning' | 'danger' | 'info';
+}>`
   display: inline-block;
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
@@ -120,20 +130,30 @@ const Badge = styled.span<{ variant?: 'success' | 'warning' | 'danger' | 'info' 
   font-weight: 600;
   background: ${props => {
     switch (props.variant) {
-      case 'success': return '#c6f6d5';
-      case 'warning': return '#feebc8';
-      case 'danger': return '#fed7d7';
-      case 'info': return '#bee3f8';
-      default: return '#e2e8f0';
+      case 'success':
+        return '#c6f6d5';
+      case 'warning':
+        return '#feebc8';
+      case 'danger':
+        return '#fed7d7';
+      case 'info':
+        return '#bee3f8';
+      default:
+        return '#e2e8f0';
     }
   }};
   color: ${props => {
     switch (props.variant) {
-      case 'success': return '#22543d';
-      case 'warning': return '#7c2d12';
-      case 'danger': return '#742a2a';
-      case 'info': return '#2c5282';
-      default: return '#2d3748';
+      case 'success':
+        return '#22543d';
+      case 'warning':
+        return '#7c2d12';
+      case 'danger':
+        return '#742a2a';
+      case 'info':
+        return '#2c5282';
+      default:
+        return '#2d3748';
     }
   }};
 `;
@@ -201,7 +221,7 @@ export default function AntifaudeDashboard() {
     async function carregarEstatisticas() {
       try {
         const response = await fetch('/api/antifraude/estatisticas');
-        
+
         if (!response.ok) {
           throw new Error('Falha ao carregar estatísticas');
         }
@@ -233,7 +253,8 @@ export default function AntifaudeDashboard() {
     return (
       <PageContainer>
         <ErrorContainer>
-          <strong>Erro:</strong> {erro || 'Não foi possível carregar as estatísticas'}
+          <strong>Erro:</strong>{' '}
+          {erro || 'Não foi possível carregar as estatísticas'}
         </ErrorContainer>
       </PageContainer>
     );
@@ -247,38 +268,54 @@ export default function AntifaudeDashboard() {
 
       <PageContainer>
         <Header>
-          <Title><span role="img" aria-label="Escudo">🛡️</span> Dashboard Antifraude</Title>
-          <Subtitle>Monitoramento em tempo real de segurança e detecção de fraudes</Subtitle>
+          <Title>
+            <span role='img' aria-label='Escudo'>
+              🛡️
+            </span>{' '}
+            Dashboard Antifraude
+          </Title>
+          <Subtitle>
+            Monitoramento em tempo real de segurança e detecção de fraudes
+          </Subtitle>
         </Header>
 
         <StatsGrid>
-          <StatCard variant="info">
+          <StatCard variant='info'>
             <StatLabel>Total de Análises</StatLabel>
-            <StatValue>{estatisticas.totais.analises.toLocaleString()}</StatValue>
+            <StatValue>
+              {estatisticas.totais.analises.toLocaleString()}
+            </StatValue>
             <StatSubtext>
-              {estatisticas.totais.analisesHoje} hoje • {estatisticas.totais.analisesSemana} esta semana
+              {estatisticas.totais.analisesHoje} hoje •{' '}
+              {estatisticas.totais.analisesSemana} esta semana
             </StatSubtext>
           </StatCard>
 
-          <StatCard variant="danger">
+          <StatCard variant='danger'>
             <StatLabel>Alto Risco</StatLabel>
-            <StatValue>{estatisticas.deteccoes.altoRisco.toLocaleString()}</StatValue>
+            <StatValue>
+              {estatisticas.deteccoes.altoRisco.toLocaleString()}
+            </StatValue>
             <StatSubtext>
               {estatisticas.taxas.altoRisco.toFixed(2)}% do total
             </StatSubtext>
           </StatCard>
 
-          <StatCard variant="warning">
+          <StatCard variant='warning'>
             <StatLabel>Bloqueadas</StatLabel>
-            <StatValue>{estatisticas.deteccoes.bloqueadas.toLocaleString()}</StatValue>
+            <StatValue>
+              {estatisticas.deteccoes.bloqueadas.toLocaleString()}
+            </StatValue>
             <StatSubtext>
               {estatisticas.taxas.bloqueio.toFixed(2)}% taxa de bloqueio
             </StatSubtext>
           </StatCard>
 
-          <StatCard variant="success">
+          <StatCard variant='success'>
             <StatLabel>Dispositivos Únicos</StatLabel>
-            <StatValue>{estatisticas.totais.dispositivosUnicos.toLocaleString()}</StatValue>
+            <StatValue>
+              {estatisticas.totais.dispositivosUnicos.toLocaleString()}
+            </StatValue>
             <StatSubtext>
               {estatisticas.deteccoes.dispositivosNovos} novos recentemente
             </StatSubtext>
@@ -288,22 +325,30 @@ export default function AntifaudeDashboard() {
         <StatsGrid>
           <StatCard>
             <StatLabel>VPNs Detectadas</StatLabel>
-            <StatValue>{estatisticas.deteccoes.vpns.toLocaleString()}</StatValue>
+            <StatValue>
+              {estatisticas.deteccoes.vpns.toLocaleString()}
+            </StatValue>
           </StatCard>
 
           <StatCard>
             <StatLabel>Bots Detectados</StatLabel>
-            <StatValue>{estatisticas.deteccoes.bots.toLocaleString()}</StatValue>
+            <StatValue>
+              {estatisticas.deteccoes.bots.toLocaleString()}
+            </StatValue>
           </StatCard>
 
           <StatCard>
             <StatLabel>IPs Únicos</StatLabel>
-            <StatValue>{estatisticas.totais.ipsUnicos.toLocaleString()}</StatValue>
+            <StatValue>
+              {estatisticas.totais.ipsUnicos.toLocaleString()}
+            </StatValue>
           </StatCard>
 
           <StatCard>
             <StatLabel>Velocidades Impossíveis</StatLabel>
-            <StatValue>{estatisticas.deteccoes.velocidadesImpossiveis.toLocaleString()}</StatValue>
+            <StatValue>
+              {estatisticas.deteccoes.velocidadesImpossiveis.toLocaleString()}
+            </StatValue>
           </StatCard>
         </StatsGrid>
 
@@ -319,12 +364,16 @@ export default function AntifaudeDashboard() {
             </thead>
             <tbody>
               {estatisticas.distribuicao.porNivelRisco.map(item => {
-                const porcentagem = (item.quantidade / estatisticas.totais.analises * 100).toFixed(2);
+                const porcentagem = (
+                  (item.quantidade / estatisticas.totais.analises) *
+                  100
+                ).toFixed(2);
                 let variant: 'success' | 'info' | 'warning' | 'danger' = 'info';
-                
+
                 if (item.nivel === 'BAIXO') variant = 'success';
                 else if (item.nivel === 'MEDIO') variant = 'warning';
-                else if (item.nivel === 'ALTO' || item.nivel === 'CRITICO') variant = 'danger';
+                else if (item.nivel === 'ALTO' || item.nivel === 'CRITICO')
+                  variant = 'danger';
 
                 return (
                   <tr key={item.nivel}>
@@ -356,21 +405,25 @@ export default function AntifaudeDashboard() {
               {estatisticas.topIPs.map(ip => (
                 <tr key={ip.ipAddress}>
                   <Td>{ip.ipAddress}</Td>
-                  <Td>{ip.cidade && ip.pais ? `${ip.cidade}, ${ip.pais}` : 'N/D'}</Td>
+                  <Td>
+                    {ip.cidade && ip.pais ? `${ip.cidade}, ${ip.pais}` : 'N/D'}
+                  </Td>
                   <Td>{ip.vezesVisto.toLocaleString()}</Td>
                   <Td>
-                    {ip.isVPN && <Badge variant="warning">VPN</Badge>}
-                    {ip.isProxy && <Badge variant="warning">Proxy</Badge>}
-                    {ip.isDatacenter && <Badge variant="info">Datacenter</Badge>}
+                    {ip.isVPN && <Badge variant='warning'>VPN</Badge>}
+                    {ip.isProxy && <Badge variant='warning'>Proxy</Badge>}
+                    {ip.isDatacenter && (
+                      <Badge variant='info'>Datacenter</Badge>
+                    )}
                     {!ip.isVPN && !ip.isProxy && !ip.isDatacenter && (
-                      <Badge variant="success">Normal</Badge>
+                      <Badge variant='success'>Normal</Badge>
                     )}
                   </Td>
                   <Td>
                     {ip.bloqueado ? (
-                      <Badge variant="danger">Bloqueado</Badge>
+                      <Badge variant='danger'>Bloqueado</Badge>
                     ) : (
-                      <Badge variant="success">Permitido</Badge>
+                      <Badge variant='success'>Permitido</Badge>
                     )}
                   </Td>
                 </tr>
@@ -382,4 +435,3 @@ export default function AntifaudeDashboard() {
     </>
   );
 }
-

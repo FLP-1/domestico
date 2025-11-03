@@ -15,13 +15,14 @@ Usar `any` **anula completamente** os benefícios do TypeScript:
 
 ```typescript
 // ❌ MAU: Perde toda a segurança de tipos
-render: (item: any) => item.tipo
+render: (item: any) => item.tipo;
 
 // ✅ BOM: Mantém segurança de tipos
-render: (item: PendingRecord) => item.tipo
+render: (item: PendingRecord) => item.tipo;
 ```
 
 Com `any`:
+
 - ❌ Não há autocomplete no IDE
 - ❌ Não há verificação de tipos em tempo de compilação
 - ❌ Erros só aparecem em runtime (tarde demais!)
@@ -181,13 +182,13 @@ ${props => props.$clickable && `
 
 ## 5. Benefícios da Abordagem Correta
 
-| Aspecto | Com `any` | Com Tipos Corretos |
-|---------|-----------|-------------------|
-| **Autocomplete** | ❌ Não funciona | ✅ Funciona perfeitamente |
-| **Erros em Tempo de Compilação** | ❌ Não detecta | ✅ Detecta todos |
-| **Refatoração Segura** | ❌ Perigosa | ✅ Segura |
-| **Documentação** | ❌ Inexistente | ✅ Auto-documentado |
-| **Manutenibilidade** | ❌ Baixa | ✅ Alta |
+| Aspecto                          | Com `any`       | Com Tipos Corretos        |
+| -------------------------------- | --------------- | ------------------------- |
+| **Autocomplete**                 | ❌ Não funciona | ✅ Funciona perfeitamente |
+| **Erros em Tempo de Compilação** | ❌ Não detecta  | ✅ Detecta todos          |
+| **Refatoração Segura**           | ❌ Perigosa     | ✅ Segura                 |
+| **Documentação**                 | ❌ Inexistente  | ✅ Auto-documentado       |
+| **Manutenibilidade**             | ❌ Baixa        | ✅ Alta                   |
 
 ---
 
@@ -196,6 +197,7 @@ ${props => props.$clickable && `
 **Devemos reverter as mudanças com `any` e implementar a solução correta com generics.**
 
 Isso levará um pouco mais de tempo, mas resultará em:
+
 - ✅ Código mais seguro
 - ✅ Melhor experiência de desenvolvimento
 - ✅ Menos bugs em produção

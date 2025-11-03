@@ -11,16 +11,19 @@ Sistema web de controle de ponto (time-clock) desenvolvido em **Next.js 15.5.2**
 ## 🚨 Problema Atual
 
 ### 1. **Precisão Ruim (968 metros)**
+
 - **Esperado:** 15-20 metros (funcionava antes)
 - **Atual:** ~1km (968m) em desktop
 - **Contexto:** Google Maps funciona com precisão boa no mesmo hardware
 
 ### 2. **Popup de Permissão Aparece Indevidamente**
+
 - **Esperado:** Popup SÓ ao clicar em card de registro de ponto
 - **Atual:** Popup aparece (possivelmente ao carregar página?)
 - **Contexto:** Captura deve ser 100% manual, não automática
 
 ### 3. **Possível Confusão: WiFi SSID vs Geolocalização GPS**
+
 - **WiFi SSID:** Nome da rede (`navigator.connection`) - sem permissão
 - **Geolocalização:** Coordenadas GPS (`navigator.geolocation`) - requer permissão
 - **Suspeita:** Código pode estar misturando as duas
@@ -73,7 +76,7 @@ const captureRealTimeLocation = useCallback(async (): Promise<{
 }> => {
   const maxAccuracy = await getGeolocationMaxAccuracy();
   const timeout = await getGeolocationTimeout();
-  
+
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
       reject(new Error('Geolocalizacao nao suportada pelo navegador'));
@@ -81,13 +84,13 @@ const captureRealTimeLocation = useCallback(async (): Promise<{
     }
 
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
+      async position => {
         try {
           const { latitude, longitude, accuracy } = position.coords;
 
           const [address, networkInfo] = await Promise.all([
             getAddressFromCoords(latitude, longitude),
-            captureNetworkInfo()
+            captureNetworkInfo(),
           ]);
 
           resolve({
@@ -96,19 +99,19 @@ const captureRealTimeLocation = useCallback(async (): Promise<{
             accuracy,
             address,
             wifiName: networkInfo.wifiName,
-            networkInfo
+            networkInfo,
           });
         } catch (error) {
           reject(error);
         }
       },
-      (error) => {
+      error => {
         reject(new Error(`Erro de geolocalizacao: ${error.message}`));
       },
       {
         enableHighAccuracy: true,
         timeout: timeout,
-        maximumAge: 0
+        maximumAge: 0,
       }
     );
   });
@@ -116,6 +119,7 @@ const captureRealTimeLocation = useCallback(async (): Promise<{
 ```
 
 **Configuração:**
+
 - `enableHighAccuracy: true`
 - `timeout: await getGeolocationTimeout()` (configurável via banco)
 - `maximumAge: 0` (sem cache)
@@ -132,12 +136,14 @@ if (isMobile) {
   try {
     locationData = await Promise.race([
       captureRealTimeLocation(),
-      new Promise((_, reject) => 
+      new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Timeout rápido para desktop')), 3000)
-      )
+      ),
     ]);
   } catch (error) {
-    logger.warn('⚠️ Desktop: Captura rápida falhou, continuando sem geolocalização');
+    logger.warn(
+      '⚠️ Desktop: Captura rápida falhou, continuando sem geolocalização'
+    );
     locationData = null;
   }
 }
@@ -157,7 +163,8 @@ useEffect(() => {
     const connection = (navigator as any).connection;
     if (connection && connection.addEventListener) {
       connection.addEventListener('change', updateConnectionInfo);
-      return () => connection.removeEventListener('change', updateConnectionInfo);
+      return () =>
+        connection.removeEventListener('change', updateConnectionInfo);
     }
   }
 }, [updateConnectionInfo]);
@@ -168,12 +175,14 @@ useEffect(() => {
 ## 📊 Resultados Obtidos
 
 ### Teste Realizado
+
 - **Dispositivo:** Desktop Windows
 - **Navegador:** Chrome
 - **WiFi:** Conectado
 - **Resultado:** 968.4 metros de precisão
 
 ### Comportamento Observado
+
 1. Popup de permissão aparece (possivelmente ao carregar página)
 2. Precisão muito ruim (~1km)
 3. Sistema funciona, mas localização imprecisa
@@ -183,12 +192,14 @@ useEffect(() => {
 ## 📚 Documentação Existente
 
 ### 1. DECISAO_GEOLOCALIZACAO_MANUAL.md
+
 - Define que geolocalização é **manual** (só ao clicar)
 - WelcomeSection: WiFi SSID sem GPS
 - Login: sem geolocalização (`locationData = null`)
 - TimeRecordCard: captura ao clicar
 
 ### 2. LIMITACOES_TECNICAS_GEOLOCALIZACAO.md
+
 - Documento criado por assistente anterior
 - Afirma que 968m é "adequado" (questionável)
 - Justifica imprecisão em desktop por falta de GPS
@@ -198,23 +209,27 @@ useEffect(() => {
 ## ❓ Perguntas para Análise
 
 ### 1. **Precisão Ruim**
+
 - Por que 968m se antes tinha 15-20m?
 - Google Maps funciona bem - o que eles fazem diferente?
 - `enableHighAccuracy: true` está sendo respeitado?
 - Há algum problema com `getCurrentPosition` vs `watchPosition`?
 
 ### 2. **Popup de Permissão**
+
 - Por que popup aparece se `useEffect` está vazio?
 - Há alguma captura automática escondida?
 - `captureNetworkInfo()` ou `updateConnectionInfo()` chamam geolocalização?
 - Algum componente instanciado automaticamente está acionando?
 
 ### 3. **WiFi vs Geolocalização**
+
 - `captureNetworkInfo()` usa `navigator.connection` ou `navigator.geolocation`?
 - Há confusão entre SSID (sem permissão) e GPS (com permissão)?
 - `networkInfo.wifiName` vem de onde?
 
 ### 4. **Estratégia Desktop**
+
 - Timeout de 3s é adequado?
 - `getCurrentPosition` única tentativa é suficiente?
 - Deveria usar `watchPosition` para aguardar estabilização?
@@ -269,6 +284,7 @@ Por favor, analise:
 ## 📂 Arquivos para Análise
 
 Se necessário, solicite leitura de:
+
 - `src/hooks/useGeolocation.ts`
 - `src/hooks/useGeolocationCapture.ts`
 - `src/components/TimeRecordCard/index.tsx`
@@ -281,4 +297,3 @@ Se necessário, solicite leitura de:
 **Data:** 08/10/2025  
 **Ambiente:** Produção (Windows Desktop + Chrome)  
 **Prioridade:** Alta (funcionalidade crítica para anti-fraude)
-

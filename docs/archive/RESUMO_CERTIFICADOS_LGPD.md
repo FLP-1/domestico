@@ -15,6 +15,7 @@ ESOCIAL_CERTIFICATE_PASSWORD=456587  ← 🚨 SENHA EM TEXTO CLARO
 ```
 
 **Riscos:**
+
 - 🚨 Senha exposta em arquivo de texto
 - 🚨 Sem controle de acesso
 - 🚨 Sem auditoria (não conforme LGPD)
@@ -25,6 +26,7 @@ ESOCIAL_CERTIFICATE_PASSWORD=456587  ← 🚨 SENHA EM TEXTO CLARO
 ## ✅ SOLUÇÃO IMPLEMENTADA
 
 ### 1. **Banco de Dados Seguro**
+
 ```
 📦 PostgreSQL
    ├── certificados_digitais
@@ -40,6 +42,7 @@ ESOCIAL_CERTIFICATE_PASSWORD=456587  ← 🚨 SENHA EM TEXTO CLARO
 ```
 
 ### 2. **Criptografia de Classe Mundial**
+
 ```typescript
 🔐 AES-256-GCM (Advanced Encryption Standard)
 ✅ 256 bits de segurança
@@ -49,6 +52,7 @@ ESOCIAL_CERTIFICATE_PASSWORD=456587  ← 🚨 SENHA EM TEXTO CLARO
 ```
 
 ### 3. **APIs REST Completas**
+
 ```
 GET    /api/certificates       → Lista certificados (dados mascarados)
 POST   /api/certificates       → Upload e cadastro
@@ -61,34 +65,35 @@ DELETE /api/certificates       → Revogação
 
 ## 🛡️ Conformidade LGPD
 
-| Requisito LGPD | Status |
-|----------------|--------|
-| Criptografia de dados sensíveis | ✅ AES-256-GCM |
-| Registro de todas as operações | ✅ Histórico completo |
-| Consentimento do titular | ✅ Campo no banco |
-| Direito ao esquecimento | ✅ Revogação |
-| Mascaramento de dados | ✅ CPF/Serial/Senhas |
-| Auditoria de acessos | ✅ IP, motivo, data |
-| Portabilidade de dados | ✅ Exportação JSON |
+| Requisito LGPD                  | Status                |
+| ------------------------------- | --------------------- |
+| Criptografia de dados sensíveis | ✅ AES-256-GCM        |
+| Registro de todas as operações  | ✅ Histórico completo |
+| Consentimento do titular        | ✅ Campo no banco     |
+| Direito ao esquecimento         | ✅ Revogação          |
+| Mascaramento de dados           | ✅ CPF/Serial/Senhas  |
+| Auditoria de acessos            | ✅ IP, motivo, data   |
+| Portabilidade de dados          | ✅ Exportação JSON    |
 
 ---
 
 ## 📊 Antes vs Depois
 
-| Aspecto | ❌ Antes | ✅ Depois |
-|---------|---------|----------|
-| **Senha** | Texto claro no `.env` | Criptografada AES-256-GCM |
-| **Arquivo** | Caminho exposto | Protegido no banco |
-| **Acesso** | Sem controle | Auditoria completa |
-| **Validade** | Manual | Verificação automática |
-| **LGPD** | Não conforme | ✅ 100% conforme |
-| **Segurança** | 🔴 Baixa | 🟢 Máxima |
+| Aspecto       | ❌ Antes              | ✅ Depois                 |
+| ------------- | --------------------- | ------------------------- |
+| **Senha**     | Texto claro no `.env` | Criptografada AES-256-GCM |
+| **Arquivo**   | Caminho exposto       | Protegido no banco        |
+| **Acesso**    | Sem controle          | Auditoria completa        |
+| **Validade**  | Manual                | Verificação automática    |
+| **LGPD**      | Não conforme          | ✅ 100% conforme          |
+| **Segurança** | 🔴 Baixa              | 🟢 Máxima                 |
 
 ---
 
 ## 🔐 Como Funciona?
 
 ### Cadastro de Certificado
+
 ```mermaid
 1. Usuário faz upload do .pfx + senha
 2. Sistema criptografa senha (AES-256-GCM)
@@ -97,6 +102,7 @@ DELETE /api/certificates       → Revogação
 ```
 
 ### Uso do Certificado
+
 ```mermaid
 1. Sistema eSocial precisa assinar documento
 2. Solicita certificado com MOTIVO (obrigatório LGPD)
@@ -112,6 +118,7 @@ DELETE /api/certificates       → Revogação
 ## 📝 Dados Agora no Banco
 
 ### ✅ Tabela `certificados_digitais`
+
 - ID do certificado
 - Nome e descrição
 - Tipo (e-CPF A1, e-CPF A3, etc)
@@ -128,6 +135,7 @@ DELETE /api/certificates       → Revogação
 - Consentimento LGPD
 
 ### ✅ Tabela `certificados_historico`
+
 - Quem acessou?
 - Quando acessou?
 - De onde? (IP)
@@ -139,6 +147,7 @@ DELETE /api/certificates       → Revogação
 ## 🚀 Como Testar
 
 ### 1. Sincronizar Banco
+
 ```powershell
 cd E:\DOM
 npx prisma generate
@@ -147,12 +156,14 @@ npx tsx prisma/seed.ts
 ```
 
 ### 2. Verificar Tabelas
+
 ```powershell
 $env:PGPASSWORD='FLP*2025'
 psql -h localhost -p 5433 -U userdom -d dom -c "\dt certificados*"
 ```
 
 ### 3. Consultar Certificados
+
 ```powershell
 psql -h localhost -p 5433 -U userdom -d dom -c "SELECT nome, tipo, data_validade, ativo FROM certificados_digitais;"
 ```
@@ -161,20 +172,21 @@ psql -h localhost -p 5433 -U userdom -d dom -c "SELECT nome, tipo, data_validade
 
 ## 📂 Arquivos Modificados/Criados
 
-| Arquivo | Status | Descrição |
-|---------|--------|-----------|
-| `prisma/schema.prisma` | ✅ Atualizado | Adicionados models CertificadoDigital e CertificadoHistorico |
-| `env.local` | ✅ Corrigido | Removidas senhas, adicionada MASTER_KEY |
-| `src/lib/security/certificateEncryption.ts` | ✅ Criado | Criptografia AES-256-GCM |
-| `src/pages/api/certificates/index.ts` | ✅ Criado | CRUD de certificados |
-| `src/pages/api/certificates/use.ts` | ✅ Criado | Uso com auditoria |
-| `prisma/seed.ts` | ✅ Atualizado | Certificado de exemplo |
+| Arquivo                                     | Status        | Descrição                                                    |
+| ------------------------------------------- | ------------- | ------------------------------------------------------------ |
+| `prisma/schema.prisma`                      | ✅ Atualizado | Adicionados models CertificadoDigital e CertificadoHistorico |
+| `env.local`                                 | ✅ Corrigido  | Removidas senhas, adicionada MASTER_KEY                      |
+| `src/lib/security/certificateEncryption.ts` | ✅ Criado     | Criptografia AES-256-GCM                                     |
+| `src/pages/api/certificates/index.ts`       | ✅ Criado     | CRUD de certificados                                         |
+| `src/pages/api/certificates/use.ts`         | ✅ Criado     | Uso com auditoria                                            |
+| `prisma/seed.ts`                            | ✅ Atualizado | Certificado de exemplo                                       |
 
 ---
 
 ## 🔒 Segurança Garantida
 
 ### ✅ O que NUNCA é exposto:
+
 - ❌ Senha do certificado (sempre criptografada)
 - ❌ Caminho completo do arquivo
 - ❌ CPF completo (mascarado)
@@ -182,6 +194,7 @@ psql -h localhost -p 5433 -U userdom -d dom -c "SELECT nome, tipo, data_validade
 - ❌ Chave mestra de criptografia
 
 ### ✅ O que é registrado (LGPD):
+
 - ✅ Quem acessou
 - ✅ Quando acessou
 - ✅ De onde acessou (IP)
@@ -192,27 +205,29 @@ psql -h localhost -p 5433 -U userdom -d dom -c "SELECT nome, tipo, data_validade
 
 ## 🎯 Benefícios
 
-| Benefício | Impacto |
-|-----------|---------|
-| 🛡️ **Segurança Máxima** | Senhas criptografadas AES-256-GCM |
-| ⚖️ **Conformidade LGPD** | 100% em compliance |
-| 📊 **Auditoria Completa** | Todo acesso registrado |
-| 🔔 **Alertas Automáticos** | Aviso de vencimento |
-| 🏢 **Multi-Empregador** | Suporta vários empregadores |
-| 🔄 **Escalável** | Pronto para crescer |
-| 📝 **Gestão Centralizada** | Interface administrativa futura |
+| Benefício                  | Impacto                           |
+| -------------------------- | --------------------------------- |
+| 🛡️ **Segurança Máxima**    | Senhas criptografadas AES-256-GCM |
+| ⚖️ **Conformidade LGPD**   | 100% em compliance                |
+| 📊 **Auditoria Completa**  | Todo acesso registrado            |
+| 🔔 **Alertas Automáticos** | Aviso de vencimento               |
+| 🏢 **Multi-Empregador**    | Suporta vários empregadores       |
+| 🔄 **Escalável**           | Pronto para crescer               |
+| 📝 **Gestão Centralizada** | Interface administrativa futura   |
 
 ---
 
 ## ⚠️ Importante
 
 ### 🔴 NUNCA faça:
+
 - ❌ Commitar `CERTIFICATE_MASTER_KEY` no Git
 - ❌ Compartilhar certificados por e-mail
 - ❌ Usar HTTP (sempre HTTPS)
 - ❌ Logar senhas descriptografadas
 
 ### ✅ SEMPRE faça:
+
 - ✅ Informe o motivo ao usar certificado
 - ✅ Verifique validade antes de usar
 - ✅ Revogue certificados comprometidos
@@ -250,4 +265,3 @@ psql -h localhost -p 5433 -U userdom -d dom -c "SELECT nome, tipo, data_validade
 **Data**: 2025-10-02  
 **Versão**: DOM v1.0.0-final  
 **Status**: ✅ **IMPLEMENTADO**
-

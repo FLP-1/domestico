@@ -18,16 +18,18 @@ interface PendingActionIconProps {
   className?: string;
 }
 
-const PendingActionContainer = styled.div<{ size: PendingActionIconProps['size'] }>`
+const PendingActionContainer = styled.div<{
+  size: PendingActionIconProps['size'];
+}>`
   position: relative;
   display: inline-block;
   cursor: pointer;
-  
+
   ${props => {
     const sizes = {
       small: '24px',
       medium: '32px',
-      large: '48px'
+      large: '48px',
     };
     const size = sizes[props.size || 'medium'];
     return `
@@ -49,7 +51,7 @@ const PendingActionIcon: React.FC<PendingActionIconProps> = ({
   icon = '⏳',
   badgeVariant = 'default',
   showBadge = true,
-  className
+  className,
 }) => {
   const handleClick = () => {
     if (!disabled && !loading && onClick) {
@@ -58,7 +60,7 @@ const PendingActionIcon: React.FC<PendingActionIconProps> = ({
   };
 
   return (
-    <PendingActionContainer 
+    <PendingActionContainer
       size={size}
       onClick={handleClick}
       className={className}
@@ -73,7 +75,7 @@ const PendingActionIcon: React.FC<PendingActionIconProps> = ({
       >
         {icon}
       </ActionIcon>
-      
+
       {showBadge && count > 0 && (
         <NotificationBadge
           count={count}

@@ -35,4 +35,3 @@ export function AntifaudeProvider({ children }: AntifaudeProviderProps) {
 
   return <>{children}</>;
 }
-

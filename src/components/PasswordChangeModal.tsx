@@ -3,7 +3,13 @@ import { toast } from 'react-toastify';
 import styled, { keyframes } from 'styled-components';
 import AccessibleEmoji from './AccessibleEmoji';
 import { Form, FormGroup, Input } from './FormComponents';
-import { UnifiedButton, UnifiedModal, ModalHeaderComponent, ModalBodyComponent, ModalFooterComponent } from './unified';
+import {
+  UnifiedButton,
+  UnifiedModal,
+  ModalHeaderComponent,
+  ModalBodyComponent,
+  ModalFooterComponent,
+} from './unified';
 import { OptimizedErrorMessage } from '../components/shared/optimized-styles';
 
 // Animações

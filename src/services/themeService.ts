@@ -35,7 +35,10 @@ export async function getActiveTheme(): Promise<typeof defaultTheme> {
     // Merge com tema padrão para garantir que todos os campos existam
     const tema = {
       colors: { ...defaultTheme.colors, ...(temaAtivo.cores as any) },
-      typography: { ...defaultTheme.typography, ...(temaAtivo.tipografia as any) },
+      typography: {
+        ...defaultTheme.typography,
+        ...(temaAtivo.tipografia as any),
+      },
       spacing: { ...defaultTheme.spacing, ...(temaAtivo.espacamentos as any) },
       shadows: { ...defaultTheme.shadows, ...(temaAtivo.sombras as any) },
       borders: { ...defaultTheme.borders, ...(temaAtivo.bordas as any) },
@@ -133,13 +136,15 @@ export async function saveTheme(
 /**
  * Lista todos os temas disponíveis
  */
-export async function listThemes(): Promise<Array<{
-  id: string;
-  nome: string;
-  descricao: string | null;
-  ativo: boolean;
-  padrao: boolean;
-}>> {
+export async function listThemes(): Promise<
+  Array<{
+    id: string;
+    nome: string;
+    descricao: string | null;
+    ativo: boolean;
+    padrao: boolean;
+  }>
+> {
   try {
     const temas = await prisma.temaVisual.findMany({
       select: {
@@ -164,7 +169,10 @@ export async function listThemes(): Promise<Array<{
 /**
  * Ativa um tema específico
  */
-export async function activateTheme(nomeOuId: string, usuarioId?: string): Promise<void> {
+export async function activateTheme(
+  nomeOuId: string,
+  usuarioId?: string
+): Promise<void> {
   try {
     // Desativa todos os temas
     await prisma.temaVisual.updateMany({
@@ -175,10 +183,7 @@ export async function activateTheme(nomeOuId: string, usuarioId?: string): Promi
     // Ativa o tema especificado
     const tema = await prisma.temaVisual.findFirst({
       where: {
-        OR: [
-          { id: nomeOuId },
-          { nome: nomeOuId },
-        ],
+        OR: [{ id: nomeOuId }, { nome: nomeOuId }],
       },
     });
 
@@ -231,7 +236,8 @@ export async function initializeDefaultTheme(): Promise<void> {
     await prisma.temaVisual.create({
       data: {
         nome: 'Tema Padrão DOM',
-        descricao: 'Tema padrão do sistema DOM com cores e estilos corporativos',
+        descricao:
+          'Tema padrão do sistema DOM com cores e estilos corporativos',
         ativo: true,
         padrao: true,
         cores: defaultTheme.colors,

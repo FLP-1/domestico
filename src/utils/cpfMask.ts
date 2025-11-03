@@ -7,10 +7,10 @@
 export function applyCpfMask(value: string): string {
   // Remove tudo que não seja dígito
   const numbers = value.replace(/\D/g, '');
-  
+
   // Limita a 11 dígitos
   const limitedNumbers = numbers.slice(0, 11);
-  
+
   // Aplica a máscara
   if (limitedNumbers.length <= 3) {
     return limitedNumbers;

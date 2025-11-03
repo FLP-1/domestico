@@ -45,7 +45,12 @@ const slideIn = keyframes`
 // Styled Components
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, ${publicColors.primary} 0%, ${publicColors.secondary} 50%, ${publicColors.tertiary} 100%);
+  background: linear-gradient(
+    135deg,
+    ${publicColors.primary} 0%,
+    ${publicColors.secondary} 50%,
+    ${publicColors.tertiary} 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -97,7 +102,11 @@ const Title = styled.h1`
   font-weight: 700;
   color: ${publicColors.text.primary};
   margin: 0 0 0.5rem 0;
-  background: linear-gradient(135deg, ${publicColors.secondary} 0%, ${publicColors.tertiary} 100%);
+  background: linear-gradient(
+    135deg,
+    ${publicColors.secondary} 0%,
+    ${publicColors.tertiary} 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -143,7 +152,8 @@ const Label = styled.label`
 const InputStyled = styled(Input)<{ $theme: any; $hasError?: boolean }>`
   width: 100%;
   padding: 1rem;
-  border: 2px solid ${props => (props.$hasError ? publicColors.error : publicColors.border)};
+  border: 2px solid
+    ${props => (props.$hasError ? publicColors.error : publicColors.border)};
   border-radius: 12px;
   font-size: 1rem;
   transition: all 0.3s ease;
@@ -164,7 +174,8 @@ const InputStyled = styled(Input)<{ $theme: any; $hasError?: boolean }>`
 const SelectStyled = styled(Select)<{ $theme: any; $hasError?: boolean }>`
   width: 100%;
   padding: 1rem;
-  border: 2px solid ${props => (props.$hasError ? publicColors.error : publicColors.border)};
+  border: 2px solid
+    ${props => (props.$hasError ? publicColors.error : publicColors.border)};
   border-radius: 12px;
   font-size: 1rem;
   transition: all 0.3s ease;
@@ -187,7 +198,11 @@ const ErrorMessage = styled.div`
 `;
 
 const RoleInfo = styled.div`
-  background: linear-gradient(135deg, ${publicColors.secondary} 0%, ${publicColors.tertiary} 100%);
+  background: linear-gradient(
+    135deg,
+    ${publicColors.secondary} 0%,
+    ${publicColors.tertiary} 100%
+  );
   color: ${publicColors.surface};
   padding: 1.5rem;
   border-radius: 12px;

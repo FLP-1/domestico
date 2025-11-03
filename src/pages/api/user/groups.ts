@@ -2,22 +2,29 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../lib/prisma';
 import { getCurrentUserId } from '../../../lib/configService';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== 'GET') {
-    return res.status(405).json({ success: false, error: 'Método não permitido' });
+    return res
+      .status(405)
+      .json({ success: false, error: 'Método não permitido' });
   }
 
   try {
     const usuarioId = await getCurrentUserId();
     if (!usuarioId) {
-      return res.status(401).json({ success: false, error: 'Usuário não autenticado' });
+      return res
+        .status(401)
+        .json({ success: false, error: 'Usuário não autenticado' });
     }
 
     // ✅ Buscar grupos do usuário
     const usuarioGrupos = await prisma.usuarioGrupo.findMany({
-      where: { 
+      where: {
         usuarioId,
-        ativo: true
+        ativo: true,
       },
       include: {
         grupo: {
@@ -26,25 +33,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             nome: true,
             descricao: true,
             cor: true,
-            icone: true
-          }
-        }
+            icone: true,
+          },
+        },
       },
-      orderBy: { criadoEm: 'asc' }
+      orderBy: { criadoEm: 'asc' },
     });
 
     // ✅ Buscar perfil principal do usuário
     const usuarioPerfil = await prisma.usuarioPerfil.findFirst({
-      where: { 
+      where: {
         usuarioId,
         ativo: true,
-        principal: true
+        principal: true,
       },
       include: {
         perfil: {
-          select: { codigo: true, nome: true }
-        }
-      }
+          select: { codigo: true, nome: true },
+        },
+      },
     });
 
     const response = {
@@ -58,22 +65,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           icone: ug.grupo.icone,
           ativo: ug.ativo,
         })),
-        perfilPrincipal: usuarioPerfil ? {
-          codigo: usuarioPerfil.perfil.codigo,
-          nome: usuarioPerfil.perfil.nome,
-          avatar: usuarioPerfil.avatar,
-          apelido: usuarioPerfil.apelido
-        } : null
-      }
+        perfilPrincipal: usuarioPerfil
+          ? {
+              codigo: usuarioPerfil.perfil.codigo,
+              nome: usuarioPerfil.perfil.nome,
+              avatar: usuarioPerfil.avatar,
+              apelido: usuarioPerfil.apelido,
+            }
+          : null,
+      },
     };
 
     res.status(200).json(response);
-
   } catch (error) {
     console.error('Erro ao buscar grupos do usuário:', error);
     res.status(500).json({
       success: false,
-      error: 'Erro interno do servidor'
+      error: 'Erro interno do servidor',
     });
   }
 }

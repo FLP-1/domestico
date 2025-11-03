@@ -1,9 +1,11 @@
 # 📋 CHECKLIST COMPLETO - CORREÇÃO DE CORES HARDCODED
 
 ## 🎯 OBJETIVO
+
 Eliminar TODAS as cores hardcoded (#xxxxxx e rgba) e substituir por referências dinâmicas ao sistema de temas.
 
 ## 📊 STATUS GERAL
+
 - **Total de arquivos**: 57
 - **Arquivos corrigidos**: 0
 - **Arquivos pendentes**: 57
@@ -13,13 +15,15 @@ Eliminar TODAS as cores hardcoded (#xxxxxx e rgba) e substituir por referências
 ## 🔥 PRIORIDADE CRÍTICA (Componentes principais)
 
 ### ✅ src/design-system/index.ts
+
 - **Status**: ⚠️ PARCIALMENTE CORRIGIDO
-- **Cores hardcoded encontradas**: 
+- **Cores hardcoded encontradas**:
   - `#29ABE2` ✅ CORRIGIDO
   - `rgba(41, 171, 226, 0.1)` ❌ PENDENTE
 - **Ação**: Substituir rgba por referência dinâmica
 
 ### ✅ src/components/TutorialComponent.tsx
+
 - **Status**: ⚠️ PARCIALMENTE CORRIGIDO
 - **Cores hardcoded encontradas**:
   - `#29ABE2` ✅ CORRIGIDO
@@ -36,18 +40,21 @@ Eliminar TODAS as cores hardcoded (#xxxxxx e rgba) e substituir por referências
 ## 🚨 PRIORIDADE ALTA (Páginas principais)
 
 ### ❌ src/pages/monitoring-dashboard.tsx
+
 - **Status**: ⚠️ PARCIALMENTE CORRIGIDO
 - **Cores hardcoded encontradas**:
   - `#29ABE2` ✅ CORRIGIDO
 - **Ação**: Verificar se há mais cores hardcoded
 
 ### ❌ src/pages/terms-management.tsx
+
 - **Status**: ⚠️ PARCIALMENTE CORRIGIDO
 - **Cores hardcoded encontradas**:
   - `#29ABE2` ✅ CORRIGIDO
 - **Ação**: Verificar se há mais cores hardcoded
 
 ### ❌ src/pages/register.tsx
+
 - **Status**: ⚠️ PARCIALMENTE CORRIGIDO
 - **Cores hardcoded encontradas**:
   - `#29ABE2` ✅ CORRIGIDO
@@ -55,6 +62,7 @@ Eliminar TODAS as cores hardcoded (#xxxxxx e rgba) e substituir por referências
 - **Ação**: Substituir #1e88e5 por referência dinâmica
 
 ### ❌ src/pages/communication.tsx
+
 - **Status**: ⚠️ PARCIALMENTE CORRIGIDO
 - **Cores hardcoded encontradas**:
   - `#29ABE2` ✅ CORRIGIDO
@@ -62,6 +70,7 @@ Eliminar TODAS as cores hardcoded (#xxxxxx e rgba) e substituir por referências
 - **Ação**: Substituir #9B59B6 por referência dinâmica
 
 ### ❌ src/pages/payroll-management.tsx
+
 - **Status**: ⚠️ PARCIALMENTE CORRIGIDO
 - **Cores hardcoded encontradas**:
   - `#29ABE2` ✅ CORRIGIDO
@@ -69,30 +78,35 @@ Eliminar TODAS as cores hardcoded (#xxxxxx e rgba) e substituir por referências
 - **Ação**: Substituir #90EE90 por referência dinâmica
 
 ### ❌ src/pages/welcome-tutorial.tsx
+
 - **Status**: ⚠️ PARCIALMENTE CORRIGIDO
 - **Cores hardcoded encontradas**:
   - `#29ABE2` ✅ CORRIGIDO
 - **Ação**: Verificar se há mais cores hardcoded
 
 ### ❌ src/pages/esocial-integration.tsx
+
 - **Status**: ⚠️ PARCIALMENTE CORRIGIDO
 - **Cores hardcoded encontradas**:
   - `#29ABE2` ✅ CORRIGIDO
 - **Ação**: Verificar se há mais cores hardcoded
 
 ### ❌ src/pages/login.tsx
+
 - **Status**: ⚠️ PARCIALMENTE CORRIGIDO
 - **Cores hardcoded encontradas**:
   - `#29ABE2` ✅ CORRIGIDO
 - **Ação**: Verificar se há mais cores hardcoded
 
 ### ❌ src/pages/esocial-domestico-completo.tsx
+
 - **Status**: ⚠️ PARCIALMENTE CORRIGIDO
 - **Cores hardcoded encontradas**:
   - `#29ABE2` ✅ CORRIGIDO
 - **Ação**: Verificar se há mais cores hardcoded
 
 ### ❌ src/pages/time-clock.tsx
+
 - **Status**: ⚠️ PARCIALMENTE CORRIGIDO
 - **Cores hardcoded encontradas**:
   - `#29ABE2` ✅ CORRIGIDO
@@ -103,21 +117,25 @@ Eliminar TODAS as cores hardcoded (#xxxxxx e rgba) e substituir por referências
 ## 🔧 PRIORIDADE MÉDIA (Componentes e hooks)
 
 ### ❌ src/hooks/useTheme.ts
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hardcoded encontradas**: Múltiplas cores hardcoded
 - **Ação**: Auditoria completa necessária
 
 ### ❌ src/hooks/useSystemConfig.ts
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hardcoded encontradas**: Múltiplas cores hardcoded
 - **Ação**: Auditoria completa necessária
 
 ### ❌ src/design-system/components/UnifiedModal.tsx
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hardcoded encontradas**: Múltiplas cores hardcoded
 - **Ação**: Auditoria completa necessária
 
 ### ❌ src/design-system/components/Modal.tsx
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Cores hardcoded encontradas**: Múltiplas cores hardcoded
 - **Ação**: Auditoria completa necessária
@@ -127,14 +145,17 @@ Eliminar TODAS as cores hardcoded (#xxxxxx e rgba) e substituir por referências
 ## 📁 PRIORIDADE BAIXA (Arquivos de configuração e testes)
 
 ### ✅ src/config/default-colors.ts
+
 - **Status**: ✅ CORRETO (cores hardcoded são definições base)
 - **Ação**: Nenhuma - arquivo deve ter cores hardcoded
 
 ### ❌ src/config/constants.ts
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Ação**: Auditoria completa necessária
 
 ### ❌ src/config/centralized-config.ts
+
 - **Status**: ❌ NÃO CORRIGIDO
 - **Ação**: Auditoria completa necessária
 
@@ -143,6 +164,7 @@ Eliminar TODAS as cores hardcoded (#xxxxxx e rgba) e substituir por referências
 ## 🎯 METODOLOGIA DE CORREÇÃO
 
 ### Para cada arquivo:
+
 1. **Auditoria completa**: Buscar TODAS as cores hardcoded
 2. **Mapeamento**: Listar cada ocorrência encontrada
 3. **Correção sistemática**: Substituir por referências dinâmicas
@@ -150,19 +172,21 @@ Eliminar TODAS as cores hardcoded (#xxxxxx e rgba) e substituir por referências
 5. **Marcar como concluído**: ✅ no checklist
 
 ### Padrão de correção:
+
 ```typescript
 // ❌ ERRADO
-color: '#29ABE2'
-background: 'rgba(41, 171, 226, 0.1)'
+color: '#29ABE2';
+background: 'rgba(41, 171, 226, 0.1)';
 
 // ✅ CORRETO
-color: DEFAULT_COLORS.profiles.empregado.primary
-background: DEFAULT_COLORS.profiles.empregado.primaryLight
+color: DEFAULT_COLORS.profiles.empregado.primary;
+background: DEFAULT_COLORS.profiles.empregado.primaryLight;
 ```
 
 ---
 
 ## 📊 PROGRESSO
+
 - **Arquivos corrigidos**: 0/57
 - **Cores hardcoded eliminadas**: 0
 - **Próximo arquivo**: src/design-system/index.ts (finalizar correção)
@@ -170,6 +194,7 @@ background: DEFAULT_COLORS.profiles.empregado.primaryLight
 ---
 
 ## 🚀 PRÓXIMOS PASSOS
+
 1. Finalizar correção do src/design-system/index.ts
 2. Continuar com src/components/TutorialComponent.tsx
 3. Prosseguir sistematicamente pela lista

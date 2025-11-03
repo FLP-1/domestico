@@ -80,9 +80,11 @@ export const sendSMS = async (telefone: string, codigo: string) => {
 
     // Número do Twilio (obrigatório via env)
     const fromNumber = process.env.TWILIO_PHONE_NUMBER;
-    
+
     if (!fromNumber) {
-      throw new Error('TWILIO_PHONE_NUMBER não configurado nas variáveis de ambiente');
+      throw new Error(
+        'TWILIO_PHONE_NUMBER não configurado nas variáveis de ambiente'
+      );
     }
 
     // Validar formato do telefone (deve estar no formato internacional)

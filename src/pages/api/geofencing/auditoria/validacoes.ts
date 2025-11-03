@@ -2,7 +2,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../../lib/prisma';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Método não permitido' });
   }
@@ -14,22 +17,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // }
 
   try {
-    const { 
-      dentroGeofence, 
-      dataInicio, 
-      dataFim, 
-      usuario, 
-      page = 1, 
-      limit = 50 
+    const {
+      dentroGeofence,
+      dataInicio,
+      dataFim,
+      usuario,
+      page = 1,
+      limit = 50,
     } = req.query;
 
     // Construir filtros
     const where: any = {};
-    
+
     if (dentroGeofence !== undefined) {
       where.dentroGeofence = dentroGeofence === 'true';
     }
-    
+
     if (dataInicio || dataFim) {
       where.timestamp = {};
       if (dataInicio) {
@@ -39,60 +42,60 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         where.timestamp.lte = new Date(dataFim as string);
       }
     }
-    
+
     if (usuario) {
       where.usuario = {
         nomeCompleto: {
           contains: usuario as string,
-          mode: 'insensitive'
-        }
+          mode: 'insensitive',
+        },
       };
     }
 
     // Buscar validações com paginação
     const skip = (Number(page) - 1) * Number(limit);
-    
+
     const [validacoes, total] = await Promise.all([
       prisma.geofencingValidacao.findMany({
         where,
         include: {
           usuario: {
             select: {
-              nomeCompleto: true
-            }
+              nomeCompleto: true,
+            },
           },
           localTrabalho: {
             select: {
-              nome: true
-            }
-          }
+              nome: true,
+            },
+          },
         },
         orderBy: {
-          timestamp: 'desc'
+          timestamp: 'desc',
         },
         skip,
-        take: Number(limit)
+        take: Number(limit),
       }),
-      prisma.geofencingValidacao.count({ where })
+      prisma.geofencingValidacao.count({ where }),
     ]);
 
     // Estatísticas
     const stats = await prisma.geofencingValidacao.aggregate({
       where,
       _count: {
-        dentroGeofence: true
+        dentroGeofence: true,
       },
       _avg: {
         distancia: true,
-        precisao: true
-      }
+        precisao: true,
+      },
     });
 
     const dentroGeofenceCount = await prisma.geofencingValidacao.count({
       where: {
         ...where,
-        dentroGeofence: true
-      }
+        dentroGeofence: true,
+      },
     });
 
     return res.status(200).json({
@@ -101,17 +104,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         page: Number(page),
         limit: Number(limit),
         total,
-        pages: Math.ceil(total / Number(limit))
+        pages: Math.ceil(total / Number(limit)),
       },
       stats: {
         total: stats._count.dentroGeofence,
         dentroGeofence: dentroGeofenceCount,
         foraGeofence: total - dentroGeofenceCount,
         distanciaMedia: stats._avg.distancia,
-        precisaoMedia: stats._avg.precisao
-      }
+        precisaoMedia: stats._avg.precisao,
+      },
     });
-
   } catch (error) {
     console.error('Erro na API de validações de auditoria:', error);
     return res.status(500).json({ error: 'Erro interno do servidor' });

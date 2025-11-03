@@ -125,8 +125,9 @@ const CardContainer = styled.div<{
   }}
 
   /* Interactive styles */
-  ${props => props.$interactive
-    ? `
+  ${props =>
+    props.$interactive
+      ? `
     cursor: pointer;
     &:hover {
       transform: translateY(-2px);
@@ -136,14 +137,15 @@ const CardContainer = styled.div<{
       transform: translateY(0);
     }
   `
-    : ''}
+      : ''}
 
   /* Status animations */
-  ${props => props.$status === 'success'
-    ? `
+  ${props =>
+    props.$status === 'success'
+      ? `
     animation: ${fadeIn} 0.6s ease-out, ${pulse} 2s infinite;
   `
-    : ''}
+      : ''}
 
   /* Glass effect */
   ${props =>

@@ -57,33 +57,35 @@ export default async function handler(
           error: h.erro,
         })),
         userId: alerta.usuarioId,
-        userName: alerta.usuario ? (alerta.usuario.apelido || alerta.usuario.nomeCompleto) : null,
+        userName: alerta.usuario
+          ? alerta.usuario.apelido || alerta.usuario.nomeCompleto
+          : null,
       }));
 
       return res.status(200).json({ success: true, data: alertasFormatados });
     } catch (error) {
       console.error('Erro ao buscar alertas:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao buscar alertas' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao buscar alertas',
       });
     }
   }
 
   if (req.method === 'POST') {
     try {
-      const { 
-        titulo, 
-        descricao, 
-        tipo, 
-        prioridade, 
+      const {
+        titulo,
+        descricao,
+        tipo,
+        prioridade,
         categoria,
         dataAlerta,
         usuarioId,
         notificarEmail,
         notificarPush,
       } = req.body;
-      
+
       const novoAlerta = await prisma.alerta.create({
         data: {
           titulo,
@@ -106,13 +108,12 @@ export default async function handler(
       return res.status(201).json({ success: true, data: novoAlerta });
     } catch (error) {
       console.error('Erro ao criar alerta:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao criar alerta' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao criar alerta',
       });
     }
   }
 
   return res.status(405).json({ error: 'Method not allowed' });
 }
-

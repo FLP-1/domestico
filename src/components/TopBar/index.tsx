@@ -19,9 +19,10 @@ const TopBarContainer = styled.header<{ $theme?: any }>`
   align-items: center;
   justify-content: space-between;
   border: 1px solid
-    ${props => props.$theme?.colors?.primary
-      ? addOpacity(props.$theme.colors.primary, 0.12)
-      : addOpacity(defaultColors.primary, 0.12)};
+    ${props =>
+      props.$theme?.colors?.primary
+        ? addOpacity(props.$theme.colors.primary, 0.12)
+        : addOpacity(defaultColors.primary, 0.12)};
   width: 100%;
   box-sizing: border-box;
 `;

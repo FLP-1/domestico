@@ -13,21 +13,23 @@ async function geocodeAddress(endereco: string) {
         },
       }
     );
-    
+
     if (response.ok) {
       const data = await response.json();
       if (data && data.length > 0) {
         return {
           latitude: parseFloat(data[0].lat),
           longitude: parseFloat(data[0].lon),
-          endereco: data[0].display_name
+          endereco: data[0].display_name,
         };
       }
     }
-    
+
     throw new Error('Endereço não encontrado');
   } catch (error: unknown) {
-    throw new Error(`Erro no geocoding: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    throw new Error(
+      `Erro no geocoding: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
+    );
   }
 }
 
@@ -44,26 +46,34 @@ async function logGeofencingAction(
     data: {
       localTrabalhoId,
       acao,
-      dadosAnteriores: dadosAnteriores ? JSON.stringify(dadosAnteriores) : null,
-      dadosNovos: dadosNovos ? JSON.stringify(dadosNovos) : null,
-      ip: req.headers['x-forwarded-for'] as string || req.connection.remoteAddress || 'unknown',
+      dadosAnteriores: dadosAnteriores
+        ? JSON.stringify(dadosAnteriores)
+        : undefined,
+      dadosNovos: dadosNovos ? JSON.stringify(dadosNovos) : undefined,
+      ip:
+        (req.headers['x-forwarded-for'] as string) ||
+        req.connection.remoteAddress ||
+        'unknown',
       userAgent: req.headers['user-agent'] || 'unknown',
-      usuarioId
-    }
+      usuarioId,
+    },
   });
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   // TODO: Implementar autenticação adequada
   // const session = await getServerSession(req, res, authOptions);
   // if (!session?.user?.id) {
   //   return res.status(401).json({ error: 'Não autorizado' });
   // }
-  
+
   // Obter ID do usuário atual (substitui userId)
   const { getCurrentUserId } = await import('../../../lib/configService');
   const userId = await getCurrentUserId();
-  
+
   if (!userId) {
     return res.status(401).json({ error: 'Usuário não encontrado' });
   }
@@ -74,28 +84,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch (method) {
       case 'GET':
         // Listar locais do grupo do usuário
-        const usuario = await prisma.usuario.findUnique({
+        const usuario = (await prisma.usuario.findUnique({
           where: { id: userId },
-          include: { gruposUsuario: { include: { grupo: true } } }
-        }) as { gruposUsuario: { grupoId: string }[] } | null;
+          include: { gruposUsuario: { include: { grupo: true } } },
+        })) as { gruposUsuario: { grupoId: string }[] } | null;
 
         if (!usuario) {
           return res.status(404).json({ error: 'Usuário não encontrado' });
         }
 
         const grupoIds = usuario.gruposUsuario.map(ug => ug.grupoId);
-        
+
         const locais = await prisma.localTrabalho.findMany({
           where: {
             grupoId: { in: grupoIds },
-            ativo: true
+            ativo: true,
           },
           include: {
             grupo: true,
             empregador: { select: { nomeCompleto: true } },
-            criador: { select: { nomeCompleto: true } }
+            criador: { select: { nomeCompleto: true } },
           },
-          orderBy: { criadoEm: 'desc' }
+          orderBy: { criadoEm: 'desc' },
         });
 
         return res.status(200).json({ locais });
@@ -105,7 +115,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { nome, endereco, raio = 200, grupoId } = req.body;
 
         if (!nome || !endereco || !grupoId) {
-          return res.status(400).json({ error: 'Nome, endereço e grupo são obrigatórios' });
+          return res
+            .status(400)
+            .json({ error: 'Nome, endereço e grupo são obrigatórios' });
         }
 
         // Verificar se usuário tem permissão no grupo
@@ -113,12 +125,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           where: {
             usuarioId: userId,
             grupoId,
-            ativo: true
-          }
+            ativo: true,
+          },
         });
 
         if (!temPermissao) {
-          return res.status(403).json({ error: 'Sem permissão para criar locais neste grupo' });
+          return res
+            .status(403)
+            .json({ error: 'Sem permissão para criar locais neste grupo' });
         }
 
         // Geocoding do endereço
@@ -134,12 +148,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             raio,
             grupoId,
             empregadorId: userId,
-            criadoPor: userId
+            criadoPor: userId,
           },
           include: {
             grupo: true,
-            empregador: { select: { nomeCompleto: true } }
-          }
+            empregador: { select: { nomeCompleto: true } },
+          },
         });
 
         // Log de auditoria
@@ -156,7 +170,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       case 'PUT':
         // Atualizar local
-        const { id, nome: novoNome, endereco: novoEndereco, raio: novoRaio } = req.body;
+        const {
+          id,
+          nome: novoNome,
+          endereco: novoEndereco,
+          raio: novoRaio,
+        } = req.body;
 
         if (!id) {
           return res.status(400).json({ error: 'ID é obrigatório' });
@@ -164,7 +183,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Buscar local atual
         const localAtual = await prisma.localTrabalho.findUnique({
-          where: { id }
+          where: { id },
         });
 
         if (!localAtual) {
@@ -176,16 +195,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           where: {
             usuarioId: userId,
             grupoId: localAtual.grupoId,
-            ativo: true
-          }
+            ativo: true,
+          },
         });
 
         if (!temPermissaoUpdate) {
-          return res.status(403).json({ error: 'Sem permissão para editar este local' });
+          return res
+            .status(403)
+            .json({ error: 'Sem permissão para editar este local' });
         }
 
         // Geocoding se endereço mudou
-        let coordenadas = { latitude: localAtual.latitude, longitude: localAtual.longitude };
+        let coordenadas = {
+          latitude: localAtual.latitude,
+          longitude: localAtual.longitude,
+        };
         if (novoEndereco && novoEndereco !== localAtual.endereco) {
           coordenadas = await geocodeAddress(novoEndereco);
         }
@@ -199,12 +223,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             latitude: coordenadas.latitude,
             longitude: coordenadas.longitude,
             raio: novoRaio || localAtual.raio,
-            atualizadoPor: userId
+            atualizadoPor: userId,
           },
           include: {
             grupo: true,
-            empregador: { select: { nomeCompleto: true } }
-          }
+            empregador: { select: { nomeCompleto: true } },
+          },
         });
 
         // Log de auditoria
@@ -229,7 +253,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Buscar local
         const localParaDesativar = await prisma.localTrabalho.findUnique({
-          where: { id: localId }
+          where: { id: localId },
         });
 
         if (!localParaDesativar) {
@@ -241,12 +265,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           where: {
             usuarioId: userId,
             grupoId: localParaDesativar.grupoId,
-            ativo: true
-          }
+            ativo: true,
+          },
         });
 
         if (!temPermissaoDelete) {
-          return res.status(403).json({ error: 'Sem permissão para excluir este local' });
+          return res
+            .status(403)
+            .json({ error: 'Sem permissão para excluir este local' });
         }
 
         // Desativar local
@@ -254,8 +280,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           where: { id: localId },
           data: {
             ativo: false,
-            atualizadoPor: userId
-          }
+            atualizadoPor: userId,
+          },
         });
 
         // Log de auditoria
@@ -268,7 +294,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           req
         );
 
-        return res.status(200).json({ message: 'Local desativado com sucesso' });
+        return res
+          .status(200)
+          .json({ message: 'Local desativado com sucesso' });
 
       default:
         return res.status(405).json({ error: 'Método não permitido' });

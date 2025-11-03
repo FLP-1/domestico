@@ -7,10 +7,18 @@ import React from 'react';
 import styled from 'styled-components';
 import { theme } from '../../config/theme';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info' | 'ghost';
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'error'
+  | 'warning'
+  | 'info'
+  | 'ghost';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   fullWidth?: boolean;
@@ -31,15 +39,16 @@ const StyledButton = styled.button<{
   cursor: pointer;
   font-family: ${theme.typography.fontFamily.primary};
   font-weight: ${theme.typography.fontWeight.medium};
-  transition: all ${theme.transitions.duration.normal} ${theme.transitions.timing.easeInOut};
-  
+  transition: all ${theme.transitions.duration.normal}
+    ${theme.transitions.timing.easeInOut};
+
   /* Layout */
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: ${theme.spacing.sm};
-  width: ${props => props.$fullWidth ? '100%' : 'auto'};
-  
+  width: ${props => (props.$fullWidth ? '100%' : 'auto')};
+
   /* Tamanhos */
   ${props => {
     switch (props.$size) {
@@ -64,11 +73,11 @@ const StyledButton = styled.button<{
         `;
     }
   }}
-  
+
   /* Variantes */
   ${props => {
     const colors = theme.colors;
-    
+
     switch (props.$variant) {
       case 'primary':
         return `
@@ -86,7 +95,7 @@ const StyledButton = styled.button<{
             box-shadow: ${theme.shadows.xs};
           }
         `;
-      
+
       case 'secondary':
         return `
           background: ${colors.secondary.main};
@@ -96,7 +105,7 @@ const StyledButton = styled.button<{
             background: ${colors.secondary.dark};
           }
         `;
-      
+
       case 'success':
         return `
           background: ${colors.success.main};
@@ -106,7 +115,7 @@ const StyledButton = styled.button<{
             background: ${colors.success.dark};
           }
         `;
-      
+
       case 'error':
         return `
           background: ${colors.error.main};
@@ -116,7 +125,7 @@ const StyledButton = styled.button<{
             background: ${colors.error.dark};
           }
         `;
-      
+
       case 'warning':
         return `
           background: ${colors.warning.main};
@@ -126,7 +135,7 @@ const StyledButton = styled.button<{
             background: ${colors.warning.dark};
           }
         `;
-      
+
       case 'info':
         return `
           background: ${colors.info.main};
@@ -136,7 +145,7 @@ const StyledButton = styled.button<{
             background: ${colors.info.dark};
           }
         `;
-      
+
       case 'ghost':
         return `
           background: transparent;
@@ -148,7 +157,7 @@ const StyledButton = styled.button<{
             border-color: ${colors.primary.main};
           }
         `;
-      
+
       default:
         return '';
     }
@@ -161,14 +170,16 @@ const StyledButton = styled.button<{
     background: ${theme.colors.action.disabled};
     color: ${theme.colors.text.disabled};
   }
-  
+
   &:focus-visible {
     outline: ${theme.borders.width.medium} solid ${theme.colors.border.focus};
     outline-offset: 2px;
   }
-  
+
   /* Loading */
-  ${props => props.$loading && `
+  ${props =>
+    props.$loading &&
+    `
     pointer-events: none;
     opacity: 0.7;
   `}
@@ -182,7 +193,7 @@ const LoadingSpinner = styled.span`
   border-right-color: transparent;
   border-radius: ${theme.borders.radius.full};
   animation: spin 0.6s linear infinite;
-  
+
   @keyframes spin {
     to {
       transform: rotate(360deg);

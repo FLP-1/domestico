@@ -358,7 +358,7 @@ const ProxyUploadModal: React.FC<ProxyUploadModalProps> = ({
     <UnifiedModal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Configurar Procuração Eletrônica"
+      title='Configurar Procuração Eletrônica'
       maxWidth='600px'
       $theme={$theme}
       footer={

@@ -7,6 +7,7 @@
 #### **1. PÁGINAS COM DADOS SIMULADOS**
 
 ##### **`src/pages/esocial-domestico-completo.tsx`**
+
 ```typescript
 // ❌ DADOS SIMULADOS IDENTIFICADOS:
 // Linha 312: Dados de folha simulados
@@ -59,6 +60,7 @@ valor: Math.random() * 1000 + 100, // Valor simulado
 ```
 
 ##### **`src/pages/monitoring-dashboard.tsx`**
+
 ```typescript
 // ❌ DADOS SIMULADOS IDENTIFICADOS:
 // Linha 328: Simulação de carregamento
@@ -91,6 +93,7 @@ const mockActivity = [
 #### **2. COMPONENTES COM DADOS SIMULADOS**
 
 ##### **`src/components/EmployerModal.tsx`**
+
 ```typescript
 // ❌ DADOS SIMULADOS IDENTIFICADOS:
 // Linha 439: Geração de código aleatório
@@ -106,6 +109,7 @@ const isValid = Math.random() > 0.2;
 #### **3. SERVIÇOS COM DADOS SIMULADOS**
 
 ##### **`src/services/notificationService.ts`**
+
 ```typescript
 // ❌ DADOS SIMULADOS IDENTIFICADOS:
 // Linha 205: Notificações mock para demonstração
@@ -133,6 +137,7 @@ private generateMockNotifications(): void {
 ```
 
 ##### **`src/services/webhookService.ts`**
+
 ```typescript
 // ❌ DADOS SIMULADOS IDENTIFICADOS:
 // Linha 192: Evento webhook simulado
@@ -153,6 +158,7 @@ return `webhook_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 ```
 
 ##### **`src/lib/NotificationService.ts`**
+
 ```typescript
 // ❌ DADOS SIMULADOS IDENTIFICADOS:
 // Linha 292: Geração de código aleatório
@@ -164,6 +170,7 @@ private generateCode(): string {
 #### **4. CONFIGURAÇÕES COM DADOS MOCKADOS**
 
 ##### **`src/config/constants.ts`**
+
 ```typescript
 // ❌ DADOS MOCKADOS IDENTIFICADOS:
 // Linha 8: Importação de dados centralizados
@@ -177,15 +184,17 @@ import { MOCK_EMPREGADOS, MOCK_EVENTOS_ESOCIAL } from '../data/centralized';
 ### **PRIORIDADE 1 - CRÍTICO**
 
 #### **1. Criar APIs para Dados de Folha de Pagamento**
+
 ```typescript
 // Criar: src/pages/api/payroll/index.ts
 // Endpoints: GET, POST, PUT, DELETE /api/payroll
 
-// Criar: src/pages/api/tax-guides/index.ts  
+// Criar: src/pages/api/tax-guides/index.ts
 // Endpoints: GET, POST, PUT, DELETE /api/tax-guides
 ```
 
 #### **2. Criar APIs para Métricas de Monitoramento**
+
 ```typescript
 // Criar: src/pages/api/monitoring/metrics.ts
 // Endpoints: GET /api/monitoring/metrics
@@ -195,6 +204,7 @@ import { MOCK_EMPREGADOS, MOCK_EVENTOS_ESOCIAL } from '../data/centralized';
 ```
 
 #### **3. Atualizar Serviços de Notificação**
+
 ```typescript
 // Atualizar: src/services/notificationService.ts
 // Conectar à API: /api/notifications
@@ -202,6 +212,7 @@ import { MOCK_EMPREGADOS, MOCK_EVENTOS_ESOCIAL } from '../data/centralized';
 ```
 
 #### **4. Atualizar Serviços de Webhook**
+
 ```typescript
 // Atualizar: src/services/webhookService.ts
 // Conectar à API real de webhooks
@@ -211,6 +222,7 @@ import { MOCK_EMPREGADOS, MOCK_EVENTOS_ESOCIAL } from '../data/centralized';
 ### **PRIORIDADE 2 - IMPORTANTE**
 
 #### **5. Atualizar Componentes de Modal**
+
 ```typescript
 // Atualizar: src/components/EmployerModal.tsx
 // Conectar à API real para validação
@@ -218,6 +230,7 @@ import { MOCK_EMPREGADOS, MOCK_EVENTOS_ESOCIAL } from '../data/centralized';
 ```
 
 #### **6. Atualizar Configurações**
+
 ```typescript
 // Atualizar: src/config/constants.ts
 // Remover: importações de dados centralizados
@@ -227,6 +240,7 @@ import { MOCK_EMPREGADOS, MOCK_EVENTOS_ESOCIAL } from '../data/centralized';
 ### **PRIORIDADE 3 - MELHORIAS**
 
 #### **7. Criar Sistema de Geração de Códigos**
+
 ```typescript
 // Criar: src/lib/codeGenerator.ts
 // Função: generateSecureCode() com criptografia
@@ -238,6 +252,7 @@ import { MOCK_EMPREGADOS, MOCK_EVENTOS_ESOCIAL } from '../data/centralized';
 ## 📋 **TABELAS NECESSÁRIAS NO BANCO**
 
 ### **Nova Tabela: Folha de Pagamento**
+
 ```sql
 CREATE TABLE folha_pagamento (
   id UUID PRIMARY KEY,
@@ -260,6 +275,7 @@ CREATE TABLE folha_pagamento (
 ```
 
 ### **Nova Tabela: Guias de Impostos**
+
 ```sql
 CREATE TABLE guias_impostos (
   id UUID PRIMARY KEY,
@@ -276,6 +292,7 @@ CREATE TABLE guias_impostos (
 ```
 
 ### **Nova Tabela: Métricas de Sistema**
+
 ```sql
 CREATE TABLE metricas_sistema (
   id UUID PRIMARY KEY,
@@ -289,6 +306,7 @@ CREATE TABLE metricas_sistema (
 ```
 
 ### **Nova Tabela: Atividade Recente**
+
 ```sql
 CREATE TABLE atividade_recente (
   id UUID PRIMARY KEY,
@@ -306,23 +324,28 @@ CREATE TABLE atividade_recente (
 ## 🚀 **IMPLEMENTAÇÃO IMEDIATA**
 
 ### **1. Criar APIs Faltantes**
+
 - ✅ `/api/payroll` - Folha de pagamento
-- ✅ `/api/tax-guides` - Guias de impostos  
+- ✅ `/api/tax-guides` - Guias de impostos
 - ✅ `/api/monitoring/metrics` - Métricas do sistema
 - ✅ `/api/monitoring/activity` - Atividade recente
 
 ### **2. Atualizar Páginas**
+
 - ✅ `esocial-domestico-completo.tsx` - Conectar às APIs reais
 - ✅ `monitoring-dashboard.tsx` - Conectar às APIs reais
 
 ### **3. Atualizar Serviços**
+
 - ✅ `notificationService.ts` - Remover dados mockados
 - ✅ `webhookService.ts` - Conectar à API real
 
 ### **4. Atualizar Componentes**
+
 - ✅ `EmployerModal.tsx` - Remover Math.random()
 
 ### **5. Atualizar Configurações**
+
 - ✅ `constants.ts` - Remover importações mockadas
 
 ---
@@ -330,18 +353,21 @@ CREATE TABLE atividade_recente (
 ## 📊 **ESTATÍSTICAS DA REAVALIAÇÃO**
 
 ### **Arquivos Analisados:**
+
 - 📄 **Páginas**: 23 arquivos
-- 🧩 **Componentes**: 14 arquivos  
+- 🧩 **Componentes**: 14 arquivos
 - ⚙️ **Serviços**: 16 arquivos
 - 🔧 **Hooks/Utils**: 1 arquivo
 - ⚙️ **Configurações**: 1 arquivo
 
 ### **Dados Mockados Identificados:**
+
 - 🚨 **Críticos**: 8 arquivos
 - ⚠️ **Importantes**: 6 arquivos
 - ℹ️ **Menores**: 3 arquivos
 
 ### **Total de Substituições Necessárias:**
+
 - 🔄 **APIs**: 4 novas APIs
 - 🗄️ **Tabelas**: 4 novas tabelas
 - 📄 **Páginas**: 2 páginas

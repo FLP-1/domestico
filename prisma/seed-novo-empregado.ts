@@ -35,10 +35,16 @@ async function main() {
   // DADOS DO NOVO EMPREGADO
   // ============================================
   // Carregar configurações centrais para evitar hardcode
-  const configEmpresa = await prisma.configuracao.findUnique({ where: { chave: 'empresa_cpf_principal' } });
-  const configSenhaPadrao = await prisma.configuracao.findUnique({ where: { chave: 'sistema_senha_padrao' } });
+  const configEmpresa = await prisma.configuracao.findUnique({
+    where: { chave: 'empresa_cpf_principal' },
+  });
+  const configSenhaPadrao = await prisma.configuracao.findUnique({
+    where: { chave: 'sistema_senha_padrao' },
+  });
   if (!configEmpresa?.valor) {
-    throw new Error('ConfiguracaoSistema.empresa_cpf_principal não definida. Execute o seed completo antes.');
+    throw new Error(
+      'ConfiguracaoSistema.empresa_cpf_principal não definida. Execute o seed completo antes.'
+    );
   }
 
   const novoEmpregadoData = {
@@ -67,14 +73,16 @@ async function main() {
     include: {
       perfis: {
         include: {
-          perfil: true
-        }
-      }
-    }
+          perfil: true,
+        },
+      },
+    },
   });
 
   if (!empregador) {
-    throw new Error(`Empregador com CPF ${novoEmpregadoData.empregadorCpf} não encontrado!`);
+    throw new Error(
+      `Empregador com CPF ${novoEmpregadoData.empregadorCpf} não encontrado!`
+    );
   }
   console.log(`✅ Empregador encontrado: ${empregador.nomeCompleto}\n`);
 
@@ -83,7 +91,7 @@ async function main() {
   // ============================================
   console.log('🔍 Buscando perfil de Empregado...');
   const perfilEmpregado = await prisma.perfil.findFirst({
-    where: { OR: [{ nome: 'Empregado' }, { codigo: 'EMPREGADO' }] }
+    where: { OR: [{ nome: 'Empregado' }, { codigo: 'EMPREGADO' }] },
   });
 
   if (!perfilEmpregado) {
@@ -98,7 +106,9 @@ async function main() {
   const salt = await bcrypt.genSalt(10);
   const senhaHash = await bcrypt.hash(novoEmpregadoData.senha, salt);
 
-  const usuarioExistente = await prisma.usuario.findUnique({ where: { cpf: novoEmpregadoData.cpf } });
+  const usuarioExistente = await prisma.usuario.findUnique({
+    where: { cpf: novoEmpregadoData.cpf },
+  });
   const novoUsuario = usuarioExistente
     ? await prisma.usuario.update({
         where: { cpf: novoEmpregadoData.cpf },
@@ -136,19 +146,31 @@ async function main() {
           consentimentoLGPD: true,
           dataConsentimento: new Date(),
           termosAceitos: true,
-          versaoTermos: '1.0'
-        }
+          versaoTermos: '1.0',
+        },
       });
-  console.log(`✅ Usuário pronto: ${novoUsuario.nomeCompleto} (CPF: ${novoUsuario.cpf})\n`);
+  console.log(
+    `✅ Usuário pronto: ${novoUsuario.nomeCompleto} (CPF: ${novoUsuario.cpf})\n`
+  );
 
   // ============================================
   // ASSOCIAR PERFIL
   // ============================================
   console.log('🔗 Associando perfil de Empregado (idempotente)...');
   const novoUsuarioPerfil = await prisma.usuarioPerfil.upsert({
-    where: { usuarioId_perfilId: { usuarioId: novoUsuario.id, perfilId: perfilEmpregado.id } },
+    where: {
+      usuarioId_perfilId: {
+        usuarioId: novoUsuario.id,
+        perfilId: perfilEmpregado.id,
+      },
+    },
     update: { ativo: true, principal: true },
-    create: { usuarioId: novoUsuario.id, perfilId: perfilEmpregado.id, ativo: true, principal: true }
+    create: {
+      usuarioId: novoUsuario.id,
+      perfilId: perfilEmpregado.id,
+      ativo: true,
+      principal: true,
+    },
   });
   console.log('✅ Perfil associado\n');
 
@@ -156,7 +178,7 @@ async function main() {
   // GARANTIR GRUPOS E ASSOCIAR USUÁRIO
   // ============================================
   console.log('🏢 Garantindo grupos (idempotente)...');
-  
+
   const grupoEmpresarial = await prisma.grupo.upsert({
     where: { id: 'grupo-empresarial-001' },
     update: {},
@@ -168,24 +190,24 @@ async function main() {
       icone: 'building',
       tipo: 'empresa',
       privado: false,
-      ativo: true
-    }
+      ativo: true,
+    },
   });
 
   await prisma.usuarioGrupo.upsert({
     where: {
       usuarioId_grupoId: {
         usuarioId: novoUsuario.id,
-        grupoId: grupoEmpresarial.id
-      }
+        grupoId: grupoEmpresarial.id,
+      },
     },
     update: { papel: 'membro', ativo: true },
     create: {
       usuarioId: novoUsuario.id,
       grupoId: grupoEmpresarial.id,
       papel: 'membro',
-      ativo: true
-    }
+      ativo: true,
+    },
   });
 
   console.log('✅ Usuário associado ao grupo\n');
@@ -197,7 +219,12 @@ async function main() {
   const dispositivoId = `seed_device_${novoUsuario.id.substring(0, 8)}`;
   const dispositivo = await prisma.dispositivo.upsert({
     where: { dispositivoId },
-    update: { usuarioId: novoUsuario.id, ultimoUso: new Date(), ativo: true, confiavel: true },
+    update: {
+      usuarioId: novoUsuario.id,
+      ultimoUso: new Date(),
+      ativo: true,
+      confiavel: true,
+    },
     create: {
       usuarioId: novoUsuario.id,
       dispositivoId,
@@ -212,8 +239,8 @@ async function main() {
       precisao: 10.0,
       confiavel: true,
       ativo: true,
-      ultimoUso: new Date()
-    }
+      ultimoUso: new Date(),
+    },
   });
   console.log('✅ Dispositivo pronto\n');
 
@@ -221,17 +248,17 @@ async function main() {
   // CRIAR REGISTROS DE PONTO (40 DIAS)
   // ============================================
   console.log('🕐 Criando registros de ponto (40 dias, idempotente)...');
-  
+
   const hoje = new Date();
   const dataInicio = new Date(hoje);
   dataInicio.setDate(dataInicio.getDate() - 40); // 40 dias atrás
 
   let totalRegistros = 0;
-  
+
   for (let i = 0; i < 40; i++) {
     const data = new Date(dataInicio);
     data.setDate(dataInicio.getDate() + i);
-    
+
     // Pular finais de semana
     const diaSemana = data.getDay();
     if (diaSemana === 0 || diaSemana === 6) continue;
@@ -239,18 +266,20 @@ async function main() {
     // Horários de trabalho (8h às 17h com 1h de almoço)
     const entrada1 = new Date(data);
     entrada1.setHours(8, 0, 0, 0);
-    
+
     const saida1 = new Date(data);
     saida1.setHours(12, 0, 0, 0);
-    
+
     const entrada2 = new Date(data);
     entrada2.setHours(13, 0, 0, 0);
-    
+
     const saida2 = new Date(data);
     saida2.setHours(17, 0, 0, 0);
 
     // Evitar duplicar se já existir para a data/hora
-    const existsEntrada = await prisma.registroPonto.findFirst({ where: { usuarioId: novoUsuario.id, dataHora: entrada1 } });
+    const existsEntrada = await prisma.registroPonto.findFirst({
+      where: { usuarioId: novoUsuario.id, dataHora: entrada1 },
+    });
     if (!existsEntrada) {
       await prisma.registroPonto.create({
         data: {
@@ -268,12 +297,14 @@ async function main() {
           aprovadoPor: empregador.id,
           aprovadoEm: entrada1,
           observacao: 'Entrada normal',
-          hashIntegridade: `hash_${Date.now()}_entrada1`
-        }
+          hashIntegridade: `hash_${Date.now()}_entrada1`,
+        },
       });
     }
 
-    const existsSaidaAlmoco = await prisma.registroPonto.findFirst({ where: { usuarioId: novoUsuario.id, dataHora: saida1 } });
+    const existsSaidaAlmoco = await prisma.registroPonto.findFirst({
+      where: { usuarioId: novoUsuario.id, dataHora: saida1 },
+    });
     if (!existsSaidaAlmoco) {
       await prisma.registroPonto.create({
         data: {
@@ -291,12 +322,14 @@ async function main() {
           aprovadoPor: empregador.id,
           aprovadoEm: saida1,
           observacao: 'Saída para almoço',
-          hashIntegridade: `hash_${Date.now()}_saida_almoco`
-        }
+          hashIntegridade: `hash_${Date.now()}_saida_almoco`,
+        },
       });
     }
 
-    const existsRetorno = await prisma.registroPonto.findFirst({ where: { usuarioId: novoUsuario.id, dataHora: entrada2 } });
+    const existsRetorno = await prisma.registroPonto.findFirst({
+      where: { usuarioId: novoUsuario.id, dataHora: entrada2 },
+    });
     if (!existsRetorno) {
       await prisma.registroPonto.create({
         data: {
@@ -314,12 +347,14 @@ async function main() {
           aprovadoPor: empregador.id,
           aprovadoEm: entrada2,
           observacao: 'Retorno do almoço',
-          hashIntegridade: `hash_${Date.now()}_retorno_almoco`
-        }
+          hashIntegridade: `hash_${Date.now()}_retorno_almoco`,
+        },
       });
     }
 
-    const existsSaida = await prisma.registroPonto.findFirst({ where: { usuarioId: novoUsuario.id, dataHora: saida2 } });
+    const existsSaida = await prisma.registroPonto.findFirst({
+      where: { usuarioId: novoUsuario.id, dataHora: saida2 },
+    });
     if (!existsSaida) {
       await prisma.registroPonto.create({
         data: {
@@ -337,24 +372,27 @@ async function main() {
           aprovadoPor: empregador.id,
           aprovadoEm: saida2,
           observacao: 'Saída normal',
-          hashIntegridade: `hash_${Date.now()}_saida`
-        }
+          hashIntegridade: `hash_${Date.now()}_saida`,
+        },
       });
     }
 
     totalRegistros += 4;
   }
-  console.log(`✅ ${totalRegistros} registros de ponto criados (40 dias úteis)\n`);
+  console.log(
+    `✅ ${totalRegistros} registros de ponto criados (40 dias úteis)\n`
+  );
 
   // ============================================
   // CRIAR TAREFAS
   // ============================================
   console.log('✅ Criando tarefas...');
-  
+
   await prisma.tarefa.create({
     data: {
       titulo: 'Completar treinamento de integração',
-      descricao: 'Assistir todos os vídeos do curso de integração e preencher o formulário',
+      descricao:
+        'Assistir todos os vídeos do curso de integração e preencher o formulário',
       status: 'CONCLUIDA',
       prioridade: 'ALTA',
       dataVencimento: new Date(dataInicio.getTime() + 7 * 24 * 60 * 60 * 1000),
@@ -364,8 +402,8 @@ async function main() {
       tags: ['treinamento', 'integracao'],
       corLabel: '#4CAF50',
       tempoEstimado: 480,
-      tempoGasto: 420
-    }
+      tempoGasto: 420,
+    },
   });
 
   await prisma.tarefa.create({
@@ -379,8 +417,8 @@ async function main() {
       atribuidoPara: novoUsuario.id,
       tags: ['documentacao', 'politicas'],
       corLabel: '#FFC107',
-      tempoEstimado: 180
-    }
+      tempoEstimado: 180,
+    },
   });
 
   await prisma.tarefa.create({
@@ -394,8 +432,8 @@ async function main() {
       atribuidoPara: novoUsuario.id,
       tags: ['configuracao', 'acesso'],
       corLabel: '#F44336',
-      tempoEstimado: 120
-    }
+      tempoEstimado: 120,
+    },
   });
   console.log('✅ 3 tarefas criadas\n');
 
@@ -403,7 +441,7 @@ async function main() {
   // CRIAR DOCUMENTOS
   // ============================================
   console.log('📄 Criando documentos...');
-  
+
   await prisma.documento.create({
     data: {
       usuarioId: novoUsuario.id,
@@ -422,8 +460,8 @@ async function main() {
       permissao: 'PRIVADO',
       tags: ['contrato', 'trabalho', 'clt'],
       esocialPronto: true,
-      backupCriado: true
-    }
+      backupCriado: true,
+    },
   });
 
   await prisma.documento.create({
@@ -442,8 +480,8 @@ async function main() {
       permissao: 'PRIVADO',
       tags: ['ctps', 'identificacao'],
       esocialPronto: false,
-      backupCriado: true
-    }
+      backupCriado: true,
+    },
   });
 
   await prisma.documento.create({
@@ -462,8 +500,8 @@ async function main() {
       permissao: 'PRIVADO',
       tags: ['comprovante', 'endereco'],
       esocialPronto: false,
-      backupCriado: true
-    }
+      backupCriado: true,
+    },
   });
   console.log('✅ 3 documentos criados\n');
 
@@ -471,13 +509,13 @@ async function main() {
   // CRIAR CONVERSAS
   // ============================================
   console.log('💬 Criando conversas...');
-  
+
   const conversa = await prisma.conversa.create({
     data: {
       nome: 'Bem-vindo à equipe!',
       tipo: 'DIRETA',
-      arquivada: false
-    }
+      arquivada: false,
+    },
   });
 
   // Adicionar participantes
@@ -487,15 +525,15 @@ async function main() {
         conversaId: conversa.id,
         usuarioId: empregador.id,
         papel: 'ADMIN',
-        ativo: true
+        ativo: true,
       },
       {
         conversaId: conversa.id,
         usuarioId: novoUsuario.id,
         papel: 'MEMBRO',
-        ativo: true
-      }
-    ]
+        ativo: true,
+      },
+    ],
   });
 
   // Adicionar mensagens
@@ -504,18 +542,19 @@ async function main() {
       {
         conversaId: conversa.id,
         remetenteId: empregador.id,
-        conteudo: 'Olá João Pedro! Bem-vindo à nossa equipe. Estamos muito felizes em tê-lo conosco!',
+        conteudo:
+          'Olá João Pedro! Bem-vindo à nossa equipe. Estamos muito felizes em tê-lo conosco!',
         tipo: 'TEXTO',
-        lida: true
+        lida: true,
       },
       {
         conversaId: conversa.id,
         remetenteId: novoUsuario.id,
         conteudo: 'Muito obrigado! Estou muito animado para começar.',
         tipo: 'TEXTO',
-        lida: true
-      }
-    ]
+        lida: true,
+      },
+    ],
   });
   console.log('✅ Conversa criada com 2 mensagens\n');
 
@@ -523,7 +562,7 @@ async function main() {
   // CRIAR ALERTAS
   // ============================================
   console.log('🔔 Criando alertas...');
-  
+
   await prisma.alerta.create({
     data: {
       usuario: { connect: { id: novoUsuario.id } },
@@ -534,8 +573,8 @@ async function main() {
       status: 'LIDO',
       lido: true,
       categoria: 'SISTEMA',
-      dataAlerta: new Date()
-    }
+      dataAlerta: new Date(),
+    },
   });
 
   await prisma.alerta.create({
@@ -548,8 +587,8 @@ async function main() {
       status: 'NAO_LIDO',
       lido: false,
       categoria: 'TAREFA',
-      dataAlerta: new Date()
-    }
+      dataAlerta: new Date(),
+    },
   });
   console.log('✅ 2 alertas criados\n');
 
@@ -557,7 +596,7 @@ async function main() {
   // CRIAR EVENTOS ESOCIAL
   // ============================================
   console.log('📊 Criando eventos eSocial...');
-  
+
   await prisma.eventoESocial.create({
     data: {
       tipoEvento: 'S-2200',
@@ -568,8 +607,8 @@ async function main() {
       protocolo: `2.2.${Date.now()}`,
       versao: '2.5',
       xmlEnvio: '<eSocial><evento>S-2200</evento></eSocial>',
-      xmlRetorno: '<retorno>Processado com sucesso</retorno>'
-    }
+      xmlRetorno: '<retorno>Processado com sucesso</retorno>',
+    },
   });
 
   await prisma.eventoESocial.create({
@@ -582,8 +621,8 @@ async function main() {
       protocolo: `1.2.${Date.now() + 1}`,
       versao: '2.5',
       xmlEnvio: '<eSocial><evento>S-1200</evento></eSocial>',
-      xmlRetorno: '<retorno>Processado com sucesso</retorno>'
-    }
+      xmlRetorno: '<retorno>Processado com sucesso</retorno>',
+    },
   });
   console.log('✅ 2 eventos eSocial criados\n');
 
@@ -591,7 +630,7 @@ async function main() {
   // CRIAR SESSÃO ATIVA
   // ============================================
   console.log('🔐 Criando sessão ativa...');
-  
+
   await prisma.sessao.create({
     data: {
       usuarioId: novoUsuario.id,
@@ -600,8 +639,8 @@ async function main() {
       enderecoIP: '192.168.1.100',
       userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
       expiraEm: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      ativo: true
-    }
+      ativo: true,
+    },
   });
   console.log('✅ Sessão criada\n');
 
@@ -609,18 +648,18 @@ async function main() {
   // CRIAR HISTÓRICO DE LOGIN
   // ============================================
   console.log('📝 Criando histórico de login...');
-  
+
   for (let i = 0; i < 10; i++) {
     const dataLogin = new Date();
     dataLogin.setDate(dataLogin.getDate() - i);
-    
+
     await prisma.historicoLogin.create({
       data: {
         usuarioId: novoUsuario.id,
         enderecoIP: '192.168.1.100',
         userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-        sucesso: true
-      }
+        sucesso: true,
+      },
     });
   }
   console.log('✅ 10 registros de login criados\n');
@@ -631,9 +670,9 @@ async function main() {
   // CRIAR ACEITE DE TERMOS
   // ============================================
   console.log('📋 Criando aceite de termos...');
-  
+
   const termo = await prisma.termo.findFirst({
-    where: { ativo: true }
+    where: { ativo: true },
   });
 
   if (termo) {
@@ -643,8 +682,8 @@ async function main() {
         termo: { connect: { id: termo.id } },
         versao: termo.versao,
         enderecoIP: '192.168.1.100',
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
-      }
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+      },
     });
     console.log('✅ Aceite de termos registrado\n');
   }
@@ -655,18 +694,34 @@ async function main() {
   console.log('═══════════════════════════════════════════════════════');
   console.log('📊 RESUMO DA CRIAÇÃO:');
   console.log('═══════════════════════════════════════════════════════\n');
-  
+
   const counts = {
     usuario: 1,
-    registrosPonto: await prisma.registroPonto.count({ where: { usuarioId: novoUsuario.id } }),
-    tarefas: await prisma.tarefa.count({ where: { atribuidoPara: novoUsuario.id } }),
-    documentos: await prisma.documento.count({ where: { usuarioId: novoUsuario.id } }),
-    conversas: await prisma.conversaParticipante.count({ where: { usuarioId: novoUsuario.id } }),
-    mensagens: await prisma.mensagem.count({ where: { remetenteId: novoUsuario.id } }),
-    alertas: await prisma.alerta.count({ where: { usuarioId: novoUsuario.id } }),
+    registrosPonto: await prisma.registroPonto.count({
+      where: { usuarioId: novoUsuario.id },
+    }),
+    tarefas: await prisma.tarefa.count({
+      where: { atribuidoPara: novoUsuario.id },
+    }),
+    documentos: await prisma.documento.count({
+      where: { usuarioId: novoUsuario.id },
+    }),
+    conversas: await prisma.conversaParticipante.count({
+      where: { usuarioId: novoUsuario.id },
+    }),
+    mensagens: await prisma.mensagem.count({
+      where: { remetenteId: novoUsuario.id },
+    }),
+    alertas: await prisma.alerta.count({
+      where: { usuarioId: novoUsuario.id },
+    }),
     eventosESocial: await prisma.eventoESocial.count(),
-    sessoes: await prisma.sessao.count({ where: { usuarioId: novoUsuario.id } }),
-    historicoLogin: await prisma.historicoLogin.count({ where: { usuarioId: novoUsuario.id } }),
+    sessoes: await prisma.sessao.count({
+      where: { usuarioId: novoUsuario.id },
+    }),
+    historicoLogin: await prisma.historicoLogin.count({
+      where: { usuarioId: novoUsuario.id },
+    }),
   };
 
   console.log('👤 NOVO EMPREGADO:');
@@ -680,7 +735,9 @@ async function main() {
   console.log(`   CPF: ${empregador.cpf}`);
   console.log('');
   console.log('📊 DADOS CRIADOS:');
-  console.log(`   🕐 Registros de Ponto: ${counts.registrosPonto} (40 dias úteis)`);
+  console.log(
+    `   🕐 Registros de Ponto: ${counts.registrosPonto} (40 dias úteis)`
+  );
   console.log(`   ✅ Tarefas: ${counts.tarefas}`);
   console.log(`   📄 Documentos: ${counts.documentos}`);
   console.log(`   💬 Conversas: ${counts.conversas}`);
@@ -696,11 +753,10 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
+  .catch(e => {
     console.error('❌ Erro ao criar massa de dados:', e);
     process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();
   });
-

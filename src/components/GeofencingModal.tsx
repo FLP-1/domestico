@@ -28,7 +28,7 @@ const ModalOverlay = styled.div<{ isOpen: boolean }>`
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  display: ${props => props.isOpen ? 'flex' : 'none'};
+  display: ${props => (props.isOpen ? 'flex' : 'none')};
   justify-content: center;
   align-items: center;
   z-index: 1000;
@@ -42,7 +42,9 @@ const ModalContent = styled.div<{ $theme?: any }>`
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
 `;
 
 const ModalHeader = styled.div<{ $theme?: any }>`
@@ -68,7 +70,7 @@ const CloseButton = styled.button<{ $theme?: any }>`
   cursor: pointer;
   color: ${props => props.$theme.colors.text.secondary};
   padding: 4px;
-  
+
   &:hover {
     color: ${props => props.$theme.colors.text.primary};
   }
@@ -142,7 +144,7 @@ const JustificativaTextarea = styled.textarea<{ $theme?: any }>`
   border-radius: 6px;
   font-size: 0.95rem;
   resize: vertical;
-  
+
   &:focus {
     outline: none;
     border-color: #3b82f6;
@@ -164,8 +166,10 @@ const Button = styled.button<{ variant: 'primary' | 'secondary' }>`
   cursor: pointer;
   border: none;
   transition: all 0.2s;
-  
-  ${props => props.variant === 'primary' ? `
+
+  ${props =>
+    props.variant === 'primary'
+      ? `
     background-color: #3b82f6;
     color: white;
     
@@ -177,7 +181,8 @@ const Button = styled.button<{ variant: 'primary' | 'secondary' }>`
       background-color: #9ca3af;
       cursor: not-allowed;
     }
-  ` : `
+  `
+      : `
     background-color: #f3f4f6;
     color: #374151;
     border: 1px solid #d1d5db;
@@ -195,7 +200,7 @@ const GeofencingModal: React.FC<GeofencingModalProps> = ({
   coordenadas,
   localMaisProximo,
   distanciaMinima,
-  endereco
+  endereco,
 }) => {
   const { currentProfile } = useUserProfile();
   const { colors: theme } = useTheme(currentProfile?.role.toLowerCase());
@@ -222,42 +227,77 @@ const GeofencingModal: React.FC<GeofencingModalProps> = ({
     <ModalOverlay isOpen={isOpen}>
       <ModalContent>
         <ModalHeader $theme={{}}>
-          <ModalTitle $theme={{}}><span role="img" aria-label="Proibido">🚫</span> Localização Fora do Raio Autorizado</ModalTitle>
-          <CloseButton $theme={{}} onClick={handleCancel}>×</CloseButton>
+          <ModalTitle $theme={{}}>
+            <span role='img' aria-label='Proibido'>
+              🚫
+            </span>{' '}
+            Localização Fora do Raio Autorizado
+          </ModalTitle>
+          <CloseButton $theme={{}} onClick={handleCancel}>
+            ×
+          </CloseButton>
         </ModalHeader>
 
         <AlertBox $theme={{}}>
-          <AlertTitle $theme={{}}><span role="img" aria-label="Atenção">⚠️</span> Atenção</AlertTitle>
+          <AlertTitle $theme={{}}>
+            <span role='img' aria-label='Atenção'>
+              ⚠️
+            </span>{' '}
+            Atenção
+          </AlertTitle>
           <AlertText $theme={{}}>
-            Sua localização atual está fora do raio autorizado para registro de ponto. 
-            Para prosseguir, é necessário fornecer uma justificativa.
+            Sua localização atual está fora do raio autorizado para registro de
+            ponto. Para prosseguir, é necessário fornecer uma justificativa.
           </AlertText>
         </AlertBox>
 
         <InfoGrid>
           <InfoItem $theme={{}}>
-            <InfoLabel><span role="img" aria-label="Localização">📍</span> Coordenadas</InfoLabel>
+            <InfoLabel>
+              <span role='img' aria-label='Localização'>
+                📍
+              </span>{' '}
+              Coordenadas
+            </InfoLabel>
             <InfoValue>
-              {coordenadas.latitude.toFixed(6)}, {coordenadas.longitude.toFixed(6)}
+              {coordenadas.latitude.toFixed(6)},{' '}
+              {coordenadas.longitude.toFixed(6)}
             </InfoValue>
           </InfoItem>
-          
+
           <InfoItem $theme={{}}>
-            <InfoLabel><span role="img" aria-label="Régua">📏</span> Precisão</InfoLabel>
+            <InfoLabel>
+              <span role='img' aria-label='Régua'>
+                📏
+              </span>{' '}
+              Precisão
+            </InfoLabel>
             <InfoValue>{Math.round(coordenadas.precisao)}m</InfoValue>
           </InfoItem>
-          
+
           <InfoItem $theme={{}}>
-            <InfoLabel><span role="img" aria-label="Prédio">🏢</span> Local Mais Próximo</InfoLabel>
+            <InfoLabel>
+              <span role='img' aria-label='Prédio'>
+                🏢
+              </span>{' '}
+              Local Mais Próximo
+            </InfoLabel>
             <InfoValue>
               {localMaisProximo ? localMaisProximo.nome : 'N/A'}
             </InfoValue>
           </InfoItem>
-          
+
           <InfoItem $theme={{}}>
-            <InfoLabel><span role="img" aria-label="Régua">📐</span> Distância</InfoLabel>
+            <InfoLabel>
+              <span role='img' aria-label='Régua'>
+                📐
+              </span>{' '}
+              Distância
+            </InfoLabel>
             <InfoValue>
-              {localMaisProximo ? `${localMaisProximo.distancia}m` : `${Math.round(distanciaMinima)}m`}
+              {localMaisProximo
+                ? `${localMaisProximo.distancia}m`
+                : `${Math.round(distanciaMinima)}m`}
             </InfoValue>
           </InfoItem>
         </InfoGrid>
@@ -269,20 +309,20 @@ const GeofencingModal: React.FC<GeofencingModalProps> = ({
           <JustificativaTextarea
             value={justificativa}
             onChange={(e: any) => setJustificativa(e.target.value)}
-            placeholder="Descreva o motivo para o registro de ponto neste local..."
+            placeholder='Descreva o motivo para o registro de ponto neste local...'
             maxLength={500}
           />
-          <HelpText $theme={theme} $size="sm">
+          <HelpText $theme={theme} $size='sm'>
             {justificativa.length}/500 caracteres
           </HelpText>
         </JustificativaSection>
 
         <ButtonGroup>
-          <Button variant="secondary" onClick={handleCancel}>
+          <Button variant='secondary' onClick={handleCancel}>
             Cancelar
           </Button>
-          <Button 
-            variant="primary" 
+          <Button
+            variant='primary'
             onClick={handleApprove}
             disabled={!justificativa.trim()}
           >

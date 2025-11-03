@@ -227,11 +227,13 @@ export class DocumentService {
       await new Promise(resolve => setTimeout(resolve, 300));
 
       // Buscar documentos reais do banco de dados
-      const response = await fetch(`/api/documents?userId=${userId}&category=${category || ''}`);
+      const response = await fetch(
+        `/api/documents?userId=${userId}&category=${category || ''}`
+      );
       if (!response.ok) {
         throw new Error('Erro ao buscar documentos');
       }
-      
+
       const filteredDocs = await response.json();
 
       return filteredDocs;

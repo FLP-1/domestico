@@ -17,14 +17,16 @@ import WelcomeSection from '../components/WelcomeSection';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
 import { defaultColors, addOpacity } from '../utils/themeHelpers';
-import {
-  UnifiedCard,
-} from '../components/unified';
+import { UnifiedCard } from '../components/unified';
 import {
   OptimizedFormRow,
   OptimizedLabel,
 } from '../components/shared/optimized-styles';
-import DataList, { DataListColumn, DataListAction, DataListItem } from '../components/DataList';
+import DataList, {
+  DataListColumn,
+  DataListAction,
+  DataListItem,
+} from '../components/DataList';
 
 // Interfaces
 interface Document {
@@ -57,13 +59,17 @@ const UploadSection = styled.div<{ $theme: any; $isDragOver: boolean }>`
   padding: 2rem;
   margin-bottom: 2rem;
   border: 2px dashed
-    ${props => (props.$isDragOver ? (props.$theme?.colors?.primary || defaultColors.primary) : '#e0e0e0')};
+    ${props =>
+      props.$isDragOver
+        ? props.$theme?.colors?.primary || defaultColors.primary
+        : '#e0e0e0'};
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
 
   &:hover {
-    border-color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
+    border-color: ${props =>
+      props.$theme?.colors?.primary || defaultColors.primary};
     background: rgba(255, 255, 255, 1);
   }
 `;
@@ -216,7 +222,7 @@ const DocumentNameWrapper = styled.div`
     font-weight: 600;
     margin-bottom: 0.25rem;
   }
-  
+
   .document-description {
     font-size: 0.8rem;
     color: #7f8c8d;
@@ -239,7 +245,8 @@ const ProgressBar = styled.div<{ $theme: any }>`
 const ProgressFill = styled.div<{ $progress: number; $theme: any }>`
   width: ${props => props.$progress}%;
   height: 100%;
-  background: ${props => props.$theme?.colors?.primary || defaultColors.primary};
+  background: ${props =>
+    props.$theme?.colors?.primary || defaultColors.primary};
   transition: width 0.3s ease;
 `;
 
@@ -330,15 +337,12 @@ export default function DocumentManagement() {
       width: '300px',
       render: (item: DataListItem) => (
         <DocumentNameWrapper>
-          <div className="document-name">
-            {item.name}
-          </div>
+          <div className='document-name'>{item.name}</div>
           {item.description && (
-            <div className="document-description">
-              {item.description.length > 50 
-                ? `${item.description.substring(0, 50)}...` 
-                : item.description
-              }
+            <div className='document-description'>
+              {item.description.length > 50
+                ? `${item.description.substring(0, 50)}...`
+                : item.description}
             </div>
           )}
         </DocumentNameWrapper>
@@ -363,10 +367,10 @@ export default function DocumentManagement() {
       width: '200px',
       render: (item: DataListItem) => (
         <MetaInfo>
-          <AccessibleEmoji emoji="📊" label="Tamanho" />
+          <AccessibleEmoji emoji='📊' label='Tamanho' />
           {item.fileSize}
           <br />
-          <AccessibleEmoji emoji="📅" label="Data" />
+          <AccessibleEmoji emoji='📅' label='Data' />
           {new Date(item.uploadDate).toLocaleDateString('pt-BR')}
         </MetaInfo>
       ),
@@ -379,7 +383,7 @@ export default function DocumentManagement() {
         if (!item.dueDate) return '-';
         return (
           <DueDateBadge>
-            <AccessibleEmoji emoji="📅" label="Vencimento" />
+            <AccessibleEmoji emoji='📅' label='Vencimento' />
             {new Date(item.dueDate).toLocaleDateString('pt-BR')}
           </DueDateBadge>
         );
@@ -407,13 +411,15 @@ export default function DocumentManagement() {
       icon: '✏️',
       label: 'Editar documento',
       variant: 'primary',
-      onClick: (item: DataListItem) => openUnifiedModal('edit', item as Document),
+      onClick: (item: DataListItem) =>
+        openUnifiedModal('edit', item as Document),
     },
     {
       icon: '🔗',
       label: 'Compartilhar documento',
       variant: 'secondary',
-      onClick: (item: DataListItem) => openUnifiedModal('view', item as Document),
+      onClick: (item: DataListItem) =>
+        openUnifiedModal('view', item as Document),
     },
     {
       icon: '❌',
@@ -430,7 +436,7 @@ export default function DocumentManagement() {
         // Carregar documentos da API
         const response = await fetch('/api/documents');
         const result = await response.json();
-        
+
         if (result.success && result.data) {
           // Mapear dados da API para o formato da página
           const mappedDocuments = result.data.map((doc: any) => ({
@@ -438,23 +444,53 @@ export default function DocumentManagement() {
             name: doc.name,
             category: doc.category,
             description: doc.description,
-            uploadDate: doc.uploadDate?.split('T')[0] || new Date().toISOString().split('T')[0],
+            uploadDate:
+              doc.uploadDate?.split('T')[0] ||
+              new Date().toISOString().split('T')[0],
             fileSize: `${(doc.fileSize / 1024 / 1024).toFixed(1)} MB`,
             fileType: doc.fileType?.includes('pdf') ? 'PDF' : 'Arquivo',
             permissions: doc.permissions || 'private',
-            isExpiring: doc.expirationDate ? new Date(doc.expirationDate) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : false,
+            isExpiring: doc.expirationDate
+              ? new Date(doc.expirationDate) <
+                new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+              : false,
             dueDate: doc.expirationDate?.split('T')[0],
           }));
           setDocuments(mappedDocuments);
         }
-        
+
         // Carregar categorias (usar categorias padrão por enquanto)
         const defaultCategories = [
-          { id: '1', name: 'Documentos Pessoais', icon: <AccessibleEmoji emoji='📄' label='Documento' />, color: '#3498db' },
-          { id: '2', name: 'Recibos', icon: <AccessibleEmoji emoji='🧾' label='Recibo' />, color: '#e74c3c' },
-          { id: '3', name: 'Certidões', icon: <AccessibleEmoji emoji='📜' label='Certidão' />, color: '#f39c12' },
-          { id: '4', name: 'Certificados', icon: <AccessibleEmoji emoji='🏆' label='Certificado' />, color: '#27ae60' },
-          { id: '5', name: 'Outros', icon: <AccessibleEmoji emoji='📁' label='Pasta' />, color: '#9b59b6' },
+          {
+            id: '1',
+            name: 'Documentos Pessoais',
+            icon: <AccessibleEmoji emoji='📄' label='Documento' />,
+            color: '#3498db',
+          },
+          {
+            id: '2',
+            name: 'Recibos',
+            icon: <AccessibleEmoji emoji='🧾' label='Recibo' />,
+            color: '#e74c3c',
+          },
+          {
+            id: '3',
+            name: 'Certidões',
+            icon: <AccessibleEmoji emoji='📜' label='Certidão' />,
+            color: '#f39c12',
+          },
+          {
+            id: '4',
+            name: 'Certificados',
+            icon: <AccessibleEmoji emoji='🏆' label='Certificado' />,
+            color: '#27ae60',
+          },
+          {
+            id: '5',
+            name: 'Outros',
+            icon: <AccessibleEmoji emoji='📁' label='Pasta' />,
+            color: '#9b59b6',
+          },
         ];
         setCategories(defaultCategories);
       } catch (error) {
@@ -595,7 +631,8 @@ export default function DocumentManagement() {
       />
 
       <TopBar $theme={theme}>
-        <WelcomeSection $theme={theme}
+        <WelcomeSection
+          $theme={theme}
           userAvatar={currentProfile?.avatar || 'U'}
           userName={currentProfile?.name || 'Usuário'}
           userRole={currentProfile?.role || 'Usuário'}
@@ -606,7 +643,8 @@ export default function DocumentManagement() {
         />
       </TopBar>
 
-      <PageHeader $theme={theme}
+      <PageHeader
+        $theme={theme}
         title='Gestão de Documentos'
         subtitle='Organize, armazene e gerencie todos os documentos importantes do lar'
       />
@@ -713,9 +751,11 @@ export default function DocumentManagement() {
           items={getFilteredDocuments()}
           columns={documentColumns}
           actions={documentActions}
-          onItemClick={(item: any) => openUnifiedModal('view', item as Document)}
-          emptyMessage="Nenhum documento encontrado. Clique no botão acima para fazer upload do seu primeiro documento."
-          variant="detailed"
+          onItemClick={(item: any) =>
+            openUnifiedModal('view', item as Document)
+          }
+          emptyMessage='Nenhum documento encontrado. Clique no botão acima para fazer upload do seu primeiro documento.'
+          variant='detailed'
           showHeader={true}
           striped={true}
           hoverable={true}

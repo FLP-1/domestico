@@ -31,6 +31,7 @@
    - **Causa:** Módulo legacy não encontrado
 
 3. **Node.js PFX Direto:**
+
    ```javascript
    pfx: fs.readFileSync(pfxPath), passphrase: '456587'
    ```
@@ -66,6 +67,7 @@
    - ✅ **Confirmou:** Precisam de certificado mTLS
 
 3. **Serviço ESocialSoapReal Existente:**
+
    ```json
    {
      "success": true,

@@ -39,14 +39,18 @@ const getActivityIcon = (tipo: string) => {
 const formatTimeAgo = (dateString: string) => {
   const date = new Date(dateString);
   const now = new Date();
-  const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-  
+  const diffInMinutes = Math.floor(
+    (now.getTime() - date.getTime()) / (1000 * 60)
+  );
+
   if (diffInMinutes < 1) return 'Agora mesmo';
-  if (diffInMinutes < 60) return `${diffInMinutes} minuto${diffInMinutes > 1 ? 's' : ''} atrás`;
-  
+  if (diffInMinutes < 60)
+    return `${diffInMinutes} minuto${diffInMinutes > 1 ? 's' : ''} atrás`;
+
   const diffInHours = Math.floor(diffInMinutes / 60);
-  if (diffInHours < 24) return `${diffInHours} hora${diffInHours > 1 ? 's' : ''} atrás`;
-  
+  if (diffInHours < 24)
+    return `${diffInHours} hora${diffInHours > 1 ? 's' : ''} atrás`;
+
   const diffInDays = Math.floor(diffInHours / 24);
   return `${diffInDays} dia${diffInDays > 1 ? 's' : ''} atrás`;
 };
@@ -73,7 +77,11 @@ const FlexContainer = styled.div`
 const Container = styled.div`
   display: flex;
   min-height: 100vh;
-  background: linear-gradient(135deg, ${props => props.theme?.background?.secondary || '#f5f7fa'} 0%, ${props => props.theme?.background?.tertiary || '#c3cfe2'} 100%);
+  background: linear-gradient(
+    135deg,
+    ${props => props.theme?.background?.secondary || '#f5f7fa'} 0%,
+    ${props => props.theme?.background?.tertiary || '#c3cfe2'} 100%
+  );
   animation: ${fadeIn} 0.6s ease-out;
 `;
 
@@ -339,7 +347,9 @@ const MonitoringDashboard: React.FC = () => {
   const theme = { colors: themeObject.colors };
   const [collapsed, setCollapsed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [systemStatus, setSystemStatus] = useState<'success' | 'warning' | 'error' | 'info'>('success');
+  const [systemStatus, setSystemStatus] = useState<
+    'success' | 'warning' | 'error' | 'info'
+  >('success');
   const [metrics, setMetrics] = useState({
     eventosEnviados: 0,
     eventosProcessados: 0,
@@ -358,23 +368,40 @@ const MonitoringDashboard: React.FC = () => {
       // Carregar métricas da API
       const metricsResponse = await fetch('/api/monitoring/metrics');
       const metricsResult = await metricsResponse.json();
-      
+
       if (metricsResult.success && metricsResult.data) {
         const metricsData = metricsResult.data;
         setMetrics({
-          eventosEnviados: metricsData.esocial?.find((m: any) => m.chave === 'eventos_enviados')?.valor || 0,
-          eventosProcessados: metricsData.esocial?.find((m: any) => m.chave === 'eventos_processados')?.valor || 0,
-          eventosComErro: metricsData.esocial?.find((m: any) => m.chave === 'eventos_com_erro')?.valor || 0,
-          webhooksAtivos: metricsData.webhook?.find((m: any) => m.chave === 'webhooks_ativos')?.valor || 0,
-          backupsRealizados: metricsData.backup?.find((m: any) => m.chave === 'backups_realizados')?.valor || 0,
-          logsAuditoria: metricsData.auditoria?.find((m: any) => m.chave === 'logs_auditoria')?.valor || 0,
+          eventosEnviados:
+            metricsData.esocial?.find(
+              (m: any) => m.chave === 'eventos_enviados'
+            )?.valor || 0,
+          eventosProcessados:
+            metricsData.esocial?.find(
+              (m: any) => m.chave === 'eventos_processados'
+            )?.valor || 0,
+          eventosComErro:
+            metricsData.esocial?.find(
+              (m: any) => m.chave === 'eventos_com_erro'
+            )?.valor || 0,
+          webhooksAtivos:
+            metricsData.webhook?.find((m: any) => m.chave === 'webhooks_ativos')
+              ?.valor || 0,
+          backupsRealizados:
+            metricsData.backup?.find(
+              (m: any) => m.chave === 'backups_realizados'
+            )?.valor || 0,
+          logsAuditoria:
+            metricsData.auditoria?.find(
+              (m: any) => m.chave === 'logs_auditoria'
+            )?.valor || 0,
         });
       }
 
       // Carregar atividade recente da API
       const activityResponse = await fetch('/api/monitoring/activity?limit=10');
       const activityResult = await activityResponse.json();
-      
+
       if (activityResult.success && activityResult.data) {
         const mappedActivity = activityResult.data.map((item: any) => ({
           id: item.id,
@@ -450,7 +477,8 @@ const MonitoringDashboard: React.FC = () => {
         currentPath={router.pathname}
       />
       <MainContent>
-        <WelcomeSection $theme={theme}
+        <WelcomeSection
+          $theme={theme}
           userAvatar={currentProfile?.avatar || 'U'}
           userName={currentProfile?.name || 'Usuário'}
           userRole={currentProfile?.role || 'Usuário'}
@@ -538,7 +566,9 @@ const MonitoringDashboard: React.FC = () => {
               <AccessibleEmoji emoji='💾' label='Armazenar' /> Backups
               Realizados
             </MetricTitle>
-            <MetricValue $theme={theme}>{metrics.backupsRealizados}</MetricValue>
+            <MetricValue $theme={theme}>
+              {metrics.backupsRealizados}
+            </MetricValue>
             <MetricSubtext>Backups executados com sucesso</MetricSubtext>
           </MetricCard>
 

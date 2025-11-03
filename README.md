@@ -113,6 +113,7 @@ A documentação completa do projeto está organizada em:
 - **`docs/archive/`** - Documentação histórica e relatórios temporários
 
 ### Documentação Essencial (Raiz)
+
 - `RELATORIO_ANALISE_COMPLETA_PUBLICACAO.md` - Análise completa para publicação
 - `RELATORIO_EXECUCAO_PLANO_ACAO.md` - Execução do plano de ação
 - `INTEGRACAO_ESOCIAL_OFICIAL.md` - Integração com eSocial

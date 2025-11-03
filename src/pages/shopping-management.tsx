@@ -71,7 +71,8 @@ const CreateListSection = styled.div<{ $theme: any }>`
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 4px 16px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+  box-shadow: 0 4px 16px
+    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
 `;
 
 const ListsGrid = styled.div`
@@ -86,14 +87,17 @@ const ListCard = styled.div<{ $theme: any }>`
   backdrop-filter: blur(20px);
   border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 4px 16px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
-  border: 1px solid ${props => (props.$theme?.colors?.primary || defaultColors.primary) + '20'};
+  box-shadow: 0 4px 16px
+    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+  border: 1px solid
+    ${props => (props.$theme?.colors?.primary || defaultColors.primary) + '20'};
   transition: all 0.3s ease;
   cursor: pointer;
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+    box-shadow: 0 8px 24px
+      ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
   }
 `;
 
@@ -169,14 +173,16 @@ const UnifiedButtonSmall = styled.button<{
   font-weight: 600;
   transition: all 0.3s ease;
   background: ${props =>
-    props.$variant === 'danger' ? '#e74c3c' : (props.$theme?.colors?.primary || defaultColors.primary)};
+    props.$variant === 'danger'
+      ? '#e74c3c'
+      : props.$theme?.colors?.primary || defaultColors.primary};
   color: white;
 
   &:hover {
     background: ${props =>
       props.$variant === 'danger'
         ? '#c0392b'
-        : (props.$theme?.colors?.primary || defaultColors.primary)};
+        : props.$theme?.colors?.primary || defaultColors.primary};
     transform: translateY(-2px);
   }
 `;
@@ -207,7 +213,8 @@ const ItemCheckbox = styled.input<{ $theme: any }>`
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
+  accent-color: ${props =>
+    props.$theme?.colors?.primary || defaultColors.primary};
 `;
 
 const ItemInfo = styled.div<{ $isBought: boolean }>`
@@ -237,7 +244,8 @@ const ItemUnifiedButton = styled.button<{ $theme: any }>`
   height: 28px;
   border-radius: 6px;
   border: none;
-  background: ${props => (props.$theme?.colors?.primary || defaultColors.primary) + '20'};
+  background: ${props =>
+    (props.$theme?.colors?.primary || defaultColors.primary) + '20'};
   color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
   cursor: pointer;
   display: flex;
@@ -247,7 +255,8 @@ const ItemUnifiedButton = styled.button<{ $theme: any }>`
   transition: all 0.3s ease;
 
   &:hover {
-    background: ${props => (props.$theme?.colors?.primary || defaultColors.primary) + '30'};
+    background: ${props =>
+      (props.$theme?.colors?.primary || defaultColors.primary) + '30'};
     transform: scale(1.1);
   }
 `;
@@ -280,15 +289,19 @@ const AddItemForm = styled.form`
 const AddItemInput = styled.input<{ $theme: any }>`
   flex: 1;
   padding: 0.75rem;
-  border: 2px solid ${props => props.$theme?.colors?.border || defaultColors.border};
+  border: 2px solid
+    ${props => props.$theme?.colors?.border || defaultColors.border};
   border-radius: 8px;
   font-size: 0.9rem;
   transition: all 0.3s ease;
 
   &:focus {
     outline: none;
-    border-color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
-    box-shadow: 0 0 0 3px ${props => (props.$theme?.colors?.primary || defaultColors.primary) + '20'};
+    border-color: ${props =>
+      props.$theme?.colors?.primary || defaultColors.primary};
+    box-shadow: 0 0 0 3px
+      ${props =>
+        (props.$theme?.colors?.primary || defaultColors.primary) + '20'};
   }
 `;
 
@@ -296,21 +309,24 @@ const AddItemButton = styled.button<{ $theme: any }>`
   padding: 0.75rem 1rem;
   border-radius: 8px;
   border: none;
-  background: ${props => props.$theme?.colors?.primary || defaultColors.primary};
+  background: ${props =>
+    props.$theme?.colors?.primary || defaultColors.primary};
   color: white;
   cursor: pointer;
   font-weight: 600;
   transition: all 0.3s ease;
 
   &:hover {
-    background: ${props => props.$theme?.colors?.primary || defaultColors.primary};
+    background: ${props =>
+      props.$theme?.colors?.primary || defaultColors.primary};
     transform: translateY(-2px);
   }
 `;
 
 const ListSummary = styled.div<{ $theme: any }>`
   padding: 1rem;
-  background: ${props => (props.$theme?.colors?.primary || defaultColors.primary) + '10'};
+  background: ${props =>
+    (props.$theme?.colors?.primary || defaultColors.primary) + '10'};
   border-radius: 8px;
   margin-top: 1rem;
 
@@ -382,18 +398,26 @@ export default function ShoppingManagement() {
   useEffect(() => {
     const loadCentralizedData = async () => {
       try {
-        const { dataService } = await import('../data/centralized/services/dataService');
-        
+        const { dataService } = await import(
+          '../data/centralized/services/dataService'
+        );
+
         // Carregar categorias
         const categoriesResult = await dataService.getShoppingCategories();
         if (categoriesResult.success) {
           // Mapear para incluir componentes AccessibleEmoji
           const mappedCategories = categoriesResult.data.map((cat: any) => ({
             ...cat,
-            icon: cat.icon === '🛍' ? <AccessibleEmoji emoji='🛍' label='Carrinho' /> :
-                  cat.icon === '💉' ? <AccessibleEmoji emoji='💉' label='Medicamento' /> :
-                  cat.icon === '📦' ? <AccessibleEmoji emoji='📦' label='Pacote' /> :
-                  cat.icon,
+            icon:
+              cat.icon === '🛍' ? (
+                <AccessibleEmoji emoji='🛍' label='Carrinho' />
+              ) : cat.icon === '💉' ? (
+                <AccessibleEmoji emoji='💉' label='Medicamento' />
+              ) : cat.icon === '📦' ? (
+                <AccessibleEmoji emoji='📦' label='Pacote' />
+              ) : (
+                cat.icon
+              ),
           }));
           setCategories(mappedCategories);
         }

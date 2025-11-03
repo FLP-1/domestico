@@ -26,13 +26,14 @@ const Overlay = styled.div<{ $isOpen: boolean }>`
   right: 0;
   bottom: 0;
   background: ${theme.colors.surface.overlay};
-  display: ${props => props.$isOpen ? 'flex' : 'none'};
+  display: ${props => (props.$isOpen ? 'flex' : 'none')};
   align-items: center;
   justify-content: center;
   z-index: ${theme.zIndex.modalBackdrop};
   padding: ${theme.spacing.md};
-  animation: fadeIn ${theme.transitions.duration.normal} ${theme.transitions.timing.easeOut};
-  
+  animation: fadeIn ${theme.transitions.duration.normal}
+    ${theme.transitions.timing.easeOut};
+
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -52,8 +53,9 @@ const ModalContainer = styled.div<{ $size: 'sm' | 'md' | 'lg' | 'xl' }>`
   display: flex;
   flex-direction: column;
   z-index: ${theme.zIndex.modal};
-  animation: slideUp ${theme.transitions.duration.normal} ${theme.transitions.timing.easeOut};
-  
+  animation: slideUp ${theme.transitions.duration.normal}
+    ${theme.transitions.timing.easeOut};
+
   ${props => {
     switch (props.$size) {
       case 'sm':
@@ -67,9 +69,9 @@ const ModalContainer = styled.div<{ $size: 'sm' | 'md' | 'lg' | 'xl' }>`
         return `max-width: 600px;`;
     }
   }}
-  
+
   width: 100%;
-  
+
   @keyframes slideUp {
     from {
       transform: translateY(20px);
@@ -105,12 +107,13 @@ const CloseButton = styled.button`
   cursor: pointer;
   padding: ${theme.spacing.xs};
   line-height: 1;
-  transition: color ${theme.transitions.duration.fast} ${theme.transitions.timing.easeInOut};
-  
+  transition: color ${theme.transitions.duration.fast}
+    ${theme.transitions.timing.easeInOut};
+
   &:hover {
     color: ${theme.colors.text.primary};
   }
-  
+
   &:focus {
     outline: ${theme.borders.width.medium} solid ${theme.colors.border.focus};
     outline-offset: 2px;
@@ -185,7 +188,7 @@ export const Modal: React.FC<ModalProps> = ({
           <ModalHeader>
             {title && <ModalTitle>{title}</ModalTitle>}
             {showCloseButton && (
-              <CloseButton onClick={onClose} aria-label="Fechar">
+              <CloseButton onClick={onClose} aria-label='Fechar'>
                 ×
               </CloseButton>
             )}

@@ -295,14 +295,18 @@ const ReportModal: React.FC<ReportModalProps> = ({
     <UnifiedModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Gerar Relatórios"
+      title='Gerar Relatórios'
       maxWidth='600px'
       footer={
         <>
           <UnifiedButton $variant='secondary' $theme={$theme} onClick={onClose}>
             Cancelar
           </UnifiedButton>
-          <UnifiedButton $variant='primary' $theme={$theme} onClick={handleSubmit}>
+          <UnifiedButton
+            $variant='primary'
+            $theme={$theme}
+            onClick={handleSubmit}
+          >
             <AccessibleEmoji emoji='💾' label='Salvar' /> Gerar Relatórios
           </UnifiedButton>
         </>

@@ -16,7 +16,8 @@ const SelectorContainer = styled.div<{ $theme?: any }>`
   border-radius: 12px;
   padding: 1rem;
   margin-bottom: 1rem;
-  box-shadow: 0 4px 16px ${props => props.$theme?.shadow || 'rgba(0, 0, 0, 0.1)'};
+  box-shadow: 0 4px 16px
+    ${props => props.$theme?.shadow || 'rgba(0, 0, 0, 0.1)'};
   border: 1px solid ${props => props.$theme?.navigation?.primary || '#29ABE2'}20;
 `;
 
@@ -48,16 +49,16 @@ const GroupOption = styled.button<{ $selected: boolean; $color: string }>`
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  border: 2px solid ${props => props.$selected ? props.$color : 'transparent'};
+  border: 2px solid ${props => (props.$selected ? props.$color : 'transparent')};
   border-radius: 8px;
-  background: ${props => props.$selected ? `${props.$color}15` : '#f8f9fa'};
+  background: ${props => (props.$selected ? `${props.$color}15` : '#f8f9fa')};
   cursor: pointer;
   transition: all 0.3s ease;
   width: 100%;
   text-align: left;
 
   &:hover {
-    background: ${props => props.$selected ? `${props.$color}25` : '#e9ecef'};
+    background: ${props => (props.$selected ? `${props.$color}25` : '#e9ecef')};
     transform: translateY(-1px);
   }
 `;
@@ -79,7 +80,7 @@ const GroupInfo = styled.div<{ $theme?: any }>`
 `;
 
 const GroupName = styled.div<{ $selected: boolean; $theme?: any }>`
-  font-weight: ${props => props.$selected ? 600 : 500};
+  font-weight: ${props => (props.$selected ? 600 : 500)};
   color: ${props => props.$theme?.text?.dark || '#2c3e50'};
   font-size: 0.95rem;
 `;
@@ -118,16 +119,19 @@ const ErrorState = styled.div<{ $theme?: any }>`
   border: 1px solid ${props => props.$theme?.status?.error?.border || '#fecaca'};
 `;
 
-const GroupSelector: React.FC<GroupSelectorProps> = ({ theme, onGroupChange }) => {
+const GroupSelector: React.FC<GroupSelectorProps> = ({
+  theme,
+  onGroupChange,
+}) => {
   const { currentProfile } = useUserProfile();
   const { colors: themeColors } = useTheme(currentProfile?.role.toLowerCase());
-  const { 
-    groups, 
-    selectedGroup, 
-    loading, 
-    error, 
-    hasMultipleGroups, 
-    selectGroup 
+  const {
+    groups,
+    selectedGroup,
+    loading,
+    error,
+    hasMultipleGroups,
+    selectGroup,
   } = useUserGroups();
 
   const handleGroupSelect = (groupId: string) => {
@@ -139,7 +143,7 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({ theme, onGroupChange }) =
     return (
       <SelectorContainer $theme={themeColors}>
         <LoadingState $theme={themeColors}>
-          <AccessibleEmoji emoji="⏳" label="Carregando" />
+          <AccessibleEmoji emoji='⏳' label='Carregando' />
           Carregando grupos...
         </LoadingState>
       </SelectorContainer>
@@ -150,7 +154,7 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({ theme, onGroupChange }) =
     return (
       <SelectorContainer $theme={themeColors}>
         <ErrorState $theme={themeColors}>
-          <AccessibleEmoji emoji="❌" label="Erro" />
+          <AccessibleEmoji emoji='❌' label='Erro' />
           {error}
         </ErrorState>
       </SelectorContainer>
@@ -166,7 +170,7 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({ theme, onGroupChange }) =
     <SelectorContainer $theme={themeColors}>
       <SelectorHeader>
         <SelectorTitle $theme={themeColors}>
-          <AccessibleEmoji emoji="🏢" label="Grupo" />
+          <AccessibleEmoji emoji='🏢' label='Grupo' />
           Selecionar Grupo
         </SelectorTitle>
       </SelectorHeader>
@@ -183,17 +187,26 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({ theme, onGroupChange }) =
               {group.icone ? (
                 <AccessibleEmoji emoji={group.icone} label={group.nome} />
               ) : (
-                <AccessibleEmoji emoji="🏢" label="Grupo" />
+                <AccessibleEmoji emoji='🏢' label='Grupo' />
               )}
             </GroupIcon>
-            
+
             <GroupInfo>
-              <GroupName $selected={selectedGroup?.id === group.id} $theme={themeColors}>
+              <GroupName
+                $selected={selectedGroup?.id === group.id}
+                $theme={themeColors}
+              >
                 {group.nome}
-                {group.principal && <PrincipalBadge $theme={themeColors}>Principal</PrincipalBadge>}
+                {group.principal && (
+                  <PrincipalBadge $theme={themeColors}>
+                    Principal
+                  </PrincipalBadge>
+                )}
               </GroupName>
               {group.descricao && (
-                <GroupDescription $theme={themeColors}>{group.descricao}</GroupDescription>
+                <GroupDescription $theme={themeColors}>
+                  {group.descricao}
+                </GroupDescription>
               )}
             </GroupInfo>
           </GroupOption>

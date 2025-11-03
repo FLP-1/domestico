@@ -12,17 +12,18 @@ Após análise detalhada do `schema.prisma`, foram encontradas **55 tabelas** j�
 
 ### **1. Sistema de Comunicação** ✅ **JÁ EXISTE**
 
-| Tabela Proposta (❌ NÃO CRIAR) | Tabela Existente (✅ USAR) | Status |
-|--------------------------------|----------------------------|---------|
-| `contatos` | **NÃO TEM** - Criar! | ⚠️ CRIAR |
-| `conversas` | `Conversa` (linha 364) | ✅ EXISTE |
-| `conversa_participantes` | `ConversaParticipante` (linha 383) | ✅ EXISTE |
-| `mensagens` | `Mensagem` (linha 404) | ✅ EXISTE |
-| - | `MensagemAnexo` (linha 433) | ✅ EXISTE |
-| - | `MensagemLeitura` (linha 452) | ✅ EXISTE |
-| - | `MensagemReacao` (linha 467) | ✅ EXISTE |
+| Tabela Proposta (❌ NÃO CRIAR) | Tabela Existente (✅ USAR)         | Status    |
+| ------------------------------ | ---------------------------------- | --------- |
+| `contatos`                     | **NÃO TEM** - Criar!               | ⚠️ CRIAR  |
+| `conversas`                    | `Conversa` (linha 364)             | ✅ EXISTE |
+| `conversa_participantes`       | `ConversaParticipante` (linha 383) | ✅ EXISTE |
+| `mensagens`                    | `Mensagem` (linha 404)             | ✅ EXISTE |
+| -                              | `MensagemAnexo` (linha 433)        | ✅ EXISTE |
+| -                              | `MensagemLeitura` (linha 452)      | ✅ EXISTE |
+| -                              | `MensagemReacao` (linha 467)       | ✅ EXISTE |
 
 **Campos da Tabela `Conversa`**:
+
 ```prisma
 model Conversa {
   id               String                 @id @default(uuid())
@@ -40,6 +41,7 @@ model Conversa {
 ```
 
 **Campos da Tabela `ConversaParticipante`**:
+
 ```prisma
 model ConversaParticipante {
   id            String    @id @default(uuid())
@@ -57,6 +59,7 @@ model ConversaParticipante {
 ```
 
 **Campos da Tabela `Mensagem`**:
+
 ```prisma
 model Mensagem {
   id             String            @id @default(uuid())
@@ -79,12 +82,13 @@ model Mensagem {
 
 ### **2. Sistema de Empréstimos** ✅ **JÁ EXISTE**
 
-| Tabela Proposta (❌ NÃO CRIAR) | Tabela Existente (✅ USAR) | Status |
-|--------------------------------|----------------------------|---------|
-| `emprestimos` | `Emprestimo` (linha 761) | ✅ EXISTE |
-| `emprestimo_parcelas` | **NÃO TEM** - Adicionar campos | ⚠️ EXPANDIR |
+| Tabela Proposta (❌ NÃO CRIAR) | Tabela Existente (✅ USAR)     | Status      |
+| ------------------------------ | ------------------------------ | ----------- |
+| `emprestimos`                  | `Emprestimo` (linha 761)       | ✅ EXISTE   |
+| `emprestimo_parcelas`          | **NÃO TEM** - Adicionar campos | ⚠️ EXPANDIR |
 
 **Campos da Tabela `Emprestimo`**:
+
 ```prisma
 model Emprestimo {
   id                 String   @id @default(uuid())
@@ -101,6 +105,7 @@ model Emprestimo {
 ```
 
 **⚠️ CAMPOS FALTANDO** (Adicionar à tabela `Emprestimo`):
+
 ```prisma
 // Campos a adicionar:
 tipo              String?   @db.VarChar(20)  // 'loan', 'advance'
@@ -117,14 +122,15 @@ motivoRejeicao    String?   @db.Text          // Se rejeitado, motivo
 
 ### **3. Sistema de Tarefas** ✅ **JÁ EXISTE COMPLETO**
 
-| Tabela Proposta (❌ NÃO CRIAR) | Tabela Existente (✅ USAR) | Status |
-|--------------------------------|----------------------------|---------|
-| `tarefas` | `Tarefa` (linha 526) | ✅ EXISTE |
-| `tarefa_anexos` | `TarefaAnexo` (linha 560) | ✅ EXISTE |
-| `tarefa_comentarios` | `TarefaComentario` (linha 576) | ✅ EXISTE |
-| - | `TarefaDependencia` (linha 592) | ✅ EXISTE |
+| Tabela Proposta (❌ NÃO CRIAR) | Tabela Existente (✅ USAR)      | Status    |
+| ------------------------------ | ------------------------------- | --------- |
+| `tarefas`                      | `Tarefa` (linha 526)            | ✅ EXISTE |
+| `tarefa_anexos`                | `TarefaAnexo` (linha 560)       | ✅ EXISTE |
+| `tarefa_comentarios`           | `TarefaComentario` (linha 576)  | ✅ EXISTE |
+| -                              | `TarefaDependencia` (linha 592) | ✅ EXISTE |
 
 **Campos da Tabela `Tarefa`**:
+
 ```prisma
 model Tarefa {
   id             String              @id @default(uuid())
@@ -154,12 +160,13 @@ model Tarefa {
 
 ### **4. Métricas e Dashboard** ✅ **JÁ EXISTE**
 
-| Tabela Proposta (❌ NÃO CRIAR) | Tabela Existente (✅ USAR) | Status |
-|--------------------------------|----------------------------|---------|
-| `metricas_dashboard` | `MetricaSistema` (linha 1176) | ✅ EXISTE |
-| `estatisticas_sistema` | `EstatisticaSistema` (linha 1037) | ✅ EXISTE |
+| Tabela Proposta (❌ NÃO CRIAR) | Tabela Existente (✅ USAR)        | Status    |
+| ------------------------------ | --------------------------------- | --------- |
+| `metricas_dashboard`           | `MetricaSistema` (linha 1176)     | ✅ EXISTE |
+| `estatisticas_sistema`         | `EstatisticaSistema` (linha 1037) | ✅ EXISTE |
 
 **Campos da Tabela `MetricaSistema`**:
+
 ```prisma
 model MetricaSistema {
   id           String   @id @default(uuid())
@@ -173,6 +180,7 @@ model MetricaSistema {
 ```
 
 **Campos da Tabela `EstatisticaSistema`**:
+
 ```prisma
 model EstatisticaSistema {
   id        String   @id @default(uuid())
@@ -189,16 +197,16 @@ model EstatisticaSistema {
 
 ### **5. Outras Tabelas Relevantes** ✅ **JÁ EXISTEM**
 
-| Tabela | Linha | Uso |
-|--------|-------|-----|
-| `Documento` | 481 | ✅ Gestão de documentos |
-| `FolhaPagamento` | 1126 | ✅ Folha de pagamento |
-| `Notificacao` | 1099 | ✅ Notificações do sistema |
-| `Alerta` | 781 | ✅ Alertas e avisos |
-| `ConfiguracaoSistema` | 1208 | ✅ Configurações dinâmicas |
-| `AtividadeRecente` | 1192 | ✅ Histórico de atividades |
-| `ListaCompras` | 831 | ✅ Listas de compras |
-| `MembroFamilia` | 1053 | ✅ Membros da família |
+| Tabela                | Linha | Uso                        |
+| --------------------- | ----- | -------------------------- |
+| `Documento`           | 481   | ✅ Gestão de documentos    |
+| `FolhaPagamento`      | 1126  | ✅ Folha de pagamento      |
+| `Notificacao`         | 1099  | ✅ Notificações do sistema |
+| `Alerta`              | 781   | ✅ Alertas e avisos        |
+| `ConfiguracaoSistema` | 1208  | ✅ Configurações dinâmicas |
+| `AtividadeRecente`    | 1192  | ✅ Histórico de atividades |
+| `ListaCompras`        | 831   | ✅ Listas de compras       |
+| `MembroFamilia`       | 1053  | ✅ Membros da família      |
 
 ---
 
@@ -215,10 +223,10 @@ model Contato {
   favorito      Boolean  @default(false)
   bloqueado     Boolean  @default(false)
   criadoEm      DateTime @default(now())
-  
+
   usuario       Usuario  @relation("ContatosUsuario", fields: [usuarioId], references: [id], onDelete: Cascade)
   contato       Usuario  @relation("ContatosDeUsuario", fields: [contatoId], references: [id], onDelete: Cascade)
-  
+
   @@unique([usuarioId, contatoId])
   @@index([usuarioId])
   @@index([contatoId])
@@ -240,7 +248,7 @@ ALTER TABLE emprestimos ADD COLUMN data_aprovacao TIMESTAMP;
 ALTER TABLE emprestimos ADD COLUMN motivo_rejeicao TEXT;
 
 -- Adicionar foreign key
-ALTER TABLE emprestimos ADD CONSTRAINT fk_empregado 
+ALTER TABLE emprestimos ADD CONSTRAINT fk_empregado
   FOREIGN KEY (empregado_id) REFERENCES usuarios(id) ON DELETE CASCADE;
 ```
 
@@ -249,16 +257,19 @@ ALTER TABLE emprestimos ADD CONSTRAINT fk_empregado
 ## 🎯 **PLANO DE AÇÃO CORRETO**
 
 ### **Fase 1: Criar o que falta** (Imediato)
+
 1. ✅ Criar tabela `Contato` no schema
 2. ✅ Adicionar campos faltantes em `Emprestimo`
 3. ✅ Executar migration do Prisma
 
 ### **Fase 2: Atualizar Relacionamentos** (1 dia)
+
 1. ✅ Adicionar relações de `Contato` em `Usuario`
 2. ✅ Adicionar relações de `empregadoId` em `Emprestimo`
 3. ✅ Validar integridade referencial
 
 ### **Fase 3: Implementar APIs** (2-3 dias)
+
 1. ✅ API CRUD para Contatos
 2. ✅ API CRUD para Conversas (usar existente)
 3. ✅ API CRUD para Mensagens (usar existente)
@@ -267,6 +278,7 @@ ALTER TABLE emprestimos ADD CONSTRAINT fk_empregado
 6. ✅ API para Métricas do Dashboard
 
 ### **Fase 4: Refatorar Páginas** (3-5 dias)
+
 1. ✅ `communication.tsx` - Usar tabelas de Conversa/Mensagem
 2. ✅ `loan-management.tsx` - Usar tabela Emprestimo
 3. ✅ `payroll-management.tsx` - Usar FolhaPagamento/Documento
@@ -276,13 +288,13 @@ ALTER TABLE emprestimos ADD CONSTRAINT fk_empregado
 
 ## 📊 **COMPARAÇÃO: Proposta vs Realidade**
 
-| Item | Proposta Original | Realidade |
-|------|-------------------|-----------|
-| **Tabelas a criar** | 11 | **2** (Contato + expansão Emprestimo) |
-| **Tabelas existentes** | 0 (não verificado) | **53 relevantes** |
-| **Esforço estimado** | 2-3 semanas | **3-5 dias** |
-| **Migração de dados** | Complexa | **Mínima** |
-| **Risco** | Alto | **Baixo** |
+| Item                   | Proposta Original  | Realidade                             |
+| ---------------------- | ------------------ | ------------------------------------- |
+| **Tabelas a criar**    | 11                 | **2** (Contato + expansão Emprestimo) |
+| **Tabelas existentes** | 0 (não verificado) | **53 relevantes**                     |
+| **Esforço estimado**   | 2-3 semanas        | **3-5 dias**                          |
+| **Migração de dados**  | Complexa           | **Mínima**                            |
+| **Risco**              | Alto               | **Baixo**                             |
 
 ---
 
@@ -309,4 +321,3 @@ Economia de tempo: **2-3 semanas → 3-5 dias** (redução de 80%)
 
 **Data da Análise Corrigida**: 2025-10-08  
 **Status**: ✅ Análise Completa e Correta
-

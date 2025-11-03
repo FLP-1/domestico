@@ -305,7 +305,7 @@ const CertificateUploadModal: React.FC<CertificateUploadModalProps> = ({
     <UnifiedModal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Configurar Certificado Digital"
+      title='Configurar Certificado Digital'
       maxWidth='600px'
       $theme={$theme}
       footer={

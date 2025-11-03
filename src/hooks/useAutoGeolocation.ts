@@ -13,7 +13,7 @@ export const useAutoGeolocation = (options: UseAutoGeolocationOptions = {}) => {
   const {
     intervalMinutes = 5, // Capturar a cada 5 minutos por padrão
     captureOnRouteChange = true,
-    enableLogging = true
+    enableLogging = true,
   } = options;
 
   const { setLastCaptureLocation } = useGeolocationContext();
@@ -37,39 +37,41 @@ export const useAutoGeolocation = (options: UseAutoGeolocationOptions = {}) => {
       }
 
       // Capturar posição atual
-      const position = await new Promise<GeolocationPosition>((resolve: any, reject: any) => {
-        const timeout = setTimeout(() => {
-          reject(new Error('Timeout na captura de geolocalização'));
-        }, 10000); // 10 segundos de timeout
+      const position = await new Promise<GeolocationPosition>(
+        (resolve: any, reject: any) => {
+          const timeout = setTimeout(() => {
+            reject(new Error('Timeout na captura de geolocalização'));
+          }, 10000); // 10 segundos de timeout
 
-        navigator.geolocation.getCurrentPosition(
-          (pos: any) => {
-            clearTimeout(timeout);
-            resolve(pos);
-          },
-          (error: any) => {
-            clearTimeout(timeout);
-            reject(error);
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 60000 // Aceitar posição de até 1 minuto
-          }
-        );
-      });
+          navigator.geolocation.getCurrentPosition(
+            (pos: any) => {
+              clearTimeout(timeout);
+              resolve(pos);
+            },
+            (error: any) => {
+              clearTimeout(timeout);
+              reject(error);
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 60000, // Aceitar posição de até 1 minuto
+            }
+          );
+        }
+      );
 
       // Obter endereço via geocoding usando endpoint interno com máxima precisão
       let address = 'Endereço indisponível na captura';
       let addressComponents = null;
       let hasNumber = false;
-      
+
       try {
         // Usar zoom=19 para máxima precisão (equivalente a 7 casas decimais)
         const response = await fetch(
           `/api/geocoding/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&zoom=19`
         );
-        
+
         if (response.ok) {
           const data = await response.json();
           if (data.success) {
@@ -79,17 +81,21 @@ export const useAutoGeolocation = (options: UseAutoGeolocationOptions = {}) => {
             } else if (data.address) {
               address = data.address;
             }
-            
+
             // Capturar componentes para verificar se tem número
             if (data.components) {
               addressComponents = data.components;
-              hasNumber = !!(data.components.number || data.components.house_number);
-              
+              hasNumber = !!(
+                data.components.number || data.components.house_number
+              );
+
               if (enableLogging && hasNumber) {
                 logger.log('✅ Endereço capturado com número:', {
-                  number: data.components.number || data.components.house_number,
+                  number:
+                    data.components.number || data.components.house_number,
                   street: data.components.street || data.components.road,
-                  neighborhood: data.components.neighborhood || data.components.suburb
+                  neighborhood:
+                    data.components.neighborhood || data.components.suburb,
                 });
               }
             }
@@ -112,7 +118,7 @@ export const useAutoGeolocation = (options: UseAutoGeolocationOptions = {}) => {
         addressComponents,
         hasNumber,
         wifiName,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       setLastCaptureLocation && setLastCaptureLocation(locationData);
@@ -124,10 +130,9 @@ export const useAutoGeolocation = (options: UseAutoGeolocationOptions = {}) => {
           hasNumber,
           accuracy: `${position.coords.accuracy}m`,
           wifiName,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
-
     } catch (error) {
       if (enableLogging) {
         logger.log('❌ Erro na captura automática:', error);
@@ -142,13 +147,18 @@ export const useAutoGeolocation = (options: UseAutoGeolocationOptions = {}) => {
       // captureLocation(); // Removido - causa violações
 
       // Configurar intervalo
-      intervalRef.current = setInterval(() => {
-        // ❌ NÃO capturar automaticamente - viola política de geolocalização
-        // captureLocation(); // Removido - causa violações
-        if (enableLogging) {
-          logger.log('⏰ Intervalo de captura automática atingido - pulado (requer interação do usuário)');
-        }
-      }, intervalMinutes * 60 * 1000); // Converter minutos para milissegundos
+      intervalRef.current = setInterval(
+        () => {
+          // ❌ NÃO capturar automaticamente - viola política de geolocalização
+          // captureLocation(); // Removido - causa violações
+          if (enableLogging) {
+            logger.log(
+              '⏰ Intervalo de captura automática atingido - pulado (requer interação do usuário)'
+            );
+          }
+        },
+        intervalMinutes * 60 * 1000
+      ); // Converter minutos para milissegundos
 
       return () => {
         if (intervalRef.current) {
@@ -171,7 +181,7 @@ export const useAutoGeolocation = (options: UseAutoGeolocationOptions = {}) => {
 
   //     // Escutar mudanças de rota
   //     window.addEventListener('popstate', handleRouteChange);
-      
+
   //     return () => {
   //       window.removeEventListener('popstate', handleRouteChange);
   //     };
@@ -191,7 +201,7 @@ export const useAutoGeolocation = (options: UseAutoGeolocationOptions = {}) => {
   return {
     captureLocation: forceCapture,
     getLastCapture,
-    isCapturing: intervalRef.current !== null
+    isCapturing: intervalRef.current !== null,
   };
 };
 

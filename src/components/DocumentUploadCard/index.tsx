@@ -4,22 +4,25 @@ import AccessibleEmoji from '../AccessibleEmoji';
 import { UnifiedCard, UnifiedButton } from '../unified';
 
 // Styled Components
-const DocumentUploadContainer = styled.div<{ $theme?: any; $isDragOver: boolean }>`
+const DocumentUploadContainer = styled.div<{
+  $theme?: any;
+  $isDragOver: boolean;
+}>`
   transition: all 0.3s ease;
   cursor: pointer;
-  
+
   &:hover {
     transform: translateY(-2px);
   }
 `;
 
 const UploadSection = styled.div<{ $theme?: any; $isDragOver: boolean }>`
-  border: 2px dashed ${props => 
-    props.$isDragOver ? props.$theme.colors.primary : '#e0e0e0'};
+  border: 2px dashed
+    ${props => (props.$isDragOver ? props.$theme.colors.primary : '#e0e0e0')};
   border-radius: 12px;
   padding: 1.5rem;
   text-align: center;
-  background: ${props => 
+  background: ${props =>
     props.$isDragOver ? props.$theme.colors.primary + '10' : 'transparent'};
   transition: all 0.3s ease;
   margin-bottom: 1rem;
@@ -42,7 +45,7 @@ const UploadText = styled.div<{ $theme?: any }>`
     font-size: 1.1rem;
     font-weight: 600;
   }
-  
+
   p {
     margin: 0;
     color: #7f8c8d;
@@ -101,7 +104,7 @@ const DocumentItem = styled.div<{ $theme?: any }>`
   margin-bottom: 0.5rem;
   font-size: 0.8rem;
   color: #7f8c8d;
-  
+
   .document-icon {
     color: ${props => props.$theme.colors.primary};
   }
@@ -166,10 +169,10 @@ export const DocumentUploadCard: React.FC<DocumentUploadCardProps> = ({
     <DocumentUploadContainer $theme={theme} $isDragOver={isDragOver}>
       <UnifiedCard
         theme={theme}
-        variant="default"
-        size="md"
-        icon={<AccessibleEmoji emoji="📄" label="Documentos" />}
-        title="Atestados e Documentos"
+        variant='default'
+        size='md'
+        icon={<AccessibleEmoji emoji='📄' label='Documentos' />}
+        title='Atestados e Documentos'
       >
         <UploadSection
           $theme={theme}
@@ -180,21 +183,21 @@ export const DocumentUploadCard: React.FC<DocumentUploadCardProps> = ({
           onClick={handleClick}
         >
           <UploadIcon $theme={theme}>
-            <AccessibleEmoji emoji="📁" label="Upload" />
+            <AccessibleEmoji emoji='📁' label='Upload' />
           </UploadIcon>
           <UploadText>
             <h3>Enviar Documento</h3>
             <p>Arraste e solte arquivos aqui ou clique para selecionar</p>
           </UploadText>
-          
+
           <UploadButton>
             <UnifiedButton
-              $variant="primary"
+              $variant='primary'
               $theme={theme}
-              $size="sm"
+              $size='sm'
               onClick={handleClick}
             >
-              <AccessibleEmoji emoji="📤" label="Upload" />
+              <AccessibleEmoji emoji='📤' label='Upload' />
               Selecionar Arquivo
             </UnifiedButton>
           </UploadButton>
@@ -202,15 +205,15 @@ export const DocumentUploadCard: React.FC<DocumentUploadCardProps> = ({
 
         <HiddenFileInput
           ref={fileInputRef}
-          type="file"
-          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx"
+          type='file'
+          accept='.pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx'
           onChange={handleFileSelect}
           multiple
         />
 
         <DocumentTypes $theme={theme}>
           <DocumentTypesTitle>
-            <AccessibleEmoji emoji="📋" label="Tipos" />
+            <AccessibleEmoji emoji='📋' label='Tipos' />
             Tipos de Documentos Aceitos:
           </DocumentTypesTitle>
           <DocumentTypesList>
@@ -224,13 +227,13 @@ export const DocumentUploadCard: React.FC<DocumentUploadCardProps> = ({
         {recentDocuments.length > 0 && (
           <RecentDocuments>
             <RecentDocumentsTitle>
-              <AccessibleEmoji emoji="🕒" label="Recentes" />
+              <AccessibleEmoji emoji='🕒' label='Recentes' />
               Documentos Recentes:
             </RecentDocumentsTitle>
             {recentDocuments.slice(0, 3).map((doc: any) => (
               <DocumentItem key={doc.id} $theme={theme}>
-                <span className="document-icon">
-                  <AccessibleEmoji emoji="📄" label="Documento" />
+                <span className='document-icon'>
+                  <AccessibleEmoji emoji='📄' label='Documento' />
                 </span>
                 <span>{doc.name}</span>
                 <DocumentDate>

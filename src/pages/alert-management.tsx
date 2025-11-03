@@ -111,7 +111,8 @@ const StatCard = styled.div<{
   backdrop-filter: blur(20px);
   border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 4px 16px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+  box-shadow: 0 4px 16px
+    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
   border-left: 4px solid
     ${props => {
       switch (props.$variant) {
@@ -131,7 +132,8 @@ const StatCard = styled.div<{
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+    box-shadow: 0 8px 24px
+      ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
   }
 `;
 
@@ -160,7 +162,8 @@ const AlertCard = styled.div<{ $theme: any; $status: 'active' | 'inactive' }>`
   backdrop-filter: blur(20px);
   border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 4px 16px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+  box-shadow: 0 4px 16px
+    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
   border: 1px solid
     ${props =>
       props.$status === 'active'
@@ -171,7 +174,8 @@ const AlertCard = styled.div<{ $theme: any; $status: 'active' | 'inactive' }>`
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+    box-shadow: 0 8px 24px
+      ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
   }
 `;
 
@@ -260,8 +264,8 @@ const AlertUnifiedButton = styled.button<{
         return '#e74c3c';
       default:
         return props.$theme?.colors?.primary || defaultColors.primary;
-      }
-    }};
+    }
+  }};
   color: white;
 
   &:hover {
@@ -285,7 +289,8 @@ const CreateAlertSection = styled.div<{ $theme: any }>`
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 4px 16px ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+  box-shadow: 0 4px 16px
+    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
 `;
 
 const SectionTitle = styled.h3`
@@ -322,14 +327,16 @@ const ConditionRow = styled.div`
 const ConditionInput = styled.input<{ $theme: any }>`
   flex: 1;
   padding: 0.5rem;
-  border: 1px solid ${props => props.$theme?.colors?.border || defaultColors.border};
+  border: 1px solid
+    ${props => props.$theme?.colors?.border || defaultColors.border};
   border-radius: 4px;
   font-size: 0.85rem;
 `;
 
 const ConditionSelect = styled(Select)<{ $theme: any }>`
   padding: 0.5rem;
-  border: 1px solid ${props => props.$theme?.colors?.border || defaultColors.border};
+  border: 1px solid
+    ${props => props.$theme?.colors?.border || defaultColors.border};
   border-radius: 4px;
   font-size: 0.85rem;
   background: white;
@@ -339,7 +346,8 @@ const AddConditionButton = styled.button<{ $theme: any }>`
   padding: 0.5rem 1rem;
   border-radius: 6px;
   border: none;
-  background: ${props => props.$theme?.colors?.primary || defaultColors.primary};
+  background: ${props =>
+    props.$theme?.colors?.primary || defaultColors.primary};
   color: white;
   cursor: pointer;
   font-size: 0.8rem;
@@ -347,7 +355,8 @@ const AddConditionButton = styled.button<{ $theme: any }>`
   transition: all 0.3s ease;
 
   &:hover {
-    background: ${props => props.$theme?.colors?.primary || defaultColors.primary};
+    background: ${props =>
+      props.$theme?.colors?.primary || defaultColors.primary};
   }
 `;
 
@@ -369,9 +378,11 @@ const RemoveConditionButton = styled.button`
 const NotificationPreview = styled.div<{ $theme: any }>`
   margin-top: 1rem;
   padding: 1rem;
-  background: ${props => (props.$theme?.colors?.primary || defaultColors.primary) + '10'};
+  background: ${props =>
+    (props.$theme?.colors?.primary || defaultColors.primary) + '10'};
   border-radius: 8px;
-  border: 1px solid ${props => (props.$theme?.colors?.primary || defaultColors.primary) + '30'};
+  border: 1px solid
+    ${props => (props.$theme?.colors?.primary || defaultColors.primary) + '30'};
 `;
 
 const PreviewTitle = styled.h4`
@@ -787,7 +798,8 @@ export default function AlertManagement() {
           <OptimizedFormRow>
             <FormGroupFlex>
               <OptimizedLabel>Título do Alerta</OptimizedLabel>
-              <Input $theme={theme}
+              <Input
+                $theme={theme}
                 type='text'
                 value={newAlert.title}
                 onChange={e =>
@@ -805,7 +817,7 @@ export default function AlertManagement() {
                 id='alert-type'
                 $theme={theme}
                 value={newAlert.type}
-                title="Tipo de Alerta"
+                title='Tipo de Alerta'
                 onChange={e =>
                   setNewAlert(prev => ({ ...prev, type: e.target.value }))
                 }
@@ -824,7 +836,8 @@ export default function AlertManagement() {
 
           <FormGroup>
             <OptimizedLabel>Descrição</OptimizedLabel>
-            <Input $theme={theme}
+            <Input
+              $theme={theme}
               type='text'
               value={newAlert.description}
               onChange={e =>
@@ -840,7 +853,8 @@ export default function AlertManagement() {
           <OptimizedFormRow>
             <FormGroupFlex>
               <OptimizedLabel>Data</OptimizedLabel>
-              <Input $theme={theme}
+              <Input
+                $theme={theme}
                 type='date'
                 value={newAlert.date}
                 onChange={e =>
@@ -851,7 +865,8 @@ export default function AlertManagement() {
             </FormGroupFlex>
             <FormGroupFlex>
               <OptimizedLabel>Hora</OptimizedLabel>
-              <Input $theme={theme}
+              <Input
+                $theme={theme}
                 type='time'
                 value={newAlert.time}
                 onChange={e =>
@@ -862,9 +877,10 @@ export default function AlertManagement() {
             </FormGroupFlex>
             <FormGroupFlex>
               <OptimizedLabel>Frequência</OptimizedLabel>
-              <Select $theme={theme}
+              <Select
+                $theme={theme}
                 value={newAlert.frequency}
-                title="Frequência do Alerta"
+                title='Frequência do Alerta'
                 onChange={e =>
                   setNewAlert(prev => ({
                     ...prev,
@@ -885,9 +901,10 @@ export default function AlertManagement() {
           <OptimizedFormRow>
             <FormGroupFlex>
               <OptimizedLabel>Tipo de Notificação</OptimizedLabel>
-              <Select $theme={theme}
+              <Select
+                $theme={theme}
                 value={newAlert.notificationType}
-                title="Tipo de Notificação"
+                title='Tipo de Notificação'
                 onChange={e =>
                   setNewAlert(prev => ({
                     ...prev,
@@ -906,7 +923,8 @@ export default function AlertManagement() {
 
           <FormGroup>
             <OptimizedLabel>Texto da Notificação</OptimizedLabel>
-            <Input $theme={theme}
+            <Input
+              $theme={theme}
               type='text'
               value={newAlert.notificationText}
               onChange={e =>
@@ -1009,7 +1027,8 @@ export default function AlertManagement() {
         <OptimizedFormRow>
           <FormGroup>
             <OptimizedLabel>Buscar Alertas</OptimizedLabel>
-            <Input $theme={theme}
+            <Input
+              $theme={theme}
               type='text'
               value={filters.search}
               onChange={e =>
@@ -1020,9 +1039,10 @@ export default function AlertManagement() {
           </FormGroup>
           <FormGroup>
             <OptimizedLabel>Tipo</OptimizedLabel>
-            <Select $theme={theme}
+            <Select
+              $theme={theme}
               value={filters.type}
-              title="Filtrar por Tipo"
+              title='Filtrar por Tipo'
               onChange={e =>
                 setFilters(prev => ({ ...prev, type: e.target.value }))
               }
@@ -1038,9 +1058,10 @@ export default function AlertManagement() {
           </FormGroup>
           <FormGroup>
             <OptimizedLabel>Status</OptimizedLabel>
-            <Select $theme={theme}
+            <Select
+              $theme={theme}
               value={filters.status}
-              title="Filtrar por Status"
+              title='Filtrar por Status'
               onChange={e =>
                 setFilters(prev => ({ ...prev, status: e.target.value }))
               }
@@ -1170,7 +1191,8 @@ export default function AlertManagement() {
             <OptimizedFormRow>
               <FormGroupFlex>
                 <OptimizedLabel>Título do Alerta</OptimizedLabel>
-                <Input $theme={theme}
+                <Input
+                  $theme={theme}
                   type='text'
                   value={newAlert.title}
                   onChange={e =>
@@ -1181,7 +1203,8 @@ export default function AlertManagement() {
               </FormGroupFlex>
               <FormGroupFlex>
                 <OptimizedLabel>Tipo de Alerta</OptimizedLabel>
-                <Select $theme={theme}
+                <Select
+                  $theme={theme}
                   value={newAlert.type}
                   onChange={e =>
                     setNewAlert(prev => ({ ...prev, type: e.target.value }))
@@ -1201,7 +1224,8 @@ export default function AlertManagement() {
 
             <FormGroup>
               <OptimizedLabel>Descrição</OptimizedLabel>
-              <Input $theme={theme}
+              <Input
+                $theme={theme}
                 type='text'
                 value={newAlert.description}
                 onChange={e =>
@@ -1216,7 +1240,8 @@ export default function AlertManagement() {
             <OptimizedFormRow>
               <FormGroupFlex>
                 <OptimizedLabel>Data</OptimizedLabel>
-                <Input $theme={theme}
+                <Input
+                  $theme={theme}
                   type='date'
                   value={newAlert.date}
                   onChange={e =>
@@ -1227,7 +1252,8 @@ export default function AlertManagement() {
               </FormGroupFlex>
               <FormGroupFlex>
                 <OptimizedLabel>Hora</OptimizedLabel>
-                <Input $theme={theme}
+                <Input
+                  $theme={theme}
                   type='time'
                   value={newAlert.time}
                   onChange={e =>
@@ -1238,7 +1264,8 @@ export default function AlertManagement() {
               </FormGroupFlex>
               <FormGroupFlex>
                 <OptimizedLabel>Frequência</OptimizedLabel>
-                <Select $theme={theme}
+                <Select
+                  $theme={theme}
                   value={newAlert.frequency}
                   onChange={e =>
                     setNewAlert(prev => ({
@@ -1261,7 +1288,8 @@ export default function AlertManagement() {
             <OptimizedFormRow>
               <FormGroupFlex>
                 <OptimizedLabel>Tipo de Notificação</OptimizedLabel>
-                <Select $theme={theme}
+                <Select
+                  $theme={theme}
                   value={newAlert.notificationType}
                   onChange={e =>
                     setNewAlert(prev => ({
@@ -1282,7 +1310,8 @@ export default function AlertManagement() {
 
             <FormGroup>
               <OptimizedLabel>Texto da Notificação</OptimizedLabel>
-              <Input $theme={theme}
+              <Input
+                $theme={theme}
                 type='text'
                 value={newAlert.notificationText}
                 onChange={e =>

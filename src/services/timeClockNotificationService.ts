@@ -3,7 +3,11 @@
 
 export interface TimeClockNotification {
   id: string;
-  tipo: 'pending_approval' | 'overtime_request' | 'time_record' | 'geolocation_issue';
+  tipo:
+    | 'pending_approval'
+    | 'overtime_request'
+    | 'time_record'
+    | 'geolocation_issue';
   titulo: string;
   mensagem: string;
   timestamp: string;
@@ -69,8 +73,8 @@ class TimeClockNotificationService {
         callback: () => {
           // Abrir modal de aprovação
           window.dispatchEvent(new CustomEvent('openPendingApproval'));
-        }
-      }
+        },
+      },
     };
 
     // ✅ Sistema simplificado - apenas armazenar localmente
@@ -110,8 +114,8 @@ class TimeClockNotificationService {
         callback: () => {
           // Abrir modal de aprovação de horas extras
           window.dispatchEvent(new CustomEvent('openOvertimeApproval'));
-        }
-      }
+        },
+      },
     };
 
     // ✅ Sistema simplificado - apenas armazenar localmente
@@ -131,11 +135,13 @@ class TimeClockNotificationService {
     tipoRegistro: string;
   }): Promise<void> {
     const isHighPrecision = data.precisao > 500; // Mais de 500m é impreciso
-    
+
     const notification: TimeClockNotification = {
       id: this.generateId(),
       tipo: 'geolocation_issue',
-      titulo: isHighPrecision ? 'Geolocalização Imprecisa' : 'Registro com Localização',
+      titulo: isHighPrecision
+        ? 'Geolocalização Imprecisa'
+        : 'Registro com Localização',
       mensagem: `${data.usuarioNome} registrou ${data.tipoRegistro} com precisão de ${Math.round(data.precisao)}m em ${data.endereco}`,
       timestamp: new Date().toISOString(),
       lida: false,
@@ -146,7 +152,7 @@ class TimeClockNotificationService {
         tipoRegistro: data.tipoRegistro,
         endereco: data.endereco,
         precisao: data.precisao,
-      }
+      },
     };
 
     // ✅ Sistema simplificado - apenas armazenar localmente
@@ -159,7 +165,9 @@ class TimeClockNotificationService {
    * Marcar notificação como lida
    */
   markAsRead(notificationId: string): void {
-    const notification = this.timeClockNotifications.find(n => n.id === notificationId);
+    const notification = this.timeClockNotifications.find(
+      n => n.id === notificationId
+    );
     if (notification) {
       notification.lida = true;
       this.saveTimeClockNotifications();
@@ -183,7 +191,9 @@ class TimeClockNotificationService {
   /**
    * Obter notificações por tipo
    */
-  getNotificationsByType(tipo: TimeClockNotification['tipo']): TimeClockNotification[] {
+  getNotificationsByType(
+    tipo: TimeClockNotification['tipo']
+  ): TimeClockNotification[] {
     return this.timeClockNotifications.filter(n => n.tipo === tipo);
   }
 
@@ -209,7 +219,10 @@ class TimeClockNotificationService {
    */
   private saveTimeClockNotifications(): void {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('timeClockNotifications', JSON.stringify(this.timeClockNotifications));
+      localStorage.setItem(
+        'timeClockNotifications',
+        JSON.stringify(this.timeClockNotifications)
+      );
     }
   }
 

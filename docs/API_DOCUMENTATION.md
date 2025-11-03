@@ -26,12 +26,13 @@ Autentica um usuário e retorna um token JWT.
 **Rate Limit:** 5 requisições por 15 minutos
 
 **Request Body:**
+
 ```json
 {
   "cpf": "12345678901",
   "senha": "senha123",
   "locationData": {
-    "latitude": -23.550520,
+    "latitude": -23.55052,
     "longitude": -46.633308,
     "accuracy": 10
   }
@@ -39,6 +40,7 @@ Autentica um usuário e retorna um token JWT.
 ```
 
 **Response 200 (Success):**
+
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -64,6 +66,7 @@ Autentica um usuário e retorna um token JWT.
 ```
 
 **Response 401 (Unauthorized):**
+
 ```json
 {
   "message": "Credenciais inválidas"
@@ -71,6 +74,7 @@ Autentica um usuário e retorna um token JWT.
 ```
 
 **Response 429 (Too Many Requests):**
+
 ```json
 {
   "error": "Muitas tentativas de login. Por favor, aguarde 15 minutos.",
@@ -85,6 +89,7 @@ Autentica um usuário e retorna um token JWT.
 Obtém um token CSRF para proteção contra ataques CSRF.
 
 **Response 200:**
+
 ```json
 {
   "csrfToken": "a1b2c3d4e5f6..."
@@ -106,12 +111,13 @@ Registra um ponto (entrada, saída, pausa).
 **Rate Limit:** 100 requisições por 15 minutos
 
 **Request Body:**
+
 ```json
 {
   "usuarioId": "uuid",
   "localId": "uuid",
   "tipo": "ENTRADA",
-  "latitude": -23.550520,
+  "latitude": -23.55052,
   "longitude": -46.633308,
   "observacao": "Registro normal"
 }
@@ -120,6 +126,7 @@ Registra um ponto (entrada, saída, pausa).
 **Tipos válidos:** `ENTRADA`, `SAIDA`, `PAUSA`, `RETORNO_PAUSA`
 
 **Response 200 (Success):**
+
 ```json
 {
   "success": true,
@@ -127,7 +134,7 @@ Registra um ponto (entrada, saída, pausa).
     "id": "uuid",
     "tipo": "ENTRADA",
     "dataHora": "2025-10-30T08:00:00.000Z",
-    "latitude": -23.550520,
+    "latitude": -23.55052,
     "longitude": -46.633308
   },
   "geofencingValidado": true,
@@ -136,6 +143,7 @@ Registra um ponto (entrada, saída, pausa).
 ```
 
 **Response 400 (Geofencing Failed):**
+
 ```json
 {
   "error": "Você está fora da área permitida para registro de ponto",
@@ -153,6 +161,7 @@ Lista o histórico de registros de ponto de um usuário.
 **Autenticação:** Requerida
 
 **Query Parameters:**
+
 - `usuarioId` (required): ID do usuário
 - `startDate` (optional): Data inicial (ISO 8601)
 - `endDate` (optional): Data final (ISO 8601)
@@ -160,6 +169,7 @@ Lista o histórico de registros de ponto de um usuário.
 - `pageSize` (optional): Itens por página (padrão: 20, máx: 100)
 
 **Response 200:**
+
 ```json
 {
   "registros": [
@@ -167,7 +177,7 @@ Lista o histórico de registros de ponto de um usuário.
       "id": "uuid",
       "tipo": "ENTRADA",
       "dataHora": "2025-10-30T08:00:00.000Z",
-      "latitude": -23.550520,
+      "latitude": -23.55052,
       "longitude": -46.633308,
       "localTrabalho": {
         "id": "uuid",
@@ -195,12 +205,14 @@ Faz upload de um documento.
 **Tamanho Máximo:** 10MB
 
 **Request Body (multipart/form-data):**
+
 - `usuarioId`: ID do usuário
 - `nome`: Nome do arquivo
 - `tipo`: Tipo do documento (`RG`, `CPF`, `CTPS`, `CONTRATO`, etc.)
 - `file`: Arquivo binário
 
 **Response 201 (Success):**
+
 ```json
 {
   "success": true,
@@ -216,6 +228,7 @@ Faz upload de um documento.
 ```
 
 **Response 400 (File Too Large):**
+
 ```json
 {
   "error": "Arquivo muito grande",
@@ -233,12 +246,14 @@ Lista documentos de um usuário.
 **Autenticação:** Requerida
 
 **Query Parameters:**
+
 - `usuarioId` (required): ID do usuário
 - `tipo` (optional): Filtrar por tipo de documento
 - `page` (optional): Número da página
 - `pageSize` (optional): Itens por página
 
 **Response 200:**
+
 ```json
 {
   "documentos": [
@@ -266,6 +281,7 @@ Deleta um documento.
 **Autorização:** Apenas o dono do documento ou admin
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -274,6 +290,7 @@ Deleta um documento.
 ```
 
 **Response 404:**
+
 ```json
 {
   "error": "Documento não encontrado"
@@ -284,14 +301,14 @@ Deleta um documento.
 
 ## Códigos de Erro
 
-| Código | Descrição |
-|--------|-----------|
-| 400 | Bad Request - Dados inválidos ou ausentes |
-| 401 | Unauthorized - Token ausente ou inválido |
-| 403 | Forbidden - Permissão insuficiente |
-| 404 | Not Found - Recurso não encontrado |
-| 429 | Too Many Requests - Rate limit excedido |
-| 500 | Internal Server Error - Erro no servidor |
+| Código | Descrição                                 |
+| ------ | ----------------------------------------- |
+| 400    | Bad Request - Dados inválidos ou ausentes |
+| 401    | Unauthorized - Token ausente ou inválido  |
+| 403    | Forbidden - Permissão insuficiente        |
+| 404    | Not Found - Recurso não encontrado        |
+| 429    | Too Many Requests - Rate limit excedido   |
+| 500    | Internal Server Error - Erro no servidor  |
 
 ---
 
@@ -299,13 +316,14 @@ Deleta um documento.
 
 Diferentes endpoints têm diferentes limites de taxa:
 
-| Endpoint | Limite |
-|----------|--------|
-| `/api/auth/login` | 5 req / 15 min |
-| `/api/documents/upload` | 10 req / 1 hora |
-| APIs gerais | 100 req / 15 min |
+| Endpoint                | Limite           |
+| ----------------------- | ---------------- |
+| `/api/auth/login`       | 5 req / 15 min   |
+| `/api/documents/upload` | 10 req / 1 hora  |
+| APIs gerais             | 100 req / 15 min |
 
 Quando o limite é excedido, a resposta inclui:
+
 - Status: 429
 - Header `Retry-After`: Segundos até poder tentar novamente
 - Header `X-RateLimit-Limit`: Limite total
@@ -317,13 +335,17 @@ Quando o limite é excedido, a resposta inclui:
 ## Segurança
 
 ### HTTPS
+
 Todas as requisições em produção devem usar HTTPS.
 
 ### CSRF Protection
+
 Requisições que modificam dados (POST, PUT, DELETE) requerem um token CSRF no header `x-csrf-token`.
 
 ### Headers de Segurança
+
 Todas as respostas incluem headers de segurança:
+
 - `X-Content-Type-Options: nosniff`
 - `X-Frame-Options: DENY`
 - `X-XSS-Protection: 1; mode=block`
@@ -333,6 +355,7 @@ Todas as respostas incluem headers de segurança:
 ## Webhooks (Futuro)
 
 Planejado para notificações de eventos importantes:
+
 - Novo registro de ponto
 - Documento aprovado/rejeitado
 - Evento eSocial processado
@@ -342,5 +365,6 @@ Planejado para notificações de eventos importantes:
 ## Suporte
 
 Para questões sobre a API, entre em contato:
+
 - Email: api@sistemadom.com
 - Documentação: https://docs.sistemadom.com

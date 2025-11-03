@@ -1,7 +1,10 @@
 import prisma from '@/lib/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
     switch (req.method) {
       case 'GET':
@@ -13,11 +16,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       case 'DELETE':
         return await deleteUserType(req, res);
       default:
-        return res.status(405).json({ success: false, error: 'Método não permitido' });
+        return res
+          .status(405)
+          .json({ success: false, error: 'Método não permitido' });
     }
   } catch (error) {
     console.error('Erro na API de tipos de usuário:', error);
-    return res.status(500).json({ success: false, error: 'Erro interno do servidor' });
+    return res
+      .status(500)
+      .json({ success: false, error: 'Erro interno do servidor' });
   } finally {
     await prisma.$disconnect();
   }
@@ -125,5 +132,7 @@ async function deleteUserType(req: NextApiRequest, res: NextApiResponse) {
     where: { id: id as string },
   });
 
-  return res.status(200).json({ success: true, message: 'Tipo de usuário excluído com sucesso' });
+  return res
+    .status(200)
+    .json({ success: true, message: 'Tipo de usuário excluído com sucesso' });
 }

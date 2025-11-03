@@ -2,10 +2,15 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../lib/prisma';
 import { getCurrentUserId } from '../../../lib/configService';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', ['GET']);
-    return res.status(405).json({ success: false, error: 'Método não permitido' });
+    return res
+      .status(405)
+      .json({ success: false, error: 'Método não permitido' });
   }
 
   try {
@@ -24,14 +29,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const last = await prisma.registroPonto.findFirst({
       where: { usuarioId },
-      orderBy: { dataHora: 'desc' }
+      orderBy: { dataHora: 'desc' },
     });
 
     return res.status(200).json({ success: true, data: last });
   } catch (error) {
     console.error('Erro em /api/time-clock/last', error);
-    return res.status(500).json({ success: false, error: 'Erro interno do servidor' });
+    return res
+      .status(500)
+      .json({ success: false, error: 'Erro interno do servidor' });
   }
 }
-
-

@@ -38,28 +38,37 @@ const Header = styled.div<{ $theme?: any }>`
 `;
 
 const Title = styled.h1<{ $theme?: any }>`
-  color: ${props => props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
   margin: 0;
 `;
 
 const Button = styled.button<{ $theme?: any }>`
-  background: ${props => props.$theme?.colors?.button?.primary?.background || geofencingColors.button.primary.background};
-  color: ${props => props.$theme?.colors?.button?.primary?.text || geofencingColors.button.primary.text};
+  background: ${props =>
+    props.$theme?.colors?.button?.primary?.background ||
+    geofencingColors.button.primary.background};
+  color: ${props =>
+    props.$theme?.colors?.button?.primary?.text ||
+    geofencingColors.button.primary.text};
   border: none;
   padding: 12px 24px;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  
+
   &:hover {
-    background: ${props => props.$theme?.colors?.button?.primary?.hover || geofencingColors.button.primary.hover};
+    background: ${props =>
+      props.$theme?.colors?.button?.primary?.hover ||
+      geofencingColors.button.primary.hover};
   }
 `;
 
 const Card = styled.div<{ $theme?: any }>`
-  background: ${props => props.$theme?.colors?.background?.primary || geofencingColors.background.primary};
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
+    geofencingColors.background.primary};
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
   margin-bottom: 20px;
 `;
@@ -73,16 +82,23 @@ const CardHeader = styled.div<{ $theme?: any }>`
 
 const CardTitle = styled.h3<{ $theme?: any }>`
   margin: 0;
-  color: ${props => props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
 `;
 
 const StatusBadge = styled.span<{ $active: boolean; $theme?: any }>`
-  background: ${props => props.$active 
-    ? (props.$theme?.colors?.status?.success?.background || geofencingColors.status.success.background)
-    : (props.$theme?.colors?.status?.error?.background || geofencingColors.status.error.background)};
-  color: ${props => props.$active 
-    ? (props.$theme?.colors?.status?.success?.text || geofencingColors.status.success.text)
-    : (props.$theme?.colors?.status?.error?.text || geofencingColors.status.error.text)};
+  background: ${props =>
+    props.$active
+      ? props.$theme?.colors?.status?.success?.background ||
+        geofencingColors.status.success.background
+      : props.$theme?.colors?.status?.error?.background ||
+        geofencingColors.status.error.background};
+  color: ${props =>
+    props.$active
+      ? props.$theme?.colors?.status?.success?.text ||
+        geofencingColors.status.success.text
+      : props.$theme?.colors?.status?.error?.text ||
+        geofencingColors.status.error.text};
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
@@ -104,17 +120,21 @@ const InfoItem = styled.div<{ $theme?: any }>`
 
 const Label = styled.span<{ $theme?: any }>`
   font-weight: bold;
-  color: ${props => props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
   font-size: 14px;
 `;
 
 const Value = styled.span<{ $theme?: any }>`
-  color: ${props => props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
   font-size: 16px;
 `;
 
 const Coordinates = styled.div<{ $theme?: any }>`
-  background: ${props => props.$theme?.colors?.background?.secondary || geofencingColors.background.secondary};
+  background: ${props =>
+    props.$theme?.colors?.background?.secondary ||
+    geofencingColors.background.secondary};
   padding: 10px;
   border-radius: 5px;
   font-family: monospace;
@@ -126,13 +146,16 @@ const Actions = styled.div<{ $theme?: any }>`
   gap: 10px;
 `;
 
-const ActionButton = styled.button<{ $variant?: 'primary' | 'secondary' | 'danger'; $theme?: any }>`
+const ActionButton = styled.button<{
+  $variant?: 'primary' | 'secondary' | 'danger';
+  $theme?: any;
+}>`
   padding: 8px 16px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
-  
+
   ${props => {
     switch (props.$variant) {
       case 'danger':
@@ -158,13 +181,13 @@ const ActionButton = styled.button<{ $variant?: 'primary' | 'secondary' | 'dange
 `;
 
 const Modal = styled.div<{ $show: boolean }>`
-  display: ${props => props.$show ? 'flex' : 'none'};
+  display: ${props => (props.$show ? 'flex' : 'none')};
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
   z-index: 1000;
@@ -189,7 +212,8 @@ const ModalHeader = styled.div<{ $theme?: any }>`
 
 const ModalTitle = styled.h2<{ $theme?: any }>`
   margin: 0;
-  color: ${props => props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
 `;
 
 const CloseButton = styled.button<{ $theme?: any }>`
@@ -197,7 +221,8 @@ const CloseButton = styled.button<{ $theme?: any }>`
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: ${props => props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
 `;
 
 const Form = styled.form<{ $theme?: any }>`
@@ -214,37 +239,48 @@ const FormGroup = styled.div<{ $theme?: any }>`
 
 const Input = styled.input<{ $theme?: any }>`
   padding: 12px;
-  border: 1px solid ${props => props.$theme?.colors?.border?.primary || geofencingColors.border.primary};
+  border: 1px solid
+    ${props =>
+      props.$theme?.colors?.border?.primary || geofencingColors.border.primary};
   border-radius: 5px;
   font-size: 16px;
-  
+
   &:focus {
     outline: none;
-    border-color: ${props => props.$theme?.colors?.border?.focus || geofencingColors.border.focus};
+    border-color: ${props =>
+      props.$theme?.colors?.border?.focus || geofencingColors.border.focus};
   }
 `;
 
 const Select = styled.select<{ $theme?: any }>`
   padding: 12px;
-  border: 1px solid ${props => props.$theme?.colors?.border?.primary || geofencingColors.border.primary};
+  border: 1px solid
+    ${props =>
+      props.$theme?.colors?.border?.primary || geofencingColors.border.primary};
   border-radius: 5px;
   font-size: 16px;
-  
+
   &:focus {
     outline: none;
-    border-color: ${props => props.$theme?.colors?.border?.focus || geofencingColors.border.focus};
+    border-color: ${props =>
+      props.$theme?.colors?.border?.focus || geofencingColors.border.focus};
   }
 `;
 
 const Loading = styled.div<{ $theme?: any }>`
   text-align: center;
   padding: 40px;
-  color: ${props => props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
 `;
 
 const Error = styled.div<{ $theme?: any }>`
-  background: ${props => props.$theme?.colors?.status?.error?.background || geofencingColors.status.error.background};
-  color: ${props => props.$theme?.colors?.status?.error?.text || geofencingColors.status.error.text};
+  background: ${props =>
+    props.$theme?.colors?.status?.error?.background ||
+    geofencingColors.status.error.background};
+  color: ${props =>
+    props.$theme?.colors?.status?.error?.text ||
+    geofencingColors.status.error.text};
   padding: 15px;
   border-radius: 5px;
   margin-bottom: 20px;
@@ -256,12 +292,14 @@ const EmptyState = styled.div<{ $theme?: any }>`
 `;
 
 const EmptyStateTitle = styled.h3<{ $theme?: any }>`
-  color: ${props => props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
   margin: 0 0 10px 0;
 `;
 
 const EmptyStateText = styled.p<{ $theme?: any }>`
-  color: ${props => props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
   margin: 0;
 `;
 
@@ -277,12 +315,12 @@ export default function LocaisTrabalho() {
   const [showModal, setShowModal] = useState(false);
   const [editingLocal, setEditingLocal] = useState<LocalTrabalho | null>(null);
   const [grupos, setGrupos] = useState<any[]>([]);
-  
+
   const [formData, setFormData] = useState({
     nome: '',
     endereco: '',
     raio: 200,
-    grupoId: ''
+    grupoId: '',
   });
 
   useEffect(() => {
@@ -291,7 +329,7 @@ export default function LocaisTrabalho() {
     //   router.push('/login');
     //   return;
     // }
-    
+
     loadLocais();
     loadGrupos();
   }, [router]);
@@ -326,11 +364,13 @@ export default function LocaisTrabalho() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
-      const url = editingLocal ? '/api/geofencing/locais' : '/api/geofencing/locais';
+      const url = editingLocal
+        ? '/api/geofencing/locais'
+        : '/api/geofencing/locais';
       const method = editingLocal ? 'PUT' : 'POST';
-      
+
       const response = await fetch(url, {
         method,
         headers: {
@@ -338,7 +378,7 @@ export default function LocaisTrabalho() {
         },
         body: JSON.stringify({
           ...formData,
-          ...(editingLocal && { id: editingLocal.id })
+          ...(editingLocal && { id: editingLocal.id }),
         }),
       });
 
@@ -362,7 +402,7 @@ export default function LocaisTrabalho() {
       nome: local.nome,
       endereco: local.endereco,
       raio: local.raio,
-      grupoId: local.grupo.id
+      grupoId: local.grupo.id,
     });
     setShowModal(true);
   };
@@ -370,7 +410,7 @@ export default function LocaisTrabalho() {
   const handleDelete = async (id: string) => {
     // eslint-disable-next-line no-alert
     if (!window.confirm('Tem certeza que deseja excluir este local?')) return;
-    
+
     try {
       const response = await fetch('/api/geofencing/locais', {
         method: 'DELETE',
@@ -400,7 +440,9 @@ export default function LocaisTrabalho() {
   if (themeLoading || !theme) {
     return (
       <Container>
-        <Loading $theme={theme || { colors: { text: { secondary: '#666' } } }}>Carregando tema...</Loading>
+        <Loading $theme={theme || { colors: { text: { secondary: '#666' } } }}>
+          Carregando tema...
+        </Loading>
       </Container>
     );
   }
@@ -416,9 +458,17 @@ export default function LocaisTrabalho() {
   return (
     <Container>
       <Header>
-        <Title $theme={theme}><span role="img" aria-label="office">🏢</span> Locais de Trabalho</Title>
+        <Title $theme={theme}>
+          <span role='img' aria-label='office'>
+            🏢
+          </span>{' '}
+          Locais de Trabalho
+        </Title>
         <Button $theme={theme} onClick={openModal}>
-          <span role="img" aria-label="plus">➕</span> Novo Local
+          <span role='img' aria-label='plus'>
+            ➕
+          </span>{' '}
+          Novo Local
         </Button>
       </Header>
 
@@ -427,8 +477,13 @@ export default function LocaisTrabalho() {
       {locais.length === 0 ? (
         <Card $theme={theme}>
           <EmptyState $theme={theme}>
-            <EmptyStateTitle $theme={theme}>Nenhum local de trabalho encontrado</EmptyStateTitle>
-            <EmptyStateText $theme={theme}>Clique em &quot;Novo Local&quot; para adicionar o primeiro local de trabalho.</EmptyStateText>
+            <EmptyStateTitle $theme={theme}>
+              Nenhum local de trabalho encontrado
+            </EmptyStateTitle>
+            <EmptyStateText $theme={theme}>
+              Clique em &quot;Novo Local&quot; para adicionar o primeiro local
+              de trabalho.
+            </EmptyStateText>
           </EmptyState>
         </Card>
       ) : (
@@ -440,42 +495,49 @@ export default function LocaisTrabalho() {
                 {local.ativo ? 'Ativo' : 'Inativo'}
               </StatusBadge>
             </CardHeader>
-            
+
             <CardContent>
               <InfoItem>
                 <Label $theme={theme}>Endereço</Label>
                 <Value $theme={theme}>{local.endereco}</Value>
               </InfoItem>
-              
+
               <InfoItem>
                 <Label $theme={theme}>Grupo</Label>
                 <Value $theme={theme}>{local.grupo.nome}</Value>
               </InfoItem>
-              
+
               <InfoItem>
                 <Label $theme={theme}>Raio</Label>
                 <Value $theme={theme}>{local.raio}m</Value>
               </InfoItem>
-              
+
               <InfoItem>
                 <Label $theme={theme}>Coordenadas</Label>
                 <Coordinates $theme={theme}>
-                  Lat: {local.latitude.toFixed(8)}<br/>
+                  Lat: {local.latitude.toFixed(8)}
+                  <br />
                   Lon: {local.longitude.toFixed(8)}
                 </Coordinates>
               </InfoItem>
             </CardContent>
-            
+
             <Actions>
               <ActionButton $theme={theme} onClick={() => handleEdit(local)}>
-                <span role="img" aria-label="edit">✏️</span> Editar
+                <span role='img' aria-label='edit'>
+                  ✏️
+                </span>{' '}
+                Editar
               </ActionButton>
-              <ActionButton 
-                $variant="danger" 
+              <ActionButton
+                $variant='danger'
                 $theme={theme}
                 onClick={() => handleDelete(local.id)}
               >
-                <span role="img" aria-label="delete">🗑️</span> Excluir
+                <span role='img' aria-label='delete'>
+                  🗑️
+                </span>{' '}
+                Excluir
               </ActionButton>
             </Actions>
           </Card>
@@ -492,42 +554,48 @@ export default function LocaisTrabalho() {
               ×
             </CloseButton>
           </ModalHeader>
-          
+
           <Form onSubmit={handleSubmit}>
             <FormGroup>
               <Label $theme={theme}>Nome do Local</Label>
               <Input
                 $theme={theme}
-                type="text"
+                type='text'
                 value={formData.nome}
-                onChange={(e: any) => setFormData({ ...formData, nome: e.target.value })}
+                onChange={(e: any) =>
+                  setFormData({ ...formData, nome: e.target.value })
+                }
                 required
-                placeholder="Ex: Escritório Central"
+                placeholder='Ex: Escritório Central'
               />
             </FormGroup>
-            
+
             <FormGroup>
               <Label $theme={theme}>Endereço</Label>
               <Input
                 $theme={theme}
-                type="text"
+                type='text'
                 value={formData.endereco}
-                onChange={(e: any) => setFormData({ ...formData, endereco: e.target.value })}
+                onChange={(e: any) =>
+                  setFormData({ ...formData, endereco: e.target.value })
+                }
                 required
-                placeholder="Ex: Rua das Flores, 123, São Paulo, SP"
+                placeholder='Ex: Rua das Flores, 123, São Paulo, SP'
               />
             </FormGroup>
-            
+
             <FormGroup>
               <Label $theme={theme}>Grupo</Label>
               <Select
                 $theme={theme}
                 value={formData.grupoId}
-                onChange={(e: any) => setFormData({ ...formData, grupoId: e.target.value })}
+                onChange={(e: any) =>
+                  setFormData({ ...formData, grupoId: e.target.value })
+                }
                 required
-                aria-label="Selecionar grupo"
+                aria-label='Selecionar grupo'
               >
-                <option value="">Selecione um grupo</option>
+                <option value=''>Selecione um grupo</option>
                 {grupos.map((grupo: any) => (
                   <option key={grupo.id} value={grupo.id}>
                     {grupo.nome}
@@ -535,27 +603,29 @@ export default function LocaisTrabalho() {
                 ))}
               </Select>
             </FormGroup>
-            
+
             <FormGroup>
               <Label $theme={theme}>Raio (metros)</Label>
               <Input
                 $theme={theme}
-                type="number"
+                type='number'
                 value={formData.raio}
-                onChange={(e: any) => setFormData({ ...formData, raio: parseInt(e.target.value) })}
-                min="50"
-                max="1000"
+                onChange={(e: any) =>
+                  setFormData({ ...formData, raio: parseInt(e.target.value) })
+                }
+                min='50'
+                max='1000'
                 required
               />
             </FormGroup>
-            
+
             <Actions>
-              <ActionButton $theme={theme} type="submit">
+              <ActionButton $theme={theme} type='submit'>
                 {editingLocal ? 'Atualizar' : 'Criar'} Local
               </ActionButton>
-              <ActionButton 
-                type="button" 
-                $variant="secondary"
+              <ActionButton
+                type='button'
+                $variant='secondary'
                 $theme={theme}
                 onClick={() => setShowModal(false)}
               >

@@ -29,14 +29,14 @@ export function requireAuth(handler: AuthenticatedHandler) {
     try {
       // Obtém o token do header Authorization
       const authHeader = req.headers.authorization;
-      
+
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
         logSecurity('unauthorized_access_attempt', {
           ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
           url: req.url,
           method: req.method,
         });
-        
+
         return res.status(401).json({
           error: 'Token de autenticação não fornecido',
           code: 'UNAUTHORIZED',
@@ -51,7 +51,7 @@ export function requireAuth(handler: AuthenticatedHandler) {
           ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
           url: req.url,
         });
-        
+
         return res.status(401).json({
           error: 'Token inválido ou expirado',
           code: 'INVALID_TOKEN',
@@ -64,7 +64,10 @@ export function requireAuth(handler: AuthenticatedHandler) {
       // Continua para o handler
       return handler(req as AuthenticatedRequest, res);
     } catch (error: unknown) {
-      logger.error({ error: error instanceof Error ? error.message : 'Unknown error' }, 'Auth middleware error');
+      logger.error(
+        { error: error instanceof Error ? error.message : 'Unknown error' },
+        'Auth middleware error'
+      );
       return res.status(500).json({
         error: 'Erro interno do servidor',
         code: 'INTERNAL_ERROR',
@@ -80,7 +83,44 @@ export function requireRole(role: string | string[]) {
   const roles = Array.isArray(role) ? role : [role];
 
   return (handler: AuthenticatedHandler) => {
-    return requireAuth(async (req: AuthenticatedRequest, res: NextApiResponse) => {
+    return requireAuth(
+      async (req: AuthenticatedRequest, res: NextApiResponse) => {
+        const user = req.user;
+
+        if (!user) {
+          return res.status(401).json({
+            error: 'Usuário não autenticado',
+            code: 'UNAUTHORIZED',
+          });
+        }
+
+        if (!roles.includes(user.role)) {
+          logSecurity('insufficient_permissions', {
+            userId: user.userId,
+            requiredRole: roles,
+            userRole: user.role,
+            url: req.url,
+          });
+
+          return res.status(403).json({
+            error: 'Permissão insuficiente',
+            code: 'FORBIDDEN',
+            requiredRole: roles,
+          });
+        }
+
+        return handler(req, res);
+      }
+    );
+  };
+}
+
+/**
+ * Middleware que valida se o usuário está ativo
+ */
+export function requireActiveUser(handler: AuthenticatedHandler) {
+  return requireAuth(
+    async (req: AuthenticatedRequest, res: NextApiResponse) => {
       const user = req.user;
 
       if (!user) {
@@ -90,107 +130,76 @@ export function requireRole(role: string | string[]) {
         });
       }
 
-      if (!roles.includes(user.role)) {
-        logSecurity('insufficient_permissions', {
+      // Busca o usuário no banco para verificar se está ativo
+      const dbUser = await prisma.usuario.findUnique({
+        where: { id: user.userId },
+        select: {
+          ativo: true,
+          bloqueado: true,
+          bloqueadoAte: true,
+        },
+      });
+
+      if (!dbUser) {
+        return res.status(404).json({
+          error: 'Usuário não encontrado',
+          code: 'USER_NOT_FOUND',
+        });
+      }
+
+      if (!dbUser.ativo) {
+        logSecurity('inactive_user_access_attempt', {
           userId: user.userId,
-          requiredRole: roles,
-          userRole: user.role,
           url: req.url,
         });
 
         return res.status(403).json({
-          error: 'Permissão insuficiente',
-          code: 'FORBIDDEN',
-          requiredRole: roles,
+          error: 'Usuário inativo',
+          code: 'USER_INACTIVE',
+        });
+      }
+
+      if (dbUser.bloqueado) {
+        const now = new Date();
+        const bloqueadoAte = dbUser.bloqueadoAte;
+
+        // Se ainda está bloqueado
+        if (!bloqueadoAte || bloqueadoAte > now) {
+          logSecurity('blocked_user_access_attempt', {
+            userId: user.userId,
+            blockedUntil: bloqueadoAte?.toISOString(),
+            url: req.url,
+          });
+
+          return res.status(403).json({
+            error: 'Usuário bloqueado',
+            code: 'USER_BLOCKED',
+            blockedUntil: bloqueadoAte?.toISOString(),
+          });
+        }
+
+        // Se o bloqueio expirou, desbloqueia automaticamente
+        await prisma.usuario.update({
+          where: { id: user.userId },
+          data: {
+            bloqueado: false,
+            bloqueadoAte: null,
+            motivoBloqueio: null,
+          },
         });
       }
 
       return handler(req, res);
-    });
-  };
-}
-
-/**
- * Middleware que valida se o usuário está ativo
- */
-export function requireActiveUser(handler: AuthenticatedHandler) {
-  return requireAuth(async (req: AuthenticatedRequest, res: NextApiResponse) => {
-    const user = req.user;
-
-    if (!user) {
-      return res.status(401).json({
-        error: 'Usuário não autenticado',
-        code: 'UNAUTHORIZED',
-      });
     }
-
-    // Busca o usuário no banco para verificar se está ativo
-    const dbUser = await prisma.usuario.findUnique({
-      where: { id: user.userId },
-      select: {
-        ativo: true,
-        bloqueado: true,
-        bloqueadoAte: true,
-      },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({
-        error: 'Usuário não encontrado',
-        code: 'USER_NOT_FOUND',
-      });
-    }
-
-    if (!dbUser.ativo) {
-      logSecurity('inactive_user_access_attempt', {
-        userId: user.userId,
-        url: req.url,
-      });
-
-      return res.status(403).json({
-        error: 'Usuário inativo',
-        code: 'USER_INACTIVE',
-      });
-    }
-
-    if (dbUser.bloqueado) {
-      const now = new Date();
-      const bloqueadoAte = dbUser.bloqueadoAte;
-
-      // Se ainda está bloqueado
-      if (!bloqueadoAte || bloqueadoAte > now) {
-        logSecurity('blocked_user_access_attempt', {
-          userId: user.userId,
-          blockedUntil: bloqueadoAte?.toISOString(),
-          url: req.url,
-        });
-
-        return res.status(403).json({
-          error: 'Usuário bloqueado',
-          code: 'USER_BLOCKED',
-          blockedUntil: bloqueadoAte?.toISOString(),
-        });
-      }
-
-      // Se o bloqueio expirou, desbloqueia automaticamente
-      await prisma.usuario.update({
-        where: { id: user.userId },
-        data: {
-          bloqueado: false,
-          bloqueadoAte: null,
-          motivoBloqueio: null,
-        },
-      });
-    }
-
-    return handler(req, res);
-  });
+  );
 }
 
 /**
  * Combina múltiplos middlewares
  */
-export function composeMiddleware(...middlewares: Array<(handler: AuthenticatedHandler) => AuthenticatedHandler>) {
+export function composeMiddleware(
+  ...middlewares: Array<(handler: AuthenticatedHandler) => AuthenticatedHandler>
+) {
   return (handler: AuthenticatedHandler): AuthenticatedHandler => {
     return middlewares.reduceRight(
       (acc: any, middleware: any) => middleware(acc),

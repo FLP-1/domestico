@@ -15,9 +15,7 @@ import WelcomeSection from '../components/WelcomeSection';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
 import { defaultColors, addOpacity } from '../utils/themeHelpers';
-import {
-  UnifiedCard,
-} from '../components/unified';
+import { UnifiedCard } from '../components/unified';
 import { OptimizedLabel } from '../components/shared/optimized-styles';
 
 // Types
@@ -87,9 +85,11 @@ const ChatLayout = styled.div`
 
 const ConversationsSidebar = styled.div<{ $theme: any }>`
   width: 350px;
-  background: ${props => props.$theme?.colors?.background || defaultColors.surface};
+  background: ${props =>
+    props.$theme?.colors?.background || defaultColors.surface};
   border-right: 1px solid
-    ${props => props.$theme?.colors?.border || addOpacity(defaultColors.primary, 0.08)};
+    ${props =>
+      props.$theme?.colors?.border || addOpacity(defaultColors.primary, 0.08)};
   display: flex;
   flex-direction: column;
 `;
@@ -98,7 +98,8 @@ const SidebarHeader = styled.div<{ $theme: any }>`
   padding: 1.5rem;
   background: ${defaultColors.surface};
   border-bottom: 1px solid
-    ${props => props.$theme?.colors?.border || addOpacity(defaultColors.primary, 0.08)};
+    ${props =>
+      props.$theme?.colors?.border || addOpacity(defaultColors.primary, 0.08)};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -108,7 +109,8 @@ const HeaderTitle = styled.h2`
   font-family: 'Montserrat', sans-serif;
   font-size: 1.5rem;
   font-weight: 700;
-  color: ${props => props.theme?.colors?.text?.primary || defaultColors.text.primary};
+  color: ${props =>
+    props.theme?.colors?.text?.primary || defaultColors.text.primary};
   margin: 0;
 `;
 
@@ -153,15 +155,18 @@ const SearchContainer = styled.div`
 const SearchInput = styled.input<{ $theme: any }>`
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 2px solid ${props => props.theme?.colors?.border || defaultColors.border};
+  border: 2px solid
+    ${props => props.theme?.colors?.border || defaultColors.border};
   border-radius: 25px;
   font-size: 0.9rem;
-  background: ${props => props.theme?.colors?.background || defaultColors.surface};
+  background: ${props =>
+    props.theme?.colors?.background || defaultColors.surface};
   transition: all 0.3s ease;
 
   &:focus {
     outline: none;
-    border-color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
+    border-color: ${props =>
+      props.$theme?.colors?.primary || defaultColors.primary};
     background: ${defaultColors.surface};
   }
 
@@ -259,7 +264,8 @@ const ConversationMeta = styled.div`
 `;
 
 const UnreadBadge = styled.div<{ $theme: any }>`
-  background: ${props => props.$theme?.colors?.primary || defaultColors.primary};
+  background: ${props =>
+    props.$theme?.colors?.primary || defaultColors.primary};
   color: ${defaultColors.surface};
   border-radius: 50%;
   width: 20px;
@@ -281,7 +287,9 @@ const ChatArea = styled.div`
 const ChatHeader = styled.div<{ $theme: any }>`
   padding: 1rem 1.5rem;
   background: ${defaultColors.surface};
-  border-bottom: 1px solid ${props => props.$theme?.colors?.border || addOpacity(defaultColors.primary, 0.08)};
+  border-bottom: 1px solid
+    ${props =>
+      props.$theme?.colors?.border || addOpacity(defaultColors.primary, 0.08)};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -302,7 +310,8 @@ const ChatMessages = styled.div`
   flex: 1;
   padding: 1rem;
   overflow-y: auto;
-  background: ${props => props.theme?.colors?.background || defaultColors.surface};
+  background: ${props =>
+    props.theme?.colors?.background || defaultColors.surface};
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -320,8 +329,11 @@ const MessageContent = styled.div<{ $isOwn: boolean; $theme: any }>`
   padding: 0.75rem 1rem;
   border-radius: 18px;
   background: ${props =>
-    props.$isOwn ? (props.$theme?.colors?.primary || defaultColors.primary) : defaultColors.surface};
-  color: ${props => (props.$isOwn ? defaultColors.surface : defaultColors.text.primary)};
+    props.$isOwn
+      ? props.$theme?.colors?.primary || defaultColors.primary
+      : defaultColors.surface};
+  color: ${props =>
+    props.$isOwn ? defaultColors.surface : defaultColors.text.primary};
   box-shadow: 0 2px 8px ${defaultColors.shadow};
   position: relative;
   word-wrap: break-word;
@@ -334,14 +346,16 @@ const MessageText = styled.p`
 
 const MessageTime = styled.span<{ $isOwn: boolean }>`
   font-size: 0.7rem;
-  color: ${props => (props.$isOwn ? addOpacity(defaultColors.surface, 0.7) : defaultColors.info)};
+  color: ${props =>
+    props.$isOwn ? addOpacity(defaultColors.surface, 0.7) : defaultColors.info};
   margin-top: 0.25rem;
   align-self: ${props => (props.$isOwn ? 'flex-end' : 'flex-start')};
 `;
 
 const ConversationName = styled.h3`
   margin: 0;
-  color: ${props => props.theme?.colors?.text?.primary || defaultColors.text.primary};
+  color: ${props =>
+    props.theme?.colors?.text?.primary || defaultColors.text.primary};
 `;
 
 const ConversationStatus = styled.p`
@@ -353,7 +367,9 @@ const ConversationStatus = styled.p`
 const MessageInput = styled.div<{ $theme: any }>`
   padding: 1rem 1.5rem;
   background: ${defaultColors.surface};
-  border-top: 1px solid ${props => props.$theme?.colors?.border || addOpacity(defaultColors.primary, 0.08)};
+  border-top: 1px solid
+    ${props =>
+      props.$theme?.colors?.border || addOpacity(defaultColors.primary, 0.08)};
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -363,7 +379,8 @@ const InputContainer = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
-  background: ${props => props.theme?.colors?.background || defaultColors.surface};
+  background: ${props =>
+    props.theme?.colors?.background || defaultColors.surface};
   border-radius: 25px;
   padding: 0.5rem 1rem;
   border: 2px solid transparent;
@@ -398,8 +415,11 @@ const SendButton = styled.button<{ $theme: any; $disabled?: boolean }>`
   border-radius: 50%;
   border: none;
   background: ${props =>
-    props.$disabled ? defaultColors.border : (props.$theme?.colors?.primary || defaultColors.primary)};
-  color: ${props => (props.$disabled ? defaultColors.text.secondary : defaultColors.surface)};
+    props.$disabled
+      ? defaultColors.border
+      : props.$theme?.colors?.primary || defaultColors.primary};
+  color: ${props =>
+    props.$disabled ? defaultColors.text.secondary : defaultColors.surface};
   cursor: ${props => (props.$disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   align-items: center;
@@ -409,7 +429,11 @@ const SendButton = styled.button<{ $theme: any; $disabled?: boolean }>`
 
   &:hover:not(:disabled) {
     transform: scale(1.1);
-    box-shadow: 0 4px 12px ${props => props.$theme?.colors?.primary ? addOpacity(props.$theme?.colors?.primary, 0.3) : addOpacity(defaultColors.primary, 0.3)};
+    box-shadow: 0 4px 12px
+      ${props =>
+        props.$theme?.colors?.primary
+          ? addOpacity(props.$theme?.colors?.primary, 0.3)
+          : addOpacity(defaultColors.primary, 0.3)};
   }
 `;
 
@@ -428,7 +452,10 @@ const AttachmentButton = styled.button<{ $theme: any }>`
   transition: all 0.3s ease;
 
   &:hover {
-    background: ${props => props.$theme?.colors?.primary ? addOpacity(props.$theme?.colors?.primary, 0.15) : addOpacity(defaultColors.primary, 0.15)};
+    background: ${props =>
+      props.$theme?.colors?.primary
+        ? addOpacity(props.$theme?.colors?.primary, 0.15)
+        : addOpacity(defaultColors.primary, 0.15)};
     color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
   }
 `;
@@ -448,7 +475,10 @@ const EmojiButton = styled.button<{ $theme: any }>`
   transition: all 0.3s ease;
 
   &:hover {
-    background: ${props => props.$theme?.colors?.primary ? addOpacity(props.$theme?.colors?.primary, 0.15) : addOpacity(defaultColors.primary, 0.15)};
+    background: ${props =>
+      props.$theme?.colors?.primary
+        ? addOpacity(props.$theme?.colors?.primary, 0.15)
+        : addOpacity(defaultColors.primary, 0.15)};
     color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
   }
 `;
@@ -817,7 +847,8 @@ export default function Communication() {
       />
 
       <TopBar $theme={theme}>
-        <WelcomeSection $theme={theme}
+        <WelcomeSection
+          $theme={theme}
           userAvatar={currentProfile?.avatar || 'U'}
           userName={currentProfile?.name || 'Usuário'}
           userRole={currentProfile?.role || 'Usuário'}
@@ -830,7 +861,8 @@ export default function Communication() {
         />
       </TopBar>
 
-      <PageHeader $theme={theme}
+      <PageHeader
+        $theme={theme}
         title='Comunicação Unificada'
         subtitle='Mantenha-se conectado com sua equipe através de mensagens instantâneas'
       />
@@ -853,7 +885,8 @@ export default function Communication() {
           </SidebarHeader>
 
           <SearchContainer>
-            <SearchInput $theme={theme}
+            <SearchInput
+              $theme={theme}
               type='text'
               placeholder='Pesquisar conversas...'
             />
@@ -1008,7 +1041,8 @@ export default function Communication() {
         <GroupUnifiedModalContent>
           <FormGroup>
             <OptimizedLabel>Nome do Grupo</OptimizedLabel>
-            <Input $theme={theme}
+            <Input
+              $theme={theme}
               type='text'
               value={groupName}
               onChange={e => setGroupName(e.target.value)}
@@ -1052,7 +1086,8 @@ export default function Communication() {
           <UnifiedButton
             $variant='primary'
             onClick={handleCreateGroup}
-            $theme={theme} $disabled={!groupName.trim() || selectedContacts.length < 2}
+            $theme={theme}
+            $disabled={!groupName.trim() || selectedContacts.length < 2}
           >
             Criar Grupo
           </UnifiedButton>

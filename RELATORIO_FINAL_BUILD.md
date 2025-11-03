@@ -7,11 +7,12 @@
 
 ## 1. Resumo Executivo
 
-Este relatório detalha o processo de correção dos erros de build do projeto DOM, que surgiram após a ativação do `strict mode` do TypeScript e a refatoração do sistema de temas. Foram identificados e corrigidos mais de 15 erros críticos de tipo manualmente. 
+Este relatório detalha o processo de correção dos erros de build do projeto DOM, que surgiram após a ativação do `strict mode` do TypeScript e a refatoração do sistema de temas. Foram identificados e corrigidos mais de 15 erros críticos de tipo manualmente.
 
 No entanto, devido à grande quantidade de erros restantes com padrões repetitivos, a abordagem mais pragmática é fornecer a você um **plano de ação claro e semi-automatizado** para finalizar o processo, garantindo que você tenha total controle e compreensão sobre as mudanças.
 
 **Situação Atual:**
+
 - ✅ **Refatoração Crítica Concluída:** O componente `DataList` foi refatorado para usar Generics, eliminando a necessidade do `any` e garantindo a segurança de tipos.
 - ✅ **~15 Erros Corrigidos:** Erros complexos de tipo e interpolação aninhada foram resolvidos manualmente.
 - ⚠️ **Erros Restantes:** Ainda existem erros de tipo, principalmente relacionados a `unknown` em `catch` blocks e tipos de JWT.
@@ -55,8 +56,6 @@ As seguintes correções críticas foram aplicadas para resolver os problemas ma
 
 Abaixo está a lista dos erros que ainda precisam ser corrigidos. A maioria segue padrões simples.
 
-
-
 ### 3.1. Erro Principal: JWT_SECRET Undefined
 
 **Arquivo:** `src/lib/auth.ts:21`
@@ -64,6 +63,7 @@ Abaixo está a lista dos erros que ainda precisam ser corrigidos. A maioria segu
 **Descrição:** A função `jwt.sign()` está recebendo `process.env.JWT_SECRET`, que pode ser `undefined`. O TypeScript strict mode não permite passar `undefined` onde um `string` é esperado.
 
 **Solução:**
+
 ```typescript
 const secret = process.env.JWT_SECRET || process.env.NEXT_PUBLIC_JWT_SECRET;
 if (!secret) {
@@ -77,6 +77,7 @@ const token = jwt.sign(payload, secret, { expiresIn: '1h' });
 **Padrão:** Múltiplos arquivos tentam acessar `error.message` diretamente em blocos `catch`, mas o TypeScript strict mode define `error` como `unknown` por padrão.
 
 **Exemplo:**
+
 ```typescript
 catch (error) {
   console.log(error.message); // ERRO: 'error' is of type 'unknown'
@@ -84,6 +85,7 @@ catch (error) {
 ```
 
 **Solução:**
+
 ```typescript
 catch (error) {
   const message = error instanceof Error ? error.message : String(error);
@@ -98,6 +100,7 @@ catch (error) {
 **Padrão:** Comparações como `analysis?.riskScore > 70` podem falhar se `riskScore` for `undefined`.
 
 **Solução:**
+
 ```typescript
 // Antes
 const isFraud = analysis?.riskScore > 70;
@@ -120,6 +123,7 @@ Este script Bash aplica correções automáticas para os padrões de erro mais c
 4. Corrige comparações inseguras com `undefined`.
 
 **Como Executar:**
+
 ```bash
 /home/ubuntu/fix-remaining-errors.sh
 ```
@@ -129,6 +133,7 @@ Este script Bash aplica correções automáticas para os padrões de erro mais c
 Script Python que corrige interpolações aninhadas em styled-components (já executado anteriormente, mas disponível para re-execução se necessário).
 
 **Como Executar:**
+
 ```bash
 python3 /home/ubuntu/fix-nested-interpolations.py
 ```

@@ -72,9 +72,9 @@ export default async function handler(
       return res.status(200).json({ success: true, data: listasFormatadas });
     } catch (error) {
       console.error('Erro ao buscar listas de compras:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao buscar listas de compras' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao buscar listas de compras',
       });
     }
   }
@@ -82,7 +82,7 @@ export default async function handler(
   if (req.method === 'POST') {
     try {
       const { nome, categoria, usuarioId } = req.body;
-      
+
       const novaLista = await prisma.listaCompras.create({
         data: {
           nome,
@@ -99,13 +99,12 @@ export default async function handler(
       return res.status(201).json({ success: true, data: novaLista });
     } catch (error) {
       console.error('Erro ao criar lista de compras:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao criar lista de compras' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao criar lista de compras',
       });
     }
   }
 
   return res.status(405).json({ error: 'Method not allowed' });
 }
-

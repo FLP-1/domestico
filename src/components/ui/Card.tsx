@@ -28,8 +28,9 @@ const StyledCard = styled.div<{
   background: ${theme.colors.surface.main};
   border-radius: ${theme.borders.radius.lg};
   padding: ${props => theme.spacing[props.$padding]};
-  transition: all ${theme.transitions.duration.normal} ${theme.transitions.timing.easeInOut};
-  
+  transition: all ${theme.transitions.duration.normal}
+    ${theme.transitions.timing.easeInOut};
+
   ${props => {
     switch (props.$variant) {
       case 'outlined':
@@ -47,12 +48,16 @@ const StyledCard = styled.div<{
         `;
     }
   }}
-  
-  ${props => props.$clickable && `
+
+  ${props =>
+    props.$clickable &&
+    `
     cursor: pointer;
   `}
   
-  ${props => props.$hoverable && `
+  ${props =>
+    props.$hoverable &&
+    `
     &:hover {
       box-shadow: ${theme.shadows.xl};
       transform: translateY(-2px);
@@ -115,9 +120,9 @@ export const Card: React.FC<CardProps> = ({
           {subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
         </CardHeader>
       )}
-      
+
       <CardContent>{children}</CardContent>
-      
+
       {footer && <CardFooter>{footer}</CardFooter>}
     </StyledCard>
   );

@@ -2,7 +2,10 @@
 // Este serviço elimina hardcoded das APIs e componentes
 
 import prisma from './prisma';
-import { loadSystemConfig, getSystemConfig } from '../config/centralized-config';
+import {
+  loadSystemConfig,
+  getSystemConfig,
+} from '../config/centralized-config';
 
 // ========================================
 // CONFIGURAÇÕES DE SISTEMA
@@ -18,14 +21,14 @@ export interface SystemConfigService {
     error: string;
     info: string;
   }>;
-  
+
   // Tipografia
   getTypography(): Promise<{
     fontFamily: string;
     fontSize: Record<string, string>;
     fontWeight: Record<string, number>;
   }>;
-  
+
   // URLs
   getUrls(): Promise<{
     api: string;
@@ -40,14 +43,14 @@ export interface SystemConfigService {
       positionstack: string;
     };
   }>;
-  
+
   // Geolocalização
   getGeolocationConfig(): Promise<{
     maxDistance: number;
     accuracyThreshold: number;
     timeout: number;
   }>;
-  
+
   // Antifraude
   getAntifraudConfig(): Promise<{
     maxAttempts: number;
@@ -61,27 +64,26 @@ export interface SystemConfigService {
 // ========================================
 
 class ConfigService implements SystemConfigService {
-  
   async getColors() {
     const config = await loadSystemConfig();
     return config.colors;
   }
-  
+
   async getTypography() {
     const config = await loadSystemConfig();
     return config.typography;
   }
-  
+
   async getUrls() {
     const config = await loadSystemConfig();
     return config.urls;
   }
-  
+
   async getGeolocationConfig() {
     const config = await loadSystemConfig();
     return config.geolocation;
   }
-  
+
   async getAntifraudConfig() {
     const config = await loadSystemConfig();
     return config.antifraud;
@@ -164,8 +166,8 @@ export async function getGeolocationConfigForUser(usuarioId: string): Promise<{
       where: {
         usuarioId,
         chave: 'geolocation_config',
-        ativo: true
-      }
+        ativo: true,
+      },
     });
 
     if (userConfig) {
@@ -175,18 +177,18 @@ export async function getGeolocationConfigForUser(usuarioId: string): Promise<{
     // Buscar configuração do grupo do usuário
     const usuario = await prisma.usuario.findUnique({
       where: { id: usuarioId },
-      include: { gruposUsuario: { include: { grupo: true } } }
+      include: { gruposUsuario: { include: { grupo: true } } },
     });
 
     if (usuario && usuario.gruposUsuario.length > 0) {
       const grupoId = usuario.gruposUsuario[0].grupoId;
-      
+
       const groupConfig = await prisma.configuracaoGeolocalizacao.findFirst({
         where: {
           grupoId,
           chave: 'geolocation_config',
-          ativo: true
-        }
+          ativo: true,
+        },
       });
 
       if (groupConfig) {
@@ -202,7 +204,7 @@ export async function getGeolocationConfigForUser(usuarioId: string): Promise<{
     return {
       maxDistance: 200,
       accuracyThreshold: 100,
-      timeout: 10000
+      timeout: 10000,
     };
   }
 }
@@ -221,8 +223,8 @@ export async function getAntifraudConfigForUser(usuarioId: string): Promise<{
       where: {
         usuarioId,
         chave: 'antifraud_config',
-        ativo: true
-      }
+        ativo: true,
+      },
     });
 
     if (userConfig) {
@@ -232,18 +234,18 @@ export async function getAntifraudConfigForUser(usuarioId: string): Promise<{
     // Buscar configuração do grupo do usuário
     const usuario = await prisma.usuario.findUnique({
       where: { id: usuarioId },
-      include: { gruposUsuario: { include: { grupo: true } } }
+      include: { gruposUsuario: { include: { grupo: true } } },
     });
 
     if (usuario && usuario.gruposUsuario.length > 0) {
       const grupoId = usuario.gruposUsuario[0].grupoId;
-      
+
       const groupConfig = await prisma.configuracaoAntifraude.findFirst({
         where: {
           grupoId,
           chave: 'antifraud_config',
-          ativo: true
-        }
+          ativo: true,
+        },
       });
 
       if (groupConfig) {
@@ -259,7 +261,7 @@ export async function getAntifraudConfigForUser(usuarioId: string): Promise<{
     return {
       maxAttempts: 3,
       lockoutDuration: 300000,
-      riskThreshold: 0.7
+      riskThreshold: 0.7,
     };
   }
 }
@@ -278,7 +280,7 @@ export async function getColorsForProfile(perfilCodigo: string): Promise<{
   try {
     // Buscar configuração específica do perfil
     const perfil = await prisma.perfil.findUnique({
-      where: { codigo: perfilCodigo.toUpperCase() }
+      where: { codigo: perfilCodigo.toUpperCase() },
     });
 
     if (perfil) {
@@ -286,8 +288,8 @@ export async function getColorsForProfile(perfilCodigo: string): Promise<{
         where: {
           perfilId: perfil.id,
           chave: 'colors',
-          ativo: true
-        }
+          ativo: true,
+        },
       });
 
       if (profileConfig) {
@@ -306,7 +308,7 @@ export async function getColorsForProfile(perfilCodigo: string): Promise<{
       success: '#10B981',
       warning: '#F59E0B',
       error: '#EF4444',
-      info: '#3B82F6'
+      info: '#3B82F6',
     };
   }
 }
@@ -319,7 +321,7 @@ export async function getCurrentUserId(): Promise<string | null> {
     // TODO: Implementar autenticação adequada
     // Por enquanto, retorna o ID do usuário do seed
     const usuario = await prisma.usuario.findFirst({
-      where: { cpf: '59876913700' }
+      where: { cpf: '59876913700' },
     });
 
     return usuario?.id || null;
@@ -347,7 +349,7 @@ export async function getGeocodingUrls(): Promise<{
       nominatim: 'https://nominatim.openstreetmap.org/reverse',
       opencage: 'https://api.opencagedata.com/geocode/v1/json',
       bigdatacloud: 'https://api.bigdatacloud.net/data/reverse-geocode-client',
-      positionstack: 'https://api.positionstack.com/v1/reverse'
+      positionstack: 'https://api.positionstack.com/v1/reverse',
     };
   }
 }

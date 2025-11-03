@@ -12,16 +12,17 @@ Este documento descreve a estratégia de backup e recuperação de desastres par
 ### Frequência
 
 A política de backup segue o princípio **3-2-1**:
+
 - **3** cópias dos dados (1 original + 2 backups)
 - **2** tipos de mídia diferentes
 - **1** cópia offsite (fora do local)
 
-| Tipo de Backup | Frequência | Retenção | Horário |
-|----------------|------------|----------|---------|
-| **Completo** | Diário | 7 dias | 02:00 AM |
-| **Incremental** | A cada 6 horas | 24 horas | 02:00, 08:00, 14:00, 20:00 |
-| **Semanal** | Domingo | 4 semanas | 01:00 AM |
-| **Mensal** | Primeiro domingo do mês | 12 meses | 00:00 AM |
+| Tipo de Backup  | Frequência              | Retenção  | Horário                    |
+| --------------- | ----------------------- | --------- | -------------------------- |
+| **Completo**    | Diário                  | 7 dias    | 02:00 AM                   |
+| **Incremental** | A cada 6 horas          | 24 horas  | 02:00, 08:00, 14:00, 20:00 |
+| **Semanal**     | Domingo                 | 4 semanas | 01:00 AM                   |
+| **Mensal**      | Primeiro domingo do mês | 12 meses  | 00:00 AM                   |
 
 ### Dados Incluídos no Backup
 
@@ -30,7 +31,6 @@ A política de backup segue o princípio **3-2-1**:
   - Índices
   - Sequências
   - Funções e procedures
-  
 - **Arquivos de Upload**
   - Documentos dos usuários
   - Certificados digitais
@@ -58,17 +58,20 @@ Dois scripts foram criados para facilitar o backup e a restauração:
 Realiza backup completo do banco de dados PostgreSQL.
 
 **Uso:**
+
 ```bash
 ./scripts/backup-database.sh
 ```
 
 **Funcionalidades:**
+
 - Cria backup comprimido (gzip) do banco de dados
 - Gera checksum MD5 para verificação de integridade
 - Remove backups antigos (> 7 dias)
 - Opcionalmente faz upload para S3 (se configurado)
 
 **Configuração via Variáveis de Ambiente:**
+
 ```bash
 export BACKUP_DIR="/var/backups/dom"        # Diretório de backups
 export RETENTION_DAYS="7"                    # Dias de retenção
@@ -80,11 +83,13 @@ export AWS_S3_BUCKET="meu-bucket-backups"   # Bucket S3 (opcional)
 Restaura um backup do banco de dados.
 
 **Uso:**
+
 ```bash
 ./scripts/restore-database.sh /var/backups/dom/dom_backup_20251030_120000.sql.gz
 ```
 
 **Funcionalidades:**
+
 - Verifica integridade do backup (MD5)
 - Cria backup de segurança antes da restauração
 - Desconecta usuários ativos
@@ -113,16 +118,19 @@ crontab -e
 Para habilitar backup automático para S3:
 
 1. **Instalar AWS CLI:**
+
 ```bash
 sudo apt-get install awscli
 ```
 
 2. **Configurar credenciais:**
+
 ```bash
 aws configure
 ```
 
 3. **Definir variável de ambiente:**
+
 ```bash
 export AWS_S3_BUCKET="dom-backups-producao"
 ```
@@ -145,6 +153,7 @@ export AWS_S3_BUCKET="dom-backups-producao"
 **Sintomas:** Dados inconsistentes ou corrompidos no banco.
 
 **Procedimento:**
+
 1. Identificar o último backup válido
 2. Notificar usuários sobre manutenção
 3. Executar script de restauração
@@ -160,6 +169,7 @@ export AWS_S3_BUCKET="dom-backups-producao"
 **Sintomas:** Servidor inacessível ou destruído.
 
 **Procedimento:**
+
 1. Provisionar novo servidor
 2. Instalar dependências (Node.js, PostgreSQL)
 3. Restaurar código do repositório Git
@@ -174,6 +184,7 @@ export AWS_S3_BUCKET="dom-backups-producao"
 **Sintomas:** Usuário reporta dados perdidos.
 
 **Procedimento:**
+
 1. Identificar timestamp da exclusão
 2. Restaurar backup em banco temporário
 3. Extrair dados específicos
@@ -195,6 +206,7 @@ Realizar testes de recuperação **mensalmente**:
 ### Alertas
 
 Configurar alertas para:
+
 - Falha no backup diário
 - Backup com tamanho anormal (muito pequeno ou grande)
 - Espaço em disco insuficiente
@@ -203,6 +215,7 @@ Configurar alertas para:
 ### Logs
 
 Todos os backups são registrados em:
+
 - `/var/log/dom-backup.log` (local)
 - CloudWatch Logs (se configurado na AWS)
 
@@ -223,6 +236,7 @@ Todos os backups são registrados em:
 ### Conformidade LGPD
 
 Os backups contêm dados pessoais e devem seguir a LGPD:
+
 - Backups são criptografados
 - Acesso é registrado em logs de auditoria
 - Retenção limitada a 12 meses
@@ -231,16 +245,19 @@ Os backups contêm dados pessoais e devem seguir a LGPD:
 ## Checklist de Backup
 
 ### Diário
+
 - [ ] Verificar se o backup diário foi executado com sucesso
 - [ ] Validar tamanho do backup
 - [ ] Confirmar upload para S3 (se configurado)
 
 ### Semanal
+
 - [ ] Revisar logs de backup
 - [ ] Verificar espaço em disco
 - [ ] Validar integridade de um backup aleatório
 
 ### Mensal
+
 - [ ] Realizar teste de recuperação completo
 - [ ] Revisar e atualizar documentação
 - [ ] Auditar acessos aos backups
@@ -248,11 +265,11 @@ Os backups contêm dados pessoais e devem seguir a LGPD:
 
 ## Contatos de Emergência
 
-| Função | Nome | Contato | Disponibilidade |
-|--------|------|---------|------------------|
-| DBA | [Nome] | [Email/Telefone] | 24/7 |
-| DevOps | [Nome] | [Email/Telefone] | 24/7 |
-| Suporte AWS | AWS Support | Através do Console | 24/7 |
+| Função      | Nome        | Contato            | Disponibilidade |
+| ----------- | ----------- | ------------------ | --------------- |
+| DBA         | [Nome]      | [Email/Telefone]   | 24/7            |
+| DevOps      | [Nome]      | [Email/Telefone]   | 24/7            |
+| Suporte AWS | AWS Support | Através do Console | 24/7            |
 
 ## Referências
 

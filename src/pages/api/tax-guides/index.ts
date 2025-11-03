@@ -1,7 +1,10 @@
 import prisma from '@/lib/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
     switch (req.method) {
       case 'GET':
@@ -13,11 +16,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       case 'DELETE':
         return await deleteTaxGuide(req, res);
       default:
-        return res.status(405).json({ success: false, error: 'Método não permitido' });
+        return res
+          .status(405)
+          .json({ success: false, error: 'Método não permitido' });
     }
   } catch (error) {
     console.error('Erro na API de guias de impostos:', error);
-    return res.status(500).json({ success: false, error: 'Erro interno do servidor' });
+    return res
+      .status(500)
+      .json({ success: false, error: 'Erro interno do servidor' });
   } finally {
     await prisma.$disconnect();
   }
@@ -45,11 +52,7 @@ async function getTaxGuides(req: NextApiRequest, res: NextApiResponse) {
         },
       },
     },
-    orderBy: [
-      { ano: 'desc' },
-      { mes: 'desc' },
-      { vencimento: 'asc' },
-    ],
+    orderBy: [{ ano: 'desc' }, { mes: 'desc' }, { vencimento: 'asc' }],
   });
 
   return res.status(200).json({ success: true, data: taxGuides });
@@ -70,7 +73,8 @@ async function createTaxGuide(req: NextApiRequest, res: NextApiResponse) {
   if (!usuarioId || !tipo || !mes || !ano || !valor || !vencimento) {
     return res.status(400).json({
       success: false,
-      error: 'Campos obrigatórios: usuarioId, tipo, mes, ano, valor, vencimento',
+      error:
+        'Campos obrigatórios: usuarioId, tipo, mes, ano, valor, vencimento',
     });
   }
 
@@ -140,5 +144,7 @@ async function deleteTaxGuide(req: NextApiRequest, res: NextApiResponse) {
     where: { id: id as string },
   });
 
-  return res.status(200).json({ success: true, message: 'Guia de imposto excluído com sucesso' });
+  return res
+    .status(200)
+    .json({ success: true, message: 'Guia de imposto excluído com sucesso' });
 }

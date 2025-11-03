@@ -2,7 +2,16 @@ import React from 'react';
 import styled from 'styled-components';
 
 interface ActionIconProps {
-  variant: 'approve' | 'reject' | 'edit' | 'delete' | 'view' | 'warning' | 'info' | 'success' | 'primary';
+  variant:
+    | 'approve'
+    | 'reject'
+    | 'edit'
+    | 'delete'
+    | 'view'
+    | 'warning'
+    | 'info'
+    | 'success'
+    | 'primary';
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
   loading?: boolean;
@@ -17,48 +26,48 @@ const getVariantStyles = (variant: ActionIconProps['variant']) => {
     approve: {
       backgroundColor: '#28a745',
       hoverColor: '#218838',
-      icon: '✅'
+      icon: '✅',
     },
     reject: {
       backgroundColor: '#dc3545',
       hoverColor: '#c82333',
-      icon: '❌'
+      icon: '❌',
     },
     edit: {
       backgroundColor: '#17a2b8',
       hoverColor: '#138496',
-      icon: '✏️'
+      icon: '✏️',
     },
     delete: {
       backgroundColor: '#dc3545',
       hoverColor: '#c82333',
-      icon: '🗑️'
+      icon: '🗑️',
     },
     view: {
       backgroundColor: '#6c757d',
       hoverColor: '#545b62',
-      icon: '👁️'
+      icon: '👁️',
     },
     warning: {
       backgroundColor: '#ffc107',
       hoverColor: '#e0a800',
-      icon: '⚠️'
+      icon: '⚠️',
     },
     info: {
       backgroundColor: '#17a2b8',
       hoverColor: '#138496',
-      icon: 'ℹ️'
+      icon: 'ℹ️',
     },
     success: {
       backgroundColor: '#28a745',
       hoverColor: '#218838',
-      icon: '✅'
+      icon: '✅',
     },
     primary: {
       backgroundColor: '#007bff',
       hoverColor: '#0056b3',
-      icon: '🔧'
-    }
+      icon: '🔧',
+    },
   };
 
   return variants[variant] || variants.primary;
@@ -69,18 +78,18 @@ const getSizeStyles = (size: ActionIconProps['size']) => {
     small: {
       width: '24px',
       height: '24px',
-      fontSize: '12px'
+      fontSize: '12px',
     },
     medium: {
       width: '32px',
       height: '32px',
-      fontSize: '16px'
+      fontSize: '16px',
     },
     large: {
       width: '48px',
       height: '48px',
-      fontSize: '24px'
-    }
+      fontSize: '24px',
+    },
   };
 
   return sizes[size || 'medium'];
@@ -94,40 +103,40 @@ const StyledActionIcon = styled.button<ActionIconProps>`
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
   transition: all 0.2s ease;
   font-size: ${props => getSizeStyles(props.size || 'medium').fontSize};
   position: relative;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  
+
   background-color: ${props => getVariantStyles(props.variant).backgroundColor};
   color: white;
-  
+
   &:hover {
-    background-color: ${props => 
-      props.disabled 
-        ? getVariantStyles(props.variant).backgroundColor 
-        : getVariantStyles(props.variant).hoverColor
-    };
-    transform: ${props => props.disabled ? 'none' : 'scale(1.1)'};
-    box-shadow: ${props => 
-      props.disabled 
-        ? '0 2px 4px rgba(0, 0, 0, 0.1)' 
-        : '0 4px 8px rgba(0, 0, 0, 0.2)'
-    };
+    background-color: ${props =>
+      props.disabled
+        ? getVariantStyles(props.variant).backgroundColor
+        : getVariantStyles(props.variant).hoverColor};
+    transform: ${props => (props.disabled ? 'none' : 'scale(1.1)')};
+    box-shadow: ${props =>
+      props.disabled
+        ? '0 2px 4px rgba(0, 0, 0, 0.1)'
+        : '0 4px 8px rgba(0, 0, 0, 0.2)'};
   }
-  
+
   &:active {
-    transform: ${props => props.disabled ? 'none' : 'scale(0.95)'};
+    transform: ${props => (props.disabled ? 'none' : 'scale(0.95)')};
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
   }
-  
-  ${props => props.loading && `
+
+  ${props =>
+    props.loading &&
+    `
     &::after {
       content: '';
       position: absolute;
@@ -154,10 +163,10 @@ const ActionIcon: React.FC<ActionIconProps> = ({
   onClick,
   title,
   children,
-  className
+  className,
 }) => {
   const variantInfo = getVariantStyles(variant);
-  
+
   const handleClick = () => {
     if (!disabled && !loading && onClick) {
       onClick();
@@ -174,7 +183,7 @@ const ActionIcon: React.FC<ActionIconProps> = ({
       title={title}
       className={className}
     >
-      {loading ? '⏳' : (children || variantInfo.icon)}
+      {loading ? '⏳' : children || variantInfo.icon}
     </StyledActionIcon>
   );
 };

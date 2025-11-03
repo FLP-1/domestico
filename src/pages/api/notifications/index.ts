@@ -10,7 +10,7 @@ export default async function handler(
       const { usuarioId, tipo, categoria, lida, enviada } = req.query;
 
       const whereClause: any = {};
-      
+
       if (usuarioId) whereClause.usuarioId = usuarioId;
       if (tipo) whereClause.tipo = tipo;
       if (categoria) whereClause.categoria = categoria;
@@ -24,36 +24,37 @@ export default async function handler(
         },
       });
 
-      return res.status(200).json({ 
-        success: true, 
-        data: notificacoes 
+      return res.status(200).json({
+        success: true,
+        data: notificacoes,
       });
     } catch (error) {
       console.error('Erro ao buscar notificações:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao buscar notificações' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao buscar notificações',
       });
     }
   }
 
   if (req.method === 'POST') {
     try {
-      const { 
+      const {
         usuarioId,
-        tipo, 
-        titulo, 
-        mensagem, 
-        categoria, 
+        tipo,
+        titulo,
+        mensagem,
+        categoria,
         prioridade,
         dadosAcao,
-        dataExpiracao 
+        dataExpiracao,
       } = req.body;
-      
+
       if (!tipo || !titulo || !mensagem || !categoria || !prioridade) {
         return res.status(400).json({
           success: false,
-          error: 'tipo, titulo, mensagem, categoria e prioridade são obrigatórios'
+          error:
+            'tipo, titulo, mensagem, categoria e prioridade são obrigatórios',
         });
       }
 
@@ -72,45 +73,39 @@ export default async function handler(
         },
       });
 
-      return res.status(201).json({ 
-        success: true, 
-        data: notificacao 
+      return res.status(201).json({
+        success: true,
+        data: notificacao,
       });
     } catch (error) {
       console.error('Erro ao criar notificação:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao criar notificação' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao criar notificação',
       });
     }
   }
 
   if (req.method === 'PUT') {
     try {
-      const { 
-        id,
-        lida,
-        enviada,
-        dataLeitura,
-        dataEnvio 
-      } = req.body;
-      
+      const { id, lida, enviada, dataLeitura, dataEnvio } = req.body;
+
       if (!id) {
         return res.status(400).json({
           success: false,
-          error: 'id é obrigatório'
+          error: 'id é obrigatório',
         });
       }
 
       const updateData: any = {};
-      
+
       if (lida !== undefined) {
         updateData.lida = lida;
         if (lida && !dataLeitura) {
           updateData.dataLeitura = new Date();
         }
       }
-      
+
       if (enviada !== undefined) {
         updateData.enviada = enviada;
         if (enviada && !dataEnvio) {
@@ -123,15 +118,15 @@ export default async function handler(
         data: updateData,
       });
 
-      return res.status(200).json({ 
-        success: true, 
-        data: notificacao 
+      return res.status(200).json({
+        success: true,
+        data: notificacao,
       });
     } catch (error) {
       console.error('Erro ao atualizar notificação:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao atualizar notificação' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao atualizar notificação',
       });
     }
   }
@@ -139,11 +134,11 @@ export default async function handler(
   if (req.method === 'DELETE') {
     try {
       const { id } = req.query;
-      
+
       if (!id) {
         return res.status(400).json({
           success: false,
-          error: 'id é obrigatório'
+          error: 'id é obrigatório',
         });
       }
 
@@ -151,15 +146,15 @@ export default async function handler(
         where: { id: id as string },
       });
 
-      return res.status(200).json({ 
-        success: true, 
-        message: 'Notificação removida com sucesso' 
+      return res.status(200).json({
+        success: true,
+        message: 'Notificação removida com sucesso',
       });
     } catch (error) {
       console.error('Erro ao remover notificação:', error);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro ao remover notificação' 
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao remover notificação',
       });
     }
   }

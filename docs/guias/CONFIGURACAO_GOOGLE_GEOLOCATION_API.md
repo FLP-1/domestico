@@ -3,10 +3,12 @@
 ## Por Que Usar?
 
 **Problema:**
+
 - Navegador: 100-500m de precisão ❌
 - Google Maps: 10-50m de precisão ✅
 
 **Solução:**
+
 - Usar a MESMA API que Google Maps usa
 - Precisão profissional: 10-50m
 - Ideal para anti-fraude de registro de ponto
@@ -15,13 +17,14 @@
 
 ## 💰 Custo
 
-| Item | Valor |
-|------|-------|
-| **Preço por requisição** | $0.005 (meio centavo) |
-| **Grátis por mês** | 500 requisições |
-| **Custo para 1000 funcionários/mês** | ~$5-10 USD |
+| Item                                 | Valor                 |
+| ------------------------------------ | --------------------- |
+| **Preço por requisição**             | $0.005 (meio centavo) |
+| **Grátis por mês**                   | 500 requisições       |
+| **Custo para 1000 funcionários/mês** | ~$5-10 USD            |
 
 **Exemplo:**
+
 - 50 empregados × 2 registros/dia × 22 dias = 2.200 requisições/mês
 - Custo: ~$11 USD/mês
 - Benefício: Anti-fraude confiável
@@ -54,6 +57,7 @@
 ### 4️⃣ Restringir API Key (Segurança)
 
 **Restrições de aplicativo:**
+
 - Selecione "Referenciadores HTTP (sites)"
 - Adicione:
   - `http://localhost:3000/*`
@@ -61,6 +65,7 @@
   - `https://seudominio.com.br/*` (quando em produção)
 
 **Restrições de API:**
+
 - Selecione "Restringir chave"
 - Marque APENAS: "Geolocation API"
 
@@ -74,6 +79,7 @@ NEXT_PUBLIC_GOOGLE_GEOLOCATION_API_KEY=SuaChaveAqui
 ```
 
 **Exemplo:**
+
 ```bash
 NEXT_PUBLIC_GOOGLE_GEOLOCATION_API_KEY=AIzaSyC1234567890abcdefghijklmnopqrstu
 ```
@@ -105,12 +111,14 @@ npm run dev
 ## 🔒 Segurança
 
 **✅ Fazer:**
+
 - Restringir API key a domínios específicos
 - Usar HTTPS em produção
 - Monitorar uso no Google Cloud Console
 - Configurar alertas de custo
 
 **❌ NÃO fazer:**
+
 - Commit da API key no GitHub (já está no .gitignore)
 - Usar mesma key em múltiplos projetos
 - Deixar sem restrições
@@ -120,6 +128,7 @@ npm run dev
 ## 📊 Monitoramento
 
 **Ver uso e custos:**
+
 1. Google Cloud Console
 2. Menu → "APIs e serviços" → "Painel"
 3. Selecione "Geolocation API"
@@ -129,6 +138,7 @@ npm run dev
    - Erros
 
 **Configurar alerta:**
+
 1. Menu → "Faturamento" → "Orçamentos e alertas"
 2. Criar orçamento: Ex: $50/mês
 3. Alerta quando atingir: 80% ($40)
@@ -138,10 +148,12 @@ npm run dev
 ## 🚀 Modo Híbrido (Recomendado)
 
 **Como funciona:**
+
 1. **Se API key configurada** → Usa Google API (10-50m)
 2. **Se não configurada** → Usa navegador (100-500m)
 
 **Vantagem:**
+
 - Desenvolvimento: Grátis (navegador)
 - Produção: Preciso (Google API)
 
@@ -182,4 +194,3 @@ R: Google tem banco de dados MASSIVO de WiFi APs e cell towers.
 **Status:** Pronto para uso  
 **Precisão esperada:** 10-50 metros  
 **Custo estimado:** $5-15/mês para pequenas empresas
-

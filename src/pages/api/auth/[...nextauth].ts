@@ -11,7 +11,7 @@ export default NextAuth({
       name: 'credentials',
       credentials: {
         email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' }
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -21,8 +21,8 @@ export default NextAuth({
         // Buscar usuário no banco
         const user = await prisma.usuario.findUnique({
           where: {
-            email: credentials.email
-          }
+            email: credentials.email,
+          },
         });
 
         if (!user) {
@@ -34,17 +34,17 @@ export default NextAuth({
         return {
           id: user.id,
           email: user.email,
-          name: user.nomeCompleto
+          name: user.nomeCompleto,
         };
-      }
-    })
+      },
+    }),
   ],
   session: {
-    strategy: 'jwt'
+    strategy: 'jwt',
   },
   pages: {
     signIn: '/login',
-    signOut: '/logout'
+    signOut: '/logout',
   },
   callbacks: {
     async jwt({ token, user }: any) {
@@ -58,8 +58,8 @@ export default NextAuth({
         (session.user as any).id = token.id as string;
       }
       return session;
-    }
-  }
+    },
+  },
 });
 
 export const authOptions = {
@@ -69,7 +69,7 @@ export const authOptions = {
       name: 'credentials',
       credentials: {
         email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' }
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -78,8 +78,8 @@ export const authOptions = {
 
         const user = await prisma.usuario.findUnique({
           where: {
-            email: credentials.email
-          }
+            email: credentials.email,
+          },
         });
 
         if (!user) {
@@ -89,17 +89,17 @@ export const authOptions = {
         return {
           id: user.id,
           email: user.email,
-          name: user.nomeCompleto
+          name: user.nomeCompleto,
         };
-      }
-    })
+      },
+    }),
   ],
   session: {
-    strategy: 'jwt'
+    strategy: 'jwt',
   },
   pages: {
     signIn: '/login',
-    signOut: '/logout'
+    signOut: '/logout',
   },
   callbacks: {
     async jwt({ token, user }: any) {
@@ -113,6 +113,6 @@ export const authOptions = {
         (session.user as any).id = token.id as string;
       }
       return session;
-    }
-  }
+    },
+  },
 };

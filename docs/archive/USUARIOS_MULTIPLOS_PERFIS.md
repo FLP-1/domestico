@@ -9,6 +9,7 @@ Baseado na configuração do seed atualizado, aqui estão os usuários com múlt
 ## 🔑 Francisco Jose Lattari Papaleo
 
 ### Credenciais:
+
 ```
 CPF: 59876913700 (sem máscara)
 CPF: 598.769.137-00 (com máscara)
@@ -18,10 +19,12 @@ Senha: senha123
 ```
 
 ### Perfis (2):
+
 1. **🔴 Empregador** (principal)
 2. **🟣 Família** (adicional)
 
 ### Para Testar o Modal:
+
 1. Execute: `npx tsx prisma/seed.ts`
 2. Faça login com CPF `598.769.137-00`
 3. O modal deve aparecer com as 2 opções de perfil
@@ -31,12 +34,14 @@ Senha: senha123
 ## 📊 Como Verificar
 
 ### Comando para Confirmar:
+
 ```powershell
 $env:PGPASSWORD='FLP*2025'
 psql -h localhost -p 5433 -U userdom -d dom -c "SELECT u.cpf, u.\"nomeCompleto\", p.nome as perfil FROM usuarios u JOIN usuarios_perfis up ON up.\"usuarioId\" = u.id JOIN perfis p ON p.id = up.\"perfilId\" WHERE u.cpf = '59876913700' ORDER BY up.principal DESC;"
 ```
 
 ### Resultado Esperado:
+
 ```
      cpf      |         nomeCompleto         |  perfil
 --------------|------------------------------|----------
@@ -49,6 +54,7 @@ psql -h localhost -p 5433 -U userdom -d dom -c "SELECT u.cpf, u.\"nomeCompleto\"
 ## 🧪 Teste do Modal
 
 ### Cenário 1: Login com CPF 598.769.137-00
+
 ```
 1. Acesse: http://localhost:3000/login
 2. Digite CPF: 598.769.137-00
@@ -60,6 +66,7 @@ psql -h localhost -p 5433 -U userdom -d dom -c "SELECT u.cpf, u.\"nomeCompleto\"
 ```
 
 ### Cenário 2: Seleção de Perfil
+
 ```
 1. No modal, clique em "Empregador"
 2. WelcomeSection deve mostrar: "Empregador • [data]"
@@ -73,11 +80,13 @@ psql -h localhost -p 5433 -U userdom -d dom -c "SELECT u.cpf, u.\"nomeCompleto\"
 ## 🔧 Se o Modal Não Aparecer
 
 ### Possíveis Causas:
+
 1. **Seed não executado**: Execute `npx tsx prisma/seed.ts`
 2. **Apenas 1 perfil**: Verifique se o usuário tem 2 perfis
 3. **Cache**: Limpe cache do navegador
 
 ### Debug:
+
 ```powershell
 # Verificar quantos perfis o Francisco tem
 $env:PGPASSWORD='FLP*2025'
@@ -91,10 +100,12 @@ psql -h localhost -p 5433 -U userdom -d dom -c "SELECT COUNT(*) as total FROM us
 ## 📝 Outros Usuários
 
 ### Usuários com 1 Perfil (Sem Modal):
+
 - **Maria Silva** (CPF: 38645446880) - Perfil: Empregado
 - **Usuários gerados automaticamente** - 1 perfil cada
 
 ### Usuários com Múltiplos Perfis:
+
 - **Francisco Jose Lattari Papaleo** (CPF: 59876913700) - 2 perfis
 
 ---
