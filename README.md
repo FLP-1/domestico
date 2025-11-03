@@ -1,7 +1,7 @@
 ﻿# 🏠 Sistema DOM - Gestão Doméstica Completa
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/seu-usuario/sistema-dom)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/seu-usuario/sistema-dom/releases)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/FLP-1/domestico)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/FLP-1/domestico/releases)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## 🚀 Sobre o Projeto
@@ -79,8 +79,8 @@ O **Sistema DOM** é uma solução completa para gestão doméstica que revoluci
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-usuario/sistema-dom.git
-cd sistema-dom
+git clone https://github.com/FLP-1/domestico.git
+cd domestico
 
 # Instale as dependências
 npm install
