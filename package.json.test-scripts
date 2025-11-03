@@ -1,0 +1,9 @@
+{
+  "test": "jest --passWithNoTests",
+  "test:unit": "jest --testPathPattern=__tests__ --passWithNoTests",
+  "test:integration": "jest --testPathPattern=__tests__/api --passWithNoTests",
+  "test:e2e": "cypress run",
+  "test:e2e:open": "cypress open",
+  "test:watch": "jest --watch --passWithNoTests",
+  "test:coverage": "jest --coverage --passWithNoTests"
+}

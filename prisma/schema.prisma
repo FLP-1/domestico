@@ -1,0 +1,1784 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id                       String                         @id @default(uuid())
+  cpf                      String                         @unique @db.VarChar(11)
+  nomeCompleto             String                         @db.VarChar(255)
+  apelido                  String?                        @db.VarChar(100)
+  dataNascimento           DateTime                       @db.Date
+  email                    String                         @unique @db.VarChar(255)
+  emailVerificado          Boolean                        @default(false)
+  telefone                 String                         @db.VarChar(11)
+  telefoneVerificado       Boolean                        @default(false)
+  logradouro               String?                        @db.VarChar(255)
+  numero                   String?                        @db.VarChar(20)
+  complemento              String?                        @db.VarChar(100)
+  bairro                   String?                        @db.VarChar(100)
+  cidade                   String?                        @db.VarChar(100)
+  uf                       String?                        @db.VarChar(2)
+  cep                      String?                        @db.VarChar(8)
+  senhaHash                String                         @db.VarChar(255)
+  salt                     String                         @db.VarChar(255)
+  autenticacao2FA          Boolean                        @default(false)
+  secret2FA                String?                        @db.VarChar(255)
+  refreshToken             String?
+  resetPasswordToken       String?
+  resetPasswordExpires     DateTime?
+  codigoRecuperacao        String?                        @db.VarChar(10)
+  codigoExpiraEm           DateTime?
+  biometriaAtiva           Boolean                        @default(false)
+  biometriaHash            String?
+  bloqueado                Boolean                        @default(false)
+  bloqueadoAte             DateTime?
+  motivoBloqueio           String?
+  tentativasLogin          Int                            @default(0)
+  ultimasTentativasLogin   Json?
+  ultimoAcesso             DateTime?
+  notificarNovoDispositivo Boolean                        @default(true)
+  notificarLoginSuspeito   Boolean                        @default(true)
+  consentimentoLGPD        Boolean                        @default(false)
+  dataConsentimento        DateTime?
+  termosAceitos            Boolean                        @default(false)
+  versaoTermos             String?                        @db.VarChar(20)
+  ativo                    Boolean                        @default(true)
+  criadoEm                 DateTime                       @default(now())
+  atualizadoEm             DateTime                       @updatedAt
+  aceitesTermos            AceiteTermo[]
+  alertas                  Alerta[]
+  assinaturas              Assinatura[]
+  atividadeRecente         AtividadeRecente[]
+  analisesComportamento    BehaviorAnalysis[]
+  conversasParticipante    ConversaParticipante[]
+  convites                 Convite[]
+  deviceFingerprints       DeviceFingerprint[]
+  dispositivos             Dispositivo[]
+  documentos               Documento[]
+  documentosCompartilhados DocumentoCompartilhamento[]
+  emprestimosSolicitados   Emprestimo[]                   @relation("EmprestimosEmpregado")
+  emprestimosAprovados     Emprestimo[]                   @relation("EmprestimosEmpregador")
+  folhaPagamento           FolhaPagamento[]
+  geofencingLogs           GeofencingLog[]
+  geofencingValidacoes     GeofencingValidacao[]
+  geolocalizacoesHistorico GeolocationHistory[]
+  guiasImpostos            GuiaImposto[]
+  historicosLogin          HistoricoLogin[]
+  listasCompras            ListaCompras[]
+  listasCompartilhadas     ListaComprasCompartilhamento[]
+  locaisAtualizados        LocalTrabalho[]                @relation("LocaisAtualizados")
+  locaisCriados            LocalTrabalho[]                @relation("LocaisCriados")
+  locaisEmpregador         LocalTrabalho[]                @relation("LocaisEmpregador")
+  logs                     LogAuditoria[]
+  membrosFamilia           MembroFamilia[]                @relation("MembrosFamiliaPrincipal")
+  membrosFamiliaVinculados MembroFamilia[]                @relation("MembrosFamiliaVinculados")
+  mensagens                Mensagem[]
+  mensagensLidas           MensagemLeitura[]
+  mensagensReacoes         MensagemReacao[]
+  networkFingerprints      NetworkFingerprint[]
+  notificacoes             Notificacao[]
+  onboarding               Onboarding?
+  pontosRegistrados        RegistroPonto[]
+  analisesRisco            RiskAnalysis[]
+  sessoes                  Sessao[]
+  solicitacoesHoraExtra    SolicitacaoHoraExtra[]
+  tarefas                  Tarefa[]                       @relation("TarefasAtribuidas")
+  tarefasCriadas           Tarefa[]                       @relation("TarefasCriadas")
+  tarefasComentarios       TarefaComentario[]
+  gruposUsuario            UsuarioGrupo[]
+  perfis                   UsuarioPerfil[]
+  validacoesContato        ValidacaoContato[]
+  configuracoesGeolocalizacao ConfiguracaoGeolocalizacao[]
+  configuracoesAntifraude  ConfiguracaoAntifraude[]
+  historicosConfiguracao   HistoricoConfiguracao[]
+
+  @@index([cpf])
+  @@index([email])
+  @@index([telefone])
+  @@map("usuarios")
+}
+
+model LocalTrabalho {
+  id            String                @id @default(uuid())
+  nome          String                @db.VarChar(255)
+  endereco      String                @db.VarChar(500)
+  latitude      Float
+  longitude     Float
+  raio          Int                   @default(200)
+  ativo         Boolean               @default(true)
+  grupoId       String
+  empregadorId  String
+  criadoPor     String
+  criadoEm      DateTime              @default(now())
+  atualizadoPor String?
+  atualizadoEm  DateTime              @updatedAt
+  logs          GeofencingLog[]
+  validacoes    GeofencingValidacao[]
+  atualizador   Usuario?              @relation("LocaisAtualizados", fields: [atualizadoPor], references: [id])
+  criador       Usuario               @relation("LocaisCriados", fields: [criadoPor], references: [id])
+  empregador    Usuario               @relation("LocaisEmpregador", fields: [empregadorId], references: [id])
+  grupo         Grupo                 @relation(fields: [grupoId], references: [id])
+
+  @@index([grupoId])
+  @@index([empregadorId])
+  @@index([ativo])
+  @@map("locais_trabalho")
+}
+
+model GeofencingLog {
+  id              String        @id @default(uuid())
+  localTrabalhoId String
+  acao            String        @db.VarChar(50)
+  dadosAnteriores Json?
+  dadosNovos      Json?
+  ip              String        @db.VarChar(45)
+  userAgent       String        @db.VarChar(500)
+  usuarioId       String
+  timestamp       DateTime      @default(now())
+  localTrabalho   LocalTrabalho @relation(fields: [localTrabalhoId], references: [id])
+  usuario         Usuario       @relation(fields: [usuarioId], references: [id])
+
+  @@index([localTrabalhoId])
+  @@index([usuarioId])
+  @@index([timestamp])
+  @@map("geofencing_logs")
+}
+
+model GeofencingValidacao {
+  id              String        @id @default(uuid())
+  localTrabalhoId String
+  usuarioId       String
+  latitude        Float
+  longitude       Float
+  distancia       Float
+  dentroGeofence  Boolean
+  precisao        Float
+  endereco        String?       @db.VarChar(500)
+  wifiName        String?       @db.VarChar(255)
+  ip              String        @db.VarChar(45)
+  userAgent       String        @db.VarChar(500)
+  timestamp       DateTime      @default(now())
+  localTrabalho   LocalTrabalho @relation(fields: [localTrabalhoId], references: [id])
+  usuario         Usuario       @relation(fields: [usuarioId], references: [id])
+
+  @@index([localTrabalhoId])
+  @@index([usuarioId])
+  @@index([timestamp])
+  @@map("geofencing_validacoes")
+}
+
+model Perfil {
+  id           String                 @id @default(uuid())
+  codigo       String                 @unique @db.VarChar(50)
+  nome         String                 @db.VarChar(100)
+  descricao    String?
+  cor          String                 @db.VarChar(7)
+  icone        String?                @db.VarChar(50)
+  ativo        Boolean                @default(true)
+  criadoEm     DateTime               @default(now())
+  atualizadoEm DateTime               @updatedAt
+  permissoes   PerfilFuncionalidade[]
+  usuarios     UsuarioPerfil[]
+  configuracoes ConfiguracaoPerfil[]
+
+  @@map("perfis")
+}
+
+model UsuarioPerfil {
+  id                   String                 @id @default(uuid())
+  usuarioId            String
+  perfilId             String
+  avatar               String?                @db.VarChar(10)
+  apelido              String?                @db.VarChar(100)
+  ativo                Boolean                @default(true)
+  principal            Boolean                @default(false)
+  criadoEm             DateTime               @default(now())
+  atualizadoEm         DateTime               @updatedAt
+  RegistroPonto        RegistroPonto[]
+  SolicitacaoHoraExtra SolicitacaoHoraExtra[]
+  perfil               Perfil                 @relation(fields: [perfilId], references: [id])
+  usuario              Usuario                @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, perfilId])
+  @@index([usuarioId])
+  @@index([perfilId])
+  @@map("usuarios_perfis")
+}
+
+model Funcionalidade {
+  id           String                 @id @default(uuid())
+  codigo       String                 @unique @db.VarChar(100)
+  nome         String                 @db.VarChar(100)
+  descricao    String?
+  icone        String?                @db.VarChar(50)
+  rota         String?                @db.VarChar(255)
+  ordem        Int                    @default(0)
+  ativo        Boolean                @default(true)
+  criadoEm     DateTime               @default(now())
+  atualizadoEm DateTime               @updatedAt
+  perfis       PerfilFuncionalidade[]
+
+  @@map("funcionalidades")
+}
+
+model PerfilFuncionalidade {
+  id                String         @id @default(uuid())
+  perfilId          String
+  funcionalidadeId  String
+  permissaoLeitura  Boolean        @default(true)
+  permissaoEscrita  Boolean        @default(false)
+  permissaoExclusao Boolean        @default(false)
+  permissaoAdmin    Boolean        @default(false)
+  criadoEm          DateTime       @default(now())
+  atualizadoEm      DateTime       @updatedAt
+  funcionalidade    Funcionalidade @relation(fields: [funcionalidadeId], references: [id], onDelete: Cascade)
+  perfil            Perfil         @relation(fields: [perfilId], references: [id], onDelete: Cascade)
+
+  @@unique([perfilId, funcionalidadeId])
+  @@index([perfilId])
+  @@index([funcionalidadeId])
+  @@map("perfis_funcionalidades")
+}
+
+model Grupo {
+  id                   String                 @id @default(uuid())
+  nome                 String                 @db.VarChar(255)
+  descricao            String?
+  cor                  String?                @db.VarChar(7)
+  icone                String?                @db.VarChar(50)
+  tipo                 String                 @db.VarChar(50)
+  privado              Boolean                @default(false)
+  ativo                Boolean                @default(true)
+  criadoEm             DateTime               @default(now())
+  atualizadoEm         DateTime               @updatedAt
+  locaisTrabalho       LocalTrabalho[]
+  RegistroPonto        RegistroPonto[]
+  SolicitacaoHoraExtra SolicitacaoHoraExtra[]
+  membros              UsuarioGrupo[]
+  configuracoesGeolocalizacao ConfiguracaoGeolocalizacao[]
+  configuracoesAntifraude ConfiguracaoAntifraude[]
+
+  @@map("grupos")
+}
+
+model UsuarioGrupo {
+  id        String   @id @default(uuid())
+  usuarioId String
+  grupoId   String
+  papel     String   @db.VarChar(50)
+  ativo     Boolean  @default(true)
+  criadoEm  DateTime @default(now())
+  grupo     Grupo    @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, grupoId])
+  @@index([usuarioId])
+  @@index([grupoId])
+  @@map("usuarios_grupos")
+}
+
+model Dispositivo {
+  id             String          @id @default(uuid())
+  usuarioId      String
+  dispositivoId  String          @unique @db.VarChar(255)
+  nome           String?         @db.VarChar(255)
+  modelo         String?         @db.VarChar(255)
+  versaoSO       String?         @db.VarChar(100)
+  tipo           String          @db.VarChar(50)
+  nomeRedeWiFi   String?         @db.VarChar(255)
+  enderecoIP     String?         @db.VarChar(45)
+  latitude       Float?
+  longitude      Float?
+  precisao       Float?
+  confiavel      Boolean         @default(false)
+  ativo          Boolean         @default(true)
+  ultimoUso      DateTime        @default(now())
+  criadoEm       DateTime        @default(now())
+  atualizadoEm   DateTime        @updatedAt
+  usuario        Usuario         @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  registrosPonto RegistroPonto[]
+  sessoes        Sessao[]
+
+  @@index([usuarioId])
+  @@index([dispositivoId])
+  @@map("dispositivos")
+}
+
+model Sessao {
+  id            String       @id @default(uuid())
+  usuarioId     String
+  dispositivoId String?
+  token         String       @unique
+  refreshToken  String?
+  enderecoIP    String?      @db.VarChar(45)
+  userAgent     String?
+  expiraEm      DateTime
+  ativo         Boolean      @default(true)
+  criadoEm      DateTime     @default(now())
+  atualizadoEm  DateTime     @updatedAt
+  dispositivo   Dispositivo? @relation(fields: [dispositivoId], references: [id])
+  usuario       Usuario      @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([token])
+  @@map("sessoes")
+}
+
+/// @description Novo: Histórico de Login
+model HistoricoLogin {
+  id                 String   @id @default(uuid())
+  usuarioId          String
+  sucesso            Boolean
+  tentativaNumero    Int      @default(1)
+  dispositivoId      String?
+  enderecoIP         String   @db.VarChar(45)
+  userAgent          String?
+  navegador          String?  @db.VarChar(100)
+  sistemaOperacional String?  @db.VarChar(100)
+  latitude           Float?
+  longitude          Float?
+  cidade             String?  @db.VarChar(100)
+  pais               String?  @db.VarChar(50)
+  motivoFalha        String?
+  criadoEm           DateTime @default(now())
+  usuario            Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([criadoEm])
+  @@index([sucesso])
+  @@map("historico_login")
+}
+
+/// @description Novo: Validação de Email/Telefone
+model ValidacaoContato {
+  id         String    @id @default(uuid())
+  usuarioId  String
+  tipo       String    @db.VarChar(20)
+  valor      String    @db.VarChar(255)
+  codigo     String    @db.VarChar(10)
+  validado   Boolean   @default(false)
+  tentativas Int       @default(0)
+  expiraEm   DateTime
+  validadoEm DateTime?
+  criadoEm   DateTime  @default(now())
+  usuario    Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([codigo])
+  @@map("validacoes_contato")
+}
+
+/// @description Novo: Onboarding
+model Onboarding {
+  id              String    @id @default(uuid())
+  usuarioId       String    @unique
+  etapaAtual      Int       @default(1)
+  etapasCompletas Json
+  completo        Boolean   @default(false)
+  completoEm      DateTime?
+  preferencias    Json?
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+  usuario         Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@map("onboarding")
+}
+
+/// @description Novo: Convites
+model Convite {
+  id             String    @id @default(uuid())
+  convidadoPor   String
+  email          String    @db.VarChar(255)
+  telefone       String?   @db.VarChar(11)
+  nome           String?   @db.VarChar(255)
+  perfilSugerido String    @db.VarChar(50)
+  status         String    @db.VarChar(50)
+  token          String    @unique @db.VarChar(255)
+  expiraEm       DateTime
+  aceitoEm       DateTime?
+  usuarioCriado  String?
+  criadoEm       DateTime  @default(now())
+  convidante     Usuario   @relation(fields: [convidadoPor], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([email])
+  @@index([status])
+  @@map("convites")
+}
+
+model Termo {
+  id                String        @id @default(uuid())
+  versao            String        @unique @db.VarChar(20)
+  tipo              String        @db.VarChar(50)
+  titulo            String        @db.VarChar(255)
+  subtitulo         String?       @db.VarChar(255)
+  conteudo          String
+  ativo             Boolean       @default(true)
+  dataVigencia      DateTime      @db.Date
+  dataExpiracao     DateTime?     @db.Date
+  mudancas          Json?
+  anexos            Json?
+  notificarUsuarios Boolean       @default(false)
+  notificadoEm      DateTime?
+  criadoEm          DateTime      @default(now())
+  atualizadoEm      DateTime      @updatedAt
+  aceites           AceiteTermo[]
+
+  @@index([versao])
+  @@map("termos")
+}
+
+/// @description Novo: Aceite de Termos
+model AceiteTermo {
+  id             String   @id @default(uuid())
+  usuarioId      String
+  termoId        String
+  versao         String   @db.VarChar(20)
+  aceitoEm       DateTime @default(now())
+  enderecoIP     String   @db.VarChar(45)
+  userAgent      String?
+  assinaturaHash String?  @db.VarChar(255)
+  termo          Termo    @relation(fields: [termoId], references: [id])
+  usuario        Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, termoId, versao])
+  @@index([usuarioId])
+  @@index([termoId])
+  @@map("aceites_termos")
+}
+
+/// @description Novo: Conversas
+model Conversa {
+  id               String                 @id @default(uuid())
+  tipo             String                 @db.VarChar(50)
+  nome             String?                @db.VarChar(255)
+  descricao        String?
+  avatar           String?
+  ativa            Boolean                @default(true)
+  arquivada        Boolean                @default(false)
+  ultimaMensagemId String?
+  ultimaMensagemEm DateTime?
+  criadoEm         DateTime               @default(now())
+  atualizadoEm     DateTime               @updatedAt
+  participantes    ConversaParticipante[]
+  mensagens        Mensagem[]
+
+  @@map("conversas")
+}
+
+/// @description Novo: Participantes de Conversa
+model ConversaParticipante {
+  id            String    @id @default(uuid())
+  conversaId    String
+  usuarioId     String
+  papel         String    @default("MEMBRO") @db.VarChar(50)
+  fixada        Boolean   @default(false)
+  silenciada    Boolean   @default(false)
+  notificacoes  Boolean   @default(true)
+  ultimaLeitura DateTime?
+  entradaEm     DateTime  @default(now())
+  saidaEm       DateTime?
+  ativo         Boolean   @default(true)
+  bloqueado     Boolean   @default(false)
+  favorito      Boolean   @default(false)
+  apelidoLocal  String?   @db.VarChar(100)
+  conversa      Conversa  @relation(fields: [conversaId], references: [id], onDelete: Cascade)
+  usuario       Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([conversaId, usuarioId])
+  @@index([conversaId])
+  @@index([usuarioId])
+  @@map("conversas_participantes")
+}
+
+model Mensagem {
+  id             String            @id @default(uuid())
+  conversaId     String
+  remetenteId    String
+  conteudo       String
+  tipo           String            @db.VarChar(50)
+  respostaParaId String?
+  lida           Boolean           @default(false)
+  editada        Boolean           @default(false)
+  excluida       Boolean           @default(false)
+  fixada         Boolean           @default(false)
+  criadoEm       DateTime          @default(now())
+  atualizadoEm   DateTime          @updatedAt
+  excluidaEm     DateTime?
+  conversa       Conversa          @relation(fields: [conversaId], references: [id], onDelete: Cascade)
+  remetente      Usuario           @relation(fields: [remetenteId], references: [id], onDelete: Cascade)
+  respostaPara   Mensagem?         @relation("MensagemResposta", fields: [respostaParaId], references: [id])
+  respostas      Mensagem[]        @relation("MensagemResposta")
+  anexos         MensagemAnexo[]
+  leituras       MensagemLeitura[]
+  reacoes        MensagemReacao[]
+
+  @@index([conversaId])
+  @@index([remetenteId])
+  @@index([criadoEm])
+  @@map("mensagens")
+}
+
+/// @description Novo: Anexos de Mensagem
+model MensagemAnexo {
+  id         String   @id @default(uuid())
+  mensagemId String
+  nome       String   @db.VarChar(255)
+  tipo       String   @db.VarChar(100)
+  tamanho    Int
+  url        String
+  thumbnail  String?
+  duracao    Int?
+  largura    Int?
+  altura     Int?
+  criadoEm   DateTime @default(now())
+  mensagem   Mensagem @relation(fields: [mensagemId], references: [id], onDelete: Cascade)
+
+  @@index([mensagemId])
+  @@map("mensagens_anexos")
+}
+
+/// @description Novo: Leitura de Mensagens
+model MensagemLeitura {
+  id         String   @id @default(uuid())
+  mensagemId String
+  usuarioId  String
+  lidaEm     DateTime @default(now())
+  mensagem   Mensagem @relation(fields: [mensagemId], references: [id], onDelete: Cascade)
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([mensagemId, usuarioId])
+  @@index([mensagemId])
+  @@index([usuarioId])
+  @@map("mensagens_leituras")
+}
+
+/// @description Novo: Reações em Mensagens
+model MensagemReacao {
+  id         String   @id @default(uuid())
+  mensagemId String
+  usuarioId  String
+  emoji      String   @db.VarChar(10)
+  criadoEm   DateTime @default(now())
+  mensagem   Mensagem @relation(fields: [mensagemId], references: [id], onDelete: Cascade)
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([mensagemId, usuarioId, emoji])
+  @@index([mensagemId])
+  @@map("mensagens_reacoes")
+}
+
+model Documento {
+  id                String                      @id @default(uuid())
+  usuarioId         String
+  nome              String                      @db.VarChar(255)
+  descricao         String?
+  categoria         String                      @db.VarChar(100)
+  tipo              String                      @db.VarChar(50)
+  tamanho           Int
+  caminhoArquivo    String
+  urlPublica        String?
+  hash              String?                     @db.VarChar(255)
+  validado          Boolean                     @default(false)
+  validadoEm        DateTime?
+  validadoPor       String?                     @db.VarChar(255)
+  dataVencimento    DateTime?
+  alertaVencimento  Boolean                     @default(false)
+  permissao         String                      @db.VarChar(50)
+  tags              String[]
+  esocialPronto     Boolean                     @default(false)
+  backupCriado      Boolean                     @default(false)
+  criadoEm          DateTime                    @default(now())
+  atualizadoEm      DateTime                    @updatedAt
+  usuario           Usuario                     @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  compartilhamentos DocumentoCompartilhamento[]
+
+  @@index([usuarioId])
+  @@index([categoria])
+  @@map("documentos")
+}
+
+model DocumentoCompartilhamento {
+  id          String    @id @default(uuid())
+  documentoId String
+  usuarioId   String
+  permissao   String    @default("LEITURA") @db.VarChar(50)
+  criadoEm    DateTime  @default(now())
+  documento   Documento @relation(fields: [documentoId], references: [id], onDelete: Cascade)
+  usuario     Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([documentoId, usuarioId])
+  @@index([documentoId])
+  @@index([usuarioId])
+  @@map("documentos_compartilhamento")
+}
+
+model Tarefa {
+  id             String              @id @default(uuid())
+  titulo         String              @db.VarChar(255)
+  descricao      String?
+  prioridade     String              @db.VarChar(20)
+  status         String              @db.VarChar(50)
+  atribuidoPara  String
+  criadoPor      String
+  dataVencimento DateTime
+  dataConclusao  DateTime?
+  tags           String[]
+  corLabel       String?             @db.VarChar(7)
+  tempoEstimado  Int?
+  tempoGasto     Int?
+  tarefaPaiId    String?
+  checklist      Json?
+  criadoEm       DateTime            @default(now())
+  atualizadoEm   DateTime            @updatedAt
+  responsavel    Usuario             @relation("TarefasAtribuidas", fields: [atribuidoPara], references: [id])
+  criador        Usuario             @relation("TarefasCriadas", fields: [criadoPor], references: [id])
+  tarefaPai      Tarefa?             @relation("SubTarefas", fields: [tarefaPaiId], references: [id])
+  subtarefas     Tarefa[]            @relation("SubTarefas")
+  anexos         TarefaAnexo[]
+  comentarios    TarefaComentario[]
+  bloqueiaAs     TarefaDependencia[] @relation("TarefaBloqueadora")
+  dependeDe      TarefaDependencia[] @relation("TarefaDependente")
+
+  @@index([atribuidoPara])
+  @@index([criadoPor])
+  @@index([status])
+  @@map("tarefas")
+}
+
+/// @description Novo: Anexos de Tarefa
+model TarefaAnexo {
+  id        String   @id @default(uuid())
+  tarefaId  String
+  nome      String   @db.VarChar(255)
+  tipo      String   @db.VarChar(100)
+  tamanho   Int
+  url       String
+  criadoEm  DateTime @default(now())
+  criadoPor String
+  tarefa    Tarefa   @relation(fields: [tarefaId], references: [id], onDelete: Cascade)
+
+  @@index([tarefaId])
+  @@map("tarefas_anexos")
+}
+
+/// @description Novo: Comentários de Tarefa
+model TarefaComentario {
+  id           String   @id @default(uuid())
+  tarefaId     String
+  usuarioId    String
+  texto        String
+  editado      Boolean  @default(false)
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+  tarefa       Tarefa   @relation(fields: [tarefaId], references: [id], onDelete: Cascade)
+  usuario      Usuario  @relation(fields: [usuarioId], references: [id])
+
+  @@index([tarefaId])
+  @@map("tarefas_comentarios")
+}
+
+/// @description Novo: Dependências entre Tarefas
+model TarefaDependencia {
+  id                  String   @id @default(uuid())
+  tarefaDependenteId  String
+  tarefaBloqueadoraId String
+  tipo                String   @default("FINISH_TO_START") @db.VarChar(50)
+  criadoEm            DateTime @default(now())
+  tarefaBloqueadora   Tarefa   @relation("TarefaBloqueadora", fields: [tarefaBloqueadoraId], references: [id], onDelete: Cascade)
+  tarefaDependente    Tarefa   @relation("TarefaDependente", fields: [tarefaDependenteId], references: [id], onDelete: Cascade)
+
+  @@unique([tarefaDependenteId, tarefaBloqueadoraId])
+  @@map("tarefas_dependencias")
+}
+
+model RegistroPonto {
+  id              String         @id @default(uuid())
+  usuarioId       String
+  dispositivoId   String
+  dataHora        DateTime       @default(now()) @db.Timestamptz(6)
+  tipo            String         @db.VarChar(50)
+  latitude        Float
+  longitude       Float
+  precisao        Float
+  dentroGeofence  Boolean        @default(false)
+  enderecoIP      String         @db.VarChar(45)
+  nomeRedeWiFi    String?        @db.VarChar(255)
+  aprovado        Boolean        @default(false)
+  aprovadoPor     String?        @db.VarChar(255)
+  aprovadoEm      DateTime?
+  observacao      String?
+  hashIntegridade String         @db.VarChar(255)
+  criadoEm        DateTime       @default(now())
+  /// Escopo de contexto
+  grupoId         String?
+  usuarioPerfilId String?
+  endereco        String?
+  numeroEndereco  String?        @db.VarChar(20)
+  dispositivo     Dispositivo    @relation(fields: [dispositivoId], references: [id])
+  grupo           Grupo?         @relation(fields: [grupoId], references: [id])
+  usuario         Usuario        @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  usuarioPerfil   UsuarioPerfil? @relation(fields: [usuarioPerfilId], references: [id])
+
+  @@index([usuarioId])
+  @@index([dataHora])
+  @@index([tipo])
+  @@index([grupoId])
+  @@index([usuarioPerfilId])
+  @@map("registros_ponto")
+}
+
+/// @description Solicitações de Hora Extra para aprovação
+model SolicitacaoHoraExtra {
+  id              String         @id @default(uuid())
+  usuarioId       String
+  data            DateTime       @db.Date
+  inicio          String         @db.VarChar(5)
+  fim             String         @db.VarChar(5)
+  justificativa   String?        @db.VarChar(500)
+  status          String         @default("PENDENTE") @db.VarChar(20)
+  revisadaPor     String?        @db.VarChar(255)
+  revisadaEm      DateTime?
+  observacao      String?        @db.VarChar(500)
+  criadoEm        DateTime       @default(now())
+  atualizadoEm    DateTime       @updatedAt
+  /// Escopo de contexto
+  grupoId         String?
+  usuarioPerfilId String?
+  grupo           Grupo?         @relation(fields: [grupoId], references: [id])
+  usuario         Usuario        @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  usuarioPerfil   UsuarioPerfil? @relation(fields: [usuarioPerfilId], references: [id])
+
+  @@index([usuarioId])
+  @@index([data])
+  @@index([status])
+  @@index([grupoId])
+  @@index([usuarioPerfilId])
+  @@map("solicitacoes_hora_extra")
+}
+
+model EventoESocial {
+  id                String    @id @default(uuid())
+  tipoEvento        String    @db.VarChar(20)
+  descricao         String    @db.VarChar(255)
+  status            String    @db.VarChar(50)
+  dataEnvio         DateTime?
+  dataProcessamento DateTime?
+  protocolo         String?   @db.VarChar(255)
+  versao            String?   @db.VarChar(20)
+  xmlEnvio          String?
+  xmlRetorno        String?
+  erro              String?
+  criadoEm          DateTime  @default(now())
+  atualizadoEm      DateTime  @updatedAt
+
+  @@index([tipoEvento])
+  @@index([status])
+  @@map("eventos_esocial")
+}
+
+model Empregador {
+  id              String               @id @default(uuid())
+  cpfCnpj         String               @unique @db.VarChar(14)
+  tipoInscricao   String               @default("CPF") @db.VarChar(4)
+  nome            String               @db.VarChar(255)
+  razaoSocial     String?              @db.VarChar(255)
+  email           String               @db.VarChar(255)
+  telefone        String               @db.VarChar(11)
+  logradouro      String               @db.VarChar(255)
+  numero          String               @db.VarChar(20)
+  complemento     String?              @db.VarChar(100)
+  bairro          String               @db.VarChar(100)
+  cidade          String               @db.VarChar(100)
+  uf              String               @db.VarChar(2)
+  cep             String               @db.VarChar(8)
+  ambienteESocial String               @default("HOMOLOGACAO") @db.VarChar(20)
+  ativo           Boolean              @default(true)
+  criadoEm        DateTime             @default(now())
+  atualizadoEm    DateTime             @updatedAt
+  certificados    CertificadoDigital[]
+
+  @@index([cpfCnpj])
+  @@index([ativo])
+  @@map("empregadores")
+}
+
+/// @description Certificados Digitais (e-CPF, e-CNPJ) com segurança LGPD
+model CertificadoDigital {
+  id                     String                 @id @default(uuid())
+  empregadorId           String?
+  usuarioId              String?
+  nome                   String                 @db.VarChar(255)
+  descricao              String?
+  tipo                   String                 @db.VarChar(50)
+  tipoDocumento          String                 @db.VarChar(100)
+  cpfCnpjTitular         String                 @db.VarChar(14)
+  nomeTitular            String                 @db.VarChar(255)
+  numeroSerial           String                 @unique @db.VarChar(255)
+  emissor                String                 @db.VarChar(255)
+  dataEmissao            DateTime               @db.Date
+  dataValidade           DateTime               @db.Date
+  algoritmo              String                 @db.VarChar(50)
+  tamanhoChave           Int
+  thumbprint             String                 @db.VarChar(255)
+  caminhoArquivo         String                 @db.VarChar(500)
+  nomeArquivoOriginal    String                 @db.VarChar(255)
+  tamanhoArquivo         Int
+  hashArquivo            String                 @db.VarChar(255)
+  senhaHash              String                 @db.VarChar(255)
+  senhaSalt              String                 @db.VarChar(255)
+  senhaAlgoritmo         String                 @default("AES-256-GCM") @db.VarChar(50)
+  criptografiaIV         String                 @db.VarChar(255)
+  ativo                  Boolean                @default(true)
+  revogado               Boolean                @default(false)
+  dataRevogacao          DateTime?
+  motivoRevogacao        String?
+  alertaVencimento       Boolean                @default(true)
+  diasAntesAlerta        Int                    @default(30)
+  ultimoUso              DateTime?
+  contagemUso            Int                    @default(0)
+  finalidadeUso          String?
+  consentimentoLGPD      Boolean                @default(false)
+  dataConsentimentoLGPD  DateTime?
+  ipCadastro             String?                @db.VarChar(45)
+  ipUltimaAlteracao      String?                @db.VarChar(45)
+  usuarioCadastro        String?                @db.VarChar(255)
+  usuarioUltimaAlteracao String?                @db.VarChar(255)
+  observacoes            String?
+  metadata               Json?
+  criadoEm               DateTime               @default(now())
+  atualizadoEm           DateTime               @updatedAt
+  empregador             Empregador?            @relation(fields: [empregadorId], references: [id])
+  historicoAcessos       CertificadoHistorico[]
+
+  @@index([empregadorId])
+  @@index([usuarioId])
+  @@index([tipo])
+  @@index([dataValidade])
+  @@index([ativo])
+  @@index([numeroSerial])
+  @@map("certificados_digitais")
+}
+
+/// @description Histórico de Acesso a Certificados (Auditoria LGPD)
+model CertificadoHistorico {
+  id            String             @id @default(uuid())
+  certificadoId String
+  usuarioId     String?
+  acao          String             @db.VarChar(50)
+  descricao     String?
+  enderecoIP    String             @db.VarChar(45)
+  userAgent     String?
+  localizacao   String?            @db.VarChar(255)
+  sucesso       Boolean            @default(true)
+  mensagemErro  String?
+  dadosAntes    Json?
+  dadosDepois   Json?
+  motivoAcesso  String?
+  autorizadoPor String?            @db.VarChar(255)
+  criadoEm      DateTime           @default(now())
+  certificado   CertificadoDigital @relation(fields: [certificadoId], references: [id], onDelete: Cascade)
+
+  @@index([certificadoId])
+  @@index([usuarioId])
+  @@index([acao])
+  @@index([criadoEm])
+  @@map("certificados_historico")
+}
+
+model Emprestimo {
+  id                 String    @id @default(uuid())
+  usuarioId          String
+  empregadoId        String?
+  tipo               String?   @db.VarChar(20)
+  valor              Decimal   @db.Decimal(10, 2)
+  valorParcela       Decimal   @db.Decimal(10, 2)
+  quantidadeParcelas Int
+  parcelasPagas      Int       @default(0)
+  taxaJuros          Decimal   @default(0) @db.Decimal(5, 2)
+  dataConcessao      DateTime  @db.Date
+  dataVencimento     DateTime  @db.Date
+  dataSolicitacao    DateTime  @default(now())
+  dataAprovacao      DateTime?
+  status             String    @db.VarChar(50)
+  observacao         String?
+  justificativa      String?
+  aprovadoPor        String?   @db.VarChar(255)
+  motivoRejeicao     String?
+  criadoEm           DateTime  @default(now())
+  atualizadoEm       DateTime  @updatedAt
+  empregado          Usuario?  @relation("EmprestimosEmpregado", fields: [empregadoId], references: [id], onDelete: Cascade)
+  usuario            Usuario   @relation("EmprestimosEmpregador", fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([empregadoId])
+  @@index([status])
+  @@index([tipo])
+  @@map("emprestimos")
+}
+
+model Alerta {
+  id               String            @id @default(uuid())
+  usuarioId        String?
+  titulo           String            @db.VarChar(255)
+  descricao        String
+  tipo             String            @db.VarChar(50)
+  prioridade       String            @db.VarChar(20)
+  categoria        String            @db.VarChar(100)
+  status           String            @db.VarChar(50)
+  lido             Boolean           @default(false)
+  dataAlerta       DateTime
+  dataExpiracao    DateTime?
+  recorrente       Boolean           @default(false)
+  frequencia       String?           @db.VarChar(50)
+  textoNotificacao String?
+  gatilhoContador  Int               @default(0)
+  ultimoGatilho    DateTime?
+  notificarEmail   Boolean           @default(false)
+  notificarPush    Boolean           @default(false)
+  notificarSMS     Boolean           @default(false)
+  horaAlerta       String?           @db.VarChar(5)
+  condicoes        Json?
+  criadoEm         DateTime          @default(now())
+  atualizadoEm     DateTime          @updatedAt
+  usuario          Usuario?          @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  historico        AlertaHistorico[]
+
+  @@index([usuarioId])
+  @@index([tipo])
+  @@index([status])
+  @@map("alertas")
+}
+
+/// @description Novo: Histórico de Alertas
+model AlertaHistorico {
+  id            String   @id @default(uuid())
+  alertaId      String
+  disparadoEm   DateTime @default(now())
+  destinatarios String[]
+  canal         String   @db.VarChar(50)
+  sucesso       Boolean
+  erro          String?
+  valorGatilho  Json?
+  alerta        Alerta   @relation(fields: [alertaId], references: [id], onDelete: Cascade)
+
+  @@index([alertaId])
+  @@index([disparadoEm])
+  @@map("alertas_historico")
+}
+
+model ListaCompras {
+  id                String                         @id @default(uuid())
+  usuarioId         String
+  nome              String                         @db.VarChar(255)
+  categoria         String                         @db.VarChar(100)
+  descricao         String?
+  totalItens        Int                            @default(0)
+  itensComprados    Int                            @default(0)
+  valorEstimado     Decimal                        @db.Decimal(10, 2)
+  valorFinal        Decimal?                       @db.Decimal(10, 2)
+  ativa             Boolean                        @default(true)
+  concluida         Boolean                        @default(false)
+  criadoEm          DateTime                       @default(now())
+  atualizadoEm      DateTime                       @updatedAt
+  itens             ItemCompra[]
+  usuario           Usuario                        @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  compartilhamentos ListaComprasCompartilhamento[]
+
+  @@index([usuarioId])
+  @@index([categoria])
+  @@map("listas_compras")
+}
+
+model ItemCompra {
+  id           String       @id @default(uuid())
+  listaId      String
+  nome         String       @db.VarChar(255)
+  quantidade   String       @db.VarChar(100)
+  preco        Decimal?     @db.Decimal(10, 2)
+  categoria    String       @db.VarChar(100)
+  comprado     Boolean      @default(false)
+  compradoEm   DateTime?
+  compradoPor  String?      @db.VarChar(255)
+  observacao   String?
+  marca        String?      @db.VarChar(100)
+  local        String?      @db.VarChar(255)
+  ordem        Int          @default(0)
+  criadoEm     DateTime     @default(now())
+  atualizadoEm DateTime     @updatedAt
+  lista        ListaCompras @relation(fields: [listaId], references: [id], onDelete: Cascade)
+
+  @@index([listaId])
+  @@index([comprado])
+  @@index([categoria])
+  @@map("itens_compra")
+}
+
+model ListaComprasCompartilhamento {
+  id        String       @id @default(uuid())
+  listaId   String
+  usuarioId String
+  permissao String       @default("LEITURA") @db.VarChar(50)
+  criadoEm  DateTime     @default(now())
+  lista     ListaCompras @relation(fields: [listaId], references: [id], onDelete: Cascade)
+  usuario   Usuario      @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([listaId, usuarioId])
+  @@index([listaId])
+  @@index([usuarioId])
+  @@map("listas_compras_compartilhamento")
+}
+
+model CalculoSalarial {
+  id               String              @id @default(uuid())
+  cpfEmpregado     String              @db.VarChar(11)
+  mesReferencia    Int
+  anoReferencia    Int
+  salarioBruto     Decimal             @db.Decimal(10, 2)
+  descontos        Json
+  proventos        Json
+  salarioLiquido   Decimal             @db.Decimal(10, 2)
+  baseINSS         Decimal             @db.Decimal(10, 2)
+  valorINSS        Decimal             @db.Decimal(10, 2)
+  baseIR           Decimal             @db.Decimal(10, 2)
+  valorIR          Decimal             @db.Decimal(10, 2)
+  horasTrabalhadas Int?
+  horasExtras      Int?
+  valorHoraExtra   Decimal?            @db.Decimal(10, 2)
+  valeTransporte   Decimal?            @db.Decimal(10, 2)
+  valeAlimentacao  Decimal?            @db.Decimal(10, 2)
+  planoSaude       Decimal?            @db.Decimal(10, 2)
+  diasFalta        Int?                @default(0)
+  valorFaltas      Decimal?            @db.Decimal(10, 2)
+  processado       Boolean             @default(false)
+  pago             Boolean             @default(false)
+  dataPagamento    DateTime?
+  criadoEm         DateTime            @default(now())
+  atualizadoEm     DateTime            @updatedAt
+  holerites        HoleritePagamento[]
+
+  @@unique([cpfEmpregado, mesReferencia, anoReferencia])
+  @@index([cpfEmpregado])
+  @@map("calculos_salariais")
+}
+
+/// @description Novo: Holerites
+model HoleritePagamento {
+  id             String          @id @default(uuid())
+  calculoId      String
+  numeroHolerite String          @unique @db.VarChar(50)
+  arquivoUrl     String
+  hash           String          @db.VarChar(255)
+  enviado        Boolean         @default(false)
+  enviadoEm      DateTime?
+  visualizado    Boolean         @default(false)
+  visualizadoEm  DateTime?
+  criadoEm       DateTime        @default(now())
+  calculo        CalculoSalarial @relation(fields: [calculoId], references: [id])
+
+  @@index([calculoId])
+  @@map("holerites_pagamento")
+}
+
+/// @description Novo: Planos de Assinatura
+model PlanoAssinatura {
+  id              String       @id @default(uuid())
+  codigo          String       @unique @db.VarChar(50)
+  nome            String       @db.VarChar(100)
+  tagline         String       @db.VarChar(255)
+  descricao       String
+  precoMensal     Decimal      @db.Decimal(10, 2)
+  precoAnual      Decimal      @db.Decimal(10, 2)
+  descontoAnual   String?      @db.VarChar(50)
+  recursos        String[]
+  limitesRecursos Json?
+  popular         Boolean      @default(false)
+  recomendado     Boolean      @default(false)
+  gratuito        Boolean      @default(false)
+  parceria        Boolean      @default(false)
+  ativo           Boolean      @default(true)
+  ordem           Int          @default(0)
+  criadoEm        DateTime     @default(now())
+  atualizadoEm    DateTime     @updatedAt
+  assinaturas     Assinatura[]
+
+  @@map("planos_assinatura")
+}
+
+/// @description Novo: Assinaturas
+model Assinatura {
+  id                String          @id @default(uuid())
+  usuarioId         String
+  planoId           String
+  tipoCobranca      String          @db.VarChar(50)
+  status            String          @db.VarChar(50)
+  inicioEm          DateTime
+  fimEm             DateTime?
+  canceladaEm       DateTime?
+  proximaCobrancaEm DateTime?
+  valorAtual        Decimal         @db.Decimal(10, 2)
+  criadoEm          DateTime        @default(now())
+  atualizadoEm      DateTime        @updatedAt
+  plano             PlanoAssinatura @relation(fields: [planoId], references: [id])
+  usuario           Usuario         @relation(fields: [usuarioId], references: [id])
+
+  @@index([usuarioId])
+  @@index([status])
+  @@map("assinaturas")
+}
+
+model LogAuditoria {
+  id              String   @id @default(uuid())
+  usuarioId       String?
+  acao            String   @db.VarChar(100)
+  entidade        String   @db.VarChar(100)
+  entidadeId      String?  @db.VarChar(255)
+  descricao       String
+  metodo          String?  @db.VarChar(20)
+  rota            String?  @db.VarChar(255)
+  enderecoIP      String?  @db.VarChar(45)
+  userAgent       String?
+  dadosAnteriores Json?
+  dadosNovos      Json?
+  sucesso         Boolean  @default(true)
+  erro            String?
+  tipoLog         String   @db.VarChar(50)
+  nivelSeveridade String   @db.VarChar(20)
+  criadoEm        DateTime @default(now())
+  usuario         Usuario? @relation(fields: [usuarioId], references: [id])
+
+  @@index([usuarioId])
+  @@index([acao])
+  @@index([entidade])
+  @@index([criadoEm])
+  @@index([tipoLog])
+  @@map("logs_auditoria")
+}
+
+model Configuracao {
+  id           String   @id @default(uuid())
+  chave        String   @unique @db.VarChar(100)
+  valor        String
+  tipo         String   @db.VarChar(50)
+  descricao    String?
+  categoria    String   @db.VarChar(100)
+  ativo        Boolean  @default(true)
+  sensivel     Boolean  @default(false)
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  @@index([chave])
+  @@index([categoria])
+  @@map("configuracoes")
+}
+
+/// @description Novo: Estatísticas do Sistema
+model EstatisticaSistema {
+  id           String   @id @default(uuid())
+  chave        String   @unique @db.VarChar(100)
+  valor        String   @db.VarChar(255)
+  descricao    String?
+  categoria    String   @db.VarChar(100)
+  tipoDado     String   @db.VarChar(50)
+  atualizadaEm DateTime @default(now())
+  criadoEm     DateTime @default(now())
+
+  @@index([chave])
+  @@index([categoria])
+  @@map("estatisticas_sistema")
+}
+
+/// @description Novo: Membros da Família
+model MembroFamilia {
+  id                    String    @id @default(uuid())
+  usuarioId             String
+  nome                  String    @db.VarChar(255)
+  parentesco            String    @db.VarChar(100)
+  cpf                   String?   @db.VarChar(11)
+  dataNascimento        DateTime? @db.Date
+  telefone              String?   @db.VarChar(11)
+  email                 String?   @db.VarChar(255)
+  endereco              Json?
+  contatoEmergencia     Boolean   @default(false)
+  responsavelFinanceiro Boolean   @default(false)
+  ativo                 Boolean   @default(true)
+  avatar                String?   @db.VarChar(255)
+  favorito              Boolean   @default(false)
+  bloqueado             Boolean   @default(false)
+  usuarioVinculado      String?
+  criadoEm              DateTime  @default(now())
+  atualizadoEm          DateTime  @updatedAt
+  usuario               Usuario   @relation("MembrosFamiliaPrincipal", fields: [usuarioId], references: [id], onDelete: Cascade)
+  usuarioRef            Usuario?  @relation("MembrosFamiliaVinculados", fields: [usuarioVinculado], references: [id])
+
+  @@index([usuarioId])
+  @@index([parentesco])
+  @@index([usuarioVinculado])
+  @@map("membros_familia")
+}
+
+/// @description Novo: Dados de Páginas
+model DadosPagina {
+  id                String   @id @default(uuid())
+  slug              String   @unique @db.VarChar(100)
+  titulo            String   @db.VarChar(255)
+  conteudo          String
+  tipoPagina        String   @db.VarChar(50)
+  categoria         String   @db.VarChar(100)
+  tags              String[]
+  ativa             Boolean  @default(true)
+  publica           Boolean  @default(false)
+  ultimaModificacao DateTime @default(now())
+  modificadoPor     String?  @db.VarChar(255)
+  versao            String   @db.VarChar(20)
+  criadoEm          DateTime @default(now())
+  atualizadoEm      DateTime @updatedAt
+
+  @@index([slug])
+  @@index([tipoPagina])
+  @@index([categoria])
+  @@map("dados_paginas")
+}
+
+/// @description Novo: Notificações
+model Notificacao {
+  id            String    @id @default(uuid())
+  usuarioId     String?
+  tipo          String    @db.VarChar(50)
+  titulo        String    @db.VarChar(255)
+  mensagem      String
+  categoria     String    @db.VarChar(100)
+  prioridade    String    @db.VarChar(20)
+  lida          Boolean   @default(false)
+  enviada       Boolean   @default(false)
+  dadosAcao     Json?
+  dataEnvio     DateTime?
+  dataLeitura   DateTime?
+  dataExpiracao DateTime?
+  criadoEm      DateTime  @default(now())
+  atualizadoEm  DateTime  @updatedAt
+  usuario       Usuario?  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([tipo])
+  @@index([categoria])
+  @@index([lida])
+  @@index([dataEnvio])
+  @@map("notificacoes")
+}
+
+/// @description Nova: Folha de Pagamento
+model FolhaPagamento {
+  id               String   @id @default(uuid())
+  usuarioId        String
+  empregadoId      String
+  mes              Int
+  ano              Int
+  salarioBase      Decimal  @db.Decimal(10, 2)
+  horasTrabalhadas Int
+  horasExtras      Int      @default(0)
+  faltas           Int      @default(0)
+  atestados        Int      @default(0)
+  descontos        Decimal  @db.Decimal(10, 2)
+  adicionais       Decimal  @db.Decimal(10, 2)
+  salarioLiquido   Decimal  @db.Decimal(10, 2)
+  status           String   @db.VarChar(50)
+  observacoes      String?
+  criadoEm         DateTime @default(now())
+  atualizadoEm     DateTime @updatedAt
+  usuario          Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([empregadoId])
+  @@index([mes, ano])
+  @@index([status])
+  @@map("folha_pagamento")
+}
+
+/// @description Nova: Guias de Impostos
+model GuiaImposto {
+  id           String   @id @default(uuid())
+  usuarioId    String
+  tipo         String   @db.VarChar(50)
+  mes          Int
+  ano          Int
+  valor        Decimal  @db.Decimal(10, 2)
+  vencimento   DateTime @db.Date
+  status       String   @db.VarChar(50)
+  observacoes  String?
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+  usuario      Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([tipo])
+  @@index([mes, ano])
+  @@index([status])
+  @@map("guias_impostos")
+}
+
+/// @description Nova: Métricas de Sistema
+model MetricaSistema {
+  id           String   @id @default(uuid())
+  chave        String   @unique @db.VarChar(100)
+  valor        Int
+  descricao    String?
+  categoria    String   @db.VarChar(100)
+  dadosExtras  Json?
+  atualizadaEm DateTime @default(now())
+  criadoEm     DateTime @default(now())
+
+  @@index([chave])
+  @@index([categoria])
+  @@map("metricas_sistema")
+}
+
+/// @description Nova: Atividade Recente
+model AtividadeRecente {
+  id        String   @id @default(uuid())
+  tipo      String   @db.VarChar(50)
+  titulo    String   @db.VarChar(255)
+  descricao String?
+  usuarioId String?
+  dados     Json?
+  criadoEm  DateTime @default(now())
+  usuario   Usuario? @relation(fields: [usuarioId], references: [id])
+
+  @@index([usuarioId])
+  @@index([tipo])
+  @@index([criadoEm])
+  @@map("atividade_recente")
+}
+
+model ConfiguracaoSistema {
+  id           String   @id @default(uuid())
+  chave        String   @unique @db.VarChar(100)
+  valor        String
+  tipo         String   @db.VarChar(50)
+  descricao    String?  @db.VarChar(255)
+  categoria    String   @db.VarChar(100)
+  editavel     Boolean  @default(true)
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  @@index([categoria])
+  @@index([chave])
+  @@map("configuracao_sistema")
+}
+
+model ConfiguracaoTeste {
+  id           String   @id @default(uuid())
+  nome         String   @unique @db.VarChar(255)
+  descricao    String?  @db.VarChar(500)
+  dados        Json
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  @@index([ativo])
+  @@map("configuracao_teste")
+}
+
+model TemplateComunicacao {
+  id           String   @id @default(uuid())
+  nome         String   @db.VarChar(255)
+  tipo         String   @db.VarChar(50)
+  assunto      String?  @db.VarChar(255)
+  conteudo     String
+  variaveis    Json?
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  @@index([nome])
+  @@index([tipo])
+  @@index([ativo])
+  @@map("template_comunicacao")
+}
+
+/// @description Fingerprint de Dispositivo (Antifraude)
+model DeviceFingerprint {
+  id                 String               @id @default(uuid())
+  usuarioId          String?
+  fingerprintHash    String               @unique @db.VarChar(255)
+  canvasFingerprint  String?
+  webglFingerprint   String?
+  audioFingerprint   String?
+  platform           String?              @db.VarChar(100)
+  cpuCores           Int?
+  memoria            Int?
+  telaResolucao      String?              @db.VarChar(50)
+  telaColorDepth     Int?
+  timezone           String?              @db.VarChar(100)
+  idioma             String?              @db.VarChar(20)
+  fontesDetectadas   String[]
+  userAgent          String?
+  plugins            Json?
+  navegador          String?              @db.VarChar(100)
+  navegadorVersao    String?              @db.VarChar(50)
+  sistemaOperacional String?              @db.VarChar(100)
+  dispositivoTipo    String?              @db.VarChar(50)
+  touchSupport       Boolean              @default(false)
+  webglVendor        String?              @db.VarChar(100)
+  webglRenderer      String?              @db.VarChar(100)
+  confiavel          Boolean              @default(false)
+  vezesVisto         Int                  @default(1)
+  primeiraVez        DateTime             @default(now())
+  ultimaVez          DateTime             @default(now())
+  bloqueado          Boolean              @default(false)
+  motivoBloqueio     String?
+  criadoEm           DateTime             @default(now())
+  atualizadoEm       DateTime             @updatedAt
+  usuario            Usuario?             @relation(fields: [usuarioId], references: [id])
+  geolocalizacoes    GeolocationHistory[]
+  analisesRisco      RiskAnalysis[]
+
+  @@index([usuarioId])
+  @@index([fingerprintHash])
+  @@index([confiavel])
+  @@index([primeiraVez])
+  @@map("device_fingerprints")
+}
+
+/// @description Fingerprint de Rede (Antifraude)
+model NetworkFingerprint {
+  id                String   @id @default(uuid())
+  usuarioId         String?
+  connectionType    String?  @db.VarChar(50)
+  effectiveType     String?  @db.VarChar(50)
+  downlink          Float?
+  rtt               Int?
+  ipAddress         String?  @db.VarChar(45)
+  timezone          String?  @db.VarChar(100)
+  language          String?  @db.VarChar(20)
+  userAgent         String?
+  platform          String?  @db.VarChar(100)
+  screenResolution  String?  @db.VarChar(50)
+  connectionSpeed   String?  @db.VarChar(50)
+  connectionQuality String?  @db.VarChar(50)
+  networkLatency    Int?
+  bandwidthEstimate Float?
+  timestamp         DateTime @default(now())
+  sessionId         String?  @db.VarChar(100)
+  riskScore         Int?
+  confidence        Int?
+  anomalies         String?
+  isFraud           Boolean  @default(false)
+  fraudReasons      String?
+  fraudConfidence   Int?
+  criadoEm          DateTime @default(now())
+  atualizadoEm      DateTime @updatedAt
+  usuario           Usuario? @relation(fields: [usuarioId], references: [id])
+
+  @@index([usuarioId])
+  @@index([ipAddress])
+  @@index([sessionId])
+  @@index([timestamp])
+  @@index([isFraud])
+  @@index([riskScore])
+  @@map("network_fingerprints")
+}
+
+/// @description Análise de Risco (Antifraude)
+model RiskAnalysis {
+  id                   String              @id @default(uuid())
+  usuarioId            String?
+  fingerprintId        String?
+  sessionId            String?
+  ipAddress            String              @db.VarChar(45)
+  ipAnaliseId          String?
+  geolocalizacaoId     String?
+  comportamentoId      String?
+  tipoEvento           String              @db.VarChar(50)
+  scoreFinal           Decimal             @db.Decimal(5, 4)
+  nivelRisco           String              @db.VarChar(20)
+  scoreFingerprint     Decimal?            @db.Decimal(5, 4)
+  scoreIP              Decimal?            @db.Decimal(5, 4)
+  scoreGeolocalizacao  Decimal?            @db.Decimal(5, 4)
+  scoreComportamento   Decimal?            @db.Decimal(5, 4)
+  scoreTemporal        Decimal?            @db.Decimal(5, 4)
+  sinaisAlerta         String[]
+  dispositivoNovo      Boolean             @default(false)
+  ipNovo               Boolean             @default(false)
+  localizacaoNova      Boolean             @default(false)
+  velocidadeImpossivel Boolean             @default(false)
+  horaAtipica          Boolean             @default(false)
+  vpnDetectado         Boolean             @default(false)
+  proxyDetectado       Boolean             @default(false)
+  datacenterDetectado  Boolean             @default(false)
+  botDetectado         Boolean             @default(false)
+  acaoTomada           String?             @db.VarChar(100)
+  bloqueado            Boolean             @default(false)
+  notificadoUsuario    Boolean             @default(false)
+  dadosCompletos       Json?
+  criadoEm             DateTime            @default(now())
+  comportamento        BehaviorAnalysis?   @relation(fields: [comportamentoId], references: [id])
+  fingerprint          DeviceFingerprint?  @relation(fields: [fingerprintId], references: [id])
+  geolocalizacao       GeolocationHistory? @relation(fields: [geolocalizacaoId], references: [id])
+  ipAnalise            IPAnalysis?         @relation(fields: [ipAnaliseId], references: [id])
+  usuario              Usuario?            @relation(fields: [usuarioId], references: [id])
+
+  @@index([usuarioId])
+  @@index([fingerprintId])
+  @@index([ipAddress])
+  @@index([nivelRisco])
+  @@index([tipoEvento])
+  @@index([criadoEm])
+  @@index([scoreFinal])
+  @@map("risk_analysis")
+}
+
+/// @description Histórico de Geolocalizações (Antifraude)
+model GeolocationHistory {
+  id                     String             @id @default(uuid())
+  usuarioId              String?
+  fingerprintId          String?
+  latitude               Float
+  longitude              Float
+  precisao               Float?
+  altitude               Float?
+  altitudePrecisao       Float?
+  velocidade             Float?
+  direcao                Float?
+  cidade                 String?            @db.VarChar(100)
+  estado                 String?            @db.VarChar(100)
+  pais                   String?            @db.VarChar(100)
+  codigoPais             String?            @db.VarChar(2)
+  cep                    String?            @db.VarChar(20)
+  enderecoCompleto       String?
+  distanciaUltimaKm      Float?
+  tempoDecorridoMin      Float?
+  velocidadeCalculadaKmH Float?
+  suspeita               Boolean            @default(false)
+  motivoSuspeita         String?
+  criadoEm               DateTime           @default(now())
+  fingerprint            DeviceFingerprint? @relation(fields: [fingerprintId], references: [id])
+  usuario                Usuario?           @relation(fields: [usuarioId], references: [id])
+  analisesRisco          RiskAnalysis[]
+
+  @@index([usuarioId])
+  @@index([fingerprintId])
+  @@index([criadoEm])
+  @@index([suspeita])
+  @@map("geolocation_history")
+}
+
+/// @description Análise de Endereço IP (Antifraude)
+model IPAnalysis {
+  id             String         @id @default(uuid())
+  ipAddress      String         @unique @db.VarChar(45)
+  tipo           String?        @db.VarChar(20)
+  versaoIP       String?        @db.VarChar(10)
+  hostname       String?        @db.VarChar(255)
+  isp            String?        @db.VarChar(255)
+  asn            String?        @db.VarChar(50)
+  asnOrganizacao String?        @db.VarChar(255)
+  cidade         String?        @db.VarChar(100)
+  regiao         String?        @db.VarChar(100)
+  pais           String?        @db.VarChar(100)
+  codigoPais     String?        @db.VarChar(2)
+  continente     String?        @db.VarChar(50)
+  latitude       Float?
+  longitude      Float?
+  timezone       String?        @db.VarChar(100)
+  isVPN          Boolean        @default(false)
+  isProxy        Boolean        @default(false)
+  isTor          Boolean        @default(false)
+  isDatacenter   Boolean        @default(false)
+  isRelay        Boolean        @default(false)
+  isMobile       Boolean        @default(false)
+  scoreAbuso     Decimal?       @db.Decimal(5, 4)
+  scoreRisco     Decimal?       @db.Decimal(5, 4)
+  vezesVisto     Int            @default(1)
+  primeiraVez    DateTime       @default(now())
+  ultimaVez      DateTime       @default(now())
+  bloqueado      Boolean        @default(false)
+  motivoBloqueio String?
+  dadosCompletos Json?
+  criadoEm       DateTime       @default(now())
+  atualizadoEm   DateTime       @updatedAt
+  analisesRisco  RiskAnalysis[]
+
+  @@index([ipAddress])
+  @@index([isVPN])
+  @@index([isProxy])
+  @@index([isDatacenter])
+  @@index([scoreRisco])
+  @@index([bloqueado])
+  @@map("ip_analysis")
+}
+
+/// @description Análise Comportamental (Antifraude)
+model BehaviorAnalysis {
+  id                        String         @id @default(uuid())
+  usuarioId                 String?
+  sessionId                 String?
+  fingerprintId             String?
+  tipoAnalise               String         @db.VarChar(50)
+  velocidadeDigitacaoMed    Int?
+  velocidadeDigitacaoDesvio Int?
+  velocidadeMouseMed        Float?
+  padraoCliques             Json?
+  tempoEntreAcoes           Json?
+  sequenciaEventos          Json?
+  eventosTotais             Int            @default(0)
+  tempoSessaoSegundos       Int?
+  paginasVisitadas          Int?
+  acionamentosTeclas        Json?
+  movimentosMouse           Int?
+  scrollsRealizados         Int?
+  regularidadeExcessiva     Boolean        @default(false)
+  acoesMuitoRapidas         Boolean        @default(false)
+  padraoHumano              Boolean        @default(true)
+  scoreBotProbabilidade     Decimal?       @db.Decimal(5, 4)
+  scoreNormalidade          Decimal?       @db.Decimal(5, 4)
+  criadoEm                  DateTime       @default(now())
+  atualizadoEm              DateTime       @updatedAt
+  usuario                   Usuario?       @relation(fields: [usuarioId], references: [id])
+  analisesRisco             RiskAnalysis[]
+
+  @@index([usuarioId])
+  @@index([sessionId])
+  @@index([fingerprintId])
+  @@index([scoreBotProbabilidade])
+  @@index([criadoEm])
+  @@map("behavior_analysis")
+}
+
+// ========================================
+// TABELAS DE CONFIGURAÇÃO DINÂMICA
+// ========================================
+// Nota: ConfiguracaoSistema já existe no schema
+
+model ConfiguracaoPerfil {
+  id          String    @id @default(uuid())
+  perfilId    String
+  chave       String
+  categoria   String
+  valor       String
+  descricao   String?
+  ativo       Boolean   @default(true)
+  prioridade  Int       @default(1)
+  criadoEm    DateTime  @default(now())
+  atualizadoEm DateTime @updatedAt
+  
+  perfil      Perfil    @relation(fields: [perfilId], references: [id], onDelete: Cascade)
+  
+  @@unique([perfilId, chave])
+  @@map("configuracao_perfil")
+}
+
+model ConfiguracaoGeolocalizacao {
+  id          String    @id @default(uuid())
+  usuarioId   String?
+  grupoId     String?
+  chave       String
+  valor       String
+  descricao   String?
+  ativo       Boolean   @default(true)
+  criadoEm    DateTime  @default(now())
+  atualizadoEm DateTime @updatedAt
+  
+  usuario     Usuario?  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  grupo       Grupo?    @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+  
+  @@map("configuracao_geolocalizacao")
+}
+
+model ConfiguracaoAntifraude {
+  id          String    @id @default(uuid())
+  usuarioId   String?
+  grupoId     String?
+  chave       String
+  valor       String
+  descricao   String?
+  ativo       Boolean   @default(true)
+  criadoEm    DateTime  @default(now())
+  atualizadoEm DateTime @updatedAt
+  
+  usuario     Usuario?  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  grupo       Grupo?    @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+  
+  @@map("configuracao_antifraude")
+}
+
+
+// ============================================
+// MODELOS DE CONFIGURAÇÃO E CUSTOMIZAÇÃO
+// ============================================
+
+// ConfiguracaoSistema já definido anteriormente (linha 1358)
+
+/// Temas visuais completos
+model TemaVisual {
+  id           String   @id @default(uuid())
+  nome         String   @unique @db.VarChar(100)
+  descricao    String?
+  ativo        Boolean  @default(false)
+  padrao       Boolean  @default(false)
+  cores        Json     // { primary, secondary, success, error, etc }
+  tipografia   Json     // { fontFamily, fontSize, fontWeight, lineHeight }
+  espacamentos Json     // { xs, sm, md, lg, xl }
+  sombras      Json     // { sm, md, lg }
+  bordas       Json     // { radius, width }
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  @@index([ativo])
+}
+
+/// Componentes reutilizáveis catalogados
+model ComponenteReutilizavel {
+  id           String   @id @default(uuid())
+  nome         String   @unique @db.VarChar(100)
+  categoria    String   @db.VarChar(50) // button, input, modal, card, layout
+  descricao    String?
+  codigo       String   // Código do componente
+  props        Json?    // Propriedades aceitas
+  exemplos     Json?    // Exemplos de uso
+  documentacao String?  // Documentação markdown
+  versao       String   @default("1.0.0") @db.VarChar(20)
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  @@index([categoria])
+}
+
+/// Constantes da aplicação
+model ConstanteAplicacao {
+  id          String   @id @default(uuid())
+  chave       String   @db.VarChar(100)
+  valor       String
+  tipo        String   @db.VarChar(50) // string, number, boolean, url
+  categoria   String   @db.VarChar(50) // api, limite, timeout, url
+  descricao   String?
+  ambiente    String   @default("all") @db.VarChar(20) // all, development, production
+  criadoEm    DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  @@unique([chave, ambiente])
+  @@index([categoria])
+}
+
+/// Histórico de mudanças nas configurações
+model HistoricoConfiguracao {
+  id             String   @id @default(uuid())
+  tabelaOrigem   String   @db.VarChar(100)
+  registroId     String
+  campo          String   @db.VarChar(100)
+  valorAnterior  String?
+  valorNovo      String
+  usuarioId      String?
+  usuario        Usuario? @relation(fields: [usuarioId], references: [id])
+  motivo         String?
+  criadoEm       DateTime @default(now())
+
+  @@index([tabelaOrigem, registroId])
+  @@index([usuarioId])
+}

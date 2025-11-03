@@ -1,0 +1,31 @@
+// src/components/TopBar/index.tsx
+import styled from 'styled-components';
+import { defaultColors, addOpacity } from '../../utils/themeHelpers';
+
+interface TopBarProps {
+  $theme?: any;
+  children: React.ReactNode;
+}
+
+const TopBarContainer = styled.header<{ $theme?: any }>`
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 1rem 2rem;
+  margin: 0 0 2rem 0;
+  box-shadow: 0 4px 16px
+    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid
+    ${props => props.$theme?.colors?.primary
+      ? addOpacity(props.$theme.colors.primary, 0.12)
+      : addOpacity(defaultColors.primary, 0.12)};
+  width: 100%;
+  box-sizing: border-box;
+`;
+
+export default function TopBar({ $theme, children }: TopBarProps) {
+  return <TopBarContainer $theme={$theme}>{children}</TopBarContainer>;
+}
