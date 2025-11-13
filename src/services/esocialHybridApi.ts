@@ -57,7 +57,8 @@ class ESocialHybridApiService {
         );
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      // Carregamento dinâmico necessário para evitar importação no frontend
+      // eslint-disable-next-line no-var
       const realApiModule = require('./esocialRealApi') as {
         getESocialRealApiService: () => ESocialRealApiService;
       };

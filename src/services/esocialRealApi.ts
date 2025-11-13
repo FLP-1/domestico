@@ -635,7 +635,9 @@ export class ESocialRealApiService {
                 data: this.processEmpregadosResponse(extracted || parsed),
               };
             });
-            return result.data;
+            // Garantir que retornamos um array diretamente
+            const data = result.data;
+            return Array.isArray(data) ? data : (data as any).data || [];
           }, 'consultarDadosEmpregados');
         }
       );
@@ -709,7 +711,9 @@ export class ESocialRealApiService {
                 data: this.processEventosResponse(extracted || parsed),
               };
             });
-            return result.data;
+            // Garantir que retornamos um array diretamente
+            const data = result.data;
+            return Array.isArray(data) ? data : (data as any).data || [];
           }, 'consultarEventosEnviados');
         },
         60 * 60 * 1000 // 1 hora
