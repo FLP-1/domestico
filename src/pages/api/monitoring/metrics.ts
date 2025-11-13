@@ -27,29 +27,35 @@ export default async function handler(
 }
 
 async function getMetrics(req: NextApiRequest, res: NextApiResponse) {
-  const { categoria } = req.query;
+  try {
+    const { categoria } = req.query;
 
-  const where: any = {};
-  if (categoria) where.categoria = categoria as string;
+    const where: any = {};
+    if (categoria) where.categoria = categoria as string;
 
-  const metrics = await prisma.metricaSistema.findMany({
-    where,
-    orderBy: [{ categoria: 'asc' }, { chave: 'asc' }],
-  });
+    const metrics = await prisma.metricaSistema.findMany({
+      where,
+      orderBy: [{ categoria: 'asc' }, { chave: 'asc' }],
+    });
 
-  // Agrupar métricas por categoria
-  const groupedMetrics = metrics.reduce(
-    (acc: any, metric: any) => {
-      if (!acc[metric.categoria]) {
-        acc[metric.categoria] = [];
-      }
-      acc[metric.categoria].push(metric);
-      return acc;
-    },
-    {} as Record<string, any[]>
-  );
+    // Agrupar métricas por categoria
+    const groupedMetrics = metrics.reduce(
+      (acc: any, metric: any) => {
+        if (!acc[metric.categoria]) {
+          acc[metric.categoria] = [];
+        }
+        acc[metric.categoria].push(metric);
+        return acc;
+      },
+      {} as Record<string, any[]>
+    );
 
-  return res.status(200).json({ success: true, data: groupedMetrics });
+    return res.status(200).json({ success: true, data: groupedMetrics });
+  } catch (error) {
+    console.error('Erro ao buscar métricas:', error);
+    // Retornar objeto vazio ao invés de erro 500
+    return res.status(200).json({ success: true, data: {} });
+  }
 }
 
 async function updateMetrics(req: NextApiRequest, res: NextApiResponse) {

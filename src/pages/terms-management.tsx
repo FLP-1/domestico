@@ -13,10 +13,13 @@ import { WidgetGrid } from '../components/WidgetGrid';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
 import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import type { Theme } from '../types/theme';
 import {
   UnifiedButton,
   UnifiedModal,
   UnifiedCard,
+  UnifiedBadge,
+  UnifiedTabs,
 } from '../components/unified';
 // Interfaces para dados de termos e políticas
 interface DocumentVersion {
@@ -97,47 +100,7 @@ const DocumentSection = styled.div`
   backdrop-filter: blur(10px);
 `;
 
-const DocumentTabs = styled.div`
-  display: flex;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid ${props => props.theme?.colors?.border || '#e0e0e0'};
-`;
-
-const TabButton = styled.button<{ $active?: boolean; $theme: any }>`
-  padding: 1rem 2rem;
-  border: none;
-  background: ${props =>
-    props.$active ? props.$theme?.colors?.primary || '#29ABE2' : 'transparent'};
-  color: ${props =>
-    props.$active ? 'white' : props.$theme?.colors?.text || '#666'};
-  font-weight: 600;
-  cursor: pointer;
-  border-radius: 8px 8px 0 0;
-  transition: all 0.3s ease;
-  position: relative;
-
-  &:hover {
-    background: ${props =>
-      props.$active
-        ? props.$theme?.colors?.primary || '#29ABE2'
-        : props.$theme?.colors?.primary || '#29ABE2'}20;
-    color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
-  }
-
-  ${props =>
-    props.$active &&
-    `
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: ${props.$theme?.colors?.primary || '#29ABE2'};
-    }
-  `}
-`;
+// DocumentTabs e TabButton removidos - usar UnifiedTabs
 
 const DocumentHeader = styled.div`
   display: flex;
@@ -162,14 +125,7 @@ const VersionInfo = styled.div`
   gap: 1rem;
 `;
 
-const VersionBadge = styled.span<{ $theme: any }>`
-  background: ${props => props.$theme?.colors?.success || '#90EE90'};
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-`;
+// VersionBadge removido - usar UnifiedBadge
 
 const EffectiveDate = styled.span`
   color: ${props => props.theme?.colors?.text || '#666'};
@@ -257,7 +213,7 @@ const VersionList = styled.div`
   gap: 1rem;
 `;
 
-const VersionItem = styled.div<{ $active?: boolean; $theme: any }>`
+const VersionItem = styled.div<{ $active?: boolean; $theme?: Theme }>`
   padding: 1rem;
   border-radius: 8px;
   border: 2px solid
@@ -289,7 +245,7 @@ const VersionDate = styled.div`
   color: ${props => props.theme?.colors?.text || '#666'};
 `;
 
-const VersionStatus = styled.span<{ $theme: any }>`
+const VersionStatus = styled.span<{ $theme?: Theme }>`
   display: inline-block;
   padding: 0.25rem 0.5rem;
   border-radius: 12px;
@@ -557,23 +513,16 @@ const TermsManagement: React.FC = () => {
 
         <ContentGrid>
           <DocumentSection>
-            <DocumentTabs>
-              <TabButton
-                $active={activeTab === 'terms'}
-                $theme={theme}
-                onClick={() => setActiveTab('terms')}
-              >
-                <AccessibleEmoji emoji='📋' label='Checklist' /> Termos de Uso
-              </TabButton>
-              <TabButton
-                $active={activeTab === 'privacy'}
-                $theme={theme}
-                onClick={() => setActiveTab('privacy')}
-              >
-                <AccessibleEmoji emoji='🔒' label='Privado' /> Políticas de
-                Privacidade
-              </TabButton>
-            </DocumentTabs>
+            <UnifiedTabs
+              tabs={[
+                { id: 'terms', label: 'Termos de Uso', icon: <AccessibleEmoji emoji='📋' label='Checklist' /> },
+                { id: 'privacy', label: 'Políticas de Privacidade', icon: <AccessibleEmoji emoji='🔒' label='Privado' /> },
+              ]}
+              activeTab={activeTab}
+              onTabChange={(tabId) => setActiveTab(tabId as 'terms' | 'privacy')}
+              variant="underline"
+              theme={theme}
+            />
 
             <DocumentHeader>
               <div>
@@ -584,9 +533,9 @@ const TermsManagement: React.FC = () => {
                 </DocumentTitle>
                 {activeVersion && (
                   <VersionInfo>
-                    <VersionBadge $theme={theme}>
+                    <UnifiedBadge variant="success" size="md" theme={theme}>
                       {activeVersion.versao} - Atual
-                    </VersionBadge>
+                    </UnifiedBadge>
                     <EffectiveDate>
                       Vigente desde:{' '}
                       {new Date(activeVersion.dataVigencia).toLocaleDateString(

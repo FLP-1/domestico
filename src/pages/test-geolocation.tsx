@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { useTheme } from '../hooks/useTheme';
+import type { Theme } from '../types/theme';
+import { getTextPrimary, getTextSecondary, getBackgroundSecondary, getBorderPrimary } from '../utils/themeTypeGuards';
 import { useUserProfile } from '../contexts/UserProfileContext';
 
 const Container = styled.div`
@@ -15,7 +17,7 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  color: ${props => props.theme?.text?.primary || '#333'};
+  color: ${props => getTextPrimary(props.theme)};
   margin-bottom: 20px;
 `;
 
@@ -34,14 +36,14 @@ const Button = styled.button`
   }
 
   &:disabled {
-    background: ${props => props.theme?.text?.secondary || '#6c757d'};
+    background: ${props => getTextSecondary(props.theme)};
     cursor: not-allowed;
   }
 `;
 
 const ResultBox = styled.div`
-  background: ${props => props.theme?.background?.secondary || '#f8f9fa'};
-  border: 1px solid ${props => props.theme?.border?.primary || '#dee2e6'};
+  background: ${props => getBackgroundSecondary(props.theme)};
+  border: 1px solid ${props => getBorderPrimary(props.theme)};
   border-radius: 6px;
   padding: 15px;
   margin: 10px 0;
@@ -164,8 +166,8 @@ export default function TestGeolocation() {
       );
 
       setResult({
-        timestamp: new Date().toISOString(),
         ...locationData,
+        timestamp: new Date().toISOString(),
         googleMapsLink: `https://www.google.com/maps?q=${locationData.latitude},${locationData.longitude}`,
       });
     } catch (err: any) {

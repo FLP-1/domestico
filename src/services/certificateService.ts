@@ -20,71 +20,128 @@ export class CertificateService {
   private certificateInfo: CertificateInfo | null = null;
   private privateKey: PrivateKeyInfo | null = null;
   private certificate: forge.pki.Certificate | null = null;
+  private certificatePem: string | null = null;
+  private certificatePemChain: string[] = [];
+  private privateKeyPem: string | null = null;
+  private pfxBytes: Uint8Array | null = null;
+  private certificatePassword: string | null = null;
+
   /**
-   * Carrega e valida o certificado digital PFX
+   * Carrega e valida o certificado digital PFX a partir de um arquivo enviado (navegador)
    */
-  async loadCertificate(certificateFile?: File): Promise<CertificateInfo> {
-    try {
-      let pfxData: ArrayBuffer;
-      if (certificateFile) {
-        // Usar arquivo fornecido pelo usuário
-        pfxData = await certificateFile.arrayBuffer();
-      } else {
-        // Certificado deve ser fornecido via upload ou configuração
-        throw new Error(
-          'Certificado não fornecido. Use o upload de arquivo ou configure o caminho no ambiente.'
-        );
-      }
-      const pfxBuffer = forge.util.createBuffer(pfxData);
-      // Converter para base64 e decodificar
-      const pfxBase64 = forge.util.encode64(pfxBuffer.getBytes());
-      const pfxDer = forge.util.decode64(pfxBase64);
-      // Decodificar o PFX
-      const pfx = forge.pkcs12.pkcs12FromAsn1(
-        forge.asn1.fromDer(pfxDer),
-        false,
-        ESOCIAL_CONFIG.certificate.password
+  async loadCertificate(certificateFile?: File, password?: string): Promise<CertificateInfo> {
+    if (!certificateFile) {
+      throw new Error(
+        'Certificado não fornecido. Use o upload de arquivo ou configure o caminho no ambiente.'
       );
-      // Extrair certificado e chave privada
-      const certBagType = forge.pki.oids['certBag'] as any;
-      const keyBagType = forge.pki.oids['pkcs8ShroudedKeyBag'] as any;
-      const bags = pfx.getBags({ bagType: certBagType });
-      const keyBags = pfx.getBags({ bagType: keyBagType });
+    }
+
+    if (typeof window === 'undefined' || typeof File === 'undefined') {
+      throw new Error('Carregamento via arquivo só é suportado no navegador.');
+    }
+
+    const filePassword = password ?? ESOCIAL_CONFIG.certificate.password;
+    if (!filePassword) {
+      throw new Error('Senha do certificado eSocial não configurada.');
+    }
+
+    const arrayBuffer = await certificateFile.arrayBuffer();
+    return this.loadCertificateFromBytes(new Uint8Array(arrayBuffer), filePassword);
+  }
+
+  /**
+   * Carrega e valida o certificado digital PFX a partir do sistema de arquivos (Node.js)
+   */
+  async loadCertificateFromPath(
+    certificatePath?: string,
+    password?: string
+  ): Promise<CertificateInfo> {
+    if (typeof window !== 'undefined') {
+      throw new Error('Carregar certificado pelo caminho só é permitido no servidor.');
+    }
+
+    const fs = require('fs') as typeof import('fs');
+    const path = require('path') as typeof import('path');
+
+    const configuredPath = certificatePath ?? ESOCIAL_CONFIG.certificate.path;
+    if (!configuredPath) {
+      throw new Error('Caminho do certificado eSocial não configurado.');
+    }
+
+    const resolvedPath = path.isAbsolute(configuredPath)
+      ? configuredPath
+      : path.join(process.cwd(), configuredPath);
+
+    if (!fs.existsSync(resolvedPath)) {
+      throw new Error(`Arquivo de certificado não encontrado em ${resolvedPath}`);
+    }
+
+    const certificatePassword = password ?? ESOCIAL_CONFIG.certificate.password;
+    if (!certificatePassword) {
+      throw new Error('Senha do certificado eSocial não configurada.');
+    }
+
+    const fileBuffer = fs.readFileSync(resolvedPath);
+    return this.loadCertificateFromBytes(new Uint8Array(fileBuffer), certificatePassword);
+  }
+
+  /**
+   * Processa o conteúdo bruto do PFX
+   */
+  private loadCertificateFromBytes(
+    pfxBytes: Uint8Array,
+    password: string
+  ): CertificateInfo {
+    try {
+      this.pfxBytes = Uint8Array.from(pfxBytes);
+      this.certificatePassword = password;
+
+      const pfxBinary = this.uint8ArrayToBinaryString(pfxBytes);
+      const pfxAsn1 = forge.asn1.fromDer(pfxBinary);
+      const pkcs12 = forge.pkcs12.pkcs12FromAsn1(pfxAsn1, false, password);
+
+      const certBagType = forge.pki.oids.certBag as string;
+      const keyBagType = forge.pki.oids.pkcs8ShroudedKeyBag as string;
+      const bags = pkcs12.getBags({ bagType: certBagType });
+      const keyBags = pkcs12.getBags({ bagType: keyBagType });
+
       const certBags = bags[certBagType];
       const keyBagsArray = keyBags[keyBagType];
+
       if (!certBags || certBags.length === 0) {
         throw new Error('Nenhum certificado encontrado no arquivo PFX');
       }
+
       if (!keyBagsArray || keyBagsArray.length === 0) {
         throw new Error('Nenhuma chave privada encontrada no arquivo PFX');
       }
-      // Obter o primeiro certificado
-      const certBag = certBags[0];
-      //
-      // Verificar se é um certificado válido
-      if (!certBag || typeof certBag !== 'object') {
-        throw new Error('Certificado extraído não é um objeto válido');
-      }
-      // Tentar diferentes formas de extrair o certificado
-      if ((certBag as any).cert) {
-        this.certificate = (certBag as any).cert;
-      } else if ((certBag as any).certificate) {
-        this.certificate = (certBag as any).certificate;
-      } else {
-        this.certificate = certBag as unknown as forge.pki.Certificate;
-      }
-      // Validar se o certificado foi extraído corretamente
+
+      const certificates = certBags.map(bag => {
+        if (!bag || typeof bag !== 'object') {
+          throw new Error('Certificado extraído não é um objeto válido');
+        }
+        if ((bag as any).cert) {
+          return (bag as any).cert as forge.pki.Certificate;
+        }
+        if ((bag as any).certificate) {
+          return (bag as any).certificate as forge.pki.Certificate;
+        }
+        return bag as unknown as forge.pki.Certificate;
+      });
+
+      this.certificate = certificates[0];
+      this.certificatePem = forge.pki.certificateToPem(this.certificate);
+      this.certificatePemChain = certificates.map(cert => forge.pki.certificateToPem(cert));
+
       if (!this.certificate) {
         throw new Error('Falha ao extrair certificado do arquivo PFX');
       }
-      //
-      // );
-      // Extrair a chave privada corretamente
+
       const keyBag = keyBagsArray[0];
       if (!keyBag || typeof keyBag !== 'object') {
         throw new Error('Chave privada extraída não é um objeto válido');
       }
-      // Verificar se a chave privada tem a estrutura correta
+
       let privateKey: forge.pki.PrivateKey;
       if ((keyBag as any).key) {
         privateKey = (keyBag as any).key;
@@ -93,30 +150,43 @@ export class CertificateService {
       } else {
         privateKey = keyBag as unknown as forge.pki.PrivateKey;
       }
-      // Validar se a chave privada tem o método sign
+
       if (!privateKey || typeof (privateKey as any).sign !== 'function') {
         throw new Error('Chave privada inválida: método sign não disponível');
       }
+
       this.privateKey = {
         key: privateKey,
         algorithm: 'RSA',
         keySize: 2048,
       };
-      // Extrair informações do certificado
+      this.privateKeyPem = forge.pki.privateKeyToPem(privateKey);
+
       this.certificateInfo = this.extractCertificateInfo(this.certificate);
-      // Validar se o certificado foi extraído corretamente
+
       if (!this.certificateInfo) {
         throw new Error('Falha ao extrair informações do certificado');
       }
-      // Certificado digital carregado com sucesso
-      //
+
       return this.certificateInfo;
     } catch (error) {
-      // Erro ao carregar certificado
       throw new Error(
         `Falha ao carregar certificado: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
       );
     }
+  }
+
+  /**
+   * Converte Uint8Array em string binária compatível com node-forge
+   */
+  private uint8ArrayToBinaryString(bytes: Uint8Array): string {
+    const chunkSize = 0x8000;
+    let binary = '';
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      const chunk = bytes.subarray(i, i + chunkSize);
+      binary += String.fromCharCode(...chunk);
+    }
+    return binary;
   }
   /**
    * Extrai informações do certificado
@@ -255,6 +325,41 @@ export class CertificateService {
     const timestamp = new Date().toISOString();
     const data = `${ESOCIAL_CONFIG.empregador.cpf}:${timestamp}`;
     return this.signData(data);
+  }
+
+  /**
+   * Obtém os bytes do PFX armazenado (para uso em agentes HTTPS)
+   */
+  getPfxBytes(): Uint8Array | null {
+    return this.pfxBytes;
+  }
+
+  /**
+   * Obtém a senha associada ao PFX
+   */
+  getCertificatePassword(): string | null {
+    return this.certificatePassword;
+  }
+
+  /**
+   * Obtém o certificado em formato PEM
+   */
+  getCertificatePem(): string | null {
+    return this.certificatePem;
+  }
+
+  /**
+   * Obtém a cadeia completa de certificados em formato PEM
+   */
+  getCertificatePemChain(): string[] {
+    return this.certificatePemChain;
+  }
+
+  /**
+   * Obtém a chave privada em formato PEM
+   */
+  getPrivateKeyPem(): string | null {
+    return this.privateKeyPem;
   }
 }
 // Instância singleton

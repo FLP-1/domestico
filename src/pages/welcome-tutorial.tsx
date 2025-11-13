@@ -6,11 +6,13 @@ import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styled, { keyframes } from 'styled-components';
-import { publicColors } from '../utils/themeHelpers';
+import { publicColors, addOpacity } from '../utils/themeHelpers';
+import type { Theme } from '../types/theme';
 import {
   UnifiedButton,
   UnifiedModal,
   UnifiedCard,
+  UnifiedProgressBar,
 } from '../components/unified';
 
 // Types
@@ -88,7 +90,7 @@ const IllustrationIcon = styled.div`
 `;
 
 // Styled Components
-const WelcomeContainer = styled.div<{ $theme: any }>`
+const WelcomeContainer = styled.div<{ $theme?: Theme }>`
   min-height: 100vh;
   background: linear-gradient(
     135deg,
@@ -144,7 +146,7 @@ const LogoContainer = styled.div`
   animation: ${bounce} 2s ease-in-out infinite;
 `;
 
-const Logo = styled.div<{ $theme: any }>`
+const Logo = styled.div<{ $theme?: Theme }>`
   width: 120px;
   height: 120px;
   border-radius: 30px;
@@ -168,7 +170,7 @@ const Logo = styled.div<{ $theme: any }>`
   }
 `;
 
-const WelcomeTitle = styled.h1<{ $theme: any }>`
+const WelcomeTitle = styled.h1<{ $theme?: Theme }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 3.5rem;
   font-weight: 800;
@@ -228,7 +230,7 @@ const SkipButton = styled.button`
   }
 `;
 
-const TutorialContainer = styled.div<{ $theme: any }>`
+const TutorialContainer = styled.div<{ $theme?: Theme }>`
   min-height: 100vh;
   background: linear-gradient(
     135deg,
@@ -240,7 +242,7 @@ const TutorialContainer = styled.div<{ $theme: any }>`
   font-family: 'Roboto', sans-serif;
 `;
 
-const TutorialHeader = styled.header<{ $theme: any }>`
+const TutorialHeader = styled.header<{ $theme?: Theme }>`
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   padding: 1.5rem 2rem;
@@ -258,25 +260,7 @@ const ProgressContainer = styled.div`
   gap: 1rem;
 `;
 
-const ProgressBar = styled.div<{ $theme: any }>`
-  width: 200px;
-  height: 8px;
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  overflow: hidden;
-`;
-
-const ProgressFill = styled.div<{ $progress: number; $theme: any }>`
-  width: ${props => props.$progress}%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    ${props => props.$theme?.colors?.primary || publicColors.primary},
-    ${props => props.$theme?.colors?.secondary || publicColors.secondary}
-  );
-  transition: width 0.5s ease;
-  border-radius: 4px;
-`;
+// ProgressBar e ProgressFill removidos - usar UnifiedProgressBar
 
 const ProgressText = styled.span`
   font-weight: 600;
@@ -390,7 +374,7 @@ const NavigationContainer = styled.div`
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 `;
 
-const NavigationButton = styled.button<{ $theme: any; $disabled?: boolean }>`
+const NavigationButton = styled.button<{ $theme?: Theme; $disabled?: boolean }>`
   background: ${props =>
     props.$disabled
       ? '#e0e0e0'
@@ -418,7 +402,7 @@ const NavigationButton = styled.button<{ $theme: any; $disabled?: boolean }>`
   }
 `;
 
-const CompletionContainer = styled.div<{ $theme: any }>`
+const CompletionContainer = styled.div<{ $theme?: Theme }>`
   min-height: 100vh;
   background: linear-gradient(
     135deg,
@@ -468,41 +452,25 @@ const StatsContainer = styled.div`
   margin: 3rem 0;
 `;
 
-const StatCard = styled.div<{ $theme: any }>`
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  padding: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  text-align: center;
-`;
+// StatCard removido - usar UnifiedCard com statsValue/statsLabel
+// StatNumber removido - usar statsValue prop do UnifiedCard
+// StatLabel removido - usar statsLabel prop do UnifiedCard
 
-const StatNumber = styled.div`
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: white;
-  margin-bottom: 0.5rem;
-`;
-
-const StatLabel = styled.div`
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 500;
-`;
-
-const WelcomeButton = styled(UnifiedButton)`
-  background: rgba(255, 255, 255, 0.2) !important;
-  border: 2px solid rgba(255, 255, 255, 0.3) !important;
-  color: white !important;
+// WelcomeButton e SecondaryButton mantidos - glass effect específico
+// Usando addOpacity para gerar rgba dinamicamente (não hardcoded)
+const WelcomeButton = styled(UnifiedButton)<{ $theme?: Theme }>`
+  background: ${addOpacity(publicColors.surface, 0.2)} !important;
+  border: 2px solid ${addOpacity(publicColors.surface, 0.3)} !important;
+  color: ${publicColors.surface} !important;
   font-size: 1.2rem !important;
   padding: 1rem 2rem !important;
   backdrop-filter: blur(10px) !important;
 `;
 
-const SecondaryButton = styled(UnifiedButton)`
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 2px solid rgba(255, 255, 255, 0.3) !important;
-  color: white !important;
+const SecondaryButton = styled(UnifiedButton)<{ $theme?: Theme }>`
+  background: ${addOpacity(publicColors.surface, 0.1)} !important;
+  border: 2px solid ${addOpacity(publicColors.surface, 0.3)} !important;
+  color: ${publicColors.surface} !important;
   font-size: 1.1rem !important;
   padding: 1rem 2rem !important;
   backdrop-filter: blur(10px) !important;
@@ -520,7 +488,7 @@ const TutorialHeaderSubtitle = styled.p`
   font-size: 0.9rem;
 `;
 
-const DotIndicator = styled.div<{ $active: boolean; $theme: any }>`
+const DotIndicator = styled.div<{ $active: boolean; $theme?: Theme }>`
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -827,9 +795,13 @@ export default function WelcomeTutorial() {
             <ProgressText>
               {currentSlide + 1} de {tutorialSlides.length}
             </ProgressText>
-            <ProgressBar $theme={theme}>
-              <ProgressFill $progress={progress} $theme={theme} />
-            </ProgressBar>
+            <UnifiedProgressBar 
+              value={progress} 
+              variant="primary" 
+              theme={theme}
+              size="sm"
+              style={{ width: '200px' }}
+            />
           </ProgressContainer>
         </TutorialHeader>
 
@@ -907,22 +879,46 @@ export default function WelcomeTutorial() {
           </CompletionDescription>
 
           <StatsContainer>
-            <StatCard $theme={theme}>
-              <StatNumber>7</StatNumber>
-              <StatLabel>Módulos Principais</StatLabel>
-            </StatCard>
-            <StatCard $theme={theme}>
-              <StatNumber>100%</StatNumber>
-              <StatLabel>Seguro e Conforme</StatLabel>
-            </StatCard>
-            <StatCard $theme={theme}>
-              <StatNumber>24/7</StatNumber>
-              <StatLabel>Disponível</StatLabel>
-            </StatCard>
-            <StatCard $theme={theme}>
-              <StatNumber>∞</StatNumber>
-              <StatLabel>Possibilidades</StatLabel>
-            </StatCard>
+            <UnifiedCard
+              theme={theme}
+              variant='glass'
+              size='md'
+            >
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white', marginBottom: '0.5rem' }}>7</div>
+                <div style={{ fontSize: '0.9rem', color: 'white' }}>Módulos Principais</div>
+              </div>
+            </UnifiedCard>
+            <UnifiedCard
+              theme={theme}
+              variant='glass'
+              size='md'
+            >
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white', marginBottom: '0.5rem' }}>100%</div>
+                <div style={{ fontSize: '0.9rem', color: 'white' }}>Seguro e Conforme</div>
+              </div>
+            </UnifiedCard>
+            <UnifiedCard
+              theme={theme}
+              variant='glass'
+              size='md'
+            >
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white', marginBottom: '0.5rem' }}>24/7</div>
+                <div style={{ fontSize: '0.9rem', color: 'white' }}>Disponível</div>
+              </div>
+            </UnifiedCard>
+            <UnifiedCard
+              theme={theme}
+              variant='glass'
+              size='md'
+            >
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white', marginBottom: '0.5rem' }}>∞</div>
+                <div style={{ fontSize: '0.9rem', color: 'white' }}>Possibilidades</div>
+              </div>
+            </UnifiedCard>
           </StatsContainer>
 
           <ButtonContainer>

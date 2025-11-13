@@ -1,6 +1,8 @@
 // src/pages/api/time-clock/registrar.ts
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from '../../../lib/prisma';
+import prisma from '@/lib/prisma';
+import logger from '@/lib/logger';
+import { handleApiError } from '@/lib/apiError';
 
 export default async function handler(
   req: NextApiRequest,
@@ -121,13 +123,15 @@ export default async function handler(
     // Atualizar resumo de horas do dia
     await atualizarResumoHoras(usuarioId, hoje);
 
-    res.status(201).json({
+    return res.status(201).json({
       message: 'Registro de ponto criado com sucesso',
       registro: novoRegistro,
     });
   } catch (error) {
-    console.error('Erro ao registrar ponto:', error);
-    res.status(500).json({ message: 'Erro interno do servidor' });
+    return handleApiError(res, error, {
+      defaultMessage: 'Erro ao registrar ponto',
+      context: { scope: 'time-clock.register', body: req.body },
+    });
   }
 }
 
@@ -163,30 +167,42 @@ async function atualizarResumoHoras(usuarioId: string, data: Date) {
     let retornoAlmoco: Date | null = null;
     let saida: Date | null = null;
 
-    registros.forEach(registro => {
-      switch (registro.tipo) {
+    type RegistroPonto = {
+      tipo: string;
+      dataHora: Date;
+    };
+
+    registros.forEach((registro) => {
+      const reg = registro as unknown as RegistroPonto;
+      const dataHora = reg.dataHora;
+      switch (reg.tipo) {
         case 'entrada':
-          entrada = registro.dataHora;
+          entrada = dataHora;
           break;
         case 'saida_almoco':
-          saidaAlmoco = registro.dataHora;
+          saidaAlmoco = dataHora;
           break;
         case 'retorno_almoco':
-          retornoAlmoco = registro.dataHora;
+          retornoAlmoco = dataHora;
           break;
         case 'saida':
-          saida = registro.dataHora;
+          saida = dataHora;
           break;
       }
     });
 
     // Calcular horas trabalhadas
-    if (entrada && saida) {
-      const tempoTotal = saida.getTime() - entrada.getTime();
-      const tempoAlmoco =
-        saidaAlmoco && retornoAlmoco
-          ? retornoAlmoco.getTime() - saidaAlmoco.getTime()
-          : 0;
+    if (entrada !== null && saida !== null) {
+      const entradaDate = entrada as Date;
+      const saidaDate = saida as Date;
+      const tempoTotal = saidaDate.getTime() - entradaDate.getTime();
+      
+      let tempoAlmoco = 0;
+      if (saidaAlmoco !== null && retornoAlmoco !== null) {
+        const saidaAlmocoDate = saidaAlmoco as Date;
+        const retornoAlmocoDate = retornoAlmoco as Date;
+        tempoAlmoco = retornoAlmocoDate.getTime() - saidaAlmocoDate.getTime();
+      }
 
       horasTrabalhadas = (tempoTotal - tempoAlmoco) / (1000 * 60 * 60); // Converter para horas
     }
@@ -195,6 +211,12 @@ async function atualizarResumoHoras(usuarioId: string, data: Date) {
     const diaSemana = data.getDay();
     // Sem modelos de horário/resumo no schema atual; nada a atualizar
   } catch (error) {
-    console.error('Erro ao atualizar resumo de horas:', error);
+    logger.error({
+      scope: 'time-clock.summary',
+      message: 'Erro ao atualizar resumo de horas',
+      error,
+      usuarioId,
+      data,
+    });
   }
 }

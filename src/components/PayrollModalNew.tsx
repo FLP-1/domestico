@@ -249,7 +249,9 @@ interface PayrollModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (
-    payroll: Omit<PayrollData, 'id' | 'salarioLiquido' | 'status'>
+    payroll: Omit<PayrollData, 'id' | 'salarioLiquido' | 'status'> & {
+      employeeId?: string | string[];
+    }
   ) => Promise<void> | void;
   employees: Employee[];
   $theme?: any;

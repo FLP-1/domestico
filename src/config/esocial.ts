@@ -1,19 +1,24 @@
 // Configurações do eSocial Doméstico
+const resolveEnvironment = (): 'producao' | 'homologacao' => {
+  const env = process.env.ESOCIAL_ENVIRONMENT?.toLowerCase();
+  return env === 'producao' || env === 'homologacao' ? env : 'homologacao';
+};
+
 export const ESOCIAL_CONFIG = {
   // Ambiente: 'producao' | 'homologacao'
-  environment: 'producao' as 'producao' | 'homologacao', // CONFIGURADO PARA PRODUÇÃO REAL
+  environment: resolveEnvironment(),
 
   // Dados do empregador
   empregador: {
-    cpf: process.env.EMPRESA_CPF || '',
-    nome: process.env.EMPRESA_NOME || 'Empresa',
+    cpf: process.env.ESOCIAL_EMPREGADOR_CPF || process.env.EMPRESA_CPF || '',
+    nome: process.env.ESOCIAL_EMPREGADOR_NOME || process.env.EMPRESA_NOME || '',
   },
 
   // Certificado digital
   certificate: {
-    path: './certificados/eCPF A1 24940271 (senha 456587).pfx',
-    password: '456587',
-    type: 'A1' as const,
+    path: process.env.ESOCIAL_CERTIFICATE_PATH || '',
+    password: process.env.ESOCIAL_CERTIFICATE_PASSWORD || '',
+    type: (process.env.ESOCIAL_CERTIFICATE_TYPE as 'A1' | 'A3') || 'A1',
   },
 
   // URLs dos WebServices OFICIAIS (produção real)
@@ -29,26 +34,47 @@ export const ESOCIAL_CONFIG = {
         endpoint:
           'https://webservices.envio.esocial.gov.br/servicos/empregador/enviarloteeventos/WsEnviarLoteEventos.svc',
 
-        // CONSULTAS - URLs REAIS QUE EXISTEM (403 = precisa certificado correto)
-        consultaEmpregador:
-          'https://webservices.consulta.esocial.gov.br/servicos/empregador/consultarloteeventos/WsConsultarLoteEventos.svc',
-        consultaTrabalhador:
-          'https://webservices.consulta.esocial.gov.br/servicos/empregador/consultarqualificacaocadastral/WsConsultarQualificacaoCadastral.svc',
-
-        // CONSULTAS ADICIONAIS - URLs QUE EXISTEM
-        consultaEventos:
-          'https://webservices.consulta.esocial.gov.br/servicos/empregador/consultareventos/WsConsultarEventos.svc',
-        consultaIdentificador:
-          'https://webservices.consulta.esocial.gov.br/servicos/empregador/consultaridentificadoreventos/WsConsultarIdentificadorEventos.svc',
+        consultaEmpregador: {
+          url: 'https://webservices.consulta.esocial.gov.br/ServicoConsultarIdentificadorCadastro/ConsultarIdentificadorCadastro.svc',
+          namespace:
+            'http://www.esocial.gov.br/servicos/empregador/consultaidentificadorcadastro/v1_0_0',
+          action: 'ConsultarIdentificadorCadastro',
+        },
+        consultaEventos: {
+          url: 'https://webservices.consulta.esocial.gov.br/ServicoConsultarEventos/ConsultarEventos.svc',
+          namespace:
+            'http://www.esocial.gov.br/servicos/empregador/consultaeventos/v1_0_0',
+          action: 'ConsultarEventos',
+        },
+        consultaIdentificador: {
+          url: 'https://webservices.consulta.esocial.gov.br/ServicoConsultarIdentificadorEventos/ConsultarIdentificadorEventos.svc',
+          namespace:
+            'http://www.esocial.gov.br/servicos/empregador/consultaridentificadoreventos/v1_0_0',
+          action: 'ConsultarIdentificadorEventos',
+        },
       },
       homologacao: {
         wsdl: 'https://webservices.producaorestrita.esocial.gov.br/servicos/empregador/consultarloteeventos/WsConsultarLoteEventos.svc?wsdl',
         endpoint:
           'https://webservices.producaorestrita.esocial.gov.br/servicos/empregador/consultarloteeventos/WsConsultarLoteEventos.svc',
-        consultaEmpregador:
-          'https://webservices.producaorestrita.esocial.gov.br/servicos/empregador/consultaridentificadorcadastro/WsConsultarIdentificadorCadastro.svc',
-        consultaTrabalhador:
-          'https://webservices.producaorestrita.esocial.gov.br/servicos/empregador/consultarloteeventos/WsConsultarLoteEventos.svc',
+        consultaEmpregador: {
+          url: 'https://webservices.producaorestrita.esocial.gov.br/ServicoConsultarIdentificadorCadastro/ConsultarIdentificadorCadastro.svc',
+          namespace:
+            'http://www.esocial.gov.br/servicos/empregador/consultaidentificadorcadastro/v1_0_0',
+          action: 'ConsultarIdentificadorCadastro',
+        },
+        consultaEventos: {
+          url: 'https://webservices.producaorestrita.esocial.gov.br/ServicoConsultarEventos/ConsultarEventos.svc',
+          namespace:
+            'http://www.esocial.gov.br/servicos/empregador/consultaeventos/v1_0_0',
+          action: 'ConsultarEventos',
+        },
+        consultaIdentificador: {
+          url: 'https://webservices.producaorestrita.esocial.gov.br/ServicoConsultarIdentificadorEventos/ConsultarIdentificadorEventos.svc',
+          namespace:
+            'http://www.esocial.gov.br/servicos/empregador/consultaridentificadoreventos/v1_0_0',
+          action: 'ConsultarIdentificadorEventos',
+        },
       },
     },
   },
@@ -67,11 +93,17 @@ export const ESOCIAL_CONFIG = {
 
   // Software House
   softwareHouse: {
-    cnpj: process.env.EMPRESA_CPF || '', // Usando CPF como CNPJ para pessoa física
-    nome: process.env.EMPRESA_NOME || 'Empresa',
-    contato: process.env.EMPRESA_NOME || 'Empresa',
-    telefone: '11999999999',
-    email: 'contato@flpbusiness.com',
+    cnpj: process.env.ESOCIAL_SOFTWARE_HOUSE_CNPJ || '',
+    nome:
+      process.env.ESOCIAL_SOFTWARE_HOUSE_NOME ||
+      process.env.EMPRESA_NOME ||
+      'Software House',
+    contato:
+      process.env.ESOCIAL_SOFTWARE_HOUSE_CONTATO ||
+      process.env.EMPRESA_NOME ||
+      'Contato',
+    telefone: process.env.ESOCIAL_SOFTWARE_HOUSE_TELEFONE || '',
+    email: process.env.ESOCIAL_SOFTWARE_HOUSE_EMAIL || '',
   },
 
   // Configurações SSL/TLS

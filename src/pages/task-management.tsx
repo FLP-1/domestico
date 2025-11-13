@@ -22,9 +22,15 @@ import { UnifiedButton, UnifiedModal } from '../components/unified';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
 import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import type { Theme } from '../types/theme';
+import {
+  getTextPrimary,
+  getTextSecondary,
+} from '../utils/themeTypeGuards';
 import {
   OptimizedSectionTitle,
   OptimizedLabel,
+  OptimizedFormRow,
 } from '../components/shared/optimized-styles';
 
 // Styled Components
@@ -80,7 +86,7 @@ interface ChecklistItem {
 
 // Styled Components
 
-const TaskCreationSection = styled.section<{ $theme: any }>`
+const TaskCreationSection = styled.section<{ $theme?: Theme }>`
   background: ${props =>
     props.$theme?.colors?.background || defaultColors.background};
   border: 1px solid
@@ -91,23 +97,7 @@ const TaskCreationSection = styled.section<{ $theme: any }>`
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 `;
 
-const SectionTitle = styled.h2<{ $theme: any }>`
-  color: ${props =>
-    props.$theme?.colors?.text?.primary ||
-    props.$theme?.colors?.text ||
-    defaultColors.text.primary};
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-
-  &::before {
-    content: '📝';
-    font-size: 1.2rem;
-  }
-`;
+// SectionTitle removido - usar OptimizedSectionTitle
 
 const TaskForm = styled(Form)`
   display: grid;
@@ -131,7 +121,7 @@ const TaskBoard = styled.div`
   }
 `;
 
-const TaskColumn = styled.div<{ $theme: any }>`
+const TaskColumn = styled.div<{ $theme?: Theme }>`
   background: ${props =>
     props.$theme?.colors?.background || defaultColors.background};
   border: 1px solid
@@ -142,7 +132,7 @@ const TaskColumn = styled.div<{ $theme: any }>`
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 `;
 
-const ColumnHeader = styled.div<{ $theme: any; $status: string }>`
+const ColumnHeader = styled.div<{ $theme?: Theme; $status: string }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -164,9 +154,7 @@ const ColumnHeader = styled.div<{ $theme: any; $status: string }>`
 
   h3 {
     color: ${props =>
-      props.$theme?.colors?.text?.primary ||
-      props.$theme?.colors?.text ||
-      defaultColors.text.primary};
+      getTextPrimary(props.$theme)};
     font-size: 1.2rem;
     font-weight: 600;
     margin: 0;
@@ -194,11 +182,7 @@ const ColumnHeader = styled.div<{ $theme: any; $status: string }>`
         case 'completed':
           return '#065f46';
         default:
-          return (
-            props.$theme?.colors?.text?.primary ||
-            props.$theme?.colors?.text ||
-            defaultColors.text.primary
-          );
+          return getTextPrimary(props.$theme);
       }
     }};
     padding: 0.25rem 0.75rem;
@@ -208,7 +192,7 @@ const ColumnHeader = styled.div<{ $theme: any; $status: string }>`
   }
 `;
 
-const TaskCard = styled.div<{ $theme: any; $priority: string }>`
+const TaskCard = styled.div<{ $theme?: Theme; $priority: string }>`
   background: ${props =>
     props.$theme?.colors?.background || defaultColors.background};
   border: 1px solid
@@ -251,34 +235,27 @@ const TaskCard = styled.div<{ $theme: any; $priority: string }>`
 
   h4 {
     color: ${props =>
-      props.$theme?.colors?.text?.primary ||
-      props.$theme?.colors?.text ||
-      defaultColors.text.primary};
+      getTextPrimary(props.$theme)};
     font-size: 1rem;
     font-weight: 600;
     margin: 0 0 0.5rem 0;
   }
 
   p {
-    color: ${props =>
-      props.$theme?.colors?.text?.secondary ||
-      props.$theme?.colors?.textSecondary ||
-      defaultColors.text.secondary};
+    color: ${props => getTextSecondary(props.$theme)};
     font-size: 0.875rem;
     margin: 0 0 0.75rem 0;
     line-height: 1.4;
   }
 `;
 
-const TaskMeta = styled.div<{ $theme: any }>`
+const TaskMeta = styled.div<{ $theme?: Theme }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 0.75rem;
   color: ${props =>
-    props.$theme?.colors?.text?.secondary ||
-    props.$theme?.colors?.textSecondary ||
-    defaultColors.text.secondary};
+    getTextSecondary(props.$theme)};
 
   .assignee {
     font-weight: 500;
@@ -325,17 +302,17 @@ const PriorityBadge = styled.span<{ $priority: string }>`
   }};
 `;
 
-const CommentSection = styled.div<{ $theme: any }>`
+const CommentSection = styled.div<{ $theme?: Theme }>`
   margin-bottom: 2rem;
 `;
 
-const CommentForm = styled.form<{ $theme: any }>`
+const CommentForm = styled.form<{ $theme?: Theme }>`
   display: flex;
   gap: 1rem;
   margin-bottom: 1.5rem;
 `;
 
-const CommentItem = styled.div<{ $theme: any }>`
+const CommentItem = styled.div<{ $theme?: Theme }>`
   background: ${props =>
     props.$theme?.colors?.background || defaultColors.background};
   border: 1px solid
@@ -345,14 +322,14 @@ const CommentItem = styled.div<{ $theme: any }>`
   margin-bottom: 1rem;
 `;
 
-const CommentHeader = styled.div<{ $theme: any }>`
+const CommentHeader = styled.div<{ $theme?: Theme }>`
   display: flex;
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 0.5rem;
 `;
 
-const CommentAvatar = styled.div<{ $theme: any }>`
+const CommentAvatar = styled.div<{ $theme?: Theme }>`
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -366,34 +343,29 @@ const CommentAvatar = styled.div<{ $theme: any }>`
   font-weight: 600;
 `;
 
-const CommentText = styled.p<{ $theme: any }>`
-  color: ${props =>
-    props.$theme?.colors?.text?.primary ||
-    props.$theme?.colors?.text ||
-    defaultColors.text.primary};
+const CommentText = styled.p<{ $theme?: Theme }>`
+  color: ${props => getTextPrimary(props.$theme)};
   margin: 0;
   line-height: 1.4;
 `;
 
-const CommentTime = styled.span<{ $theme: any }>`
+const CommentTime = styled.span<{ $theme?: Theme }>`
   color: ${props =>
-    props.$theme?.colors?.text?.secondary ||
-    props.$theme?.colors?.textSecondary ||
-    defaultColors.text.secondary};
+    getTextSecondary(props.$theme)};
   font-size: 0.75rem;
 `;
 
-const ChecklistSection = styled.div<{ $theme: any }>`
+const ChecklistSection = styled.div<{ $theme?: Theme }>`
   margin-bottom: 2rem;
 `;
 
-const ChecklistForm = styled.form<{ $theme: any }>`
+const ChecklistForm = styled.form<{ $theme?: Theme }>`
   display: flex;
   gap: 1rem;
   margin-bottom: 1.5rem;
 `;
 
-const ChecklistItem = styled.div<{ $theme: any }>`
+const ChecklistItem = styled.div<{ $theme?: Theme }>`
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -414,29 +386,21 @@ const ChecklistItem = styled.div<{ $theme: any }>`
 
   label {
     color: ${props =>
-      props.$theme?.colors?.text?.primary ||
-      props.$theme?.colors?.text ||
-      defaultColors.text.primary};
+      getTextPrimary(props.$theme)};
     font-size: 0.875rem;
     cursor: pointer;
     flex: 1;
 
     &.completed {
       text-decoration: line-through;
-      color: ${props =>
-        props.$theme?.colors?.text?.secondary ||
-        props.$theme?.colors?.textSecondary ||
-        defaultColors.text.secondary};
+      color: ${props => getTextSecondary(props.$theme)};
     }
   }
 `;
 
-const CommentAuthor = styled.div<{ $theme: any }>`
+const CommentAuthor = styled.div<{ $theme?: Theme }>`
   font-weight: 600;
-  color: ${props =>
-    props.$theme?.colors?.text?.primary ||
-    props.$theme?.colors?.text ||
-    defaultColors.text.primary};
+  color: ${props => getTextPrimary(props.$theme)};
 `;
 
 // Interface para dados de tarefas

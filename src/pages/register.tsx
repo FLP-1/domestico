@@ -8,6 +8,7 @@ import AccessibleEmoji from '../components/AccessibleEmoji';
 import { Form, FormGroup, Input, Select } from '../components/FormComponents';
 import { validateCpf } from '../utils/cpfValidator';
 import { publicColors, addOpacity } from '../utils/themeHelpers';
+import type { Theme } from '../types/theme';
 import {
   UnifiedButton,
   UnifiedModal,
@@ -149,46 +150,8 @@ const Label = styled.label`
   display: block;
 `;
 
-const InputStyled = styled(Input)<{ $theme: any; $hasError?: boolean }>`
-  width: 100%;
-  padding: 1rem;
-  border: 2px solid
-    ${props => (props.$hasError ? publicColors.error : publicColors.border)};
-  border-radius: 12px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background: ${addOpacity(publicColors.surface, 0.9)};
-
-  &:focus {
-    outline: none;
-    border-color: ${publicColors.primary};
-    box-shadow: 0 0 0 3px ${addOpacity(publicColors.primary, 0.1)};
-    transform: translateY(-2px);
-  }
-
-  &::placeholder {
-    color: ${publicColors.text.secondary};
-  }
-`;
-
-const SelectStyled = styled(Select)<{ $theme: any; $hasError?: boolean }>`
-  width: 100%;
-  padding: 1rem;
-  border: 2px solid
-    ${props => (props.$hasError ? publicColors.error : publicColors.border)};
-  border-radius: 12px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background: ${addOpacity(publicColors.surface, 0.9)};
-  cursor: pointer;
-
-  &:focus {
-    outline: none;
-    border-color: ${publicColors.primary};
-    box-shadow: 0 0 0 3px ${addOpacity(publicColors.primary, 0.1)};
-    transform: translateY(-2px);
-  }
-`;
+// InputStyled removido - usar OptimizedInputStyled diretamente
+// SelectStyled removido - usar OptimizedSelectStyled diretamente
 
 const ErrorMessage = styled.div`
   color: ${publicColors.error};
@@ -233,7 +196,7 @@ const ButtonContainer = styled.div`
 
 const RegisterButton = styled(UnifiedButton)<{
   $canSubmit?: boolean;
-  $theme: any;
+  $theme?: Theme;
 }>`
   flex: 1;
   background: ${props =>

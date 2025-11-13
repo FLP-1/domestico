@@ -5,6 +5,9 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { useGeofencingTheme } from '../../hooks/useGeofencingTheme';
 import { geofencingColors } from '../../design-system/tokens/geofencing-colors';
+import { UnifiedCard, UnifiedBadge, UnifiedMetaInfo } from '../../components/unified';
+import type { Theme } from '../../types/theme';
+import { getTextSecondary } from '../../utils/themeTypeGuards';
 
 interface LogEntry {
   id: string;
@@ -40,37 +43,43 @@ interface ValidacaoEntry {
   };
 }
 
-const Container = styled.div<{ $theme?: any }>`
+const Container = styled.div<{ $theme?: Theme }>`
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 `;
 
-const Header = styled.div<{ $theme?: any }>`
+const Header = styled.div<{ $theme?: Theme }>`
   margin-bottom: 30px;
 `;
 
-const Title = styled.h1<{ $theme?: any }>`
-  color: ${props =>
-    props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
+const Title = styled.h1<{ $theme?: Theme }>`
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.primary) || geofencingColors.text.primary;
+  }};
   margin: 0 0 10px 0;
 `;
 
-const Subtitle = styled.p<{ $theme?: any }>`
-  color: ${props =>
-    props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
+const Subtitle = styled.p<{ $theme?: Theme }>`
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.secondary) || geofencingColors.text.secondary;
+  }};
   margin: 0;
 `;
 
-const Tabs = styled.div<{ $theme?: any }>`
+const Tabs = styled.div<{ $theme?: Theme }>`
   display: flex;
   border-bottom: 1px solid
-    ${props =>
-      props.$theme?.colors?.border?.primary || geofencingColors.border.primary};
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border && (border as any).primary) || geofencingColors.border.primary;
+    }};
   margin-bottom: 20px;
 `;
 
-const Tab = styled.button<{ $active: boolean; $theme?: any }>`
+const Tab = styled.button<{ $active: boolean; $theme?: Theme }>`
   background: none;
   border: none;
   padding: 15px 20px;
@@ -81,12 +90,13 @@ const Tab = styled.button<{ $active: boolean; $theme?: any }>`
         ? props.$theme?.colors?.navigation?.active ||
           geofencingColors.navigation.active
         : 'transparent'};
-  color: ${props =>
-    props.$active
-      ? props.$theme?.colors?.navigation?.active ||
-        geofencingColors.navigation.active
-      : props.$theme?.colors?.text?.secondary ||
-        geofencingColors.text.secondary};
+  color: ${props => {
+    if (props.$active) {
+      return props.$theme?.colors?.navigation?.active || geofencingColors.navigation.active;
+    }
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.secondary) || geofencingColors.text.secondary;
+  }};
   font-weight: ${props => (props.$active ? 'bold' : 'normal')};
 
   &:hover {
@@ -96,94 +106,37 @@ const Tab = styled.button<{ $active: boolean; $theme?: any }>`
   }
 `;
 
-const Card = styled.div<{ $theme?: any }>`
-  background: ${props =>
-    props.$theme?.colors?.background?.primary ||
-    geofencingColors.background.primary};
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin-bottom: 20px;
-`;
+// Card, CardHeader, CardTitle removidos - usar UnifiedCard com title prop
 
-const CardHeader = styled.div<{ $theme?: any }>`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-`;
-
-const CardTitle = styled.h3<{ $theme?: any }>`
-  margin: 0;
-  color: ${props =>
-    props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
-`;
-
-const Timestamp = styled.span<{ $theme?: any }>`
-  color: ${props =>
-    props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
+const Timestamp = styled.span<{ $theme?: Theme }>`
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.secondary) || geofencingColors.text.secondary;
+  }};
   font-size: 14px;
 `;
 
-const CardContent = styled.div<{ $theme?: any }>`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 15px;
-`;
+// CardContent removido - usar UnifiedMetaInfo com variant="grid"
 
-const InfoItem = styled.div<{ $theme?: any }>`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-`;
+// InfoItem, Label, Value removidos - usar UnifiedMetaInfo
+// StatusBadge removido - usar UnifiedBadge
 
-const Label = styled.span<{ $theme?: any }>`
-  font-weight: bold;
-  color: ${props =>
-    props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
-  font-size: 14px;
-`;
-
-const Value = styled.span<{ $theme?: any }>`
-  color: ${props =>
-    props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
-  font-size: 16px;
-`;
-
-const StatusBadge = styled.span<{ $success: boolean; $theme?: any }>`
-  background: ${props =>
-    props.$success
-      ? props.$theme?.colors?.status?.success?.background ||
-        geofencingColors.status.success.background
-      : props.$theme?.colors?.status?.error?.background ||
-        geofencingColors.status.error.background};
-  color: ${props =>
-    props.$success
-      ? props.$theme?.colors?.status?.success?.text ||
-        geofencingColors.status.success.text
-      : props.$theme?.colors?.status?.error?.text ||
-        geofencingColors.status.error.text};
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
-`;
-
-const Coordinates = styled.div<{ $theme?: any }>`
-  background: ${props =>
-    props.$theme?.colors?.background?.secondary ||
-    geofencingColors.background.secondary};
+const Coordinates = styled.div<{ $theme?: Theme }>`
+  background: ${props => {
+    const background = props.$theme?.colors?.background;
+    return (typeof background === 'object' && background && (background as any).secondary) || (typeof background === 'string' ? background : geofencingColors.background.secondary);
+  }};
   padding: 10px;
   border-radius: 5px;
   font-family: monospace;
   font-size: 14px;
 `;
 
-const JsonData = styled.pre<{ $theme?: any }>`
-  background: ${props =>
-    props.$theme?.colors?.background?.secondary ||
-    geofencingColors.background.secondary};
+const JsonData = styled.pre<{ $theme?: Theme }>`
+  background: ${props => {
+    const background = props.$theme?.colors?.background;
+    return (typeof background === 'object' && background && (background as any).secondary) || (typeof background === 'string' ? background : geofencingColors.background.secondary);
+  }};
   padding: 10px;
   border-radius: 5px;
   font-size: 12px;
@@ -192,51 +145,59 @@ const JsonData = styled.pre<{ $theme?: any }>`
   overflow-y: auto;
 `;
 
-const Loading = styled.div<{ $theme?: any }>`
+const Loading = styled.div<{ $theme?: Theme }>`
   text-align: center;
   padding: 40px;
-  color: ${props =>
-    props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.secondary) || geofencingColors.text.secondary;
+  }};
 `;
 
-const Error = styled.div<{ $theme?: any }>`
-  background: ${props =>
-    props.$theme?.colors?.status?.error?.background ||
-    geofencingColors.status.error.background};
-  color: ${props =>
-    props.$theme?.colors?.status?.error?.text ||
-    geofencingColors.status.error.text};
+const Error = styled.div<{ $theme?: Theme }>`
+  background: ${props => {
+    const statusError = props.$theme?.colors?.status?.error;
+    return (typeof statusError === 'object' && statusError && (statusError as any).background) || (typeof statusError === 'string' ? statusError : geofencingColors.status.error.background);
+  }};
+  color: ${props => {
+    const statusError = props.$theme?.colors?.status?.error;
+    return (typeof statusError === 'object' && statusError && (statusError as any).text) || (typeof statusError === 'string' ? statusError : geofencingColors.status.error.text);
+  }};
   padding: 15px;
   border-radius: 5px;
   margin-bottom: 20px;
 `;
 
-const FilterBar = styled.div<{ $theme?: any }>`
+const FilterBar = styled.div<{ $theme?: Theme }>`
   display: flex;
   gap: 15px;
   margin-bottom: 20px;
   align-items: center;
 `;
 
-const Select = styled.select<{ $theme?: any }>`
+const Select = styled.select<{ $theme?: Theme }>`
   padding: 8px 12px;
   border: 1px solid
-    ${props =>
-      props.$theme?.colors?.border?.primary || geofencingColors.border.primary};
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border && (border as any).primary) || geofencingColors.border.primary;
+    }};
   border-radius: 5px;
   font-size: 14px;
 `;
 
-const Input = styled.input<{ $theme?: any }>`
+const Input = styled.input<{ $theme?: Theme }>`
   padding: 8px 12px;
   border: 1px solid
-    ${props =>
-      props.$theme?.colors?.border?.primary || geofencingColors.border.primary};
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border && (border as any).primary) || geofencingColors.border.primary;
+    }};
   border-radius: 5px;
   font-size: 14px;
 `;
 
-const Button = styled.button<{ $theme?: any }>`
+const Button = styled.button<{ $theme?: Theme }>`
   background: ${props =>
     props.$theme?.colors?.button?.primary?.background ||
     geofencingColors.button.primary.background};
@@ -256,37 +217,30 @@ const Button = styled.button<{ $theme?: any }>`
   }
 `;
 
-const EmptyState = styled.div<{ $theme?: any }>`
+const EmptyState = styled.div<{ $theme?: Theme }>`
   text-align: center;
   padding: 40px;
 `;
 
-const EmptyStateTitle = styled.h3<{ $theme?: any }>`
-  color: ${props =>
-    props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
+const EmptyStateTitle = styled.h3<{ $theme?: Theme }>`
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.primary) || geofencingColors.text.primary;
+  }};
   margin: 0 0 10px 0;
 `;
 
-const EmptyStateText = styled.p<{ $theme?: any }>`
-  color: ${props =>
-    props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
+const EmptyStateText = styled.p<{ $theme?: Theme }>`
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.secondary) || geofencingColors.text.secondary;
+  }};
   margin: 0;
 `;
 
-const UserAgentValue = styled(Value)<{ $theme?: any }>`
-  font-size: 12px;
-  word-break: break-all;
-`;
-
-const JsonSection = styled.div<{ $theme?: any }>`
+// UserAgentValue e JsonSectionLabel removidos - não necessários com UnifiedMetaInfo
+const JsonSection = styled.div<{ $theme?: Theme }>`
   margin-bottom: 15px;
-`;
-
-const JsonSectionLabel = styled(Label)<{ $theme?: any }>`
-  color: ${props =>
-    props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
-  font-weight: bold;
-  font-size: 14px;
 `;
 
 export default function AuditoriaGeofencing() {
@@ -309,16 +263,6 @@ export default function AuditoriaGeofencing() {
     dataFim: '',
     usuario: '',
   });
-
-  useEffect(() => {
-    // TODO: Implementar autenticação adequada
-    // if (!session) {
-    //   router.push('/login');
-    //   return;
-    // }
-
-    loadData();
-  }, [activeTab, filters, router, loadData]);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -347,6 +291,16 @@ export default function AuditoriaGeofencing() {
     }
   }, [activeTab]);
 
+  useEffect(() => {
+    // TODO: Implementar autenticação adequada
+    // if (!session) {
+    //   router.push('/login');
+    //   return;
+    // }
+
+    loadData();
+  }, [loadData]); // loadData já inclui activeTab nas dependências
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('pt-BR');
   };
@@ -365,7 +319,7 @@ export default function AuditoriaGeofencing() {
   if (themeLoading || !theme) {
     return (
       <Container>
-        <Loading $theme={theme || { colors: { text: { secondary: '#666' } } }}>
+        <Loading $theme={theme}>
           Carregando tema...
         </Loading>
       </Container>
@@ -465,7 +419,7 @@ export default function AuditoriaGeofencing() {
 
       {activeTab === 'logs' ? (
         logs.length === 0 ? (
-          <Card $theme={theme}>
+          <UnifiedCard theme={theme} variant='default' size='md'>
             <EmptyState $theme={theme}>
               <EmptyStateTitle $theme={theme}>
                 Nenhum log encontrado
@@ -475,48 +429,45 @@ export default function AuditoriaGeofencing() {
                 sistema.
               </EmptyStateText>
             </EmptyState>
-          </Card>
+          </UnifiedCard>
         ) : (
           logs.map((log: any) => (
-            <Card key={log.id} $theme={theme}>
-              <CardHeader>
-                <CardTitle $theme={theme}>
-                  {formatAction(log.acao)} - {log.localTrabalho.nome}
-                </CardTitle>
+            <UnifiedCard
+              key={log.id}
+              theme={theme}
+              variant='default'
+              size='md'
+              title={`${formatAction(log.acao)} - ${log.localTrabalho.nome}`}
+            >
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '15px' }}>
                 <Timestamp $theme={theme}>
                   {formatDate(log.timestamp)}
                 </Timestamp>
-              </CardHeader>
+              </div>
 
-              <CardContent>
-                <InfoItem>
-                  <Label $theme={theme}>Usuário</Label>
-                  <Value $theme={theme}>{log.usuario.nomeCompleto}</Value>
-                </InfoItem>
-
-                <InfoItem>
-                  <Label $theme={theme}>IP</Label>
-                  <Value $theme={theme}>{log.ip}</Value>
-                </InfoItem>
-
-                <InfoItem>
-                  <Label $theme={theme}>User Agent</Label>
-                  <UserAgentValue $theme={theme}>
-                    {log.userAgent}
-                  </UserAgentValue>
-                </InfoItem>
-
-                <InfoItem>
-                  <Label>Local de Trabalho</Label>
-                  <Value>{log.localTrabalho.nome}</Value>
-                </InfoItem>
-              </CardContent>
+              <UnifiedMetaInfo
+                items={[
+                  { label: 'Usuário', value: log.usuario.nomeCompleto },
+                  { label: 'IP', value: log.ip },
+                  { label: 'User Agent', value: log.userAgent },
+                  { label: 'Local de Trabalho', value: log.localTrabalho.nome },
+                ]}
+                variant="grid"
+                size="sm"
+                theme={theme}
+              />
 
               {log.dadosAnteriores && (
                 <JsonSection>
-                  <JsonSectionLabel $theme={theme}>
+                  <h4 style={{ 
+                    color: getTextSecondary(theme),
+                    fontWeight: 'bold',
+                    marginBottom: '10px',
+                    marginTop: 0,
+                    fontSize: '14px'
+                  }}>
                     Dados Anteriores:
-                  </JsonSectionLabel>
+                  </h4>
                   <JsonData $theme={theme}>
                     {JSON.stringify(log.dadosAnteriores, null, 2)}
                   </JsonData>
@@ -525,19 +476,25 @@ export default function AuditoriaGeofencing() {
 
               {log.dadosNovos && (
                 <JsonSection>
-                  <JsonSectionLabel $theme={theme}>
+                  <h4 style={{ 
+                    color: getTextSecondary(theme),
+                    fontWeight: 'bold',
+                    marginBottom: '10px',
+                    marginTop: 0,
+                    fontSize: '14px'
+                  }}>
                     Dados Novos:
-                  </JsonSectionLabel>
+                  </h4>
                   <JsonData $theme={theme}>
                     {JSON.stringify(log.dadosNovos, null, 2)}
                   </JsonData>
                 </JsonSection>
               )}
-            </Card>
+            </UnifiedCard>
           ))
         )
       ) : validacoes.length === 0 ? (
-        <Card $theme={theme}>
+        <UnifiedCard theme={theme} variant='default' size='md'>
           <EmptyState $theme={theme}>
             <EmptyStateTitle $theme={theme}>
               Nenhuma validação encontrada
@@ -547,60 +504,59 @@ export default function AuditoriaGeofencing() {
               registros de ponto.
             </EmptyStateText>
           </EmptyState>
-        </Card>
+        </UnifiedCard>
       ) : (
         validacoes.map((validacao: any) => (
-          <Card key={validacao.id}>
-            <CardHeader>
-              <CardTitle>Validação - {validacao.localTrabalho.nome}</CardTitle>
-              <Timestamp>{formatDate(validacao.timestamp)}</Timestamp>
-            </CardHeader>
+          <UnifiedCard
+            key={validacao.id}
+            theme={theme}
+            variant='default'
+            size='md'
+            title={`Validação - ${validacao.localTrabalho.nome}`}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+              <Timestamp $theme={theme}>
+                {formatDate(validacao.timestamp)}
+              </Timestamp>
+            </div>
 
-            <CardContent>
-              <InfoItem>
-                <Label>Usuário</Label>
-                <Value>{validacao.usuario.nomeCompleto}</Value>
-              </InfoItem>
-
-              <InfoItem>
-                <Label>Status</Label>
-                <StatusBadge $success={validacao.dentroGeofence}>
-                  {validacao.dentroGeofence
-                    ? 'Dentro do Geofence'
-                    : 'Fora do Geofence'}
-                </StatusBadge>
-              </InfoItem>
-
-              <InfoItem>
-                <Label>Distância</Label>
-                <Value>{Math.round(validacao.distancia)}m</Value>
-              </InfoItem>
-
-              <InfoItem>
-                <Label>Precisão</Label>
-                <Value>{Math.round(validacao.precisao)}m</Value>
-              </InfoItem>
-
-              <InfoItem>
-                <Label>Coordenadas</Label>
-                <Coordinates>
-                  Lat: {validacao.latitude.toFixed(8)}
-                  <br />
-                  Lon: {validacao.longitude.toFixed(8)}
-                </Coordinates>
-              </InfoItem>
-
-              <InfoItem>
-                <Label>Endereço</Label>
-                <Value>{validacao.endereco || 'Não disponível'}</Value>
-              </InfoItem>
-
-              <InfoItem>
-                <Label>WiFi</Label>
-                <Value>{validacao.wifiName || 'Não disponível'}</Value>
-              </InfoItem>
-            </CardContent>
-          </Card>
+            <UnifiedMetaInfo
+              items={[
+                { label: 'Usuário', value: validacao.usuario.nomeCompleto },
+                { 
+                  label: 'Status', 
+                  value: (
+                    <UnifiedBadge 
+                      variant={validacao.dentroGeofence ? 'success' : 'error'} 
+                      size="sm" 
+                      theme={theme}
+                    >
+                      {validacao.dentroGeofence
+                        ? 'Dentro do Geofence'
+                        : 'Fora do Geofence'}
+                    </UnifiedBadge>
+                  )
+                },
+                { label: 'Distância', value: `${Math.round(validacao.distancia)}m` },
+                { label: 'Precisão', value: `${Math.round(validacao.precisao)}m` },
+                { 
+                  label: 'Coordenadas', 
+                  value: (
+                    <Coordinates>
+                      Lat: {validacao.latitude.toFixed(8)}
+                      <br />
+                      Lon: {validacao.longitude.toFixed(8)}
+                    </Coordinates>
+                  )
+                },
+                { label: 'Endereço', value: validacao.endereco || 'Não disponível' },
+                { label: 'WiFi', value: validacao.wifiName || 'Não disponível' },
+              ]}
+              variant="grid"
+              size="sm"
+              theme={theme}
+            />
+          </UnifiedCard>
         ))
       )}
     </Container>

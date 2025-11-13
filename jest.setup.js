@@ -29,11 +29,8 @@ jest.mock('next/router', () => ({
   },
 }));
 
-// Mock styled-components
-jest.mock('styled-components', () => ({
-  ...jest.requireActual('styled-components'),
-  ThemeProvider: ({ children }) => children,
-}));
+// Mock styled-components - manter funcionalidade real
+// Não mockar, usar a implementação real para testes de componentes styled
 
 // Mock react-toastify
 jest.mock('react-toastify', () => ({

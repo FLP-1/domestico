@@ -96,6 +96,7 @@ model Usuario {
   configuracoesGeolocalizacao ConfiguracaoGeolocalizacao[]
   configuracoesAntifraude  ConfiguracaoAntifraude[]
   historicosConfiguracao   HistoricoConfiguracao[]
+  guideProgress            GuideProgress[]
 
   @@index([cpf])
   @@index([email])
@@ -1730,6 +1731,27 @@ model TemaVisual {
   atualizadoEm DateTime @updatedAt
 
   @@index([ativo])
+}
+
+/// Progresso de guias assistidos
+model GuideProgress {
+  id           String   @id @default(uuid())
+  usuarioId    String
+  guideId      String   @db.VarChar(100)
+  currentStep  String   @db.VarChar(100)
+  progressData Json
+  completed    Boolean  @default(false)
+  startedAt    DateTime @default(now())
+  completedAt  DateTime?
+  updatedAt    DateTime @updatedAt
+  
+  usuario      Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  
+  @@unique([usuarioId, guideId])
+  @@index([usuarioId])
+  @@index([guideId])
+  @@index([completed])
+  @@map("guide_progress")
 }
 
 /// Componentes reutilizáveis catalogados

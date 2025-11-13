@@ -19,7 +19,10 @@ export default async function handler(
   try {
     // Tentar Nominatim primeiro (melhor para endereços específicos)
     // Usar zoom máximo (18) para maior precisão de endereço
-    const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1&accept-language=pt-BR,pt,en&zoom=18&extratags=1`;
+    const { loadSystemConfig } = await import('../../config/centralized-config');
+    const config = await loadSystemConfig();
+    const nominatimBaseUrl = config.urls.geocoding.nominatim || 'https://nominatim.openstreetmap.org/reverse';
+    const nominatimUrl = `${nominatimBaseUrl}?format=json&lat=${lat}&lon=${lon}&addressdetails=1&accept-language=pt-BR,pt,en&zoom=18&extratags=1`;
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 10000);

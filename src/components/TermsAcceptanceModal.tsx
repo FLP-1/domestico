@@ -17,7 +17,10 @@ const TermsContent = styled.div<{ $theme?: any }>`
 const TermsHeader = styled.div<{ $theme?: any }>`
   padding: 2rem;
   border-bottom: 1px solid
-    ${props => props.$theme?.colors?.border?.light || '#e0e0e0'};
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border?.light) || '#e0e0e0';
+    }};
   text-align: center;
 `;
 
@@ -48,7 +51,10 @@ const TermsBody = styled.div<{ $theme?: any }>`
 const TermsTabs = styled.div<{ $theme?: any }>`
   display: flex;
   border-bottom: 1px solid
-    ${props => props.$theme?.colors?.border?.light || '#e0e0e0'};
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border?.light) || '#e0e0e0';
+    }};
   background: ${props =>
     props.$theme?.colors?.background?.secondary || '#f8f9fa'};
 `;

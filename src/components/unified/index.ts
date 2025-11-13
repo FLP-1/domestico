@@ -8,6 +8,12 @@ export {
   UnifiedModal,
 } from '../UnifiedModal';
 
+// 🚀 Generic Reusable Components
+export { UnifiedBadge } from './UnifiedBadge';
+export { UnifiedProgressBar } from './UnifiedProgressBar';
+export { UnifiedTabs } from './UnifiedTabs';
+export { UnifiedMetaInfo } from './UnifiedMetaInfo';
+
 // ✅ Centralized Reusable Components
 export { default as ActionIcon } from '../ActionIcon';
 export { default as NotificationBadge } from '../NotificationBadge';
@@ -20,3 +26,7 @@ export * from '../shared/styles';
 export type { UnifiedButtonProps } from '../UnifiedButton';
 export type { UnifiedCardProps } from '../UnifiedCard';
 export type { UnifiedModalProps } from '../UnifiedModal';
+export type { UnifiedBadgeProps } from './UnifiedBadge';
+export type { UnifiedProgressBarProps } from './UnifiedProgressBar';
+export type { UnifiedTabsProps, TabItem } from './UnifiedTabs';
+export type { UnifiedMetaInfoProps, MetaInfoItem } from './UnifiedMetaInfo';

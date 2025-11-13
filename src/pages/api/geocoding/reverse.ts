@@ -69,7 +69,10 @@ export default async function handler(
     // console.log('🌐 Usando Nominatim...');
 
     try {
-      const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1&accept-language=pt-BR&zoom=19`;
+      const { loadSystemConfig } = await import('../../../config/centralized-config');
+      const config = await loadSystemConfig();
+      const nominatimBaseUrl = config.urls.geocoding.nominatim || 'https://nominatim.openstreetmap.org/reverse';
+      const nominatimUrl = `${nominatimBaseUrl}?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1&accept-language=pt-BR&zoom=19`;
 
       const nominatimResponse = await fetch(nominatimUrl, {
         headers: {

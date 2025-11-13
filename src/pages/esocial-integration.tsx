@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { ToastContainer } from 'react-toastify';
 import styled, { keyframes } from 'styled-components';
 import AccessibleEmoji from '../components/AccessibleEmoji';
-import { UnifiedButton } from '../components/unified';
+import { UnifiedButton, UnifiedBadge, UnifiedProgressBar } from '../components/unified';
+import type { Theme } from '../types/theme';
 import CertificateUploadModal from '../components/CertificateUploadModal';
 import { Form, FormGroup, Input, Select } from '../components/FormComponents';
 import { UnifiedModal } from '../components/unified';
@@ -14,8 +15,7 @@ import { ESOCIAL_CONFIG } from '../config/esocial';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useAlertManager } from '../hooks/useAlertManager';
 import { useTheme } from '../hooks/useTheme';
-import { useTheme } from '../hooks/useTheme';
-import { useUserProfile } from '../contexts/UserProfileContext';
+import { getTextSecondary } from '../utils/themeTypeGuards';
 import type {
   CertificateInfo,
   ESocialConfig,
@@ -50,7 +50,7 @@ const pulse = keyframes`
 // Styled Components para substituir estilos inline
 const CenterText = styled.div`
   text-align: center;
-  color: ${props => props.theme?.text?.muted || '#7f8c8d'};
+  color: ${props => getTextSecondary(props.theme)};
   margin-top: 0.5rem;
 `;
 
@@ -62,7 +62,7 @@ const ErrorText = styled.div`
 
 const SmallText = styled.div`
   font-size: 0.8rem;
-  color: ${props => props.theme?.text?.muted || '#7f8c8d'};
+  color: ${props => getTextSecondary(props.theme)};
 `;
 
 const ApiStatusIndicator = styled.span<{ $isReal: boolean }>`
@@ -118,8 +118,20 @@ const Container = styled.div`
   min-height: 100vh;
   background: linear-gradient(
     135deg,
-    ${props => props.theme?.background?.secondary || '#f5f7fa'} 0%,
-    ${props => props.theme?.background?.tertiary || '#c3cfe2'} 100%
+    ${props => {
+      const bg = props.theme?.colors?.background;
+      if (typeof bg === 'object' && bg && 'secondary' in bg) {
+        return bg.secondary || '#f5f7fa';
+      }
+      return '#f5f7fa';
+    }} 0%,
+    ${props => {
+      const bg = props.theme?.colors?.background;
+      if (typeof bg === 'object' && bg && 'secondary' in bg) {
+        return bg.secondary || '#c3cfe2';
+      }
+      return '#c3cfe2';
+    }} 100%
   );
   animation: ${fadeIn} 0.6s ease-out;
 `;
@@ -160,27 +172,7 @@ const Subtitle = styled.div`
   opacity: 0.8;
 `;
 
-const StatusBadge = styled.span<{ $status: string; $theme: any }>`
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  background: ${props => {
-    switch (props.$status) {
-      case 'connected':
-        return props.$theme?.colors?.success || '#90EE90';
-      case 'disconnected':
-        return '#e74c3c';
-      case 'pending':
-        return '#f39c12';
-      default:
-        return '#95a5a6';
-    }
-  }};
-  color: white;
-  animation: ${props => (props.$status === 'connected' ? pulse : 'none')} 2s
-    infinite;
-`;
+// StatusBadge removido - usar UnifiedBadge
 
 const ContentGrid = styled.div`
   display: grid;
@@ -235,7 +227,7 @@ const Label = styled.label`
   display: block;
 `;
 
-const InputStyled = styled(Input)<{ $theme: any; $hasError?: boolean }>`
+const InputStyled = styled(Input)<{ $theme?: Theme; $hasError?: boolean }>`
   width: 100%;
   padding: 0.75rem;
   border: 2px solid ${props => (props.$hasError ? '#e74c3c' : '#e9ecef')};
@@ -251,7 +243,7 @@ const InputStyled = styled(Input)<{ $theme: any; $hasError?: boolean }>`
   }
 `;
 
-const SelectStyled = styled(Select)<{ $theme: any; $hasError?: boolean }>`
+const SelectStyled = styled(Select)<{ $theme?: Theme; $hasError?: boolean }>`
   width: 100%;
   padding: 0.75rem;
   border: 2px solid ${props => (props.$hasError ? '#e74c3c' : '#e9ecef')};
@@ -276,7 +268,7 @@ const ErrorMessage = styled.div`
 `;
 
 const HelpText = styled.div`
-  color: ${props => props.theme?.text?.muted || '#7f8c8d'};
+  color: ${props => getTextSecondary(props.theme)};
   font-size: 0.8rem;
   margin-top: 0.25rem;
   font-style: italic;
@@ -288,7 +280,7 @@ const EventsList = styled.div`
   gap: 1rem;
 `;
 
-const EventCard = styled.div<{ $status: string; $theme: any }>`
+const EventCard = styled.div<{ $status: string; $theme?: Theme }>`
   padding: 1.5rem;
   border-radius: 12px;
   border-left: 4px solid
@@ -330,7 +322,7 @@ const EventTitle = styled.h3`
   margin: 0;
 `;
 
-const EventStatus = styled.span<{ $status: string; $theme: any }>`
+const EventStatus = styled.span<{ $status: string; $theme?: Theme }>`
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
   font-size: 0.8rem;
@@ -353,7 +345,7 @@ const EventStatus = styled.span<{ $status: string; $theme: any }>`
 `;
 
 const EventDescription = styled.div`
-  color: ${props => props.theme?.text?.muted || '#7f8c8d'};
+  color: ${props => getTextSecondary(props.theme)};
   font-size: 0.9rem;
   margin: 0 0 1rem 0;
   line-height: 1.4;
@@ -365,29 +357,9 @@ const EventActions = styled.div`
   flex-wrap: wrap;
 `;
 
-const ProgressBar = styled.div<{ $theme: any }>`
-  width: 100%;
-  height: 8px;
-  background: #e9ecef;
-  border-radius: 4px;
-  overflow: hidden;
-  margin: 1rem 0;
-`;
+// ProgressBar e ProgressFill removidos - usar UnifiedProgressBar
 
-const ProgressFill = styled.div<{ $progress: number; $theme: any }>`
-  height: 100%;
-  width: ${props => props.$progress}%;
-  background: linear-gradient(
-    90deg,
-    ${props => props.$theme?.colors?.primary || '#29ABE2'},
-    ${props => props.$theme?.colors?.success || '#90EE90'}
-  );
-  border-radius: 4px;
-  transition: width 0.3s ease;
-  animation: ${pulse} 2s infinite;
-`;
-
-const AlertBanner = styled.div<{ $type: string; $theme: any }>`
+const AlertBanner = styled.div<{ $type: string; $theme?: Theme }>`
   padding: 1rem 1.5rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
@@ -442,7 +414,7 @@ const StatsGrid = styled.div`
   margin-bottom: 2rem;
 `;
 
-const StatCard = styled.div<{ $theme: any }>`
+const StatCard = styled.div<{ $theme?: Theme }>`
   background: rgba(255, 255, 255, 0.95);
   border-radius: 12px;
   padding: 1.5rem;
@@ -452,7 +424,7 @@ const StatCard = styled.div<{ $theme: any }>`
   border-left: 4px solid ${props => props.$theme?.colors?.primary || '#29ABE2'};
 `;
 
-const StatNumber = styled.div<{ $theme: any }>`
+const StatNumber = styled.div<{ $theme?: Theme }>`
   font-size: 2rem;
   font-weight: 700;
   color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
@@ -492,11 +464,11 @@ const ConfigLabel = styled.div`
 `;
 
 const ConfigValue = styled.div`
-  color: ${props => props.theme?.text?.muted || '#7f8c8d'};
+  color: ${props => getTextSecondary(props.theme)};
   font-size: 0.9rem;
 `;
 
-const ToggleSwitch = styled.label<{ $theme: any }>`
+const ToggleSwitch = styled.label<{ $theme?: Theme }>`
   position: relative;
   display: inline-block;
   width: 60px;
@@ -1194,9 +1166,9 @@ const ESocialIntegration: React.FC = () => {
               Gerencie a integração com o eSocial para empregados domésticos
             </Subtitle>
           </div>
-          <StatusBadge $status='connected' $theme={theme}>
-            <AccessibleEmoji emoji='🟢' label='Conectado' /> Conectado
-          </StatusBadge>
+          <UnifiedBadge variant="success" size="md" theme={theme} icon={<AccessibleEmoji emoji='🟢' label='Conectado' />}>
+            Conectado
+          </UnifiedBadge>
         </Header>
 
         {/* Alertas */}
@@ -1250,10 +1222,14 @@ const ESocialIntegration: React.FC = () => {
               <AccessibleEmoji emoji='📤' label='Exportar' /> Enviando para
               eSocial...
             </OptimizedSectionTitle>
-            <ProgressBar $theme={theme}>
-              <ProgressFill $progress={progress} $theme={theme} />
-            </ProgressBar>
-            <CenterText>{progress}% concluído</CenterText>
+            <UnifiedProgressBar 
+              value={progress} 
+              variant="primary" 
+              theme={theme}
+              showLabel
+              label={`${progress}% concluído`}
+              animated
+            />
           </Section>
         )}
 

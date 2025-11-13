@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@/lib/prisma';
+import { handleApiError } from '@/lib/apiError';
 
 export default async function handler(
   req: NextApiRequest,
@@ -75,10 +76,9 @@ export default async function handler(
 
       return res.status(200).json({ success: true, data: tarefasFormatadas });
     } catch (error) {
-      console.error('Erro ao buscar tarefas:', error);
-      return res.status(500).json({
-        success: false,
-        error: 'Erro ao buscar tarefas',
+      return handleApiError(res, error, {
+        defaultMessage: 'Erro ao buscar tarefas',
+        context: { scope: 'tasks.list', query: req.query },
       });
     }
   }
@@ -117,10 +117,9 @@ export default async function handler(
 
       return res.status(201).json({ success: true, data: novaTarefa });
     } catch (error) {
-      console.error('Erro ao criar tarefa:', error);
-      return res.status(500).json({
-        success: false,
-        error: 'Erro ao criar tarefa',
+      return handleApiError(res, error, {
+        defaultMessage: 'Erro ao criar tarefa',
+        context: { scope: 'tasks.create', body: req.body },
       });
     }
   }

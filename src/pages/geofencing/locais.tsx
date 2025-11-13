@@ -5,6 +5,9 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { useGeofencingTheme } from '../../hooks/useGeofencingTheme';
 import { geofencingColors } from '../../design-system/tokens/geofencing-colors';
+import { UnifiedCard, UnifiedBadge, UnifiedMetaInfo } from '../../components/unified';
+import { Label } from '../../components/FormComponents';
+import type { Theme } from '../../types/theme';
 
 interface LocalTrabalho {
   id: string;
@@ -24,26 +27,28 @@ interface LocalTrabalho {
   criadoEm: string;
 }
 
-const Container = styled.div<{ $theme?: any }>`
+const Container = styled.div<{ $theme?: Theme }>`
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 `;
 
-const Header = styled.div<{ $theme?: any }>`
+const Header = styled.div<{ $theme?: Theme }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
 `;
 
-const Title = styled.h1<{ $theme?: any }>`
-  color: ${props =>
-    props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
+const Title = styled.h1<{ $theme?: Theme }>`
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.primary) || geofencingColors.text.primary;
+  }};
   margin: 0;
 `;
 
-const Button = styled.button<{ $theme?: any }>`
+const Button = styled.button<{ $theme?: Theme }>`
   background: ${props =>
     props.$theme?.colors?.button?.primary?.background ||
     geofencingColors.button.primary.background};
@@ -63,92 +68,32 @@ const Button = styled.button<{ $theme?: any }>`
   }
 `;
 
-const Card = styled.div<{ $theme?: any }>`
-  background: ${props =>
-    props.$theme?.colors?.background?.primary ||
-    geofencingColors.background.primary};
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin-bottom: 20px;
-`;
+// Card removido - usar UnifiedCard
+// CardHeader removido - usar title prop do UnifiedCard
+// CardTitle removido - usar title prop do UnifiedCard
 
-const CardHeader = styled.div<{ $theme?: any }>`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-`;
+// StatusBadge removido - usar UnifiedBadge
+// CardContent, InfoItem, Label, Value removidos - usar UnifiedMetaInfo
 
-const CardTitle = styled.h3<{ $theme?: any }>`
-  margin: 0;
-  color: ${props =>
-    props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
-`;
-
-const StatusBadge = styled.span<{ $active: boolean; $theme?: any }>`
-  background: ${props =>
-    props.$active
-      ? props.$theme?.colors?.status?.success?.background ||
-        geofencingColors.status.success.background
-      : props.$theme?.colors?.status?.error?.background ||
-        geofencingColors.status.error.background};
-  color: ${props =>
-    props.$active
-      ? props.$theme?.colors?.status?.success?.text ||
-        geofencingColors.status.success.text
-      : props.$theme?.colors?.status?.error?.text ||
-        geofencingColors.status.error.text};
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
-`;
-
-const CardContent = styled.div<{ $theme?: any }>`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 15px;
-`;
-
-const InfoItem = styled.div<{ $theme?: any }>`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-`;
-
-const Label = styled.span<{ $theme?: any }>`
-  font-weight: bold;
-  color: ${props =>
-    props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
-  font-size: 14px;
-`;
-
-const Value = styled.span<{ $theme?: any }>`
-  color: ${props =>
-    props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
-  font-size: 16px;
-`;
-
-const Coordinates = styled.div<{ $theme?: any }>`
-  background: ${props =>
-    props.$theme?.colors?.background?.secondary ||
-    geofencingColors.background.secondary};
+const Coordinates = styled.div<{ $theme?: Theme }>`
+  background: ${props => {
+    const background = props.$theme?.colors?.background;
+    return (typeof background === 'object' && background && (background as any).secondary) || (typeof background === 'string' ? background : geofencingColors.background.secondary);
+  }};
   padding: 10px;
   border-radius: 5px;
   font-family: monospace;
   font-size: 14px;
 `;
 
-const Actions = styled.div<{ $theme?: any }>`
+const Actions = styled.div<{ $theme?: Theme }>`
   display: flex;
   gap: 10px;
 `;
 
 const ActionButton = styled.button<{
   $variant?: 'primary' | 'secondary' | 'danger';
-  $theme?: any;
+  $theme?: Theme;
 }>`
   padding: 8px 16px;
   border: none;
@@ -193,7 +138,7 @@ const Modal = styled.div<{ $show: boolean }>`
   z-index: 1000;
 `;
 
-const ModalContent = styled.div<{ $theme?: any }>`
+const ModalContent = styled.div<{ $theme?: Theme }>`
   background: white;
   border-radius: 10px;
   padding: 30px;
@@ -203,103 +148,135 @@ const ModalContent = styled.div<{ $theme?: any }>`
   overflow-y: auto;
 `;
 
-const ModalHeader = styled.div<{ $theme?: any }>`
+const ModalHeader = styled.div<{ $theme?: Theme }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 `;
 
-const ModalTitle = styled.h2<{ $theme?: any }>`
+const ModalTitle = styled.h2<{ $theme?: Theme }>`
   margin: 0;
-  color: ${props =>
-    props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.primary) || geofencingColors.text.primary;
+  }};
 `;
 
-const CloseButton = styled.button<{ $theme?: any }>`
+const CloseButton = styled.button<{ $theme?: Theme }>`
   background: none;
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: ${props =>
-    props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.secondary) || geofencingColors.text.secondary;
+  }};
 `;
 
-const Form = styled.form<{ $theme?: any }>`
+const Form = styled.form<{ $theme?: Theme }>`
   display: flex;
   flex-direction: column;
   gap: 20px;
 `;
 
-const FormGroup = styled.div<{ $theme?: any }>`
+const FormGroup = styled.div<{ $theme?: Theme }>`
   display: flex;
   flex-direction: column;
   gap: 5px;
 `;
 
-const Input = styled.input<{ $theme?: any }>`
+const Input = styled.input<{ $theme?: Theme }>`
   padding: 12px;
   border: 1px solid
-    ${props =>
-      props.$theme?.colors?.border?.primary || geofencingColors.border.primary};
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      if (typeof border === 'object' && border !== null && 'primary' in border) {
+        return border.primary;
+      }
+      return geofencingColors.border.primary;
+    }};
   border-radius: 5px;
   font-size: 16px;
 
   &:focus {
     outline: none;
-    border-color: ${props =>
-      props.$theme?.colors?.border?.focus || geofencingColors.border.focus};
+    border-color: ${props => {
+      const border = props.$theme?.colors?.border;
+      if (typeof border === 'object' && border !== null && 'focus' in border) {
+        return border.focus;
+      }
+      return geofencingColors.border.focus;
+    }};
   }
 `;
 
-const Select = styled.select<{ $theme?: any }>`
+const Select = styled.select<{ $theme?: Theme }>`
   padding: 12px;
   border: 1px solid
-    ${props =>
-      props.$theme?.colors?.border?.primary || geofencingColors.border.primary};
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      if (typeof border === 'object' && border !== null && 'primary' in border) {
+        return border.primary;
+      }
+      return geofencingColors.border.primary;
+    }};
   border-radius: 5px;
   font-size: 16px;
 
   &:focus {
     outline: none;
-    border-color: ${props =>
-      props.$theme?.colors?.border?.focus || geofencingColors.border.focus};
+    border-color: ${props => {
+      const border = props.$theme?.colors?.border;
+      if (typeof border === 'object' && border !== null && 'focus' in border) {
+        return border.focus;
+      }
+      return geofencingColors.border.focus;
+    }};
   }
 `;
 
-const Loading = styled.div<{ $theme?: any }>`
+const Loading = styled.div<{ $theme?: Theme }>`
   text-align: center;
   padding: 40px;
-  color: ${props =>
-    props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.secondary) || geofencingColors.text.secondary;
+  }};
 `;
 
-const Error = styled.div<{ $theme?: any }>`
-  background: ${props =>
-    props.$theme?.colors?.status?.error?.background ||
-    geofencingColors.status.error.background};
-  color: ${props =>
-    props.$theme?.colors?.status?.error?.text ||
-    geofencingColors.status.error.text};
+const Error = styled.div<{ $theme?: Theme }>`
+  background: ${props => {
+    const error = props.$theme?.colors?.status?.error;
+    return (error && typeof error === 'object' && error.background) || geofencingColors.status.error.background;
+  }};
+  color: ${props => {
+    const error = props.$theme?.colors?.status?.error;
+    return (error && typeof error === 'object' && error.text) || geofencingColors.status.error.text;
+  }};
   padding: 15px;
   border-radius: 5px;
   margin-bottom: 20px;
 `;
 
-const EmptyState = styled.div<{ $theme?: any }>`
+const EmptyState = styled.div<{ $theme?: Theme }>`
   text-align: center;
   padding: 40px;
 `;
 
-const EmptyStateTitle = styled.h3<{ $theme?: any }>`
-  color: ${props =>
-    props.$theme?.colors?.text?.primary || geofencingColors.text.primary};
+const EmptyStateTitle = styled.h3<{ $theme?: Theme }>`
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.primary) || geofencingColors.text.primary;
+  }};
   margin: 0 0 10px 0;
 `;
 
-const EmptyStateText = styled.p<{ $theme?: any }>`
-  color: ${props =>
-    props.$theme?.colors?.text?.secondary || geofencingColors.text.secondary};
+const EmptyStateText = styled.p<{ $theme?: Theme }>`
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.secondary) || geofencingColors.text.secondary;
+  }};
   margin: 0;
 `;
 
@@ -309,6 +286,7 @@ export default function LocaisTrabalho() {
   const router = useRouter();
   const themeObject = useGeofencingTheme();
   const theme = { colors: themeObject.colors };
+  const themeLoading = themeObject.loading;
   const [locais, setLocais] = useState<LocalTrabalho[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -475,7 +453,7 @@ export default function LocaisTrabalho() {
       {error && <Error $theme={theme}>{error}</Error>}
 
       {locais.length === 0 ? (
-        <Card $theme={theme}>
+        <UnifiedCard theme={theme} variant='default' size='md'>
           <EmptyState $theme={theme}>
             <EmptyStateTitle $theme={theme}>
               Nenhum local de trabalho encontrado
@@ -485,62 +463,64 @@ export default function LocaisTrabalho() {
               de trabalho.
             </EmptyStateText>
           </EmptyState>
-        </Card>
+        </UnifiedCard>
       ) : (
         locais.map((local: any) => (
-          <Card key={local.id} $theme={theme}>
-            <CardHeader>
-              <CardTitle $theme={theme}>{local.nome}</CardTitle>
-              <StatusBadge $active={local.ativo} $theme={theme}>
-                {local.ativo ? 'Ativo' : 'Inativo'}
-              </StatusBadge>
-            </CardHeader>
-
-            <CardContent>
-              <InfoItem>
-                <Label $theme={theme}>Endereço</Label>
-                <Value $theme={theme}>{local.endereco}</Value>
-              </InfoItem>
-
-              <InfoItem>
-                <Label $theme={theme}>Grupo</Label>
-                <Value $theme={theme}>{local.grupo.nome}</Value>
-              </InfoItem>
-
-              <InfoItem>
-                <Label $theme={theme}>Raio</Label>
-                <Value $theme={theme}>{local.raio}m</Value>
-              </InfoItem>
-
-              <InfoItem>
-                <Label $theme={theme}>Coordenadas</Label>
-                <Coordinates $theme={theme}>
-                  Lat: {local.latitude.toFixed(8)}
-                  <br />
-                  Lon: {local.longitude.toFixed(8)}
-                </Coordinates>
-              </InfoItem>
-            </CardContent>
-
-            <Actions>
-              <ActionButton $theme={theme} onClick={() => handleEdit(local)}>
-                <span role='img' aria-label='edit'>
-                  ✏️
-                </span>{' '}
-                Editar
-              </ActionButton>
-              <ActionButton
-                $variant='danger'
-                $theme={theme}
-                onClick={() => handleDelete(local.id)}
-              >
-                <span role='img' aria-label='delete'>
-                  🗑️
-                </span>{' '}
-                Excluir
-              </ActionButton>
-            </Actions>
-          </Card>
+          <UnifiedCard
+            key={local.id}
+            theme={theme}
+            variant='default'
+            size='md'
+            title={local.nome}
+            footer={
+              <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+                <UnifiedBadge 
+                  variant={local.ativo ? 'success' : 'error'} 
+                  size="sm" 
+                  theme={theme}
+                >
+                  {local.ativo ? 'Ativo' : 'Inativo'}
+                </UnifiedBadge>
+                <ActionButton $theme={theme} onClick={() => handleEdit(local)}>
+                  <span role='img' aria-label='edit'>
+                    ✏️
+                  </span>{' '}
+                  Editar
+                </ActionButton>
+                <ActionButton
+                  $variant='danger'
+                  $theme={theme}
+                  onClick={() => handleDelete(local.id)}
+                >
+                  <span role='img' aria-label='delete'>
+                    🗑️
+                  </span>{' '}
+                  Excluir
+                </ActionButton>
+              </div>
+            }
+          >
+            <UnifiedMetaInfo
+              items={[
+                { label: 'Endereço', value: local.endereco },
+                { label: 'Grupo', value: local.grupo.nome },
+                { label: 'Raio', value: `${local.raio}m` },
+                { 
+                  label: 'Coordenadas', 
+                  value: (
+                    <Coordinates $theme={theme}>
+                      Lat: {local.latitude.toFixed(8)}
+                      <br />
+                      Lon: {local.longitude.toFixed(8)}
+                    </Coordinates>
+                  )
+                },
+              ]}
+              variant="grid"
+              size="sm"
+              theme={theme}
+            />
+          </UnifiedCard>
         ))
       )}
 
@@ -557,7 +537,7 @@ export default function LocaisTrabalho() {
 
           <Form onSubmit={handleSubmit}>
             <FormGroup>
-              <Label $theme={theme}>Nome do Local</Label>
+              <Label>Nome do Local</Label>
               <Input
                 $theme={theme}
                 type='text'
@@ -571,7 +551,7 @@ export default function LocaisTrabalho() {
             </FormGroup>
 
             <FormGroup>
-              <Label $theme={theme}>Endereço</Label>
+              <Label>Endereço</Label>
               <Input
                 $theme={theme}
                 type='text'
@@ -585,7 +565,7 @@ export default function LocaisTrabalho() {
             </FormGroup>
 
             <FormGroup>
-              <Label $theme={theme}>Grupo</Label>
+              <Label>Grupo</Label>
               <Select
                 $theme={theme}
                 value={formData.grupoId}
@@ -605,7 +585,7 @@ export default function LocaisTrabalho() {
             </FormGroup>
 
             <FormGroup>
-              <Label $theme={theme}>Raio (metros)</Label>
+              <Label>Raio (metros)</Label>
               <Input
                 $theme={theme}
                 type='number'

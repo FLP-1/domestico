@@ -196,7 +196,7 @@ export const PayrollTransferCard: React.FC<PayrollTransferCardProps> = ({
           <TransferRow>
             <TransferLabel>Última Transferência:</TransferLabel>
             <TransferValue $theme={theme}>
-              {lastTransfer
+              {lastTransfer && lastTransfer.mesReferencia != null && lastTransfer.anoReferencia != null
                 ? `${lastTransfer.mesReferencia.toString().padStart(2, '0')}/${lastTransfer.anoReferencia}`
                 : 'N/A'}
             </TransferValue>
@@ -214,7 +214,7 @@ export const PayrollTransferCard: React.FC<PayrollTransferCardProps> = ({
           <TransferRow>
             <TransferLabel>Próxima Transferência:</TransferLabel>
             <TransferValue $theme={theme}>
-              {upcomingTransfer
+              {upcomingTransfer && upcomingTransfer.mesReferencia != null && upcomingTransfer.anoReferencia != null
                 ? `${upcomingTransfer.mesReferencia.toString().padStart(2, '0')}/${upcomingTransfer.anoReferencia}`
                 : 'Não agendada'}
             </TransferValue>
@@ -228,7 +228,7 @@ export const PayrollTransferCard: React.FC<PayrollTransferCardProps> = ({
           </TransferRow>
         </TransferSummary>
 
-        {lastTransfer && (
+        {lastTransfer && lastTransfer.mesReferencia != null && lastTransfer.anoReferencia != null && (
           <TransferInfo $theme={theme}>
             <TransferInfoTitle>
               <AccessibleEmoji emoji='🕒' label='Última Transferência' />
@@ -236,7 +236,7 @@ export const PayrollTransferCard: React.FC<PayrollTransferCardProps> = ({
             </TransferInfoTitle>
             <TransferInfoText>
               {`${lastTransfer.mesReferencia.toString().padStart(2, '0')}/${lastTransfer.anoReferencia}`}{' '}
-              - Status: {lastTransfer.status} - Valor: R${' '}
+              - Status: {lastTransfer.status || 'N/A'} - Valor: R${' '}
               {lastTransfer.valorTotal?.toLocaleString('pt-BR', {
                 minimumFractionDigits: 2,
               }) || '0,00'}

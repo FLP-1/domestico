@@ -549,8 +549,9 @@ const EmployerModal: React.FC<EmployerModalProps> = ({
     try {
       const cepLimpo = cep.replace(/\D/g, '');
       if (cepLimpo.length === 8) {
+        const { EXTERNAL_API_CONSTANTS } = await import('../config/constants');
         const response = await fetch(
-          `https://viacep.com.br/ws/${cepLimpo}/json/`
+          `${EXTERNAL_API_CONSTANTS.VIACEP.BASE_URL}/${cepLimpo}${EXTERNAL_API_CONSTANTS.VIACEP.ENDPOINT}`
         );
         const data = await response.json();
 

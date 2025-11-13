@@ -7,6 +7,12 @@ import styled from 'styled-components';
 import { useTheme } from '../hooks/useTheme';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import type { Theme } from '../types/theme';
+import {
+  getTextPrimary,
+  getTextSecondary,
+  getTextDark,
+} from '../utils/themeTypeGuards';
 
 const PendingApprovalContainer = styled.div`
   position: absolute;
@@ -72,7 +78,7 @@ const getClientIP = async (): Promise<string> => {
     return 'unknown';
   }
 };
-import { getEmpresaConfig, getDefaultPassword } from '../lib/configService';
+// configService removido - agora usamos API route para evitar Prisma no browser
 import {
   OptimizedFormRow,
   OptimizedSectionTitle,
@@ -98,7 +104,7 @@ import DataList, {
 } from '../components/DataList';
 
 // Styled Components
-const TimeClockSection = styled.section<{ $theme: any }>`
+const TimeClockSection = styled.section<{ $theme?: Theme }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -111,24 +117,30 @@ const CurrentTimeDisplay = styled.div`
   margin-bottom: 2rem;
 `;
 
-const CurrentTime = styled.h1<{ $theme: any }>`
+const CurrentTime = styled.h1<{ $theme?: Theme }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 3rem;
   font-weight: 700;
-  color: ${props =>
-    props.$theme?.colors?.text?.dark ||
-    props.$theme?.colors?.text?.primary ||
-    defaultColors.text.primary};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'dark' in text && text.dark) {
+      return text.dark;
+    }
+    return getTextPrimary(props.$theme);
+  }};
   margin: 0 0 0.5rem 0;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const CurrentDate = styled.p<{ $theme: any }>`
+const CurrentDate = styled.p<{ $theme?: Theme }>`
   font-size: 1.25rem;
-  color: ${props =>
-    props.$theme?.colors?.text?.light ||
-    props.$theme?.colors?.text?.secondary ||
-    defaultColors.text.secondary};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'light' in text && text.light) {
+      return text.light;
+    }
+    return getTextSecondary(props.$theme);
+  }};
   margin: 0;
   font-weight: 500;
 `;
@@ -141,24 +153,17 @@ const TimeRecordsGrid = styled.div`
   width: 100%;
 `;
 
-const OfficialScheduleCard = styled.div<{ $theme: any }>`
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 16px
-    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
-  border: 1px solid
-    ${props => (props.$theme?.colors?.primary || defaultColors.primary) + '20'};
-  margin-bottom: 2rem;
-`;
+// OfficialScheduleCard removido - usar UnifiedCard
 
-const ScheduleTitle = styled.h3<{ $theme: any }>`
+const ScheduleTitle = styled.h3<{ $theme?: Theme }>`
   margin: 0 0 1rem 0;
-  color: ${props =>
-    props.$theme?.colors?.text?.dark ||
-    props.$theme?.colors?.text?.primary ||
-    defaultColors.text.primary};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'dark' in text && text.dark) {
+      return text.dark;
+    }
+    return getTextPrimary(props.$theme);
+  }};
   font-size: 1.2rem;
   font-weight: 600;
   display: flex;
@@ -178,22 +183,25 @@ const ScheduleItem = styled.div`
   }
 `;
 
-const ScheduleLabel = styled.span<{ $theme: any }>`
+const ScheduleLabel = styled.span<{ $theme?: Theme }>`
   font-size: 0.9rem;
-  color: ${props =>
-    props.$theme?.colors?.text?.light ||
-    props.$theme?.colors?.text?.secondary ||
-    defaultColors.text.secondary};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'light' in text && text.light) {
+      return text.light;
+    }
+    return getTextSecondary(props.$theme);
+  }};
   font-weight: 500;
 `;
 
-const ScheduleTime = styled.span<{ $theme: any }>`
+const ScheduleTime = styled.span<{ $theme?: Theme }>`
   font-size: 1rem;
   font-weight: 600;
   color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
 `;
 
-const HistorySection = styled.div<{ $theme: any }>`
+const HistorySection = styled.div<{ $theme?: Theme }>`
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 16px;
@@ -205,26 +213,18 @@ const HistorySection = styled.div<{ $theme: any }>`
     ${props => (props.$theme?.colors?.primary || defaultColors.primary) + '20'};
 `;
 
-const SectionTitle = styled.h3<{ $theme: any }>`
-  margin: 0 0 1.5rem 0;
-  color: ${props =>
-    props.$theme?.colors?.text?.dark ||
-    props.$theme?.colors?.text?.primary ||
-    defaultColors.text.primary};
-  font-size: 1.3rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
+// SectionTitle removido - usar OptimizedSectionTitle com $size='lg'
 
-const EmptyState = styled.div<{ $theme: any }>`
+const EmptyState = styled.div<{ $theme?: Theme }>`
   text-align: center;
   padding: 3rem;
-  color: ${props =>
-    props.$theme?.colors?.text?.light ||
-    props.$theme?.colors?.text?.secondary ||
-    defaultColors.text.secondary};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'light' in text && text.light) {
+      return text.light;
+    }
+    return getTextSecondary(props.$theme);
+  }};
 
   .empty-icon {
     font-size: 4rem;
@@ -234,10 +234,7 @@ const EmptyState = styled.div<{ $theme: any }>`
   .empty-title {
     margin: 0 0 0.5rem 0;
     font-size: 1.25rem;
-    color: ${props =>
-      props.$theme?.colors?.text?.dark ||
-      props.$theme?.colors?.text?.primary ||
-      defaultColors.text.primary};
+    color: ${props => getTextDark(props.$theme)};
   }
 
   .empty-description {
@@ -434,9 +431,15 @@ export default function TimeClock() {
         // Para desenvolvimento, vamos fazer login primeiro
         let token = null;
         try {
-          // Obter configurações da empresa dinamicamente
-          const empresaConfig = await getEmpresaConfig();
-          const senhaPadrao = await getDefaultPassword();
+          // Obter configurações da empresa dinamicamente via API (não no cliente)
+          const configResponse = await fetch('/api/config/system');
+          let empresaConfig: any = {};
+          if (configResponse.ok) {
+            const configData = await configResponse.json();
+            empresaConfig = configData.data?.empresa || {};
+          }
+          const senhaPadrao = empresaConfig?.sistema_senha_padrao || 'senha123';
+          const cpfEmpresa = empresaConfig?.cpf || empresaConfig?.empresa_cpf_principal || '59876913700';
 
           const loginResponse = await fetch('/api/auth/login', {
             method: 'POST',
@@ -444,7 +447,7 @@ export default function TimeClock() {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              cpf: empresaConfig.cpf,
+              cpf: cpfEmpresa,
               senha: senhaPadrao,
             }),
           });
@@ -457,7 +460,7 @@ export default function TimeClock() {
           // login automático falhou, continuar sem autenticação
         }
 
-        const headers = token
+        const headers: HeadersInit = token
           ? {
               Authorization: `Bearer ${token}`,
               'Content-Type': 'application/json',
@@ -738,7 +741,7 @@ export default function TimeClock() {
             // ✅ Adicionar campos obrigatórios para a API
             grupoId: currentUser?.gruposUsuario?.[0]?.grupoId || null,
             usuarioPerfilId:
-              currentUser?.perfis?.find(p => p.principal)?.id ||
+              currentUser?.perfis?.find((p: any) => p.principal)?.id ||
               currentUser?.perfis?.[0]?.id ||
               null,
             // ✅ Adicionar IP do cliente (se disponível via WebRTC)
@@ -1411,7 +1414,7 @@ export default function TimeClock() {
       </TimeClockSection>
 
       {/* Horário Oficial Esperado */}
-      <OfficialScheduleCard $theme={theme}>
+      <UnifiedCard theme={theme} variant='default' size='md'>
         <ScheduleTitle $theme={theme}>
           <AccessibleEmoji emoji='📅' label='Horário' />
           Horário de Trabalho Oficial
@@ -1453,7 +1456,7 @@ export default function TimeClock() {
             </div>
           </EmptyState>
         )}
-      </OfficialScheduleCard>
+      </UnifiedCard>
 
       {/* Cards de Resumo de Horas */}
       {timeSummary && (
@@ -1554,10 +1557,10 @@ export default function TimeClock() {
 
       {/* Histórico de Registros */}
       <HistorySection $theme={theme}>
-        <SectionTitle $theme={theme}>
+        <OptimizedSectionTitle $theme={theme} $size='lg'>
           <AccessibleEmoji emoji='📋' label='Histórico' />
           Histórico de Registros
-        </SectionTitle>
+        </OptimizedSectionTitle>
 
         {historyRecords.length === 0 ? (
           <EmptyState $theme={theme}>
@@ -1596,9 +1599,9 @@ export default function TimeClock() {
 
       {/* Solicitações de Hora Extra */}
       <HistorySection $theme={theme}>
-        <SectionTitle $theme={theme}>
+        <OptimizedSectionTitle $theme={theme} $size='lg'>
           <AccessibleEmoji emoji='⏱️' label='HE' /> Solicitações de Hora Extra
-        </SectionTitle>
+        </OptimizedSectionTitle>
         {overtimeRequests.length === 0 ? (
           <EmptyState $theme={theme}>
             <div className='empty-icon'>

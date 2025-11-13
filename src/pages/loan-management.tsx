@@ -2,10 +2,11 @@ import AccessibleEmoji from '../components/AccessibleEmoji';
 // src/pages/loan-management.tsx
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { GetServerSideProps } from 'next';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styled from 'styled-components';
-import { UnifiedButton } from '../components/unified';
+import { UnifiedButton, UnifiedBadge, UnifiedProgressBar, UnifiedCard, UnifiedModal } from '../components/unified';
 import FilterSection from '../components/FilterSection';
 import {
   Form,
@@ -22,54 +23,37 @@ import WelcomeSection from '../components/WelcomeSection';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
 import { defaultColors, addOpacity } from '../utils/themeHelpers';
-import { UnifiedModal, UnifiedCard } from '../components/unified';
+import type { Theme } from '../types/theme';
 import {
   OptimizedFormRow,
   OptimizedLabel,
   OptimizedButtonGroup,
+  OptimizedSectionTitle,
 } from '../components/shared/optimized-styles';
+import EmptyState from '../components/EmptyState';
 
 // Styled Components para substituir estilos inline
-const ButtonGroup = styled.div`
-  margin-top: 1.5rem;
-`;
+// ButtonGroup removido - usar OptimizedButtonGroup
 
-const UnifiedModalSection = styled.div`
-  margin-bottom: 1.5rem;
-`;
+// UnifiedModalSection removido - usar div diretamente
 
 const FlexRow = styled.div`
   display: flex;
   gap: 1rem;
 `;
 
-const EmptyIcon = styled.div`
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  opacity: 0.6;
-`;
+// EmptyIcon, EmptyTitle, EmptyDescription removidos - usar componente EmptyState centralizado
 
-const EmptyTitle = styled.h3`
-  color: ${props => props.theme?.colors?.text?.primary || '#2c3e50'};
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
-`;
+// SectionTitle removido - usar OptimizedSectionTitle
 
-const EmptyDescription = styled.p`
-  color: ${props => props.theme?.colors?.text?.secondary || '#7f8c8d'};
-  font-size: 0.9rem;
-  margin: 0;
-`;
-
-const SectionTitle = styled.h3`
-  color: ${props => props.theme?.colors?.text?.primary || '#2c3e50'};
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-`;
-
-const SectionText = styled.p`
-  color: ${props => props.theme?.colors?.text?.secondary || '#7f8c8d'};
+const SectionText = styled.p<{ $theme?: Theme }>`
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'secondary' in text) {
+      return text.secondary;
+    }
+    return defaultColors.text.secondary;
+  }};
   font-size: 0.9rem;
   margin: 0.25rem 0;
 `;
@@ -115,8 +99,16 @@ interface LoanSummary {
 
 // Styled Components
 
-const SummarySection = styled.section<{ $theme: any }>`
-  background: rgba(255, 255, 255, 0.95);
+const SummarySection = styled.section<{ $theme: Theme }>`
+  background: ${props => {
+    const surface = props.$theme?.colors?.surface;
+    const surfaceColor = typeof surface === 'string' 
+      ? surface 
+      : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
+    return surfaceColor 
+      ? addOpacity(surfaceColor, 0.95)
+      : addOpacity(defaultColors.surface, 0.95);
+  }};
   backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 2rem;
@@ -125,10 +117,16 @@ const SummarySection = styled.section<{ $theme: any }>`
     ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
 `;
 
-const SummaryTitle = styled.h2`
+const SummaryTitle = styled.h2<{ $theme?: Theme }>`
   font-size: 1.5rem;
   font-weight: 700;
-  color: ${props => props.theme?.colors?.text?.primary || '#2c3e50'};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'primary' in text) {
+      return text.primary;
+    }
+    return defaultColors.text.primary;
+  }};
   margin: 0 0 1.5rem 0;
   font-family: 'Montserrat', sans-serif;
 `;
@@ -140,21 +138,36 @@ const SummaryGrid = styled.div`
 `;
 
 const SummaryCard = styled.div<{
-  $theme: any;
+  $theme: Theme;
   $variant?: 'primary' | 'success' | 'warning' | 'info';
 }>`
   background: ${props => {
     switch (props.$variant) {
       case 'primary':
-        return 'rgba(41, 171, 226, 0.1)';
+        return props.$theme?.colors?.primary
+          ? addOpacity(props.$theme.colors.primary, 0.1)
+          : addOpacity(defaultColors.primary, 0.1);
       case 'success':
-        return 'rgba(144, 238, 144, 0.1)';
+        return props.$theme?.colors?.success
+          ? addOpacity(props.$theme.colors.success, 0.1)
+          : addOpacity(defaultColors.success, 0.1);
       case 'warning':
-        return 'rgba(255, 193, 7, 0.1)';
+        return props.$theme?.colors?.warning
+          ? addOpacity(props.$theme.colors.warning, 0.1)
+          : addOpacity(defaultColors.warning, 0.1);
       case 'info':
-        return 'rgba(52, 152, 219, 0.1)';
-      default:
-        return 'rgba(255, 255, 255, 0.8)';
+        return props.$theme?.colors?.info
+          ? addOpacity(props.$theme.colors.info, 0.1)
+          : addOpacity(defaultColors.info, 0.1);
+      default: {
+        const surface = props.$theme?.colors?.surface;
+        const surfaceColor = typeof surface === 'string' 
+          ? surface 
+          : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
+        return surfaceColor 
+          ? addOpacity(surfaceColor, 0.8)
+          : addOpacity(defaultColors.surface, 0.8);
+      }
     }
   }};
   border-radius: 12px;
@@ -163,15 +176,23 @@ const SummaryCard = styled.div<{
     ${props => {
       switch (props.$variant) {
         case 'primary':
-          return 'rgba(41, 171, 226, 0.3)';
+          return props.$theme?.colors?.primary
+            ? addOpacity(props.$theme.colors.primary, 0.3)
+            : addOpacity(defaultColors.primary, 0.3);
         case 'success':
-          return 'rgba(144, 238, 144, 0.3)';
+          return props.$theme?.colors?.success
+            ? addOpacity(props.$theme.colors.success, 0.3)
+            : addOpacity(defaultColors.success, 0.3);
         case 'warning':
-          return 'rgba(255, 193, 7, 0.3)';
+          return props.$theme?.colors?.warning
+            ? addOpacity(props.$theme.colors.warning, 0.3)
+            : addOpacity(defaultColors.warning, 0.3);
         case 'info':
-          return 'rgba(52, 152, 219, 0.3)';
+          return props.$theme?.colors?.info
+            ? addOpacity(props.$theme.colors.info, 0.3)
+            : addOpacity(defaultColors.info, 0.3);
         default:
-          return props.theme?.border?.muted || '#e0e0e0';
+          return props.$theme?.colors?.border || defaultColors.border;
       }
     }};
   transition: all 0.3s ease;
@@ -183,87 +204,99 @@ const SummaryCard = styled.div<{
   }
 `;
 
-const SummaryCardTitle = styled.h3`
+const SummaryCardTitle = styled.h3<{ $theme?: Theme }>`
   font-size: 0.9rem;
   font-weight: 600;
-  color: ${props => props.theme?.colors?.text?.primary || '#2c3e50'};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'primary' in text) {
+      return text.primary;
+    }
+    return defaultColors.text.primary;
+  }};
   margin: 0 0 0.75rem 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 `;
 
-const SummaryValue = styled.div`
+const SummaryValue = styled.div<{ $theme?: Theme }>`
   font-size: 1.5rem;
   font-weight: 700;
-  color: ${props => props.theme?.colors?.text?.primary || '#2c3e50'};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'primary' in text) {
+      return text.primary;
+    }
+    return defaultColors.text.primary;
+  }};
   font-family: 'Montserrat', sans-serif;
 `;
 
-const SummaryDetails = styled.div`
+const SummaryDetails = styled.div<{ $theme?: Theme }>`
   margin-top: 0.5rem;
   font-size: 0.8rem;
-  color: ${props => props.theme?.colors?.text?.secondary || '#7f8c8d'};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'secondary' in text) {
+      return text.secondary;
+    }
+    return defaultColors.text.secondary;
+  }};
 `;
 
-const RequestSection = styled.section<{ $theme: any }>`
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 8px 32px
-    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
-`;
+// RequestSection removido - usar UnifiedCard
 
-const RequestSectionTitle = styled.h2`
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: ${props => props.theme?.colors?.text?.primary || '#2c3e50'};
-  margin: 0 0 1.5rem 0;
-  font-family: 'Montserrat', sans-serif;
-`;
+// RequestSectionTitle removido - usar OptimizedSectionTitle com $size='lg'
 
-const FormRow = styled.div`
-  display: flex;
-  gap: 1rem;
-  align-items: end;
-  margin-bottom: 1rem;
+// FormRow removido - usar OptimizedFormRow
 
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
-`;
+// FormGroupFlex removido - usar FormGroup com style={{ flex: 1 }}
 
-const FormGroupFlex = styled(FormGroup)`
-  flex: 1;
-`;
+// CurrencyInput removido - usar Input de FormComponents com formatação via onChange
 
-const CurrencyInput = styled(Input)`
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  -moz-appearance: textfield;
-`;
-
-const ConditionsSection = styled.div<{ $theme: any }>`
-  background: #f8f9fa;
+const ConditionsSection = styled.div<{ $theme?: Theme }>`
+  background: ${props => {
+    const surface = props.$theme?.colors?.surface;
+    if (typeof surface === 'object' && surface !== null && 'secondary' in surface) {
+      return surface.secondary;
+    }
+    const background = props.$theme?.colors?.background;
+    if (typeof background === 'string') {
+      return background;
+    } else if (typeof background === 'object' && background !== null && 'secondary' in background) {
+      return background.secondary;
+    }
+    return defaultColors.surface;
+  }};
   border-radius: 12px;
   padding: 1.5rem;
   margin-top: 1.5rem;
-  border: 1px solid #e0e0e0;
+  border: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    if (typeof border === 'string') {
+      return border;
+    } else if (typeof border === 'object' && border !== null && 'primary' in border) {
+      return border.primary;
+    }
+    return defaultColors.border;
+  }};
 `;
 
-const ConditionsTitle = styled.h3`
+const ConditionsTitle = styled.h3<{ $theme?: Theme }>`
   font-size: 1rem;
   font-weight: 600;
-  color: ${props => props.theme?.colors?.text?.primary || '#2c3e50'};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'primary' in text) {
+      return text.primary;
+    }
+    return defaultColors.text.primary;
+  }};
   margin: 0 0 1rem 0;
 `;
 
-const ConditionRow = styled.div`
+const ConditionRow = styled.div<{ $theme?: Theme }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -273,22 +306,43 @@ const ConditionRow = styled.div`
   &:last-child {
     margin-bottom: 0;
     padding-top: 0.75rem;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid ${props =>
+      props.$theme?.colors?.border || defaultColors.border};
     font-weight: 600;
   }
 `;
 
-const ConditionLabel = styled.span`
-  color: #5a6c7d;
+const ConditionLabel = styled.span<{ $theme?: Theme }>`
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'secondary' in text) {
+      return text.secondary;
+    }
+    return defaultColors.text.secondary;
+  }};
 `;
 
-const ConditionValue = styled.span`
-  color: ${props => props.theme?.colors?.text?.primary || '#2c3e50'};
+const ConditionValue = styled.span<{ $theme?: Theme }>`
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'primary' in text) {
+      return text.primary;
+    }
+    return defaultColors.text.primary;
+  }};
   font-weight: 500;
 `;
 
-const RequestsSection = styled.section<{ $theme: any }>`
-  background: rgba(255, 255, 255, 0.95);
+const RequestsSection = styled.section<{ $theme: Theme }>`
+  background: ${props => {
+    const surface = props.$theme?.colors?.surface;
+    const surfaceColor = typeof surface === 'string' 
+      ? surface 
+      : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
+    return surfaceColor 
+      ? addOpacity(surfaceColor, 0.95)
+      : addOpacity(defaultColors.surface, 0.95);
+  }};
   backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 2rem;
@@ -297,10 +351,16 @@ const RequestsSection = styled.section<{ $theme: any }>`
     ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
 `;
 
-const RequestsTitle = styled.h2`
+const RequestsTitle = styled.h2<{ $theme?: Theme }>`
   font-size: 1.5rem;
   font-weight: 700;
-  color: ${props => props.theme?.colors?.text?.primary || '#2c3e50'};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'primary' in text) {
+      return text.primary;
+    }
+    return defaultColors.text.primary;
+  }};
   margin: 0 0 1.5rem 0;
   font-family: 'Montserrat', sans-serif;
 `;
@@ -311,58 +371,33 @@ const RequestsGrid = styled.div`
   gap: 1.5rem;
 `;
 
-const RequestCard = styled.div<{
-  $theme: any;
-  $status: 'pending' | 'approved' | 'rejected' | 'paid';
-}>`
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 12px;
-  padding: 1.5rem;
-  border: 1px solid
-    ${props => {
-      switch (props.$status) {
-        case 'pending':
-          return '#f39c12';
-        case 'approved':
-          return '#2ecc71';
-        case 'rejected':
-          return '#e74c3c';
-        case 'paid':
-          return '#95a5a6';
-        default:
-          return props.theme?.border?.muted || '#e0e0e0';
-      }
-    }};
-  transition: all 0.3s ease;
+// RequestCard removido - usar UnifiedCard com status prop
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px
-      ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
-  }
-`;
+// RequestHeader removido - usar div inline ou header prop do UnifiedCard
 
-const RequestHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-`;
-
-const RequestType = styled.div<{ $type: 'loan' | 'advance' }>`
+const RequestType = styled.div<{ $type: 'loan' | 'advance'; $theme?: Theme }>`
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   border-radius: 20px;
-  background: ${props => (props.$type === 'loan' ? '#3498db20' : '#2ecc7120')};
-  color: ${props => (props.$type === 'loan' ? '#3498db' : '#2ecc71')};
+  background: ${props => {
+    const color = props.$type === 'loan'
+      ? props.$theme?.colors?.info || defaultColors.info
+      : props.$theme?.colors?.success || defaultColors.success;
+    return addOpacity(color, 0.2);
+  }};
+  color: ${props =>
+    props.$type === 'loan'
+      ? props.$theme?.colors?.info || defaultColors.info
+      : props.$theme?.colors?.success || defaultColors.success};
   font-size: 0.8rem;
   font-weight: 600;
 `;
 
 const RequestStatus = styled.span<{
   $status: 'pending' | 'approved' | 'rejected' | 'paid';
+  $theme?: Theme;
 }>`
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
@@ -371,41 +406,69 @@ const RequestStatus = styled.span<{
   background: ${props => {
     switch (props.$status) {
       case 'pending':
-        return '#f39c12';
+        return props.$theme?.colors?.warning || defaultColors.warning;
       case 'approved':
-        return '#2ecc71';
+        return props.$theme?.colors?.success || defaultColors.success;
       case 'rejected':
-        return '#e74c3c';
-      case 'paid':
-        return '#95a5a6';
-      default:
-        return '#95a5a6';
+        return props.$theme?.colors?.error || defaultColors.error;
+      case 'paid': {
+        const text = props.$theme?.colors?.text;
+        if (typeof text === 'object' && text !== null && 'secondary' in text) {
+          return text.secondary;
+        }
+        return defaultColors.text.secondary;
+      }
+      default: {
+        const text = props.$theme?.colors?.text;
+        if (typeof text === 'object' && text !== null && 'secondary' in text) {
+          return text.secondary;
+        }
+        return defaultColors.text.secondary;
+      }
     }
   }};
-  color: white;
+  color: ${props => props.$theme?.colors?.surface || defaultColors.surface};
 `;
 
 const RequestInfo = styled.div`
   margin-bottom: 1rem;
 `;
 
-const RequestTitle = styled.h3`
+const RequestTitle = styled.h3<{ $theme?: Theme }>`
   font-size: 1rem;
   font-weight: 600;
-  color: ${props => props.theme?.colors?.text?.primary || '#2c3e50'};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'primary' in text) {
+      return text.primary;
+    }
+    return defaultColors.text.primary;
+  }};
   margin: 0 0 0.5rem 0;
 `;
 
-const RequestDetails = styled.div`
+const RequestDetails = styled.div<{ $theme?: Theme }>`
   font-size: 0.85rem;
-  color: ${props => props.theme?.colors?.text?.secondary || '#7f8c8d'};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'secondary' in text) {
+      return text.secondary;
+    }
+    return defaultColors.text.secondary;
+  }};
   margin-bottom: 0.25rem;
 `;
 
-const RequestAmount = styled.div`
+const RequestAmount = styled.div<{ $theme?: Theme }>`
   font-size: 1.1rem;
   font-weight: 700;
-  color: ${props => props.theme?.colors?.text?.primary || '#2c3e50'};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'primary' in text) {
+      return text.primary;
+    }
+    return defaultColors.text.primary;
+  }};
   font-family: 'Montserrat', sans-serif;
   margin-top: 0.5rem;
 `;
@@ -416,56 +479,24 @@ const RequestActions = styled.div`
   margin-top: 1rem;
 `;
 
-const RequestUnifiedButton = styled.button<{
-  $theme: any;
-  $variant?: 'primary' | 'secondary' | 'success' | 'danger';
-}>`
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.8rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
+// RequestUnifiedButton removido - usar UnifiedButton com size='sm' e variant apropriado
+
+// ApprovalSection removido - usar UnifiedCard
+
+// ApprovalTitle removido - usar OptimizedSectionTitle
+
+// EmptyState styled removido - usar componente EmptyState centralizado
+
+const TermsSection = styled.section<{ $theme: Theme }>`
   background: ${props => {
-    switch (props.$variant) {
-      case 'secondary':
-        return '#95a5a6';
-      case 'success':
-        return '#2ecc71';
-      case 'danger':
-        return '#e74c3c';
-      default:
-        return props.$theme?.colors?.primary || defaultColors.primary;
-    }
+    const surface = props.$theme?.colors?.surface;
+    const surfaceColor = typeof surface === 'string' 
+      ? surface 
+      : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
+    return surfaceColor 
+      ? addOpacity(surfaceColor, 0.95)
+      : addOpacity(defaultColors.surface, 0.95);
   }};
-  color: white;
-
-  &:hover {
-    background: ${props => {
-      switch (props.$variant) {
-        case 'secondary':
-          return '#7f8c8d';
-        case 'success':
-          return '#27ae60';
-        case 'danger':
-          return '#c0392b';
-        default:
-          return props.$theme?.colors?.primary || defaultColors.primary;
-      }
-    }};
-    transform: translateY(-2px);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-  }
-`;
-
-const ApprovalSection = styled.section<{ $theme: any }>`
-  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 2rem;
@@ -474,61 +505,33 @@ const ApprovalSection = styled.section<{ $theme: any }>`
     ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
 `;
 
-const ApprovalTitle = styled.h2`
+const TermsTitle = styled.h2<{ $theme?: Theme }>`
   font-size: 1.5rem;
   font-weight: 700;
-  color: ${props => props.theme?.colors?.text?.primary || '#2c3e50'};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'primary' in text) {
+      return text.primary;
+    }
+    return defaultColors.text.primary;
+  }};
   margin: 0 0 1.5rem 0;
   font-family: 'Montserrat', sans-serif;
 `;
 
-const EmptyState = styled.div`
-  text-align: center;
-  padding: 3rem;
-  color: ${props => props.theme?.colors?.text?.secondary || '#7f8c8d'};
-
-  .empty-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-  }
-
-  .empty-title {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.25rem;
-    color: ${props => props.theme?.colors?.text?.primary || '#2c3e50'};
-  }
-
-  .empty-description {
-    margin: 0;
-    font-size: 0.9rem;
-  }
-`;
-
-const TermsSection = styled.section<{ $theme: any }>`
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 8px 32px
-    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
-`;
-
-const TermsTitle = styled.h2`
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: ${props => props.theme?.colors?.text?.primary || '#2c3e50'};
-  margin: 0 0 1.5rem 0;
-  font-family: 'Montserrat', sans-serif;
-`;
-
-const TermsContent = styled.div`
+const TermsContent = styled.div<{ $theme?: Theme }>`
   font-size: 0.9rem;
-  color: #5a6c7d;
+  color: ${defaultColors.text.secondary};
   line-height: 1.6;
 
   h3 {
-    color: ${props => props.theme?.colors?.text?.primary || '#2c3e50'};
+    color: ${props => {
+      const text = props.$theme?.colors?.text;
+      if (typeof text === 'object' && text !== null && 'primary' in text) {
+        return text.primary;
+      }
+      return defaultColors.text.primary;
+    }};
     margin: 1.5rem 0 0.75rem 0;
     font-size: 1rem;
     font-weight: 600;
@@ -834,36 +837,36 @@ export default function LoanManagement() {
 
       {/* Resumo */}
       <SummarySection $theme={theme}>
-        <SummaryTitle>Resumo Financeiro</SummaryTitle>
+        <SummaryTitle $theme={theme}>Resumo Financeiro</SummaryTitle>
         <SummaryGrid>
           <SummaryCard $theme={theme} $variant='warning'>
             <SummaryCardTitle>
               <AccessibleEmoji emoji='⏳' label='Carregando' /> Pendentes
             </SummaryCardTitle>
-            <SummaryValue>
+            <SummaryValue $theme={theme}>
               {formatCurrency(loanSummary.totalPending)}
             </SummaryValue>
-            <SummaryDetails>Solicitações aguardando aprovação</SummaryDetails>
+            <SummaryDetails $theme={theme}>Solicitações aguardando aprovação</SummaryDetails>
           </SummaryCard>
 
           <SummaryCard $theme={theme} $variant='success'>
             <SummaryCardTitle>
               <AccessibleEmoji emoji='✅' label='Sucesso' /> Aprovados
             </SummaryCardTitle>
-            <SummaryValue>
+            <SummaryValue $theme={theme}>
               {formatCurrency(loanSummary.totalApproved)}
             </SummaryValue>
-            <SummaryDetails>Valor total aprovado</SummaryDetails>
+            <SummaryDetails $theme={theme}>Valor total aprovado</SummaryDetails>
           </SummaryCard>
 
           <SummaryCard $theme={theme} $variant='info'>
             <SummaryCardTitle>
               <AccessibleEmoji emoji='💵' label='Pagamento' /> Em Aberto
             </SummaryCardTitle>
-            <SummaryValue>
+            <SummaryValue $theme={theme}>
               {formatCurrency(loanSummary.totalOutstanding)}
             </SummaryValue>
-            <SummaryDetails>Valor ainda não pago</SummaryDetails>
+            <SummaryDetails $theme={theme}>Valor ainda não pago</SummaryDetails>
           </SummaryCard>
 
           <SummaryCard $theme={theme} $variant='primary'>
@@ -871,10 +874,10 @@ export default function LoanManagement() {
               <AccessibleEmoji emoji='📅' label='Calendário' /> Próximo
               Pagamento
             </SummaryCardTitle>
-            <SummaryValue>
+            <SummaryValue $theme={theme}>
               {formatCurrency(loanSummary.nextPaymentAmount || 0)}
             </SummaryValue>
-            <SummaryDetails>
+            <SummaryDetails $theme={theme}>
               {loanSummary.nextPaymentDate &&
                 `Vencimento: ${new Date(loanSummary.nextPaymentDate).toLocaleDateString('pt-BR')}`}
             </SummaryDetails>
@@ -883,11 +886,13 @@ export default function LoanManagement() {
       </SummarySection>
 
       {/* Formulário de Solicitação */}
-      <RequestSection $theme={theme}>
-        <RequestSectionTitle>Nova Solicitação</RequestSectionTitle>
+      <UnifiedCard theme={theme} variant='default' size='lg'>
+        <OptimizedSectionTitle $theme={theme} $size='lg'>
+          Nova Solicitação
+        </OptimizedSectionTitle>
         <Form onSubmit={handleSubmitRequest}>
           <OptimizedFormRow>
-            <FormGroupFlex>
+            <FormGroup style={{ flex: 1 }}>
               <OptimizedLabel>Tipo de Operação</OptimizedLabel>
               <Select
                 $theme={theme}
@@ -904,10 +909,10 @@ export default function LoanManagement() {
                 <option value='advance'>Adiantamento de Salário</option>
                 <option value='loan'>Empréstimo</option>
               </Select>
-            </FormGroupFlex>
-            <FormGroupFlex>
+            </FormGroup>
+            <FormGroup style={{ flex: 1 }}>
               <OptimizedLabel>Valor Solicitado</OptimizedLabel>
-              <CurrencyInput
+              <Input
                 $theme={theme}
                 type='text'
                 value={newRequest.amount}
@@ -919,9 +924,13 @@ export default function LoanManagement() {
                 }
                 placeholder='R$ 0,00'
                 required
+                style={{
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'textfield',
+                }}
               />
-            </FormGroupFlex>
-            <FormGroupFlex>
+            </FormGroup>
+            <FormGroup style={{ flex: 1 }}>
               <OptimizedLabel>Parcelas</OptimizedLabel>
               <Input
                 $theme={theme}
@@ -937,7 +946,7 @@ export default function LoanManagement() {
                 }
                 required
               />
-            </FormGroupFlex>
+            </FormGroup>
           </OptimizedFormRow>
 
           <FormGroup>
@@ -997,19 +1006,19 @@ export default function LoanManagement() {
             </UnifiedButton>
           </OptimizedButtonGroup>
         </Form>
-      </RequestSection>
+      </UnifiedCard>
 
       {/* Seção de Aprovação (apenas para empregadores) */}
       {currentProfile?.role === 'Empregador' && (
-        <ApprovalSection $theme={theme}>
-          <ApprovalTitle>Aprovação de Solicitações</ApprovalTitle>
-          <ApprovalSection $theme={theme}>
+        <UnifiedCard theme={theme} variant='default' size='md'>
+          <OptimizedSectionTitle>Aprovação de Solicitações</OptimizedSectionTitle>
+          <UnifiedCard theme={theme} variant='default' size='md'>
             <UnifiedButton $variant='secondary' $theme={theme}>
               <AccessibleEmoji emoji='📊' label='Dashboard' /> Exportar
               Relatório
             </UnifiedButton>
-          </ApprovalSection>
-        </ApprovalSection>
+          </UnifiedCard>
+        </UnifiedCard>
       )}
 
       {/* Filtros */}
@@ -1066,99 +1075,111 @@ export default function LoanManagement() {
 
       {/* Listagem de Solicitações */}
       <RequestsSection $theme={theme}>
-        <RequestsTitle>Histórico de Solicitações</RequestsTitle>
+        <RequestsTitle $theme={theme}>Histórico de Solicitações</RequestsTitle>
 
         {getFilteredRequests().length === 0 ? (
-          <EmptyState>
-            <EmptyIcon>
-              <AccessibleEmoji emoji='💵' label='Dinheiro' />
-            </EmptyIcon>
-            <EmptyTitle>Nenhuma solicitação encontrada</EmptyTitle>
-            <EmptyDescription>
-              Não há solicitações que correspondam aos filtros selecionados.
-            </EmptyDescription>
-          </EmptyState>
+          <EmptyState
+            icon='💵'
+            title='Nenhuma solicitação encontrada'
+            description='Não há solicitações que correspondam aos filtros selecionados.'
+            theme={theme}
+          />
         ) : (
           <RequestsGrid>
             {getFilteredRequests().map(request => (
-              <RequestCard
+              <UnifiedCard
                 key={request.id}
-                $theme={theme}
-                $status={request.status}
+                theme={theme}
+                variant='default'
+                size='md'
+                status={
+                  request.status === 'approved'
+                    ? 'success'
+                    : request.status === 'rejected'
+                      ? 'error'
+                      : request.status === 'pending'
+                        ? 'warning'
+                        : 'default'
+                }
               >
-                <RequestHeader>
-                  <RequestType $type={request.type}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                  <RequestType $type={request.type} $theme={theme}>
                     <span>{getRequestTypeIcon(request.type)}</span>
                     <span>{getRequestTypeName(request.type)}</span>
                   </RequestType>
-                  <RequestStatus $status={request.status}>
+                  <RequestStatus $status={request.status} $theme={theme}>
                     {getStatusName(request.status)}
                   </RequestStatus>
-                </RequestHeader>
+                </div>
 
                 <RequestInfo>
-                  <RequestTitle>{request.employeeName}</RequestTitle>
-                  <RequestDetails>
+                  <RequestTitle $theme={theme}>{request.employeeName}</RequestTitle>
+                  <RequestDetails $theme={theme}>
                     Data:{' '}
                     {new Date(request.requestDate).toLocaleDateString('pt-BR')}
                   </RequestDetails>
-                  <RequestDetails>
+                  <RequestDetails $theme={theme}>
                     Parcelas: {request.installments}x de{' '}
                     {formatCurrency(request.monthlyPayment)}
                   </RequestDetails>
-                  <RequestDetails>
+                  <RequestDetails $theme={theme}>
                     Vencimento:{' '}
                     {new Date(request.dueDate).toLocaleDateString('pt-BR')}
                   </RequestDetails>
-                  <RequestAmount>
+                  <RequestAmount $theme={theme}>
                     {formatCurrency(request.totalAmount)}
                   </RequestAmount>
                 </RequestInfo>
 
                 <RequestActions>
-                  <RequestUnifiedButton
+                  <UnifiedButton
                     $theme={theme}
+                    $size='sm'
+                    $variant='primary'
                     onClick={() => handleViewRequest(request)}
                   >
                     <AccessibleEmoji emoji='👁' label='Ver' /> Detalhes
-                  </RequestUnifiedButton>
+                  </UnifiedButton>
 
                   {request.status === 'pending' &&
                     currentProfile?.role === 'Empregador' && (
                       <>
-                        <RequestUnifiedButton
+                        <UnifiedButton
                           $theme={theme}
+                          $size='sm'
                           $variant='success'
                           onClick={() =>
                             handleApprovalAction(request.id, 'approve')
                           }
                         >
                           <AccessibleEmoji emoji='✅' label='Sucesso' /> Aprovar
-                        </RequestUnifiedButton>
-                        <RequestUnifiedButton
+                        </UnifiedButton>
+                        <UnifiedButton
                           $theme={theme}
+                          $size='sm'
                           $variant='danger'
                           onClick={() =>
                             handleApprovalAction(request.id, 'reject')
                           }
                         >
                           <AccessibleEmoji emoji='❌' label='Erro' /> Rejeitar
-                        </RequestUnifiedButton>
+                        </UnifiedButton>
                       </>
                     )}
 
                   {request.status === 'pending' &&
                     currentProfile?.role !== 'Empregador' && (
-                      <RequestUnifiedButton
+                      <UnifiedButton
                         $theme={theme}
+                        $size='sm'
                         $variant='secondary'
                         onClick={() => handleCancelRequest(request.id)}
                       >
                         <AccessibleEmoji emoji='❌' label='Excluir' /> Cancelar
-                      </RequestUnifiedButton>
+                      </UnifiedButton>
                     )}
                 </RequestActions>
-              </RequestCard>
+              </UnifiedCard>
             ))}
           </RequestsGrid>
         )}
@@ -1166,8 +1187,8 @@ export default function LoanManagement() {
 
       {/* Termos e Condições */}
       <TermsSection $theme={theme}>
-        <TermsTitle>Termos e Condições</TermsTitle>
-        <TermsContent>
+        <TermsTitle $theme={theme}>Termos e Condições</TermsTitle>
+        <TermsContent $theme={theme}>
           <h3>Adiantamento de Salário</h3>
           <ul>
             <li>Sem taxa de juros ou custos adicionais</li>
@@ -1211,27 +1232,29 @@ export default function LoanManagement() {
       >
         {selectedRequest && (
           <div>
-            <UnifiedModalSection>
-              <SectionTitle>{selectedRequest.employeeName}</SectionTitle>
-              <SectionText>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <OptimizedSectionTitle $theme={theme}>
+                {selectedRequest.employeeName}
+              </OptimizedSectionTitle>
+              <SectionText $theme={theme}>
                 <strong>Tipo:</strong>{' '}
                 {getRequestTypeName(selectedRequest.type)}
               </SectionText>
-              <SectionText>
+              <SectionText $theme={theme}>
                 <strong>Valor:</strong>{' '}
                 {formatCurrency(selectedRequest.totalAmount)}
               </SectionText>
-              <SectionText>
+              <SectionText $theme={theme}>
                 <strong>Parcelas:</strong> {selectedRequest.installments}x de{' '}
                 {formatCurrency(selectedRequest.monthlyPayment)}
               </SectionText>
-              <SectionText>
+              <SectionText $theme={theme}>
                 <strong>Status:</strong> {getStatusName(selectedRequest.status)}
               </SectionText>
-              <SectionText>
+              <SectionText $theme={theme}>
                 <strong>Justificativa:</strong> {selectedRequest.justification}
               </SectionText>
-            </UnifiedModalSection>
+            </div>
 
             <FlexRow>
               <FlexColumn>
@@ -1260,13 +1283,13 @@ export default function LoanManagement() {
       >
         {selectedRequest && (
           <div>
-            <UnifiedModalSection>
+            <div style={{ marginBottom: '1.5rem' }}>
               <h3 className='section-title'>
                 {selectedRequest.employeeName} -{' '}
                 {formatCurrency(selectedRequest.totalAmount)}
               </h3>
-              <SectionText>{selectedRequest.justification}</SectionText>
-            </UnifiedModalSection>
+              <SectionText $theme={theme}>{selectedRequest.justification}</SectionText>
+            </div>
 
             <FormGroup>
               <OptimizedLabel>
@@ -1341,3 +1364,9 @@ export default function LoanManagement() {
     </PageContainer>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: {},
+  };
+};

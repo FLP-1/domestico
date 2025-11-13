@@ -454,7 +454,7 @@ class PerformanceMonitoringService {
     );
 
     const topMetricas = Object.entries(metricasCount)
-      .sort(([, a], [, b]) => b - a)
+      .sort(([, a], [, b]) => (b as number) - (a as number))
       .slice(0, 10)
       .map(([nome]) => metricasNoPeriodo.find(m => m.nome === nome))
       .filter(Boolean) as PerformanceMetric[];
@@ -493,12 +493,13 @@ class PerformanceMonitoringService {
     );
 
     return Object.entries(metricasPorNome).map(([nome, ms]) => {
-      if (!ms || ms.length < 2) {
+      const metricasArray = ms as PerformanceMetric[] | undefined;
+      if (!metricasArray || metricasArray.length < 2) {
         return { nome, tendencia: 'estavel' as const, variacao: 0 };
       }
 
-      const primeiro = ms[ms.length - 1]!.valor;
-      const ultimo = ms[0]!.valor;
+      const primeiro = metricasArray[metricasArray.length - 1]?.valor ?? 0;
+      const ultimo = metricasArray[0]?.valor ?? 0;
       const variacao = ((ultimo - primeiro) / primeiro) * 100;
 
       let tendencia: 'melhorando' | 'piorando' | 'estavel';

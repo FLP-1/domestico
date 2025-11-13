@@ -68,19 +68,19 @@ export type DocumentoComUsuario = Prisma.DocumentoGetPayload<{
   };
 }>;
 
-// Tipos de empregador
-export type EmpregadorComCertificado = Prisma.EmpregadorGetPayload<{
-  include: {
-    certificadoDigital: true;
-  };
-}>;
+// Tipos de empregador com certificado
+export type EmpregadorComCertificado = Prisma.EmpregadorGetPayload<
+  Prisma.EmpregadorDefaultArgs
+> & {
+  certificadoDigital: Prisma.CertificadoDigitalGetPayload<{}> | null;
+};
 
-// Tipos de eventos eSocial
-export type EventoESocialCompleto = Prisma.EventoESocialGetPayload<{
-  include: {
-    empregador: true;
-  };
-}>;
+// Tipos de eventos eSocial com empregador
+export type EventoESocialCompleto = Prisma.EventoESocialGetPayload<
+  Prisma.EventoESocialDefaultArgs
+> & {
+  empregador: Prisma.EmpregadorGetPayload<{}>;
+};
 
 // Tipos de tarefa
 export type TarefaComRelacoes = Prisma.TarefaGetPayload<{

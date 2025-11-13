@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { useSystemConfig } from './useSystemConfig';
 import { geofencingColors } from '../design-system/tokens/geofencing-colors';
 
+// Importar tipo do themeService
+import type { Theme } from '../services/themeService';
+
 export interface ThemeColors {
   primary: string;
   secondary: string;
@@ -250,41 +253,93 @@ export const useTheme = (
 
   // Aplicar tema por perfil
   useEffect(() => {
-    if (profileId && profileThemes[profileId]) {
-      const baseTheme = profileThemes[profileId];
+    const loadTheme = async () => {
+      if (!profileId) return;
 
-      // Se usar configuração centralizada, mesclar com cores do banco
-      if (useCentralizedConfig && config) {
-        const mergedTheme: ProfileTheme = {
-          ...baseTheme,
-          colors: {
-            ...baseTheme.colors,
-            // Sobrescrever com cores do banco quando disponíveis
-            primary: config.colors.primary || baseTheme.colors.primary,
-            secondary: config.colors.secondary || baseTheme.colors.secondary,
-            success: config.colors.success || baseTheme.colors.success,
-            warning: config.colors.warning || baseTheme.colors.warning,
-            error: config.colors.error || baseTheme.colors.error,
-            info: config.colors.info || baseTheme.colors.info,
-            // Adicionar cores de navegação e status
-            navigation: {
-              primary: config.colors.primary || baseTheme.colors.primary,
-              hover: config.colors.primary || baseTheme.colors.primary,
-              active: config.colors.primary || baseTheme.colors.primary,
-            },
-            status: {
-              success: config.colors.success || '#10B981',
-              warning: config.colors.warning || '#F59E0B',
-              error: config.colors.error || '#EF4444',
-              info: config.colors.info || '#3B82F6',
-            },
-          },
-        };
-        setCurrentTheme(mergedTheme);
-      } else {
-        setCurrentTheme(baseTheme);
+      // 1. Tentar buscar do banco de dados (se useCentralizedConfig)
+      if (useCentralizedConfig) {
+        try {
+          const response = await fetch(`/api/theme/get?profileCode=${profileId}`);
+          if (response.ok) {
+            const result = await response.json();
+            if (result.success && result.data) {
+              const dbTheme = result.data as Theme;
+              
+              // Validar se tema tem cores válidas
+              if (!dbTheme.colors || !dbTheme.colors.primary) {
+                throw new Error('Tema do banco inválido');
+              }
+              
+              // Converter Theme do banco para ProfileTheme
+              const profileTheme: ProfileTheme = {
+                id: profileId,
+                name: profileThemes[profileId]?.name || profileId,
+                colors: {
+                  primary: dbTheme.colors.primary || profileThemes[profileId]?.colors.primary || '#29ABE2',
+                  secondary: dbTheme.colors.secondary || profileThemes[profileId]?.colors.secondary || '#90EE90',
+                  accent: dbTheme.colors.accent || profileThemes[profileId]?.colors.accent || '#FFDA63',
+                  background: dbTheme.colors.background || profileThemes[profileId]?.colors.background || '#FFFFFF',
+                  surface: dbTheme.colors.surface || profileThemes[profileId]?.colors.surface || '#F8F9FA',
+                  text: dbTheme.colors.text || profileThemes[profileId]?.colors.text || '#2C3E50',
+                  textSecondary: dbTheme.colors.textSecondary || profileThemes[profileId]?.colors.textSecondary || '#7F8C8D',
+                  border: dbTheme.colors.border || profileThemes[profileId]?.colors.border || '#E9ECEF',
+                  shadow: dbTheme.colors.shadow || profileThemes[profileId]?.colors.shadow || 'rgba(41, 171, 226, 0.1)',
+                  success: dbTheme.colors.success,
+                  warning: dbTheme.colors.warning,
+                  error: dbTheme.colors.error,
+                  info: dbTheme.colors.info,
+                }
+              };
+              
+              setCurrentTheme(profileTheme);
+              return; // Tema do banco carregado, não precisa continuar
+            }
+          }
+        } catch (error) {
+          console.warn('Erro ao carregar tema do banco, usando fallback:', error);
+          // Continuar com fallback
+        }
       }
-    }
+
+      // 2. Fallback: usar profileThemes hardcoded (compatibilidade)
+      if (profileThemes[profileId]) {
+        const baseTheme = profileThemes[profileId];
+
+        // Se usar configuração centralizada, mesclar com cores do config
+        if (useCentralizedConfig && config) {
+          const mergedTheme: ProfileTheme = {
+            ...baseTheme,
+            colors: {
+              ...baseTheme.colors,
+              // Sobrescrever com cores do config quando disponíveis
+              primary: config.colors.primary || baseTheme.colors.primary,
+              secondary: config.colors.secondary || baseTheme.colors.secondary,
+              success: config.colors.success || baseTheme.colors.success,
+              warning: config.colors.warning || baseTheme.colors.warning,
+              error: config.colors.error || baseTheme.colors.error,
+              info: config.colors.info || baseTheme.colors.info,
+              // Adicionar cores de navegação e status
+              navigation: {
+                primary: config.colors.primary || baseTheme.colors.primary,
+                hover: config.colors.primary || baseTheme.colors.primary,
+                active: config.colors.primary || baseTheme.colors.primary,
+              },
+              status: {
+                success: config.colors.success || '#10B981',
+                warning: config.colors.warning || '#F59E0B',
+                error: config.colors.error || '#EF4444',
+                info: config.colors.info || '#3B82F6',
+              },
+            },
+          };
+          setCurrentTheme(mergedTheme);
+        } else {
+          setCurrentTheme(baseTheme);
+        }
+      }
+    };
+
+    loadTheme();
   }, [profileId, useCentralizedConfig, config, loading, error]);
 
   const updateTheme = (profileId: string) => {

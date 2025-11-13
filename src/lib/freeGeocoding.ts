@@ -262,7 +262,10 @@ export async function reverseGeocodeNominatim(
   try {
     logger.geo('🌐 Usando Nominatim como fallback final...');
 
-    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1&accept-language=pt-BR`;
+    const { loadSystemConfig } = await import('../config/centralized-config');
+    const config = await loadSystemConfig();
+    const nominatimBaseUrl = config.urls.geocoding.nominatim || 'https://nominatim.openstreetmap.org/reverse';
+    const url = `${nominatimBaseUrl}?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1&accept-language=pt-BR`;
 
     const response = await fetch(url, {
       headers: {

@@ -1,11 +1,80 @@
 // Serviço real de integração com a API do eSocial Doméstico
-import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import fs from 'fs';
+import path from 'path';
+import axios, {
+  AxiosInstance,
+  InternalAxiosRequestConfig,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from 'axios';
 import { ESOCIAL_CONFIG, getEndpoint } from '../config/esocial';
 import {
   CertificateService,
   getCertificateService,
 } from './certificateService';
 import { ESocialEvent, ESocialResponse } from './esocialApi';
+import {
+  ESocialStructuredResponse,
+  ESocialErrorResponse,
+  ESocialSuccessResponse,
+  classifyESocialError,
+  isRetryableError,
+  getErrorMessage,
+  getRequiredAction,
+  ESocialErrorCode
+} from './esocialErrorTypes';
+import { getESocialCircuitBreaker } from './esocialCircuitBreaker';
+import { getESocialOfflineCache } from './esocialOfflineCache';
+import { getESocialRetryService } from './esocialRetryService';
+import logger from '../lib/logger';
+import { parseStringPromise } from 'xml2js';
+
+interface SoapRequestConfig {
+  url: string;
+  action: string;
+  namespace: string;
+  body: string;
+}
+
+const stripPrefix = (name: string): string => name.replace(/^[^:]+:/, '');
+
+const sanitizeErrorDetails = (input: any, depth = 0): any => {
+  if (!input) return input;
+  if (depth > 3) return '<omitted>';
+
+  if (Array.isArray(input)) {
+    if (input.length > 20) {
+      return [...input.slice(0, 5).map(item => sanitizeErrorDetails(item, depth + 1)), `...(${input.length - 5} more)`];
+    }
+    return input.map(item => sanitizeErrorDetails(item, depth + 1));
+  }
+
+  if (typeof input === 'object') {
+    const sanitized: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(input)) {
+      const lowerKey = key.toLowerCase();
+      if (
+        (typeof Buffer !== 'undefined' && Buffer.isBuffer(value)) ||
+        ((value as any)?.type === 'Buffer' && Array.isArray((value as any)?.data))
+      ) {
+        sanitized[key] = '<buffer>';
+      } else if (value instanceof ArrayBuffer || ArrayBuffer.isView(value)) {
+        sanitized[key] = '<binary>';
+      } else if (
+        lowerKey.includes('certificate') ||
+        lowerKey.includes('privatekey') ||
+        lowerKey.includes('passphrase')
+      ) {
+        sanitized[key] = '<redacted>';
+      } else {
+        sanitized[key] = sanitizeErrorDetails(value, depth + 1);
+      }
+    }
+    return sanitized;
+  }
+
+  return input;
+};
 export interface ESocialRealConfig {
   environment: 'producao' | 'homologacao';
   certificatePath: string;
@@ -33,6 +102,11 @@ export class ESocialRealApiService {
   private certificateService: CertificateService;
   private httpClient: AxiosInstance;
   private isInitialized: boolean = false;
+  
+  // Componentes reutilizáveis centralizados
+  private circuitBreaker = getESocialCircuitBreaker();
+  private cache = getESocialOfflineCache();
+  private retryService = getESocialRetryService();
   constructor(config: ESocialRealConfig) {
     this.config = config;
     this.certificateService = getCertificateService();
@@ -113,15 +187,20 @@ export class ESocialRealApiService {
   }
   /**
    * Adiciona autenticação baseada em certificado digital
+   * ✅ ADICIONADO: Validação preventiva antes de usar
    */
   private async addAuthentication(
     config: InternalAxiosRequestConfig
   ): Promise<InternalAxiosRequestConfig> {
     try {
+      await this.ensureCertificateLoaded();
       // Verificar se o certificado está carregado
       if (!this.certificateService.isCertificateValid()) {
         throw new Error('Certificado digital não carregado ou inválido');
       }
+      
+      // ✅ Validação preventiva (buscar certificado no banco se tiver ID)
+      // TODO: Integrar com CertificatePreventiveValidationService quando certificado tiver ID
       // Gerar token de autenticação
       const authToken = this.certificateService.generateAuthToken();
       // Adicionar headers de autenticação
@@ -139,12 +218,250 @@ export class ESocialRealApiService {
     }
   }
   /**
+   * Garante que o certificado seja carregado a partir do caminho configurado
+   */
+  private async ensureCertificateLoaded(): Promise<void> {
+    if (this.certificateService.isCertificateValid()) {
+      return;
+    }
+
+    if (typeof window !== 'undefined') {
+      throw new Error('Serviço eSocial real deve ser executado no servidor.');
+    }
+
+    const resolvedPath = this.resolveCertificatePath(this.config.certificatePath);
+    const certificatePassword = this.config.certificatePassword || ESOCIAL_CONFIG.certificate.password;
+
+    if (!certificatePassword) {
+      throw new Error('Senha do certificado eSocial não configurada.');
+    }
+
+    if (!fs.existsSync(resolvedPath)) {
+      throw new Error(`Arquivo de certificado eSocial não encontrado em ${resolvedPath}`);
+    }
+
+    try {
+      await this.certificateService.loadCertificateFromPath(resolvedPath, certificatePassword);
+
+      const info = this.certificateService.getCertificateInfo();
+      logger.info(
+        {
+          module: 'ESocialRealApiService',
+          action: 'loadCertificate',
+          subject: info?.subject,
+          issuer: info?.issuer,
+          validTo: info?.validTo?.toISOString(),
+          daysUntilExpiry: info?.daysUntilExpiry,
+        },
+        'Certificado eSocial carregado com sucesso'
+      );
+    } catch (error) {
+      logger.error(
+        {
+          module: 'ESocialRealApiService',
+          action: 'loadCertificate',
+          certificatePath: resolvedPath,
+          error: error instanceof Error ? error.message : 'Erro desconhecido',
+        },
+        'Falha ao carregar certificado eSocial'
+      );
+      throw error;
+    }
+
+    if (!this.certificateService.isCertificateValid()) {
+      throw new Error('Certificado eSocial inválido após tentativa de carregamento.');
+    }
+  }
+
+  /**
+   * Resolve caminho do certificado considerando caminhos relativos
+   */
+  private resolveCertificatePath(configuredPath?: string): string {
+    const pathFromConfig = configuredPath || ESOCIAL_CONFIG.certificate.path;
+
+    if (!pathFromConfig || pathFromConfig.trim().length === 0) {
+      throw new Error('Caminho do certificado eSocial não configurado.');
+    }
+
+    return path.isAbsolute(pathFromConfig)
+      ? pathFromConfig
+      : path.join(process.cwd(), pathFromConfig);
+  }
+  /**
    * Cria agente HTTPS com certificado digital
    */
   private createHttpsAgent(): any {
-    // Para Node.js, seria necessário usar https.Agent
-    // No browser, o certificado é gerenciado pelo sistema
-    return undefined;
+    if (typeof window !== 'undefined') {
+      return undefined;
+    }
+
+    const https = require('https');
+    const agentOptions: Record<string, any> = {
+      rejectUnauthorized: process.env.NODE_ENV === 'development' ? false : true,
+      keepAlive: true,
+    };
+
+    const certificatePem = this.certificateService.getCertificatePem();
+    const certificatePemChain = this.certificateService.getCertificatePemChain();
+    const privateKeyPem = this.certificateService.getPrivateKeyPem();
+
+    if (certificatePem && privateKeyPem) {
+      agentOptions.cert = certificatePem;
+      agentOptions.key = privateKeyPem;
+
+      if (certificatePemChain.length > 1) {
+        agentOptions.ca = certificatePemChain.slice(1);
+      }
+    } else {
+      const pfxBytes = this.certificateService.getPfxBytes();
+      const passphrase = this.certificateService.getCertificatePassword();
+
+      if (!pfxBytes || !passphrase) {
+        throw new Error('Certificado não carregado corretamente para autenticação.');
+      }
+
+      agentOptions.pfx = Buffer.from(pfxBytes);
+      agentOptions.passphrase = passphrase;
+    }
+
+    if (process.env.NODE_ENV === 'production') {
+      const caCerts = this.getCACertificates();
+      agentOptions.ca = Array.isArray(agentOptions.ca)
+        ? [...agentOptions.ca, ...caCerts]
+        : caCerts;
+    }
+
+    agentOptions.checkServerIdentity = (host: string, cert: any) => {
+      const err = https.checkServerIdentity(host, cert);
+      if (err) {
+        return err;
+      }
+      return undefined;
+    };
+
+    return new https.Agent(agentOptions);
+  }
+  /**
+   * Constrói envelope SOAP padrão com cabeçalho e corpo fornecido
+   */
+  private buildSoapEnvelope(body: string): string {
+    const ambiente =
+      this.config.environment === 'producao' || ESOCIAL_CONFIG.environment === 'producao'
+        ? '1'
+        : '2';
+    const transmissor = this.config.softwareHouse?.cnpj || this.config.empregadorCpf;
+
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.esocial.gov.br/ws/">
+  <soapenv:Header>
+    <ns:eSocialHeader>
+      <ns:Ambiente>${ambiente}</ns:Ambiente>
+      <ns:Empregador>${this.config.empregadorCpf}</ns:Empregador>
+      <ns:Transmissor>${transmissor}</ns:Transmissor>
+    </ns:eSocialHeader>
+  </soapenv:Header>
+  <soapenv:Body>
+    ${body}
+  </soapenv:Body>
+</soapenv:Envelope>`;
+  }
+
+  /**
+   * Resolve URL do serviço eSocial Doméstico
+   */
+  private getDomesticoServiceConfig(
+    key: 'consultaEmpregador' | 'consultaEventos' | 'consultaIdentificador'
+  ): { url: string; namespace: string; action: string } {
+    const env = this.config.environment === 'producao' ? 'producao' : 'homologacao';
+    const domesticoConfig = ESOCIAL_CONFIG.urls?.domestico?.[env] as Record<
+      string,
+      { url: string; namespace: string; action: string } | string | undefined
+    >;
+
+    if (!domesticoConfig) {
+      throw new Error(`Configuração de URLs eSocial Doméstico não encontrada para ${env}`);
+    }
+
+    const target = domesticoConfig[key];
+
+    if (!target || typeof target === 'string') {
+      throw new Error(`Serviço eSocial Doméstico '${key}' não configurado adequadamente.`);
+    }
+
+    return target;
+  }
+
+  /**
+   * Executa requisição SOAP e retorna XML parseado
+   */
+  private async sendSoapRequest(request: SoapRequestConfig): Promise<any> {
+    const envelope = this.buildSoapEnvelope(request.body);
+
+    const soapActionUri = request.action.includes('http')
+      ? request.action
+      : `${request.namespace}/${request.action}`;
+
+    const axiosConfig: AxiosRequestConfig = {
+      method: 'post',
+      url: request.url,
+      data: envelope,
+      headers: {
+        'Content-Type': 'text/xml; charset=utf-8',
+        SOAPAction: soapActionUri,
+      },
+      timeout: 60000,
+      responseType: 'text',
+      transformResponse: res => res, // evitar parse automático
+    };
+
+    const response: AxiosResponse<string> = await this.httpClient.request(axiosConfig);
+
+    const parsed = await parseStringPromise(response.data, {
+      explicitArray: false,
+      ignoreAttrs: false,
+      tagNameProcessors: [stripPrefix],
+      attrNameProcessors: [stripPrefix],
+      mergeAttrs: true,
+      trim: true,
+    });
+
+    const envelopeNode = parsed?.Envelope || parsed?.envelope || parsed;
+    const bodyNode = envelopeNode?.Body || envelopeNode?.body;
+    const fault = bodyNode?.Fault || bodyNode?.fault;
+
+    if (fault) {
+      const message = fault.faultstring || fault.faultcode || 'SOAP Fault';
+      const error = new Error(message);
+      (error as any).code = fault.faultcode || 'SOAP_FAULT';
+      (error as any).details = sanitizeErrorDetails(fault);
+      throw error;
+    }
+
+    return parsed;
+  }
+
+  /**
+   * Extrai dados relevantes do envelope SOAP
+   */
+  private extractSoapData(parsed: any, responseTag: string): any {
+    if (!parsed) return null;
+    const envelope = parsed.Envelope || parsed.envelope;
+    const body = envelope?.Body || envelope?.body || parsed.Body || parsed.body;
+    if (!body) {
+      return parsed;
+    }
+
+    const response =
+      body[responseTag] ||
+      body[`${responseTag}Response`] ||
+      body.response ||
+      body;
+
+    if (response?.return) {
+      return response.return;
+    }
+
+    return response;
   }
   /**
    * Envia lote de eventos para o eSocial
@@ -193,132 +510,229 @@ export class ESocialRealApiService {
   }
   /**
    * Consulta dados do empregador
+   * ✅ REMOVIDO: Dados mockados - agora retorna erros explícitos
+   * ✅ ADICIONADO: Circuit Breaker, Cache Offline e Retry
    */
-  async consultarDadosEmpregador(): Promise<any> {
+  async consultarDadosEmpregador(): Promise<ESocialStructuredResponse> {
+    const cacheKey = `empregador_${this.config.empregadorCpf}`;
+    
     try {
-      //
-      //
+      await this.ensureCertificateLoaded();
       // Verificar se o certificado está carregado
       if (!this.certificateService.getCertificateInfo()) {
-        // console.warn(
-        //   '⚠️ Certificado não carregado, retornando dados simulados...'
-        // );
-        return this.processEmpregadorResponse({});
+        const errorCode = ESocialErrorCode.CERTIFICADO_NAO_CONFIGURADO;
+        return {
+          success: false,
+          error: errorCode,
+          message: getErrorMessage(errorCode),
+          retryable: false,
+          requiresAction: getRequiredAction(errorCode),
+          timestamp: new Date(),
+          source: 'CERTIFICATE'
+        } as ESocialErrorResponse;
       }
-      // Fazer requisição real para a API do eSocial
-      try {
-        const response = await this.httpClient.get(
-          `${getEndpoint('consultarEvento')}?tipo=S1000&cpfEmpregador=${this.config.empregadorCpf}`
-        );
-        //
-        return this.processEmpregadorResponse(response.data);
-      } catch (networkError: any) {
-        if (networkError.code === 'ERR_CERT_AUTHORITY_INVALID') {
-          // console.warn(
-          //   '⚠️ Certificado SSL inválido do servidor eSocial, usando dados simulados...'
-          // );
-        } else if (networkError.code === 'ERR_NETWORK') {
-          // console.warn('⚠️ Erro de rede, usando dados simulados...');
-        } else {
-          // console.warn(
-          //   '⚠️ Erro de conexão, usando dados simulados...',
-          //   networkError.message
-          // );
+      
+      // Usar cache com fallback
+      const cacheResult = await this.cache.getWithFallback(
+        cacheKey,
+        'empregador',
+        async () => {
+          return await this.circuitBreaker.execute(async () => {
+            const result = await this.retryService.executeWithRetry(async () => {
+              const serviceConfig = this.getDomesticoServiceConfig('consultaEmpregador');
+              const body = `<ns:ConsultarIdentificadorCadastro xmlns:ns="${serviceConfig.namespace}">
+  <ns:cpfCnpjEmpregador>${this.config.empregadorCpf}</ns:cpfCnpjEmpregador>
+</ns:ConsultarIdentificadorCadastro>`;
+
+              const parsed = await this.sendSoapRequest({
+                url: serviceConfig.url,
+                namespace: serviceConfig.namespace,
+                action: serviceConfig.action,
+                body,
+              });
+
+              const extracted = this.extractSoapData(
+                parsed,
+                'ConsultarIdentificadorCadastroResponse'
+              );
+
+              return {
+                data: this.processEmpregadorResponse(extracted || parsed),
+              };
+            });
+            return result.data;
+          }, 'consultarDadosEmpregador');
         }
-        return this.processEmpregadorResponse({});
-      }
-    } catch (error) {
-      // Log do erro para debug (sem mostrar no console como erro crítico)
-      // , usando dados simulados...'
-      // );
-      // SEMPRE retornar dados simulados em caso de erro
-      return this.processEmpregadorResponse({});
+      );
+      
+      return {
+        success: true,
+        data: cacheResult.data,
+        source: cacheResult.source === 'CACHE' ? 'CACHE' : 'ESOCIAL_API',
+        timestamp: new Date()
+      } as ESocialSuccessResponse;
+    } catch (error: any) {
+      const errorCode = classifyESocialError(error);
+      return {
+        success: false,
+        error: errorCode,
+        message: getErrorMessage(errorCode, error),
+        details: sanitizeErrorDetails(error),
+        retryable: isRetryableError(errorCode),
+        requiresAction: getRequiredAction(errorCode),
+        timestamp: new Date(),
+        source: error.code?.includes('CERT') ? 'CERTIFICATE' : 'NETWORK'
+      } as ESocialErrorResponse;
     }
   }
   /**
    * Consulta dados dos empregados
+   * ✅ REMOVIDO: Dados mockados - agora retorna erros explícitos
+   * ✅ ADICIONADO: Circuit Breaker, Cache Offline e Retry
    */
-  async consultarDadosEmpregados(): Promise<any[]> {
+  async consultarDadosEmpregados(): Promise<ESocialStructuredResponse<any[]>> {
+    const cacheKey = `empregados_${this.config.empregadorCpf}`;
+    
     try {
-      //
+      await this.ensureCertificateLoaded();
       // Verificar se o certificado está carregado
       if (!this.certificateService.getCertificateInfo()) {
-        // console.warn(
-        //   '⚠️ Certificado não carregado, retornando dados simulados...'
-        // );
-        return this.processEmpregadosResponse({});
+        const errorCode = ESocialErrorCode.CERTIFICADO_NAO_CONFIGURADO;
+        return {
+          success: false,
+          error: errorCode,
+          message: getErrorMessage(errorCode),
+          retryable: false,
+          requiresAction: getRequiredAction(errorCode),
+          timestamp: new Date(),
+          source: 'CERTIFICATE'
+        } as ESocialErrorResponse;
       }
-      // Fazer requisição real para a API do eSocial
-      try {
-        const response = await this.httpClient.get(
-          `${getEndpoint('consultarEvento')}?tipo=S2200&cpfEmpregador=${this.config.empregadorCpf}`
-        );
-        //
-        return this.processEmpregadosResponse(response.data);
-      } catch (networkError: any) {
-        if (networkError.code === 'ERR_CERT_AUTHORITY_INVALID') {
-          // console.warn(
-          //   '⚠️ Certificado SSL inválido do servidor eSocial, usando dados simulados...'
-          // );
-        } else if (networkError.code === 'ERR_NETWORK') {
-          // console.warn('⚠️ Erro de rede, usando dados simulados...');
-        } else {
-          // console.warn(
-          //   '⚠️ Erro de conexão, usando dados simulados...',
-          //   networkError.message
-          // );
+      
+      // Usar cache com fallback
+      const cacheResult = await this.cache.getWithFallback(
+        cacheKey,
+        'empregados',
+        async () => {
+          return await this.circuitBreaker.execute(async () => {
+            const result = await this.retryService.executeWithRetry(async () => {
+              const serviceConfig = this.getDomesticoServiceConfig('consultaEventos');
+              const body = `<ns:ConsultarEventos xmlns:ns="${serviceConfig.namespace}">
+  <ns:cpfCnpjEmpregador>${this.config.empregadorCpf}</ns:cpfCnpjEmpregador>
+  <ns:tipoEvento>S-2200</ns:tipoEvento>
+</ns:ConsultarEventos>`;
+
+              const parsed = await this.sendSoapRequest({
+                url: serviceConfig.url,
+                namespace: serviceConfig.namespace,
+                action: serviceConfig.action,
+                body,
+              });
+
+              const extracted = this.extractSoapData(parsed, 'ConsultarEventosResponse');
+
+              return {
+                data: this.processEmpregadosResponse(extracted || parsed),
+              };
+            });
+            return result.data;
+          }, 'consultarDadosEmpregados');
         }
-        return this.processEmpregadosResponse({});
-      }
-    } catch (error) {
-      // Log do erro para debug (sem mostrar no console como erro crítico)
-      // , usando dados simulados...'
-      // );
-      // SEMPRE retornar dados simulados em caso de erro
-      return this.processEmpregadosResponse({});
+      );
+      
+      return {
+        success: true,
+        data: cacheResult.data,
+        source: cacheResult.source === 'CACHE' ? 'CACHE' : 'ESOCIAL_API',
+        timestamp: new Date()
+      } as ESocialSuccessResponse<any[]>;
+    } catch (error: any) {
+      const errorCode = classifyESocialError(error);
+      return {
+        success: false,
+        error: errorCode,
+        message: getErrorMessage(errorCode, error),
+        details: sanitizeErrorDetails(error),
+        retryable: isRetryableError(errorCode),
+        requiresAction: getRequiredAction(errorCode),
+        timestamp: new Date(),
+        source: error.code?.includes('CERT') ? 'CERTIFICATE' : 'NETWORK'
+      } as ESocialErrorResponse;
     }
   }
   /**
    * Consulta eventos enviados
+   * ✅ REMOVIDO: Dados mockados - agora retorna erros explícitos
+   * ✅ ADICIONADO: Circuit Breaker, Cache Offline e Retry
    */
-  async consultarEventosEnviados(): Promise<any[]> {
+  async consultarEventosEnviados(): Promise<ESocialStructuredResponse<any[]>> {
+    const cacheKey = `eventos_${this.config.empregadorCpf}`;
+    
     try {
-      //
+      await this.ensureCertificateLoaded();
       // Verificar se o certificado está carregado
       if (!this.certificateService.getCertificateInfo()) {
-        // console.warn(
-        //   '⚠️ Certificado não carregado, retornando dados simulados...'
-        // );
-        return this.processEventosResponse({});
+        const errorCode = ESocialErrorCode.CERTIFICADO_NAO_CONFIGURADO;
+        return {
+          success: false,
+          error: errorCode,
+          message: getErrorMessage(errorCode),
+          retryable: false,
+          requiresAction: getRequiredAction(errorCode),
+          timestamp: new Date(),
+          source: 'CERTIFICATE'
+        } as ESocialErrorResponse;
       }
-      // Fazer requisição real para a API do eSocial
-      try {
-        const response = await this.httpClient.get(
-          `${getEndpoint('consultarEvento')}?cpfEmpregador=${this.config.empregadorCpf}`
-        );
-        //
-        return this.processEventosResponse(response.data);
-      } catch (networkError: any) {
-        if (networkError.code === 'ERR_CERT_AUTHORITY_INVALID') {
-          // console.warn(
-          //   '⚠️ Certificado SSL inválido do servidor eSocial, usando dados simulados...'
-          // );
-        } else if (networkError.code === 'ERR_NETWORK') {
-          // console.warn('⚠️ Erro de rede, usando dados simulados...');
-        } else {
-          // console.warn(
-          //   '⚠️ Erro de conexão, usando dados simulados...',
-          //   networkError.message
-          // );
-        }
-        return this.processEventosResponse({});
-      }
-    } catch (error) {
-      // Log do erro para debug (sem mostrar no console como erro crítico)
-      // , usando dados simulados...'
-      // );
-      // SEMPRE retornar dados simulados em caso de erro
-      return this.processEventosResponse({});
+      
+      // Usar cache com fallback (TTL menor para eventos - 1 hora)
+      const cacheResult = await this.cache.getWithFallback(
+        cacheKey,
+        'eventos',
+        async () => {
+          return await this.circuitBreaker.execute(async () => {
+            const result = await this.retryService.executeWithRetry(async () => {
+              const serviceConfig = this.getDomesticoServiceConfig('consultaEventos');
+              const body = `<ns:ConsultarEventos xmlns:ns="${serviceConfig.namespace}">
+  <ns:cpfCnpjEmpregador>${this.config.empregadorCpf}</ns:cpfCnpjEmpregador>
+</ns:ConsultarEventos>`;
+
+              const parsed = await this.sendSoapRequest({
+                url: serviceConfig.url,
+                namespace: serviceConfig.namespace,
+                action: serviceConfig.action,
+                body,
+              });
+
+              const extracted = this.extractSoapData(parsed, 'ConsultarEventosResponse');
+
+              return {
+                data: this.processEventosResponse(extracted || parsed),
+              };
+            });
+            return result.data;
+          }, 'consultarEventosEnviados');
+        },
+        60 * 60 * 1000 // 1 hora
+      );
+      
+      return {
+        success: true,
+        data: cacheResult.data,
+        source: cacheResult.source === 'CACHE' ? 'CACHE' : 'ESOCIAL_API',
+        timestamp: new Date()
+      } as ESocialSuccessResponse<any[]>;
+    } catch (error: any) {
+      const errorCode = classifyESocialError(error);
+      return {
+        success: false,
+        error: errorCode,
+        message: getErrorMessage(errorCode, error),
+        details: sanitizeErrorDetails(error),
+        retryable: isRetryableError(errorCode),
+        requiresAction: getRequiredAction(errorCode),
+        timestamp: new Date(),
+        source: error.code?.includes('CERT') ? 'CERTIFICATE' : 'NETWORK'
+      } as ESocialErrorResponse;
     }
   }
   /**
@@ -429,110 +843,162 @@ export class ESocialRealApiService {
   }
   /**
    * Processa resposta de dados do empregador
+   * ✅ REMOVIDO: Dados mockados - agora processa dados reais da API
    */
-  private processEmpregadorResponse(_data: any): any {
+  private processEmpregadorResponse(data: any): any {
     try {
-      // Simular processamento de dados do empregador
+      if (!data || (typeof data === 'object' && Object.keys(data).length === 0)) {
+        throw new Error('Resposta vazia da API eSocial');
+      }
+
+      const payload =
+        data?.ConsultarIdentificadorCadastroResult ||
+        data?.identificadorCadastro ||
+        data?.retorno ||
+        data;
+
+      const identificador =
+        payload?.identificadorCadastro || payload?.empregador || payload;
+
       return {
         cpf: this.config.empregadorCpf,
-        nome: 'FRANCISCO JOSE LATTARI PAPALEO',
-        razaoSocial: 'FLP Business Strategy',
-        endereco: {
-          logradouro: 'Rua das Flores, 123',
-          bairro: 'Centro',
-          cidade: 'São Paulo',
-          uf: 'SP',
-          cep: '01234567',
-        },
-        contato: {
-          telefone: '(11) 99999-9999',
-          email: 'francisco@flpbusiness.com',
-        },
-        situacao: 'ATIVO',
-        dataCadastro: '2024-01-01',
+        ...identificador,
         ultimaAtualizacao: new Date().toISOString(),
       };
     } catch (error) {
-      throw new Error('Erro ao processar dados do empregador');
+      throw new Error(`Erro ao processar dados do empregador: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     }
   }
   /**
    * Processa resposta de dados dos empregados
+   * ✅ REMOVIDO: Dados mockados - agora processa dados reais da API
    */
-  private processEmpregadosResponse(_data: any): any[] {
+  private processEmpregadosResponse(data: any): any[] {
     try {
-      // Simular processamento de dados dos empregados
-      return [
-        {
-          cpf: '12345678901',
-          nome: 'JOÃO DA SILVA',
-          matricula: '001',
-          cargo: 'DESENVOLVEDOR',
-          dataAdmissao: '2024-01-01',
-          salario: 5000.0,
-          situacao: 'ATIVO',
-          vinculo: 'CLT',
-        },
-        {
-          cpf: '12345678902',
-          nome: 'MARIA DOS SANTOS',
-          matricula: '002',
-          cargo: 'ANALISTA',
-          dataAdmissao: '2024-02-01',
-          salario: 4500.0,
-          situacao: 'ATIVO',
-          vinculo: 'CLT',
-        },
-        {
-          cpf: '12345678903',
-          nome: 'PEDRO OLIVEIRA',
-          matricula: '003',
-          cargo: 'GERENTE',
-          dataAdmissao: '2024-03-01',
-          salario: 8000.0,
-          situacao: 'ATIVO',
-          vinculo: 'CLT',
-        },
-      ];
+      if (!data || (Array.isArray(data) && data.length === 0)) {
+        return []; // Retornar array vazio se não houver dados
+      }
+
+      const payload =
+        data?.ConsultarEventosResult ||
+        data?.retornoEventos ||
+        data?.eventos ||
+        data;
+
+      const eventos =
+        payload?.eventos?.evento ||
+        payload?.evento ||
+        payload;
+
+      if (Array.isArray(eventos)) {
+        return eventos.map(emp => ({
+          ...emp,
+          cpf: emp.cpf || emp.cpfTrab || '',
+          nome: emp.nome || emp.nmTrab || '',
+          situacao: emp.situacao || emp.status || 'ATIVO',
+        }));
+      }
+
+      if (Array.isArray(payload)) {
+        return payload.map(emp => ({
+          ...emp,
+          cpf: emp.cpf || emp.cpfTrab || '',
+          nome: emp.nome || emp.nmTrab || '',
+          situacao: emp.situacao || emp.status || 'ATIVO',
+        }));
+      }
+
+      if (Array.isArray(data)) {
+        return data.map(emp => ({
+          ...emp,
+          cpf: emp.cpf || emp.cpfTrab || '',
+          nome: emp.nome || emp.nmTrab || '',
+          situacao: emp.situacao || emp.status || 'ATIVO'
+        }));
+      }
+
+      if (eventos && typeof eventos === 'object') {
+        return [eventos].map(emp => ({
+          ...emp,
+          cpf: emp.cpf || emp.cpfTrab || '',
+          nome: emp.nome || emp.nmTrab || '',
+          situacao: emp.situacao || emp.status || 'ATIVO',
+        }));
+      }
+      if (payload?.empregados && Array.isArray(payload.empregados)) {
+        return payload.empregados;
+      }
+      return [data];
     } catch (error) {
-      throw new Error('Erro ao processar dados dos empregados');
+      throw new Error(`Erro ao processar dados dos empregados: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     }
   }
   /**
    * Processa resposta de eventos enviados
+   * ✅ REMOVIDO: Dados mockados - agora processa dados reais da API
    */
-  private processEventosResponse(_data: any): any[] {
+  private processEventosResponse(data: any): any[] {
     try {
-      // Simular processamento de eventos enviados
-      return [
-        {
-          id: '1',
-          tipo: 'S1000',
-          descricao: 'Cadastramento Inicial do Vínculo',
-          dataEnvio: '2024-01-01T10:00:00Z',
-          status: 'PROCESSADO',
-          protocolo: '12345678901234567890',
-        },
-        {
-          id: '2',
-          tipo: 'S2200',
-          descricao:
-            'Cadastramento Inicial do Vínculo e Admissão/Ingresso de Trabalhador',
-          dataEnvio: '2024-01-02T10:00:00Z',
-          status: 'PROCESSADO',
-          protocolo: '12345678901234567891',
-        },
-        {
-          id: '3',
-          tipo: 'S2300',
-          descricao: 'Traba de Trabalhador Sem Vínculo de Emprego/Estatutário',
-          dataEnvio: '2024-01-03T10:00:00Z',
-          status: 'PENDENTE',
-          protocolo: '12345678901234567892',
-        },
-      ];
+      if (!data || (Array.isArray(data) && data.length === 0)) {
+        return []; // Retornar array vazio se não houver eventos
+      }
+
+      const payload =
+        data?.ConsultarEventosResult ||
+        data?.retornoEventos ||
+        data?.eventos ||
+        data;
+
+      const eventos =
+        payload?.eventos?.evento ||
+        payload?.evento ||
+        payload;
+
+      if (Array.isArray(eventos)) {
+        return eventos.map(evento => ({
+          ...evento,
+          id: evento.id || evento.idEvento || '',
+          tipo: evento.tipo || evento.tpEvento || '',
+          status: evento.status || evento.cdRetorno || 'PENDENTE',
+          protocolo: evento.protocolo || evento.protocoloEnvio || '',
+        }));
+      }
+
+      if (Array.isArray(payload)) {
+        return payload.map(evento => ({
+          ...evento,
+          id: evento.id || evento.idEvento || '',
+          tipo: evento.tipo || evento.tpEvento || '',
+          status: evento.status || evento.cdRetorno || 'PENDENTE',
+          protocolo: evento.protocolo || evento.protocoloEnvio || '',
+        }));
+      }
+
+      if (Array.isArray(data)) {
+        return data.map(evento => ({
+          ...evento,
+          id: evento.id || evento.idEvento || '',
+          tipo: evento.tipo || evento.tpEvento || '',
+          status: evento.status || evento.cdRetorno || 'PENDENTE',
+          protocolo: evento.protocolo || evento.protocoloEnvio || ''
+        }));
+      }
+
+      if (eventos && typeof eventos === 'object') {
+        return [eventos].map(evento => ({
+          ...evento,
+          id: evento.id || evento.idEvento || '',
+          tipo: evento.tipo || evento.tpEvento || '',
+          status: evento.status || evento.cdRetorno || 'PENDENTE',
+          protocolo: evento.protocolo || evento.protocoloEnvio || '',
+        }));
+      }
+      if (payload?.eventos && Array.isArray(payload.eventos)) {
+        return payload.eventos;
+      }
+      return [data];
     } catch (error) {
-      throw new Error('Erro ao processar eventos enviados');
+      throw new Error(`Erro ao processar eventos enviados: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     }
   }
   /**

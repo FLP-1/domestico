@@ -23,6 +23,7 @@ import WelcomeSection from '../components/WelcomeSection';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
 import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import type { Theme } from '../types/theme';
 import {
   UnifiedButton,
   UnifiedModal,
@@ -67,8 +68,16 @@ interface ShoppingCategory {
 
 // Styled Components
 
-const CreateListSection = styled.div<{ $theme: any }>`
-  background: rgba(255, 255, 255, 0.95);
+const CreateListSection = styled.div<{ $theme: Theme }>`
+  background: ${props => {
+    const surface = props.$theme?.colors?.surface;
+    const surfaceColor = typeof surface === 'string' 
+      ? surface 
+      : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
+    return surfaceColor 
+      ? addOpacity(surfaceColor, 0.95)
+      : addOpacity(defaultColors.surface, 0.95);
+  }};
   backdrop-filter: blur(20px);
   border-radius: 16px;
   padding: 2rem;
@@ -84,35 +93,19 @@ const ListsGrid = styled.div`
   margin-bottom: 2rem;
 `;
 
-const ListCard = styled.div<{ $theme: any }>`
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 16px
-    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
-  border: 1px solid
-    ${props => (props.$theme?.colors?.primary || defaultColors.primary) + '20'};
-  transition: all 0.3s ease;
-  cursor: pointer;
+// ListCard removido - usar UnifiedCard
 
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px
-      ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
-  }
-`;
+// ListHeader removido - usar div inline ou header prop do UnifiedCard
 
-const ListHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-`;
-
-const ListTitle = styled.h3`
+const ListTitle = styled.h3<{ $theme?: Theme }>`
   margin: 0;
-  color: #2c3e50;
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'primary' in text) {
+      return text.primary;
+    }
+    return defaultColors.text.primary;
+  }};
   font-size: 1.25rem;
 `;
 
@@ -125,36 +118,66 @@ const CategoryBadge = styled.span<{ $color: string }>`
   color: ${props => props.$color};
 `;
 
-const ListStats = styled.div`
+const ListStats = styled.div<{ $theme?: Theme }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
   padding: 1rem;
-  background: #f8f9fa;
+  background: ${props => {
+    const surface = props.$theme?.colors?.surface;
+    if (typeof surface === 'object' && surface !== null && 'secondary' in surface) {
+      return surface.secondary;
+    }
+    const background = props.$theme?.colors?.background;
+    if (typeof background === 'string') {
+      return background;
+    } else if (typeof background === 'object' && background !== null && 'secondary' in background) {
+      return background.secondary;
+    }
+    return defaultColors.surface;
+  }};
   border-radius: 8px;
 `;
 
-const StatItem = styled.div`
+const StatItem = styled.div<{ $theme?: Theme }>`
   text-align: center;
 
   .stat-number {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #2c3e50;
+    color: ${props => {
+      const text = props.$theme?.colors?.text;
+      if (typeof text === 'object' && text !== null && 'primary' in text) {
+        return text.primary;
+      }
+      return defaultColors.text.primary;
+    }};
     margin: 0;
   }
 
   .stat-label {
     font-size: 0.8rem;
-    color: #7f8c8d;
+    color: ${props => {
+      const text = props.$theme?.colors?.text;
+      if (typeof text === 'object' && text !== null && 'secondary' in text) {
+        return text.secondary;
+      }
+      return defaultColors.text.secondary;
+    }};
     margin: 0;
   }
 `;
 
-const ListMeta = styled.div`
+const ListMeta = styled.div<{ $theme?: Theme }>`
   font-size: 0.8rem;
-  color: #7f8c8d;
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'secondary' in text) {
+      return text.secondary;
+    }
+    return defaultColors.text.secondary;
+  }};
   margin-bottom: 1rem;
 `;
 
@@ -163,31 +186,7 @@ const ListActions = styled.div`
   gap: 0.5rem;
 `;
 
-const UnifiedButtonSmall = styled.button<{
-  $theme: any;
-  $variant?: 'primary' | 'danger';
-}>`
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  background: ${props =>
-    props.$variant === 'danger'
-      ? '#e74c3c'
-      : props.$theme?.colors?.primary || defaultColors.primary};
-  color: white;
-
-  &:hover {
-    background: ${props =>
-      props.$variant === 'danger'
-        ? '#c0392b'
-        : props.$theme?.colors?.primary || defaultColors.primary};
-    transform: translateY(-2px);
-  }
-`;
+// UnifiedButtonSmall removido - usar UnifiedButton com size='sm'
 
 const ItemList = styled.div`
   max-height: 300px;
@@ -195,23 +194,57 @@ const ItemList = styled.div`
   margin-bottom: 1rem;
 `;
 
-const ItemRow = styled.div<{ $isBought: boolean }>`
+const ItemRow = styled.div<{ $isBought: boolean; $theme?: Theme }>`
   display: flex;
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
   border-radius: 8px;
   margin-bottom: 0.5rem;
-  background: ${props => (props.$isBought ? '#d5f4e6' : '#f8f9fa')};
+  background: ${props =>
+    props.$isBought
+      ? props.$theme?.colors?.success
+        ? addOpacity(props.$theme.colors.success, 0.1)
+        : addOpacity(defaultColors.success, 0.1)
+      : (() => {
+          const surface = props.$theme?.colors?.surface;
+          if (typeof surface === 'object' && surface !== null && 'secondary' in surface) {
+            return surface.secondary;
+          }
+          const background = props.$theme?.colors?.background;
+          if (typeof background === 'string') {
+            return background;
+          } else if (typeof background === 'object' && background !== null && 'secondary' in background) {
+            return background.secondary;
+          }
+          return defaultColors.surface;
+        })()};
   opacity: ${props => (props.$isBought ? 0.7 : 1)};
   transition: all 0.3s ease;
 
   &:hover {
-    background: ${props => (props.$isBought ? '#c8e6c9' : '#e9ecef')};
+    background: ${props =>
+      props.$isBought
+        ? props.$theme?.colors?.success
+          ? addOpacity(props.$theme.colors.success, 0.15)
+          : addOpacity(defaultColors.success, 0.15)
+        : (() => {
+            const surface = props.$theme?.colors?.surface;
+            if (typeof surface === 'object' && surface !== null && 'secondary' in surface) {
+              return surface.secondary;
+            }
+            const background = props.$theme?.colors?.background;
+            if (typeof background === 'string') {
+              return background;
+            } else if (typeof background === 'object' && background !== null && 'secondary' in background) {
+              return background.secondary;
+            }
+            return defaultColors.surface;
+          })()};
   }
 `;
 
-const ItemCheckbox = styled.input<{ $theme: any }>`
+const ItemCheckbox = styled.input<{ $theme?: Theme }>`
   width: 18px;
   height: 18px;
   cursor: pointer;
@@ -219,20 +252,32 @@ const ItemCheckbox = styled.input<{ $theme: any }>`
     props.$theme?.colors?.primary || defaultColors.primary};
 `;
 
-const ItemInfo = styled.div<{ $isBought: boolean }>`
+const ItemInfo = styled.div<{ $isBought: boolean; $theme?: Theme }>`
   flex: 1;
 
   .item-name {
     margin: 0;
     font-weight: 600;
-    color: #2c3e50;
+    color: ${props => {
+      const text = props.$theme?.colors?.text;
+      if (typeof text === 'object' && text !== null && 'primary' in text) {
+        return text.primary;
+      }
+      return defaultColors.text.primary;
+    }};
     text-decoration: ${props => (props.$isBought ? 'line-through' : 'none')};
   }
 
   .item-details {
     margin: 0;
     font-size: 0.8rem;
-    color: #7f8c8d;
+    color: ${props => {
+      const text = props.$theme?.colors?.text;
+      if (typeof text === 'object' && text !== null && 'secondary' in text) {
+        return text.secondary;
+      }
+      return defaultColors.text.secondary;
+    }};
   }
 `;
 
@@ -241,46 +286,15 @@ const ItemActions = styled.div`
   gap: 0.25rem;
 `;
 
-const ItemUnifiedButton = styled.button<{ $theme: any }>`
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  border: none;
-  background: ${props =>
-    (props.$theme?.colors?.primary || defaultColors.primary) + '20'};
-  color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  transition: all 0.3s ease;
+// ItemUnifiedButton removido - usar UnifiedButton com size='xs' e variant='ghost'
 
-  &:hover {
-    background: ${props =>
-      (props.$theme?.colors?.primary || defaultColors.primary) + '30'};
-    transform: scale(1.1);
-  }
-`;
+// SectionTitle removido - usar OptimizedSectionTitle
 
-const SectionTitle = styled.h3`
-  margin: 0 0 1rem 0;
-  color: #2c3e50;
-`;
+// FormRow removido - usar OptimizedFormRow
 
-const FormRow = styled.div`
-  display: flex;
-  gap: 1rem;
-  align-items: end;
-`;
+// FormGroupFlex removido - usar FormGroup com style={{ flex: 1 }}
 
-const FormGroupFlex = styled(FormGroup)`
-  flex: 1;
-`;
-
-const UnifiedModalSection = styled.div`
-  margin-bottom: 1rem;
-`;
+// UnifiedModalSection removido - usar div diretamente
 
 const AddItemForm = styled.form`
   display: flex;
@@ -288,54 +302,29 @@ const AddItemForm = styled.form`
   margin-bottom: 1rem;
 `;
 
-const AddItemInput = styled.input<{ $theme: any }>`
-  flex: 1;
-  padding: 0.75rem;
-  border: 2px solid
-    ${props => props.$theme?.colors?.border || defaultColors.border};
-  border-radius: 8px;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
+// AddItemInput removido - usar Input de FormComponents
 
-  &:focus {
-    outline: none;
-    border-color: ${props =>
-      props.$theme?.colors?.primary || defaultColors.primary};
-    box-shadow: 0 0 0 3px
-      ${props =>
-        (props.$theme?.colors?.primary || defaultColors.primary) + '20'};
-  }
-`;
+// AddItemButton removido - usar UnifiedButton
 
-const AddItemButton = styled.button<{ $theme: any }>`
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  border: none;
-  background: ${props =>
-    props.$theme?.colors?.primary || defaultColors.primary};
-  color: white;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: ${props =>
-      props.$theme?.colors?.primary || defaultColors.primary};
-    transform: translateY(-2px);
-  }
-`;
-
-const ListSummary = styled.div<{ $theme: any }>`
+const ListSummary = styled.div<{ $theme?: Theme }>`
   padding: 1rem;
   background: ${props =>
-    (props.$theme?.colors?.primary || defaultColors.primary) + '10'};
+    props.$theme?.colors?.primary
+      ? addOpacity(props.$theme.colors.primary, 0.1)
+      : addOpacity(defaultColors.primary, 0.1)};
   border-radius: 8px;
   margin-top: 1rem;
 
   .summary-title {
     margin: 0 0 0.5rem 0;
     font-weight: 600;
-    color: #2c3e50;
+    color: ${props => {
+      const text = props.$theme?.colors?.text;
+      if (typeof text === 'object' && text !== null && 'primary' in text) {
+        return text.primary;
+      }
+      return defaultColors.text.primary;
+    }};
   }
 
   .summary-total {
@@ -648,7 +637,7 @@ export default function ShoppingManagement() {
         <OptimizedSectionTitle>Criar Nova Lista</OptimizedSectionTitle>
         <Form onSubmit={handleCreateList}>
           <OptimizedFormRow>
-            <FormGroupFlex>
+            <FormGroup style={{ flex: 1 }}>
               <OptimizedLabel>Nome da Lista</OptimizedLabel>
               <Input
                 $theme={theme}
@@ -660,9 +649,9 @@ export default function ShoppingManagement() {
                 placeholder='Ex: Compras da semana'
                 required
               />
-            </FormGroupFlex>
+            </FormGroup>
 
-            <FormGroupFlex>
+            <FormGroup style={{ flex: 1 }}>
               <OptimizedLabel>Categoria</OptimizedLabel>
               <Select
                 $theme={theme}
@@ -681,7 +670,7 @@ export default function ShoppingManagement() {
                   </option>
                 ))}
               </Select>
-            </FormGroupFlex>
+            </FormGroup>
 
             <UnifiedButton type='submit' $variant='primary' $theme={theme}>
               <AccessibleEmoji emoji='➕' label='Novo' /> Criar Lista
@@ -762,28 +751,29 @@ export default function ShoppingManagement() {
           {getFilteredLists().map(list => {
             const categoryInfo = getCategoryInfo(list.category);
             return (
-              <ListCard
+              <UnifiedCard
                 key={list.id}
-                $theme={theme}
+                theme={theme}
+                variant='default'
                 onClick={() => openListUnifiedModal(list)}
               >
-                <ListHeader>
-                  <ListTitle>{list.name}</ListTitle>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                  <ListTitle $theme={theme}>{list.name}</ListTitle>
                   <CategoryBadge $color={categoryInfo.color}>
                     {categoryInfo.icon} {list.category}
                   </CategoryBadge>
-                </ListHeader>
+                </div>
 
-                <ListStats>
-                  <StatItem>
+                <ListStats $theme={theme}>
+                  <StatItem $theme={theme}>
                     <p className='stat-number'>{list.totalItems}</p>
                     <p className='stat-label'>Total</p>
                   </StatItem>
-                  <StatItem>
+                  <StatItem $theme={theme}>
                     <p className='stat-number'>{list.boughtItems}</p>
                     <p className='stat-label'>Comprados</p>
                   </StatItem>
-                  <StatItem>
+                  <StatItem $theme={theme}>
                     <p className='stat-number'>
                       {list.totalItems > 0
                         ? Math.round((list.boughtItems / list.totalItems) * 100)
@@ -794,7 +784,7 @@ export default function ShoppingManagement() {
                   </StatItem>
                 </ListStats>
 
-                <ListMeta>
+                <ListMeta $theme={theme}>
                   <AccessibleEmoji emoji='📅' label='Calendário' /> Criada em:{' '}
                   {new Date(list.createdAt).toLocaleDateString('pt-BR')}
                   <br />
@@ -803,17 +793,21 @@ export default function ShoppingManagement() {
                 </ListMeta>
 
                 <ListActions>
-                  <UnifiedButtonSmall
+                  <UnifiedButton
                     $theme={theme}
+                    $size='sm'
+                    $variant='primary'
                     onClick={e => {
                       e.stopPropagation();
                       openListUnifiedModal(list);
                     }}
                   >
                     <AccessibleEmoji emoji='👁' label='Ver' /> Ver
-                  </UnifiedButtonSmall>
-                  <UnifiedButtonSmall
+                  </UnifiedButton>
+                  <UnifiedButton
                     $theme={theme}
+                    $size='sm'
+                    $variant='primary'
                     onClick={e => {
                       e.stopPropagation();
                       toast.info('Compartilhamento em desenvolvimento');
@@ -821,9 +815,10 @@ export default function ShoppingManagement() {
                   >
                     <AccessibleEmoji emoji='🔗' label='Compartilhar' />{' '}
                     Compartilhar
-                  </UnifiedButtonSmall>
-                  <UnifiedButtonSmall
+                  </UnifiedButton>
+                  <UnifiedButton
                     $theme={theme}
+                    $size='sm'
                     $variant='danger'
                     onClick={e => {
                       e.stopPropagation();
@@ -831,9 +826,9 @@ export default function ShoppingManagement() {
                     }}
                   >
                     <AccessibleEmoji emoji='❌' label='Excluir' /> Excluir
-                  </UnifiedButtonSmall>
+                  </UnifiedButton>
                 </ListActions>
-              </ListCard>
+              </UnifiedCard>
             );
           })}
         </ListsGrid>
@@ -848,51 +843,58 @@ export default function ShoppingManagement() {
       >
         {selectedList && (
           <div>
-            <UnifiedModalSection>
+            <div style={{ marginBottom: '1rem' }}>
               <CategoryBadge
                 $color={getCategoryInfo(selectedList.category).color}
               >
                 {getCategoryInfo(selectedList.category).icon}{' '}
                 {selectedList.category}
               </CategoryBadge>
-            </UnifiedModalSection>
+            </div>
 
             <AddItemForm onSubmit={e => handleAddItem(selectedList.id, e)}>
-              <AddItemInput
+              <Input
                 $theme={theme}
                 type='text'
                 value={newItemName}
                 onChange={e => setNewItemName(e.target.value)}
                 placeholder='Adicionar novo item...'
+                style={{ flex: 1 }}
               />
-              <AddItemButton $theme={theme} type='submit'>
+              <UnifiedButton
+                $theme={theme}
+                $variant='primary'
+                $size='medium'
+                type='submit'
+              >
                 <AccessibleEmoji emoji='➕' label='Novo' />
-              </AddItemButton>
+              </UnifiedButton>
             </AddItemForm>
 
             <ItemList>
               {selectedList.items.map(item => (
-                <ItemRow key={item.id} $isBought={item.isBought}>
+                <ItemRow key={item.id} $isBought={item.isBought} $theme={theme}>
                   <ItemCheckbox
                     $theme={theme}
                     type='checkbox'
                     checked={item.isBought}
                     onChange={() => handleToggleItem(selectedList.id, item.id)}
                   />
-                  <ItemInfo $isBought={item.isBought}>
+                  <ItemInfo $isBought={item.isBought} $theme={theme}>
                     <p className='item-name'>{item.name}</p>
                     <p className='item-details'>
                       {item.quantity} {item.price && `• R$ ${item.price}`}
                     </p>
                   </ItemInfo>
                   <ItemActions>
-                    <ItemUnifiedButton
+                    <UnifiedButton
                       $theme={theme}
+                      $size='xs'
+                      $variant='ghost'
                       onClick={() => handleDeleteItem(selectedList.id, item.id)}
-                      title='Remover item'
                     >
                       <AccessibleEmoji emoji='❌' label='Excluir' />
-                    </ItemUnifiedButton>
+                    </UnifiedButton>
                   </ItemActions>
                 </ItemRow>
               ))}

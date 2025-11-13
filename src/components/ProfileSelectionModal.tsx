@@ -72,7 +72,10 @@ const ProfileModalContent = styled.div<{ $theme?: any }>`
     justify-content: space-between;
     margin-bottom: 2rem;
     border-bottom: 2px solid
-      ${props => props.$theme?.colors?.border?.light || '#f1f3f4'};
+      ${props => {
+        const border = props.$theme?.colors?.border;
+        return (typeof border === 'object' && border?.light) || '#f1f3f4';
+      }};
     padding-bottom: 1.5rem;
 
     .title {

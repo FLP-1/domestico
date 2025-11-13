@@ -23,6 +23,8 @@ import {
   OptimizedCheckboxLabel,
 } from '../components/shared/optimized-styles';
 import { publicColors, addOpacity } from '../utils/themeHelpers';
+import type { Theme } from '../types/theme';
+import { UnifiedButton } from '../components/unified';
 
 // Carrega o MotivationCarousel dinamicamente
 const MotivationCarousel = dynamic(
@@ -132,12 +134,17 @@ const Logo = styled.img`
   box-shadow: 0 4px 16px ${addOpacity(publicColors.primary, 0.2)};
 `;
 
-const Title = styled.h1`
+const Title = styled.h1<{ $theme?: Theme }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 2rem;
   font-weight: 700;
-  color: ${props =>
-    props.$theme?.colors?.text?.primary || publicColors.text.primary};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'primary' in text) {
+      return text.primary;
+    }
+    return publicColors.text.primary;
+  }};
   margin: 0 0 0.5rem 0;
   background: linear-gradient(
     135deg,
@@ -187,6 +194,9 @@ const FloatingLabel = styled.label<{ $focused: boolean; $hasValue: boolean }>`
   z-index: 1;
 `;
 
+// Input mantido - usa FloatingLabel (padrão Material Design)
+// Não há componente centralizado com FloatingLabel, então manter como está
+// Mas usando tokens de cores (publicColors) ao invés de hardcoded
 const Input = styled.input<{ $hasError?: boolean }>`
   width: 100%;
   padding: 1rem;
@@ -217,15 +227,20 @@ const Input = styled.input<{ $hasError?: boolean }>`
   }
 `;
 
-const PasswordToggle = styled.button`
+const PasswordToggle = styled.button<{ $theme?: Theme }>`
   position: absolute;
   right: 1rem;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: ${props =>
-    props.$theme?.colors?.text?.secondary || publicColors.text.secondary};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'secondary' in text) {
+      return text.secondary;
+    }
+    return publicColors.text.secondary;
+  }};
   cursor: pointer;
   font-size: 1.2rem;
   transition: color 0.3s ease;
@@ -339,11 +354,16 @@ const BiometricSection = styled.div`
   text-align: center;
 `;
 
-const BiometricTitle = styled.h3`
+const BiometricTitle = styled.h3<{ $theme?: Theme }>`
   font-family: 'Roboto', sans-serif;
   font-size: 0.9rem;
-  color: ${props =>
-    props.$theme?.colors?.text?.secondary || publicColors.text.secondary};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text !== null && 'secondary' in text) {
+      return text.secondary;
+    }
+    return publicColors.text.secondary;
+  }};
   margin: 0 0 0.5rem 0;
   font-weight: 500;
 `;
@@ -355,59 +375,36 @@ const BiometricOptions = styled.div`
   flex-wrap: wrap;
 `;
 
-const BiometricButton = styled.button<{ $variant?: 'primary' | 'secondary' }>`
+// BiometricButton removido - usar UnifiedButton com styled wrapper para layout flex-col
+// Mantido wrapper para preservar layout específico (ícone + label vertical)
+const BiometricButtonWrapper = styled(UnifiedButton)<{ $variant?: 'primary' | 'secondary' }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
-  background: ${props =>
-    props.$variant === 'primary'
-      ? `linear-gradient(135deg, ${publicColors.secondary}, ${publicColors.tertiary})`
-      : 'none'};
-  border: ${props =>
-    props.$variant === 'primary'
-      ? 'none'
-      : `2px solid ${addOpacity(publicColors.primary, 0.2)}`};
-  border-radius: 12px;
-  padding: 0.75rem 0.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
   min-width: 60px;
   flex: 1;
-  color: ${props =>
-    props.$variant === 'primary' ? publicColors.surface : 'inherit'};
-
-  &:hover {
-    border-color: ${publicColors.primary};
-    background: ${props =>
-      props.$variant === 'primary'
-        ? `linear-gradient(135deg, ${publicColors.secondary}, ${publicColors.tertiary})`
-        : addOpacity(publicColors.primary, 0.05)};
-    transform: translateY(-2px);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  .icon {
-    font-size: 1.25rem;
-    color: ${props =>
-      props.$variant === 'primary'
-        ? publicColors.surface
-        : publicColors.primary};
-  }
-
-  .label {
-    font-family: 'Roboto', sans-serif;
-    font-size: 0.7rem;
-    color: ${props =>
-      props.$variant === 'primary'
-        ? publicColors.surface
-        : publicColors.text.secondary};
-    font-weight: 500;
+  padding: 0.75rem 0.5rem;
+  
+  /* Estilos específicos para variant primary */
+  ${props =>
+    props.$variant === 'primary'
+      ? `
+    background: linear-gradient(135deg, ${publicColors.secondary}, ${publicColors.tertiary}) !important;
+    border: none !important;
+    color: ${publicColors.surface} !important;
+  `
+      : `
+    background: none !important;
+    border: 2px solid ${addOpacity(publicColors.primary, 0.2)} !important;
+  `}
+  
+  /* Override para ícone e label */
+  > * {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
   }
 `;
 
@@ -629,16 +626,7 @@ export default function LoginBiometric() {
         cpf: removeCpfMask(cpf),
         senha: password,
         // Incluir dados de geolocalização no login
-        locationData: locationData
-          ? {
-              latitude: locationData.latitude,
-              longitude: locationData.longitude,
-              accuracy: locationData.accuracy,
-              address: locationData.address,
-              wifiName: locationData.wifiName,
-              timestamp: new Date().toISOString(),
-            }
-          : null,
+        locationData: null,
       }),
     })
       .then(response => response.json())
@@ -911,36 +899,43 @@ export default function LoginBiometric() {
               </BiometricOrContainer>
             </BiometricContainer>
             <BiometricOptions>
-              <BiometricButton
+              <BiometricButtonWrapper
                 $variant='primary'
+                $theme={{ colors: publicColors }}
                 onClick={() => handleBiometricLogin('password')}
-                disabled={isLoading}
+                $disabled={isLoading}
+                $size='sm'
               >
-                <span className='icon'>
-                  <AccessibleEmoji emoji='🔑' label='Chave' />
-                </span>
-                <span className='label'>Entrar</span>
-              </BiometricButton>
-              <BiometricButton onClick={() => handleBiometricLogin('face')}>
-                <span className='icon'>
-                  <AccessibleEmoji emoji='👤' label='Perfil' />
-                </span>
-                <span className='label'>Face ID</span>
-              </BiometricButton>
-              <BiometricButton
+                <AccessibleEmoji emoji='🔑' label='Chave' />
+                <span>Entrar</span>
+              </BiometricButtonWrapper>
+              <BiometricButtonWrapper
+                $variant='secondary'
+                $theme={{ colors: publicColors }}
+                onClick={() => handleBiometricLogin('face')}
+                $size='sm'
+              >
+                <AccessibleEmoji emoji='👤' label='Perfil' />
+                <span>Face ID</span>
+              </BiometricButtonWrapper>
+              <BiometricButtonWrapper
+                $variant='secondary'
+                $theme={{ colors: publicColors }}
                 onClick={() => handleBiometricLogin('fingerprint')}
+                $size='sm'
               >
-                <span className='icon'>
-                  <AccessibleEmoji emoji='👆' label='Dedo' />
-                </span>
-                <span className='label'>Digital</span>
-              </BiometricButton>
-              <BiometricButton onClick={() => setIsEmployerModalNewOpen(true)}>
-                <span className='icon'>
-                  <AccessibleEmoji emoji='📝' label='Formulário' />
-                </span>
-                <span className='label'>Cadastre-se</span>
-              </BiometricButton>
+                <AccessibleEmoji emoji='👆' label='Dedo' />
+                <span>Digital</span>
+              </BiometricButtonWrapper>
+              <BiometricButtonWrapper
+                $variant='secondary'
+                $theme={{ colors: publicColors }}
+                onClick={() => setIsEmployerModalNewOpen(true)}
+                $size='sm'
+              >
+                <AccessibleEmoji emoji='📝' label='Formulário' />
+                <span>Cadastre-se</span>
+              </BiometricButtonWrapper>
             </BiometricOptions>
           </BiometricSection>
         </LoginCard>

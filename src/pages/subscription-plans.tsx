@@ -14,6 +14,8 @@ import { UnifiedButton, UnifiedModal } from '../components/unified';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useAlertManager } from '../hooks/useAlertManager';
 import { publicColors, addOpacity } from '../utils/themeHelpers';
+import type { Theme } from '../types/theme';
+import { OptimizedSectionTitle } from '../components/shared/optimized-styles';
 
 // Interfaces
 interface Plan {
@@ -47,12 +49,7 @@ interface Testimonial {
   rating: number;
 }
 
-const SectionTitle = styled.h3`
-  color: ${publicColors.text.primary};
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-`;
+// SectionTitle removido - usar OptimizedSectionTitle
 
 const SectionText = styled.p`
   color: ${publicColors.text.secondary};
@@ -68,9 +65,7 @@ const SectionSubtitle = styled.h4`
 `;
 
 // Styled Components para substituir estilos inline
-const UnifiedModalSection = styled.div`
-  margin-bottom: 1.5rem;
-`;
+// UnifiedModalSection removido - usar div diretamente
 
 const PriceText = styled.div`
   font-size: 1.5rem;
@@ -106,7 +101,7 @@ const PlansGrid = styled.div`
 `;
 
 const PlanCard = styled.div<{
-  $theme: any;
+  $theme?: Theme;
   $isPopular?: boolean | undefined;
   $isRecommended?: boolean | undefined;
 }>`
@@ -131,7 +126,7 @@ const PlanCard = styled.div<{
   }
 `;
 
-const PopularBadge = styled.div<{ $theme: any }>`
+const PopularBadge = styled.div<{ $theme?: Theme }>`
   position: absolute;
   top: -12px;
   left: 50%;
@@ -150,7 +145,7 @@ const PopularBadge = styled.div<{ $theme: any }>`
   z-index: 10;
 `;
 
-const RecommendedBadge = styled.div<{ $theme: any }>`
+const RecommendedBadge = styled.div<{ $theme?: Theme }>`
   position: absolute;
   top: -12px;
   left: 50%;
@@ -251,7 +246,7 @@ const PlanButton = styled.div`
   width: 100%;
 `;
 
-const ComparisonSection = styled.section<{ $theme: any }>`
+const ComparisonSection = styled.section<{ $theme?: Theme }>`
   background: ${addOpacity(publicColors.surface, 0.95)};
   backdrop-filter: blur(20px);
   border-radius: 20px;
@@ -334,7 +329,7 @@ const XIcon = styled.span`
   font-weight: bold;
 `;
 
-const FAQSection = styled.section<{ $theme: any }>`
+const FAQSection = styled.section<{ $theme?: Theme }>`
   background: ${addOpacity(publicColors.surface, 0.95)};
   backdrop-filter: blur(20px);
   border-radius: 20px;
@@ -358,7 +353,7 @@ const FAQGrid = styled.div`
   gap: 1.5rem;
 `;
 
-const FAQItem = styled.div<{ $theme: any }>`
+const FAQItem = styled.div<{ $theme?: Theme }>`
   background: ${publicColors.background};
   border-radius: 12px;
   padding: 1.5rem;
@@ -385,7 +380,7 @@ const FAQAnswer = styled.p`
   line-height: 1.5;
 `;
 
-const TestimonialsSection = styled.section<{ $theme: any }>`
+const TestimonialsSection = styled.section<{ $theme?: Theme }>`
   background: ${addOpacity(publicColors.surface, 0.95)};
   backdrop-filter: blur(20px);
   border-radius: 20px;
@@ -409,7 +404,7 @@ const TestimonialsGrid = styled.div`
   gap: 1.5rem;
 `;
 
-const TestimonialCard = styled.div<{ $theme: any }>`
+const TestimonialCard = styled.div<{ $theme?: Theme }>`
   background: ${publicColors.background};
   border-radius: 12px;
   padding: 1.5rem;
@@ -462,7 +457,7 @@ const Star = styled.span<{ $filled: boolean }>`
   font-size: 1rem;
 `;
 
-const GuaranteeSection = styled.section<{ $theme: any }>`
+const GuaranteeSection = styled.section<{ $theme?: Theme }>`
   background: linear-gradient(
     135deg,
     ${addOpacity(publicColors.primary, 0.1)},
@@ -489,7 +484,7 @@ const GuaranteeText = styled.p`
   line-height: 1.5;
 `;
 
-const ContactSection = styled.section<{ $theme: any }>`
+const ContactSection = styled.section<{ $theme?: Theme }>`
   background: ${addOpacity(publicColors.surface, 0.95)};
   backdrop-filter: blur(20px);
   border-radius: 20px;
@@ -1186,23 +1181,25 @@ export default function SubscriptionPlans() {
       >
         {selectedPlan && (
           <div>
-            <UnifiedModalSection>
-              <SectionTitle>{selectedPlan.name}</SectionTitle>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <OptimizedSectionTitle $theme={theme}>
+                {selectedPlan.name}
+              </OptimizedSectionTitle>
               <SectionText>{selectedPlan.description}</SectionText>
               <PriceText>
                 {formatPrice(selectedPlan.monthlyPrice)}
                 {selectedPlan.monthlyPrice > 0 && <PriceUnit>/mês</PriceUnit>}
               </PriceText>
-            </UnifiedModalSection>
+            </div>
 
-            <UnifiedModalSection>
+            <div style={{ marginBottom: '1.5rem' }}>
               <SectionSubtitle>Recursos inclusos:</SectionSubtitle>
               <FeaturesList>
                 {selectedPlan.features.map((feature: any, index: any) => (
                   <FeatureItem key={index}>{feature}</FeatureItem>
                 ))}
               </FeaturesList>
-            </UnifiedModalSection>
+            </div>
           </div>
         )}
       </UnifiedModal>

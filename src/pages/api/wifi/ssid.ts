@@ -4,6 +4,12 @@ import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
+// Declaração de tipo para global
+declare global {
+  // eslint-disable-next-line no-var
+  var lastSSIDCall: number | undefined;
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse

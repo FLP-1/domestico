@@ -8,11 +8,14 @@ import styled from 'styled-components';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useTheme } from '../../hooks/useTheme';
+import type { Theme } from '../../types/theme';
+import { getTextSecondary, getTextDark } from '../../utils/themeTypeGuards';
+import { getBackgroundSecondary } from '../../utils/themeTypeGuards';
 import { useUserProfile } from '../../contexts/UserProfileContext';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: ${props => props.theme?.background?.secondary || '#f5f7fa'};
+  background: ${props => getBackgroundSecondary(props.theme)};
   padding: 2rem;
 `;
 
@@ -23,13 +26,13 @@ const Header = styled.div`
 const Title = styled.h1`
   font-size: 2rem;
   font-weight: 700;
-  color: ${props => props.theme?.text?.dark || '#1a202c'};
+  color: ${props => getTextDark(props.theme)};
   margin-bottom: 0.5rem;
 `;
 
 const Subtitle = styled.p`
   font-size: 1rem;
-  color: ${props => props.theme?.text?.secondary || '#718096'};
+  color: ${props => getTextSecondary(props.theme)};
 `;
 
 const StatsGrid = styled.div`
@@ -58,14 +61,14 @@ const StatCard = styled.div<{
         case 'info':
           return props.theme?.status?.info?.color || '#4299e1';
         default:
-          return props.theme?.text?.secondary || '#cbd5e0';
+          return getTextSecondary(props.theme);
       }
     }};
 `;
 
 const StatLabel = styled.div`
   font-size: 0.875rem;
-  color: ${props => props.theme?.text?.secondary || '#718096'};
+  color: ${props => getTextSecondary(props.theme)};
   margin-bottom: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -74,7 +77,7 @@ const StatLabel = styled.div`
 const StatValue = styled.div`
   font-size: 2rem;
   font-weight: 700;
-  color: ${props => props.theme?.text?.dark || '#1a202c'};
+  color: ${props => getTextDark(props.theme)};
 `;
 
 const StatSubtext = styled.div`
@@ -94,7 +97,7 @@ const Section = styled.div`
 const SectionTitle = styled.h2`
   font-size: 1.25rem;
   font-weight: 600;
-  color: ${props => props.theme?.text?.dark || '#1a202c'};
+  color: ${props => getTextDark(props.theme)};
   margin-bottom: 1rem;
 `;
 

@@ -1,0 +1,67 @@
+﻿
+src/pages/api/time-clock/overtime.ts(4,39): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/pages/api/time-clock/overtime.ts(4,44): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/pages/api/time-clock/payroll.ts(4,39): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/pages/api/time-clock/payroll.ts(4,44): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/pages/api/time-clock/registrar.ts(185,32): error TS2339: Property 'getTime' does not exist on type 'never'.
+src/pages/api/time-clock/registrar.ts(185,52): error TS2339: Property 'getTime' does not exist on type 'never'.
+src/pages/api/time-clock/registrar.ts(188,27): error TS2339: Property 'getTime' does not exist on type 'never'.
+src/pages/api/time-clock/registrar.ts(188,51): error TS2339: Property 'getTime' does not exist on type 'never'.
+src/pages/api/wifi/ssid.ts(73,29): error TS7017: Element implicitly has an 'any' type because type 'typeof globalThis' 
+has no index signature.
+src/pages/api/wifi/ssid.ts(86,12): error TS7017: Element implicitly has an 'any' type because type 'typeof globalThis' 
+has no index signature.
+src/pages/esocial-domestico-completo.tsx(985,11): error TS2322: Type '(payrollData: Omit<PayrollData, "id" | 
+"salarioLiquido" | "status">) => Promise<void>' is not assignable to type '(payroll: Omit<PayrollData, "id" | "status" 
+| "salarioLiquido">) => void | Promise<void>'.
+src/pages/esocial-integration.tsx(14,10): error TS2300: Duplicate identifier 'useUserProfile'.
+src/pages/esocial-integration.tsx(16,10): error TS2300: Duplicate identifier 'useTheme'.
+src/pages/esocial-integration.tsx(17,10): error TS2300: Duplicate identifier 'useTheme'.
+src/pages/esocial-integration.tsx(18,10): error TS2300: Duplicate identifier 'useUserProfile'.
+src/pages/geofencing/auditoria.tsx(321,35): error TS2448: Block-scoped variable 'loadData' used before its declaration.
+src/pages/geofencing/auditoria.tsx(321,35): error TS2454: Variable 'loadData' is used before being assigned.
+src/pages/geofencing/locais.tsx(440,7): error TS2304: Cannot find name 'themeLoading'.
+src/pages/login.tsx(140,11): error TS2551: Property '$theme' does not exist on type 
+'ThemedStyledProps<Omit<DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>, "ref"> & { ...; }, 
+any>'. Did you mean 'theme'?
+src/pages/login.tsx(228,11): error TS2551: Property '$theme' does not exist on type 
+'ThemedStyledProps<Omit<DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>, "ref"> & { ...; 
+}, any>'. Did you mean 'theme'?
+src/pages/login.tsx(346,11): error TS2551: Property '$theme' does not exist on type 
+'ThemedStyledProps<Omit<DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>, "ref"> & { ...; }, 
+any>'. Did you mean 'theme'?
+src/pages/login.tsx(634,38): error TS2339: Property 'latitude' does not exist on type 'never'.
+src/pages/login.tsx(635,39): error TS2339: Property 'longitude' does not exist on type 'never'.
+src/pages/login.tsx(636,38): error TS2339: Property 'accuracy' does not exist on type 'never'.
+src/pages/login.tsx(637,37): error TS2339: Property 'address' does not exist on type 'never'.
+src/pages/login.tsx(638,38): error TS2339: Property 'wifiName' does not exist on type 'never'.
+src/pages/test-api.tsx(48,28): error TS18046: 'error' is of type 'unknown'.
+src/pages/test-geolocation.tsx(167,9): error TS2783: 'timestamp' is specified more than once, so this usage will be 
+overwritten.
+src/pages/time-clock.tsx(75,10): error TS2614: Module '"../lib/configService"' has no exported member 
+'getEmpresaConfig'. Did you mean to use 'import getEmpresaConfig from "../lib/configService"' instead?
+src/pages/time-clock.tsx(75,28): error TS2614: Module '"../lib/configService"' has no exported member 
+'getDefaultPassword'. Did you mean to use 'import getDefaultPassword from "../lib/configService"' instead?
+src/pages/time-clock.tsx(475,40): error TS2769: No overload matches this call.
+src/pages/time-clock.tsx(476,46): error TS2769: No overload matches this call.
+src/pages/time-clock.tsx(477,47): error TS2769: No overload matches this call.
+src/pages/time-clock.tsx(478,46): error TS2769: No overload matches this call.
+src/pages/time-clock.tsx(741,41): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/services/dadosReaisService.ts(46,11): error TS2339: Property 'getEmpresaConfig' does not exist on type 'typeof 
+import("E:/DOM/src/lib/configService")'.
+src/services/dadosReaisService.ts(169,11): error TS2339: Property 'getEmpresaConfig' does not exist on type 'typeof 
+import("E:/DOM/src/lib/configService")'.
+src/services/performanceMonitoringService.ts(457,31): error TS18046: 'b' is of type 'unknown'.
+src/services/performanceMonitoringService.ts(457,35): error TS18046: 'a' is of type 'unknown'.
+src/services/performanceMonitoringService.ts(496,21): error TS2339: Property 'length' does not exist on type '{}'.
+src/services/performanceMonitoringService.ts(500,24): error TS7053: Element implicitly has an 'any' type because 
+expression of type 'number' can't be used to index type '{}'.
+src/services/performanceMonitoringService.ts(500,30): error TS2339: Property 'length' does not exist on type '{}'.
+src/services/performanceMonitoringService.ts(501,22): error TS7053: Element implicitly has an 'any' type because 
+expression of type '0' can't be used to index type '{}'.
+src/types/models.ts(72,68): error TS2344: Type '{ include: { certificadoDigital: true; }; }' does not satisfy the 
+constraint 'boolean | EmpregadorDefaultArgs<DefaultArgs> | null | undefined'.
+src/types/models.ts(79,68): error TS2344: Type '{ include: { empregador: true; }; }' does not satisfy the constraint 
+'boolean | EventoESocialDefaultArgs<DefaultArgs> | null | undefined'.
+
+

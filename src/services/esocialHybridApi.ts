@@ -2,8 +2,8 @@
 // Pode usar API real ou simulação baseado na configuração
 import { ESocialEvent, ESocialResponse } from './esocialApi';
 import type { ESocialRealApiService } from './esocialRealApi';
-import { getESocialRealApiService } from './esocialRealApi';
 import { ESOCIAL_SIMULATED_DATA } from '../config/constants';
+import logger from '../lib/logger';
 
 // Helper para verificar se estamos no cliente
 const isClient = typeof window !== 'undefined';
@@ -50,14 +50,19 @@ class ESocialHybridApiService {
    * Inicializa o serviço real se necessário
    */
   private initializeRealService(): ESocialRealApiService {
-    //
-    //
-    //
-
     if (!this.realApiService && this.useRealApi) {
-      //
-      this.realApiService = getESocialRealApiService();
-      //
+      if (typeof window !== 'undefined') {
+        throw new Error(
+          'Serviço real do eSocial só pode ser utilizado no backend. Utilize as rotas da API.'
+        );
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const realApiModule = require('./esocialRealApi') as {
+        getESocialRealApiService: () => ESocialRealApiService;
+      };
+
+      this.realApiService = realApiModule.getESocialRealApiService();
     }
 
     if (!this.realApiService) {
@@ -74,32 +79,9 @@ class ESocialHybridApiService {
    */
   async configureCertificate(certificateFile: File): Promise<CertificateInfo> {
     if (this.useRealApi) {
-      // Usar API real - carregar certificado com senha
-      try {
-        const realService = this.initializeRealService();
-
-        // Carregar o certificado com a senha
-        await realService.loadCertificate(certificateFile);
-
-        // Obter informações do certificado carregado
-        const certInfo = realService.getCertificateInfo();
-        if (!certInfo) {
-          throw new Error('Certificado não carregado na API real');
-        }
-        return {
-          subject: certInfo.subject,
-          issuer: certInfo.issuer,
-          validFrom: certInfo.validFrom.toISOString(),
-          validTo: certInfo.validTo.toISOString(),
-          serialNumber: certInfo.serialNumber,
-          isValid: certInfo.isValid,
-        };
-      } catch (error) {
-        // console.error('Erro ao carregar certificado na API real:', error);
-        throw new Error(
-          `Erro ao carregar certificado: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
-        );
-      }
+      throw new Error(
+        'Certificados reais devem ser configurados via backend utilizando ESOCIAL_CERTIFICATE_PATH/ESOCIAL_CERTIFICATE_PASSWORD.'
+      );
     } else {
       // Usar simulação (código original)
       return this.simulateCertificateConfiguration(certificateFile);
@@ -285,19 +267,24 @@ class ESocialHybridApiService {
     //
 
     if (this.useRealApi) {
-      //
-      try {
-        const realService = this.initializeRealService();
-        return await realService.consultarDadosEmpregador();
-      } catch (error) {
-        // console.warn('⚠️ Erro na API real, usando simulação...', error);
-        // Fallback para simulação em caso de erro
-        return this.getSimulatedEmpregadorData();
+      const realService = this.initializeRealService();
+      const response = await realService.consultarDadosEmpregador();
+
+      if (!response.success) {
+        throw new Error(
+          response.message ||
+            'Falha ao consultar dados do empregador no eSocial. Verifique logs do backend.'
+        );
       }
-    } else {
-      //
-      return this.getSimulatedEmpregadorData();
+
+      if (!response.data) {
+        throw new Error('API do eSocial retornou resposta vazia para dados do empregador.');
+      }
+
+      return response.data;
     }
+
+    return this.getSimulatedEmpregadorData();
   }
 
   /**
@@ -330,16 +317,24 @@ class ESocialHybridApiService {
    */
   async consultarDadosEmpregados(): Promise<readonly any[]> {
     if (this.useRealApi) {
-      try {
-        const realService = this.initializeRealService();
-        return await realService.consultarDadosEmpregados();
-      } catch (error) {
-        // console.warn('⚠️ Erro na API real, usando simulação...', error);
-        return this.getSimulatedEmpregadosData();
+      const realService = this.initializeRealService();
+      const response = await realService.consultarDadosEmpregados();
+
+      if (!response.success) {
+        throw new Error(
+          response.message ||
+            'Falha ao consultar dados de empregados no eSocial. Verifique logs do backend.'
+        );
       }
-    } else {
-      return this.getSimulatedEmpregadosData();
+
+      if (!response.data || !Array.isArray(response.data)) {
+        throw new Error('API do eSocial não retornou lista de empregados.');
+      }
+
+      return response.data as readonly any[];
     }
+
+    return this.getSimulatedEmpregadosData();
   }
 
   /**
@@ -354,16 +349,24 @@ class ESocialHybridApiService {
    */
   async consultarEventosEnviados(): Promise<any[]> {
     if (this.useRealApi) {
-      try {
-        const realService = this.initializeRealService();
-        return await realService.consultarEventosEnviados();
-      } catch (error) {
-        // console.warn('⚠️ Erro na API real, usando simulação...', error);
-        return this.getSimulatedEventosData();
+      const realService = this.initializeRealService();
+      const response = await realService.consultarEventosEnviados();
+
+      if (!response.success) {
+        throw new Error(
+          response.message ||
+            'Falha ao consultar eventos enviados no eSocial. Verifique logs do backend.'
+        );
       }
-    } else {
-      return this.getSimulatedEventosData();
+
+      if (!response.data || !Array.isArray(response.data)) {
+        throw new Error('API do eSocial não retornou lista de eventos.');
+      }
+
+      return response.data;
     }
+
+    return this.getSimulatedEventosData();
   }
 
   /**

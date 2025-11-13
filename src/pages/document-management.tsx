@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import styled from 'styled-components';
 import FilterSection from '../components/FilterSection';
 import { FormGroup, Input, Label, Select } from '../components/FormComponents';
-import { UnifiedButton, UnifiedModal } from '../components/unified';
+import { UnifiedButton, UnifiedModal, UnifiedBadge, UnifiedMetaInfo, UnifiedProgressBar } from '../components/unified';
 import PageContainer from '../components/PageContainer';
 import PageHeader from '../components/PageHeader';
 import Sidebar from '../components/Sidebar';
@@ -17,6 +17,8 @@ import WelcomeSection from '../components/WelcomeSection';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
 import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import type { Theme } from '../types/theme';
+import { getTextSecondary } from '../utils/themeTypeGuards';
 import { UnifiedCard } from '../components/unified';
 import {
   OptimizedFormRow,
@@ -52,25 +54,28 @@ interface DocumentCategory {
 
 // Styled Components
 
-const UploadSection = styled.div<{ $theme: any; $isDragOver: boolean }>`
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  padding: 2rem;
+// UploadSection removido - usar UnifiedCard com wrapper para drag & drop
+const UploadCardWrapper = styled.div<{ $theme: Theme; $isDragOver: boolean }>`
   margin-bottom: 2rem;
-  border: 2px dashed
-    ${props =>
-      props.$isDragOver
-        ? props.$theme?.colors?.primary || defaultColors.primary
-        : '#e0e0e0'};
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  
+  /* Sobrescrever estilos do UnifiedCard para drag & drop */
+  > div {
+    border: 2px dashed
+      ${props =>
+        props.$isDragOver
+          ? props.$theme?.colors?.primary || defaultColors.primary
+          : (() => {
+              const border = props.$theme?.colors?.border;
+              return (typeof border === 'object' && border && (border as any).primary) || (typeof border === 'string' ? border : defaultColors.border);
+            })()} !important;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
 
-  &:hover {
-    border-color: ${props =>
-      props.$theme?.colors?.primary || defaultColors.primary};
-    background: rgba(255, 255, 255, 1);
+    &:hover {
+      border-color: ${props =>
+        props.$theme?.colors?.primary || defaultColors.primary};
+    }
   }
 `;
 
@@ -81,21 +86,27 @@ const UploadContent = styled.div`
   gap: 1rem;
 `;
 
-const UploadIcon = styled.div<{ $theme: any }>`
+const UploadIcon = styled.div<{ $theme?: Theme }>`
   font-size: 3rem;
   color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
 `;
 
-const UploadText = styled.div`
+const UploadText = styled.div<{ $theme?: Theme }>`
   h3 {
     margin: 0 0 0.5rem 0;
-    color: #2c3e50;
+    color: ${props => {
+      const text = props.$theme?.colors?.text;
+      return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+    }};
     font-size: 1.25rem;
   }
 
   p {
     margin: 0;
-    color: #7f8c8d;
+    color: ${props => {
+      const text = props.$theme?.colors?.text;
+      return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+    }};
     font-size: 0.9rem;
   }
 `;
@@ -122,69 +133,49 @@ const DocumentForm = styled.form`
   gap: 1rem;
 `;
 
-const FormRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+// FormRow removido - usar OptimizedFormRow
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const TextArea = styled.textarea<{ $theme: any }>`
+// TextArea mantido - usar tokens para cores (sem hardcoded)
+const TextArea = styled.textarea<{ $theme: Theme }>`
   padding: 0.75rem;
-  border: 2px solid ${props => props.$theme?.colors?.border || '#e0e0e0'};
+  border: 2px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border && (border as any).primary) || (typeof border === 'string' ? border : defaultColors.border);
+  }};
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
+  background: ${props => {
+    const surface = props.$theme?.colors?.surface;
+    const surfaceColor = (typeof surface === 'object' && surface && (surface as any).primary) || (typeof surface === 'string' ? surface : null);
+    return surfaceColor || props.$theme?.colors?.background || defaultColors.surface;
+  }};
   resize: vertical;
   min-height: 100px;
 
   &:focus {
     outline: none;
-    border-color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
+    border-color: ${props => {
+      const border = props.$theme?.colors?.border;
+      const borderFocus = (typeof border === 'object' && border && (border as any).focus) || null;
+      return props.$theme?.colors?.primary || borderFocus || defaultColors.primary;
+    }};
     box-shadow: 0 0 0 3px
-      ${props => props.$theme?.colors?.primary || '#29ABE2'}20;
+      ${props => {
+        const border = props.$theme?.colors?.border;
+        const borderFocus = (typeof border === 'object' && border && (border as any).focus) || null;
+        const color = props.$theme?.colors?.primary || borderFocus || defaultColors.primary;
+        // Converter para rgba com opacidade
+        const hexMatch = color.match(/^#([A-Fa-f\d]{6})$/);
+        if (hexMatch) {
+          const r = parseInt(hexMatch[1].substring(0, 2), 16);
+          const g = parseInt(hexMatch[1].substring(2, 4), 16);
+          const b = parseInt(hexMatch[1].substring(4, 6), 16);
+          return `rgba(${r}, ${g}, ${b}, 0.2)`;
+        }
+        return color + '33';
+      }};
   }
-`;
-
-const PermissionBadge = styled.span<{ $permission: string }>`
-  padding: 0.25rem 0.5rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  background: ${props => {
-    switch (props.$permission) {
-      case 'public':
-        return '#2ecc71';
-      case 'private':
-        return '#e74c3c';
-      case 'shared':
-        return '#f39c12';
-      default:
-        return '#95a5a6';
-    }
-  }};
-  color: white;
-`;
-
-const DocumentInfo = styled.div`
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-`;
-
-const DocumentInfoTitle = styled.h4`
-  margin: 0 0 0.5rem 0;
-  color: #2c3e50;
-`;
-
-const DocumentInfoText = styled.p`
-  margin: 0 0 0.25rem 0;
-  color: #7f8c8d;
 `;
 
 // Styled components auxiliares para renderização customizada
@@ -194,30 +185,9 @@ const DocumentIconWrapper = styled.span<{ $color: string }>`
   margin-right: 0.5rem;
 `;
 
-const CategoryBadge = styled.span<{ $color: string }>`
-  color: ${props => props.$color};
-  font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border-radius: 8px;
-  background: ${props => props.$color}15;
-  font-size: 0.8rem;
-`;
+// PermissionBadge, CategoryBadge, DueDateBadge, DocumentInfo, MetaInfo removidos - usar UnifiedBadge e UnifiedMetaInfo
 
-const DueDateBadge = styled.span`
-  color: #e74c3c;
-  font-weight: 600;
-  font-size: 0.8rem;
-`;
-
-const MetaInfo = styled.div`
-  font-size: 0.8rem;
-  color: #7f8c8d;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
-
-const DocumentNameWrapper = styled.div`
+const DocumentNameWrapper = styled.div<{ $theme?: Theme }>`
   .document-name {
     font-weight: 600;
     margin-bottom: 0.25rem;
@@ -225,7 +195,10 @@ const DocumentNameWrapper = styled.div`
 
   .document-description {
     font-size: 0.8rem;
-    color: #7f8c8d;
+    color: ${props => {
+      const text = props.$theme?.colors?.text;
+      return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+    }};
     max-width: 280px;
   }
 `;
@@ -234,27 +207,7 @@ const UploadProgressContainer = styled.div`
   margin-bottom: 1rem;
 `;
 
-const ProgressBar = styled.div<{ $theme: any }>`
-  width: 100%;
-  height: 8px;
-  background: #e0e0e0;
-  border-radius: 4px;
-  overflow: hidden;
-`;
-
-const ProgressFill = styled.div<{ $progress: number; $theme: any }>`
-  width: ${props => props.$progress}%;
-  height: 100%;
-  background: ${props =>
-    props.$theme?.colors?.primary || defaultColors.primary};
-  transition: width 0.3s ease;
-`;
-
-const ProgressText = styled.p`
-  margin: 0.5rem 0 0 0;
-  font-size: 0.9rem;
-  color: #7f8c8d;
-`;
+// ProgressBar, ProgressFill, ProgressText removidos - usar UnifiedProgressBar
 
 const DocumentViewer = styled.div`
   text-align: center;
@@ -267,14 +220,20 @@ const DocumentIcon = styled.div<{ $color: string }>`
   color: ${props => props.$color};
 `;
 
-const DocumentTitle = styled.h3`
+const DocumentTitle = styled.h3<{ $theme?: Theme }>`
   margin: 0 0 0.5rem 0;
-  color: #2c3e50;
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+  }};
 `;
 
-const DocumentSubtitle = styled.p`
+const DocumentSubtitle = styled.p<{ $theme?: Theme }>`
   margin: 0 0 1rem 0;
-  color: #7f8c8d;
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+  }};
 `;
 
 export default function DocumentManagement() {
@@ -336,7 +295,7 @@ export default function DocumentManagement() {
       label: 'Nome do Documento',
       width: '300px',
       render: (item: DataListItem) => (
-        <DocumentNameWrapper>
+        <DocumentNameWrapper $theme={theme}>
           <div className='document-name'>{item.name}</div>
           {item.description && (
             <div className='document-description'>
@@ -355,9 +314,9 @@ export default function DocumentManagement() {
       render: (item: DataListItem) => {
         const categoryInfo = getCategoryInfo(item.category);
         return (
-          <CategoryBadge $color={categoryInfo.color}>
+          <UnifiedBadge customColor={categoryInfo.color} size="sm" theme={theme}>
             {item.category}
-          </CategoryBadge>
+          </UnifiedBadge>
         );
       },
     },
@@ -366,13 +325,15 @@ export default function DocumentManagement() {
       label: 'Informações',
       width: '200px',
       render: (item: DataListItem) => (
-        <MetaInfo>
-          <AccessibleEmoji emoji='📊' label='Tamanho' />
-          {item.fileSize}
-          <br />
-          <AccessibleEmoji emoji='📅' label='Data' />
-          {new Date(item.uploadDate).toLocaleDateString('pt-BR')}
-        </MetaInfo>
+        <UnifiedMetaInfo
+          items={[
+            { label: 'Tamanho', value: item.fileSize, icon: <AccessibleEmoji emoji='📊' label='Tamanho' /> },
+            { label: 'Data', value: new Date(item.uploadDate).toLocaleDateString('pt-BR'), icon: <AccessibleEmoji emoji='📅' label='Data' /> },
+          ]}
+          variant="horizontal"
+          size="sm"
+          theme={theme}
+        />
       ),
     },
     {
@@ -382,10 +343,9 @@ export default function DocumentManagement() {
       render: (item: DataListItem) => {
         if (!item.dueDate) return '-';
         return (
-          <DueDateBadge>
-            <AccessibleEmoji emoji='📅' label='Vencimento' />
+          <UnifiedBadge variant="error" size="sm" theme={theme} icon={<AccessibleEmoji emoji='📅' label='Vencimento' />}>
             {new Date(item.dueDate).toLocaleDateString('pt-BR')}
-          </DueDateBadge>
+          </UnifiedBadge>
         );
       },
     },
@@ -393,15 +353,26 @@ export default function DocumentManagement() {
       key: 'permissions',
       label: 'Permissões',
       width: '120px',
-      render: (item: DataListItem) => (
-        <PermissionBadge $permission={item.permissions}>
-          {item.permissions === 'public'
-            ? 'Público'
-            : item.permissions === 'private'
-              ? 'Privado'
-              : 'Compartilhado'}
-        </PermissionBadge>
-      ),
+      render: (item: DataListItem) => {
+        const variantMap = {
+          public: 'success' as const,
+          private: 'error' as const,
+          shared: 'warning' as const,
+        };
+        return (
+          <UnifiedBadge 
+            variant={variantMap[item.permissions as keyof typeof variantMap] || 'neutral'}
+            size="sm" 
+            theme={theme}
+          >
+            {item.permissions === 'public'
+              ? 'Público'
+              : item.permissions === 'private'
+                ? 'Privado'
+                : 'Compartilhado'}
+          </UnifiedBadge>
+        );
+      },
     },
   ];
 
@@ -460,36 +431,37 @@ export default function DocumentManagement() {
         }
 
         // Carregar categorias (usar categorias padrão por enquanto)
+        // Cores vêm de tokens do tema
         const defaultCategories = [
           {
             id: '1',
             name: 'Documentos Pessoais',
             icon: <AccessibleEmoji emoji='📄' label='Documento' />,
-            color: '#3498db',
+            color: theme?.colors?.info || defaultColors.info,
           },
           {
             id: '2',
             name: 'Recibos',
             icon: <AccessibleEmoji emoji='🧾' label='Recibo' />,
-            color: '#e74c3c',
+            color: theme?.colors?.error || defaultColors.error,
           },
           {
             id: '3',
             name: 'Certidões',
             icon: <AccessibleEmoji emoji='📜' label='Certidão' />,
-            color: '#f39c12',
+            color: theme?.colors?.warning || defaultColors.warning,
           },
           {
             id: '4',
             name: 'Certificados',
             icon: <AccessibleEmoji emoji='🏆' label='Certificado' />,
-            color: '#27ae60',
+            color: theme?.colors?.success || defaultColors.success,
           },
           {
             id: '5',
             name: 'Outros',
             icon: <AccessibleEmoji emoji='📁' label='Pasta' />,
-            color: '#9b59b6',
+            color: getTextSecondary(theme),
           },
         ];
         setCategories(defaultCategories);
@@ -500,6 +472,7 @@ export default function DocumentManagement() {
     };
 
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -616,7 +589,7 @@ export default function DocumentManagement() {
   const getCategoryInfo = (categoryName: string) => {
     return (
       categories.find(cat => cat.name === categoryName) || {
-        color: '#95a5a6',
+        color: theme?.colors?.text?.secondary || defaultColors.text.secondary,
         icon: <AccessibleEmoji emoji='📁' label='Pasta' />,
       }
     );
@@ -649,39 +622,46 @@ export default function DocumentManagement() {
         subtitle='Organize, armazene e gerencie todos os documentos importantes do lar'
       />
 
-      <UploadSection
+      <UploadCardWrapper
         $theme={theme}
         $isDragOver={isDragOver}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        onClick={() => fileInputRef.current?.click()}
       >
-        <UploadContent>
-          <UploadIcon $theme={theme}>
-            <AccessibleEmoji emoji='📁' label='Pasta' />
-          </UploadIcon>
-          <UploadText>
-            <h3>Enviar Documento</h3>
-            <p>Arraste e solte arquivos aqui ou clique para selecionar</p>
-          </UploadText>
-          <UnifiedButton
-            $variant='primary'
-            $theme={theme}
-            onClick={() => {
-              fileInputRef.current?.click();
-            }}
-          >
-            <AccessibleEmoji emoji='📤' label='Exportar' /> Selecionar Arquivo
-          </UnifiedButton>
-        </UploadContent>
+        <UnifiedCard
+          theme={theme}
+          variant='default'
+          size='lg'
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <UploadContent>
+            <UploadIcon $theme={theme}>
+              <AccessibleEmoji emoji='📁' label='Pasta' />
+            </UploadIcon>
+            <UploadText $theme={theme}>
+              <h3>Enviar Documento</h3>
+              <p>Arraste e solte arquivos aqui ou clique para selecionar</p>
+            </UploadText>
+            <UnifiedButton
+              $variant='primary'
+              $theme={theme}
+              onClick={e => {
+                e.stopPropagation();
+                fileInputRef.current?.click();
+              }}
+            >
+              <AccessibleEmoji emoji='📤' label='Exportar' /> Selecionar Arquivo
+            </UnifiedButton>
+          </UploadContent>
+        </UnifiedCard>
         <HiddenFileInput
           ref={fileInputRef}
           type='file'
           accept='.pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx'
           onChange={e => handleFileUpload(e.target.files)}
         />
-      </UploadSection>
+      </UploadCardWrapper>
 
       <FilterSection $theme={theme} title='Filtros e Busca'>
         <FilterRow>
@@ -781,47 +761,58 @@ export default function DocumentManagement() {
               >
                 {getCategoryInfo(selectedDocument.category).icon}
               </DocumentIcon>
-              <DocumentTitle>{selectedDocument.name}</DocumentTitle>
-              <DocumentSubtitle>
+              <DocumentTitle $theme={theme}>{selectedDocument.name}</DocumentTitle>
+              <DocumentSubtitle $theme={theme}>
                 {selectedDocument.fileType} • {selectedDocument.fileSize}
               </DocumentSubtitle>
             </DocumentViewer>
 
-            <DocumentInfo>
-              <DocumentInfoTitle>Informações do Documento</DocumentInfoTitle>
-              <DocumentInfoText>
-                <strong>Categoria:</strong> {selectedDocument.category}
-              </DocumentInfoText>
-              {selectedDocument.description && (
-                <DocumentInfoText>
-                  <strong>Descrição:</strong> {selectedDocument.description}
-                </DocumentInfoText>
-              )}
-              {selectedDocument.dueDate && (
-                <DocumentInfoText>
-                  <strong>Data de Vencimento:</strong>{' '}
-                  {new Date(selectedDocument.dueDate).toLocaleDateString(
-                    'pt-BR'
-                  )}
-                </DocumentInfoText>
-              )}
-              <DocumentInfoText>
-                <strong>Data de Upload:</strong>{' '}
-                {new Date(selectedDocument.uploadDate).toLocaleDateString(
-                  'pt-BR'
-                )}
-              </DocumentInfoText>
-              <DocumentInfoText>
-                <strong>Permissões:</strong>{' '}
-                <PermissionBadge $permission={selectedDocument.permissions}>
-                  {selectedDocument.permissions === 'public'
-                    ? 'Público'
-                    : selectedDocument.permissions === 'private'
-                      ? 'Privado'
-                      : 'Compartilhado'}
-                </PermissionBadge>
-              </DocumentInfoText>
-            </DocumentInfo>
+            <div style={{ 
+              padding: '1rem', 
+              background: ((): string => {
+                const surface = theme?.colors?.surface;
+                const surfaceColor = (typeof surface === 'object' && surface && (surface as any).secondary) || (typeof surface === 'string' ? surface : null);
+                const bgColor = theme?.colors?.background;
+                const bgColorStr = (typeof bgColor === 'object' && bgColor && (bgColor as any).primary) || (typeof bgColor === 'string' ? bgColor : null);
+                return surfaceColor || bgColorStr || defaultColors.surface;
+              })(),
+              borderRadius: '8px', 
+              marginBottom: '1rem' 
+            }}>
+              <h4 style={{ 
+                margin: '0 0 0.5rem 0', 
+                color: (() => {
+                  const text = theme?.colors?.text;
+                  return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+                })()
+              }}>Informações do Documento</h4>
+              <UnifiedMetaInfo
+                items={[
+                  { label: 'Categoria', value: selectedDocument.category },
+                  ...(selectedDocument.description ? [{ label: 'Descrição', value: selectedDocument.description }] : []),
+                  ...(selectedDocument.dueDate ? [{ label: 'Data de Vencimento', value: new Date(selectedDocument.dueDate).toLocaleDateString('pt-BR') }] : []),
+                  { label: 'Data de Upload', value: new Date(selectedDocument.uploadDate).toLocaleDateString('pt-BR') },
+                  { 
+                    label: 'Permissões', 
+                    value: (
+                      <UnifiedBadge 
+                        variant={selectedDocument.permissions === 'public' ? 'success' : selectedDocument.permissions === 'private' ? 'error' : 'warning'}
+                        size="sm" 
+                        theme={theme}
+                      >
+                        {selectedDocument.permissions === 'public'
+                          ? 'Público'
+                          : selectedDocument.permissions === 'private'
+                            ? 'Privado'
+                            : 'Compartilhado'}
+                      </UnifiedBadge>
+                    )
+                  },
+                ]}
+                variant="vertical"
+                theme={theme}
+              />
+            </div>
           </div>
         )}
 
@@ -931,10 +922,13 @@ export default function DocumentManagement() {
             {modalType === 'upload' && uploadProgress < 100 && (
               <UploadProgressContainer>
                 <OptimizedLabel>Progresso do Upload</OptimizedLabel>
-                <ProgressBar $theme={theme}>
-                  <ProgressFill $progress={uploadProgress} $theme={theme} />
-                </ProgressBar>
-                <ProgressText>{uploadProgress}% concluído</ProgressText>
+                <UnifiedProgressBar 
+                  value={uploadProgress} 
+                  variant="primary" 
+                  theme={theme}
+                  showLabel
+                  label={`${uploadProgress}% concluído`}
+                />
               </UploadProgressContainer>
             )}
 

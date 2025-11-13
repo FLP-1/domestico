@@ -2,6 +2,7 @@ import AccessibleEmoji from '../components/AccessibleEmoji';
 // src/pages/alert-management.tsx
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { GetServerSideProps } from 'next';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styled from 'styled-components';
@@ -18,10 +19,11 @@ import PageHeader from '../components/PageHeader';
 import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
 import WelcomeSection from '../components/WelcomeSection';
-import { UnifiedButton, UnifiedModal } from '../components/unified';
+import { UnifiedButton, UnifiedModal, UnifiedCard } from '../components/unified';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
 import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import type { Theme } from '../types/theme';
 import {
   OptimizedFormRow,
   OptimizedSectionTitle,
@@ -29,10 +31,14 @@ import {
   OptimizedHelpText,
   OptimizedButtonGroup,
 } from '../components/shared/optimized-styles';
+import EmptyState from '../components/EmptyState';
 
 // Styled Components
-const HelpText = styled.small`
-  color: #7f8c8d;
+const HelpText = styled.small<{ $theme?: Theme }>`
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+  }};
   font-size: 0.8rem;
 `;
 
@@ -40,23 +46,7 @@ const ButtonGroup = styled.div`
   margin-top: 1rem;
 `;
 
-const EmptyIcon = styled.div`
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  opacity: 0.6;
-`;
-
-const EmptyTitle = styled.h3`
-  color: #2c3e50;
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
-`;
-
-const EmptyDescription = styled.p`
-  color: #7f8c8d;
-  font-size: 0.9rem;
-  margin: 0;
-`;
+// EmptyIcon, EmptyTitle, EmptyDescription removidos - usar componente EmptyState centralizado
 
 // Interfaces
 interface Alert {
@@ -96,7 +86,7 @@ type NotificationType = 'email' | 'push' | 'sms' | 'all';
 
 // Styled Components
 
-const AlertStats = styled.div<{ $theme: any }>`
+const AlertStats = styled.div<{ $theme: Theme }>`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
@@ -104,10 +94,14 @@ const AlertStats = styled.div<{ $theme: any }>`
 `;
 
 const StatCard = styled.div<{
-  $theme: any;
+  $theme: Theme;
   $variant?: 'primary' | 'warning' | 'success' | 'danger';
 }>`
-  background: rgba(255, 255, 255, 0.95);
+  background: ${props => {
+    const surface = props.$theme?.colors?.surface;
+    const surfaceColor = typeof surface === 'string' ? surface : (surface && typeof surface === 'object' && (surface as any).primary) || defaultColors.surface;
+    return addOpacity(surfaceColor, 0.95);
+  }};
   backdrop-filter: blur(20px);
   border-radius: 16px;
   padding: 1.5rem;
@@ -119,11 +113,11 @@ const StatCard = styled.div<{
         case 'primary':
           return props.$theme?.colors?.primary || defaultColors.primary;
         case 'warning':
-          return '#f39c12';
+          return props.$theme?.colors?.warning || defaultColors.warning;
         case 'success':
-          return '#2ecc71';
+          return props.$theme?.colors?.success || defaultColors.success;
         case 'danger':
-          return '#e74c3c';
+          return props.$theme?.colors?.error || defaultColors.error;
         default:
           return props.$theme?.colors?.primary || defaultColors.primary;
       }
@@ -137,16 +131,22 @@ const StatCard = styled.div<{
   }
 `;
 
-const StatNumber = styled.div`
+const StatNumber = styled.div<{ $theme?: Theme }>`
   font-size: 2rem;
   font-weight: 700;
-  color: #2c3e50;
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+  }};
   margin-bottom: 0.5rem;
 `;
 
-const StatLabel = styled.div`
+const StatLabel = styled.div<{ $theme?: Theme }>`
   font-size: 0.9rem;
-  color: #7f8c8d;
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+  }};
   font-weight: 500;
 `;
 
@@ -157,34 +157,9 @@ const AlertsGrid = styled.div`
   margin-bottom: 2rem;
 `;
 
-const AlertCard = styled.div<{ $theme: any; $status: 'active' | 'inactive' }>`
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 16px
-    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
-  border: 1px solid
-    ${props =>
-      props.$status === 'active'
-        ? (props.$theme?.colors?.primary || defaultColors.primary) + '20'
-        : '#e0e0e0'};
-  transition: all 0.3s ease;
-  opacity: ${props => (props.$status === 'inactive' ? 0.7 : 1)};
+// AlertCard removido - usar UnifiedCard com status prop
 
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px
-      ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
-  }
-`;
-
-const AlertHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-`;
+// AlertHeader removido - usar header prop do UnifiedCard ou div inline
 
 const AlertTypeBadge = styled.div<{ $color: string }>`
   display: flex;
@@ -198,45 +173,66 @@ const AlertTypeBadge = styled.div<{ $color: string }>`
   font-weight: 600;
 `;
 
-const AlertStatus = styled.span<{ $status: 'active' | 'inactive' }>`
+const AlertStatus = styled.span<{ $status: 'active' | 'inactive'; $theme?: Theme }>`
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
   font-size: 0.75rem;
   font-weight: 600;
-  background: ${props => (props.$status === 'active' ? '#2ecc71' : '#95a5a6')};
-  color: white;
+  background: ${props => {
+    if (props.$status === 'active') {
+      return props.$theme?.colors?.success || defaultColors.success;
+    }
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+  }};
+  color: ${props => {
+    const surface = props.$theme?.colors?.surface;
+    return (typeof surface === 'string' ? surface : defaultColors.surface) || defaultColors.surface;
+  }};
 `;
 
-const AlertTitle = styled.h3`
+const AlertTitle = styled.h3<{ $theme?: Theme }>`
   margin: 0 0 0.5rem 0;
-  color: #2c3e50;
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+  }};
   font-size: 1.1rem;
   font-weight: 600;
 `;
 
-const AlertDescription = styled.p`
+const AlertDescription = styled.p<{ $theme?: Theme }>`
   margin: 0 0 1rem 0;
-  color: #7f8c8d;
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+  }};
   font-size: 0.9rem;
   line-height: 1.4;
 `;
 
-const AlertDateTime = styled.div`
+const AlertDateTime = styled.div<{ $theme?: Theme }>`
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
   font-size: 0.85rem;
-  color: #5a6c7d;
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+  }};
 `;
 
-const AlertFrequency = styled.div`
+const AlertFrequency = styled.div<{ $theme?: Theme }>`
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
   font-size: 0.85rem;
-  color: #5a6c7d;
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+  }};
 `;
 
 const AlertActions = styled.div`
@@ -245,76 +241,31 @@ const AlertActions = styled.div`
   margin-top: 1rem;
 `;
 
-const AlertUnifiedButton = styled.button<{
-  $theme: any;
-  $variant?: 'primary' | 'warning' | 'danger';
-}>`
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.8rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  background: ${props => {
-    switch (props.$variant) {
-      case 'warning':
-        return '#f39c12';
-      case 'danger':
-        return '#e74c3c';
-      default:
-        return props.$theme?.colors?.primary || defaultColors.primary;
-    }
-  }};
-  color: white;
+// AlertUnifiedButton removido - usar UnifiedButton com size='sm' e variant apropriado
 
-  &:hover {
-    background: ${props => {
-      switch (props.$variant) {
-        case 'warning':
-          return '#e67e22';
-        case 'danger':
-          return '#c0392b';
-        default:
-          return props.$theme?.colors?.primary || defaultColors.primary;
-      }
-    }};
-    transform: translateY(-2px);
-  }
-`;
+// CreateAlertSection removido - usar UnifiedCard
 
-const CreateAlertSection = styled.div<{ $theme: any }>`
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 16px
-    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
-`;
+// SectionTitle removido - usar OptimizedSectionTitle
 
-const SectionTitle = styled.h3`
-  margin: 0 0 1rem 0;
-  color: #2c3e50;
-`;
+// FormRow removido - usar OptimizedFormRow
 
-const FormRow = styled.div`
-  display: flex;
-  gap: 1rem;
-  align-items: end;
-  margin-bottom: 1rem;
-`;
+// FormGroupFlex removido - usar FormGroup com style={{ flex: 1 }}
 
-const FormGroupFlex = styled(FormGroup)`
-  flex: 1;
-`;
-
-const ConditionsSection = styled.div`
+const ConditionsSection = styled.div<{ $theme?: Theme }>`
   margin-top: 1rem;
   padding: 1rem;
-  background: #f8f9fa;
+  background: ${props => {
+    const surface = props.$theme?.colors?.surface;
+    if (surface && typeof surface === 'object' && 'secondary' in surface) {
+      return (surface as any).secondary;
+    }
+    return props.$theme?.colors?.background || defaultColors.surface;
+  }};
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'string' ? border : (border && typeof border === 'object' && (border as any).primary)) || defaultColors.border;
+  }};
 `;
 
 const ConditionRow = styled.div`
@@ -324,25 +275,11 @@ const ConditionRow = styled.div`
   margin-bottom: 0.5rem;
 `;
 
-const ConditionInput = styled.input<{ $theme: any }>`
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid
-    ${props => props.$theme?.colors?.border || defaultColors.border};
-  border-radius: 4px;
-  font-size: 0.85rem;
-`;
+// ConditionInput removido - usar Input de FormComponents com size menor via style
 
-const ConditionSelect = styled(Select)<{ $theme: any }>`
-  padding: 0.5rem;
-  border: 1px solid
-    ${props => props.$theme?.colors?.border || defaultColors.border};
-  border-radius: 4px;
-  font-size: 0.85rem;
-  background: white;
-`;
+// ConditionSelect removido - usar Select de FormComponents com style inline
 
-const AddConditionButton = styled.button<{ $theme: any }>`
+const AddConditionButton = styled.button<{ $theme?: Theme }>`
   padding: 0.5rem 1rem;
   border-radius: 6px;
   border: none;
@@ -375,7 +312,7 @@ const RemoveConditionButton = styled.button`
   }
 `;
 
-const NotificationPreview = styled.div<{ $theme: any }>`
+const NotificationPreview = styled.div<{ $theme?: Theme }>`
   margin-top: 1rem;
   padding: 1rem;
   background: ${props =>
@@ -398,27 +335,7 @@ const PreviewText = styled.p`
   font-style: italic;
 `;
 
-const EmptyState = styled.div`
-  text-align: center;
-  padding: 3rem;
-  color: #7f8c8d;
-
-  .empty-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-  }
-
-  .empty-title {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.25rem;
-    color: #2c3e50;
-  }
-
-  .empty-description {
-    margin: 0;
-    font-size: 0.9rem;
-  }
-`;
+// EmptyStateContainer removido - usar componente EmptyState centralizado
 
 export default function AlertManagement() {
   const router = useRouter();
@@ -774,29 +691,29 @@ export default function AlertManagement() {
       {/* Estatísticas */}
       <AlertStats $theme={theme}>
         <StatCard $theme={theme} $variant='primary'>
-          <StatNumber>{stats.activeAlerts}</StatNumber>
-          <StatLabel>Alertas Ativos</StatLabel>
+          <StatNumber $theme={theme}>{stats.activeAlerts}</StatNumber>
+          <StatLabel $theme={theme}>Alertas Ativos</StatLabel>
         </StatCard>
         <StatCard $theme={theme} $variant='warning'>
-          <StatNumber>{stats.triggeredToday}</StatNumber>
-          <StatLabel>Disparados Hoje</StatLabel>
+          <StatNumber $theme={theme}>{stats.triggeredToday}</StatNumber>
+          <StatLabel $theme={theme}>Disparados Hoje</StatLabel>
         </StatCard>
         <StatCard $theme={theme} $variant='success'>
-          <StatNumber>{stats.totalTriggers}</StatNumber>
-          <StatLabel>Total de Disparos</StatLabel>
+          <StatNumber $theme={theme}>{stats.totalTriggers}</StatNumber>
+          <StatLabel $theme={theme}>Total de Disparos</StatLabel>
         </StatCard>
         <StatCard $theme={theme} $variant='danger'>
-          <StatNumber>{stats.inactiveAlerts}</StatNumber>
-          <StatLabel>Alertas Inativos</StatLabel>
+          <StatNumber $theme={theme}>{stats.inactiveAlerts}</StatNumber>
+          <StatLabel $theme={theme}>Alertas Inativos</StatLabel>
         </StatCard>
       </AlertStats>
 
       {/* Criar Novo Alerta */}
-      <CreateAlertSection $theme={theme}>
+      <UnifiedCard theme={theme} variant='default' size='lg'>
         <OptimizedSectionTitle>Criar Novo Alerta</OptimizedSectionTitle>
         <Form onSubmit={handleCreateAlert}>
           <OptimizedFormRow>
-            <FormGroupFlex>
+            <FormGroup style={{ flex: 1 }}>
               <OptimizedLabel>Título do Alerta</OptimizedLabel>
               <Input
                 $theme={theme}
@@ -808,8 +725,8 @@ export default function AlertManagement() {
                 placeholder='Ex: Vencimento do Contrato'
                 required
               />
-            </FormGroupFlex>
-            <FormGroupFlex>
+            </FormGroup>
+            <FormGroup style={{ flex: 1 }}>
               <OptimizedLabel htmlFor='alert-type'>
                 Tipo de Alerta
               </OptimizedLabel>
@@ -831,7 +748,7 @@ export default function AlertManagement() {
                   </option>
                 ))}
               </Select>
-            </FormGroupFlex>
+            </FormGroup>
           </OptimizedFormRow>
 
           <FormGroup>
@@ -851,7 +768,7 @@ export default function AlertManagement() {
           </FormGroup>
 
           <OptimizedFormRow>
-            <FormGroupFlex>
+            <FormGroup style={{ flex: 1 }}>
               <OptimizedLabel>Data</OptimizedLabel>
               <Input
                 $theme={theme}
@@ -862,8 +779,8 @@ export default function AlertManagement() {
                 }
                 required
               />
-            </FormGroupFlex>
-            <FormGroupFlex>
+            </FormGroup>
+            <FormGroup style={{ flex: 1 }}>
               <OptimizedLabel>Hora</OptimizedLabel>
               <Input
                 $theme={theme}
@@ -874,8 +791,8 @@ export default function AlertManagement() {
                 }
                 required
               />
-            </FormGroupFlex>
-            <FormGroupFlex>
+            </FormGroup>
+            <FormGroup style={{ flex: 1 }}>
               <OptimizedLabel>Frequência</OptimizedLabel>
               <Select
                 $theme={theme}
@@ -895,11 +812,11 @@ export default function AlertManagement() {
                 <option value='monthly'>Mensalmente</option>
                 <option value='yearly'>Anualmente</option>
               </Select>
-            </FormGroupFlex>
+            </FormGroup>
           </OptimizedFormRow>
 
           <OptimizedFormRow>
-            <FormGroupFlex>
+            <FormGroup style={{ flex: 1 }}>
               <OptimizedLabel>Tipo de Notificação</OptimizedLabel>
               <Select
                 $theme={theme}
@@ -918,7 +835,7 @@ export default function AlertManagement() {
                 <option value='sms'>SMS</option>
                 <option value='all'>Todos os tipos</option>
               </Select>
-            </FormGroupFlex>
+            </FormGroup>
           </OptimizedFormRow>
 
           <FormGroup>
@@ -959,19 +876,20 @@ export default function AlertManagement() {
           </OptimizedButtonGroup>
 
           {showConditions && (
-            <ConditionsSection>
+            <ConditionsSection $theme={theme}>
               <OptimizedSectionTitle>Condições do Alerta</OptimizedSectionTitle>
               {conditions.map(condition => (
                 <ConditionRow key={condition.id}>
-                  <ConditionInput
+                  <Input
                     $theme={theme}
                     value={condition.field}
                     onChange={e =>
                       updateCondition(condition.id, 'field', e.target.value)
                     }
                     placeholder='Campo (ex: valor, status)'
+                    style={{ flex: 1, fontSize: '0.85rem', padding: '0.5rem' }}
                   />
-                  <ConditionSelect
+                  <Select
                     $theme={theme}
                     value={condition.operator}
                     onChange={e =>
@@ -983,19 +901,21 @@ export default function AlertManagement() {
                     }
                     aria-label='Selecionar operador da condição'
                     title='Selecionar operador da condição'
+                    style={{ padding: '0.5rem', fontSize: '0.85rem' }}
                   >
                     <option value='equals'>Igual a</option>
                     <option value='greater_than'>Maior que</option>
                     <option value='less_than'>Menor que</option>
                     <option value='contains'>Contém</option>
-                  </ConditionSelect>
-                  <ConditionInput
+                  </Select>
+                  <Input
                     $theme={theme}
                     value={condition.value}
                     onChange={e =>
                       updateCondition(condition.id, 'value', e.target.value)
                     }
                     placeholder='Valor'
+                    style={{ flex: 1, fontSize: '0.85rem', padding: '0.5rem' }}
                   />
                   <RemoveConditionButton
                     onClick={() => removeCondition(condition.id)}
@@ -1020,7 +940,7 @@ export default function AlertManagement() {
             </UnifiedButton>
           </OptimizedButtonGroup>
         </Form>
-      </CreateAlertSection>
+      </UnifiedCard>
 
       {/* Filtros */}
       <FilterSection $theme={theme} title='Filtros e Busca'>
@@ -1077,40 +997,42 @@ export default function AlertManagement() {
 
       {/* Lista de Alertas */}
       {getFilteredAlerts().length === 0 ? (
-        <EmptyState>
-          <EmptyIcon>
-            <AccessibleEmoji emoji='🔔' label='Notificação' />
-          </EmptyIcon>
-          <EmptyTitle>Nenhum alerta encontrado</EmptyTitle>
-          <EmptyDescription>
-            Crie seu primeiro alerta para começar a receber notificações
-            importantes.
-          </EmptyDescription>
-        </EmptyState>
+        <EmptyState
+          icon='🔔'
+          title='Nenhum alerta encontrado'
+          description='Crie seu primeiro alerta para começar a receber notificações importantes.'
+          theme={theme}
+        />
       ) : (
         <AlertsGrid>
           {getFilteredAlerts().map(alert => (
-            <AlertCard key={alert.id} $theme={theme} $status={alert.status}>
-              <AlertHeader>
+            <UnifiedCard
+              key={alert.id}
+              theme={theme}
+              variant='default'
+              size='md'
+              status={alert.status === 'active' ? 'success' : 'default'}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <AlertTypeBadge $color={alert.type.color}>
                   <span>{alert.type.icon}</span>
                   <span>{alert.type.name}</span>
                 </AlertTypeBadge>
-                <AlertStatus $status={alert.status}>
+                <AlertStatus $status={alert.status} $theme={theme}>
                   {alert.status === 'active' ? 'Ativo' : 'Inativo'}
                 </AlertStatus>
-              </AlertHeader>
+              </div>
 
-              <AlertTitle>{alert.title}</AlertTitle>
-              <AlertDescription>{alert.description}</AlertDescription>
+              <AlertTitle $theme={theme}>{alert.title}</AlertTitle>
+              <AlertDescription $theme={theme}>{alert.description}</AlertDescription>
 
-              <AlertDateTime>
+              <AlertDateTime $theme={theme}>
                 <AccessibleEmoji emoji='📅' label='Calendário' />{' '}
                 {new Date(alert.date).toLocaleDateString('pt-BR')} às{' '}
                 {alert.time}
               </AlertDateTime>
 
-              <AlertFrequency>
+              <AlertFrequency $theme={theme}>
                 <AccessibleEmoji emoji='🔄' label='Sincronizar' />{' '}
                 {alert.frequency === 'once'
                   ? 'Uma vez'
@@ -1135,28 +1057,32 @@ export default function AlertManagement() {
               </OptimizedHelpText>
 
               <AlertActions>
-                <AlertUnifiedButton
+                <UnifiedButton
                   $theme={theme}
+                  $size='sm'
+                  $variant='primary'
                   onClick={() => handleEditAlert(alert)}
                 >
                   <AccessibleEmoji emoji='✏' label='Editar' /> Editar
-                </AlertUnifiedButton>
-                <AlertUnifiedButton
+                </UnifiedButton>
+                <UnifiedButton
                   $theme={theme}
+                  $size='sm'
                   $variant='warning'
                   onClick={() => handleToggleAlertStatus(alert.id)}
                 >
                   {alert.status === 'active' ? '⏸️ Pausar' : '▶️ Ativar'}
-                </AlertUnifiedButton>
-                <AlertUnifiedButton
+                </UnifiedButton>
+                <UnifiedButton
                   $theme={theme}
+                  $size='sm'
                   $variant='danger'
                   onClick={() => handleDeleteAlert(alert.id)}
                 >
                   <AccessibleEmoji emoji='❌' label='Excluir' /> Excluir
-                </AlertUnifiedButton>
+                </UnifiedButton>
               </AlertActions>
-            </AlertCard>
+            </UnifiedCard>
           ))}
         </AlertsGrid>
       )}
@@ -1189,7 +1115,7 @@ export default function AlertManagement() {
         {editingAlert && (
           <Form onSubmit={handleUpdateAlert}>
             <OptimizedFormRow>
-              <FormGroupFlex>
+              <FormGroup style={{ flex: 1 }}>
                 <OptimizedLabel>Título do Alerta</OptimizedLabel>
                 <Input
                   $theme={theme}
@@ -1200,8 +1126,8 @@ export default function AlertManagement() {
                   }
                   required
                 />
-              </FormGroupFlex>
-              <FormGroupFlex>
+              </FormGroup>
+              <FormGroup style={{ flex: 1 }}>
                 <OptimizedLabel>Tipo de Alerta</OptimizedLabel>
                 <Select
                   $theme={theme}
@@ -1219,7 +1145,7 @@ export default function AlertManagement() {
                     </option>
                   ))}
                 </Select>
-              </FormGroupFlex>
+              </FormGroup>
             </OptimizedFormRow>
 
             <FormGroup>
@@ -1238,7 +1164,7 @@ export default function AlertManagement() {
             </FormGroup>
 
             <OptimizedFormRow>
-              <FormGroupFlex>
+              <FormGroup style={{ flex: 1 }}>
                 <OptimizedLabel>Data</OptimizedLabel>
                 <Input
                   $theme={theme}
@@ -1249,8 +1175,8 @@ export default function AlertManagement() {
                   }
                   required
                 />
-              </FormGroupFlex>
-              <FormGroupFlex>
+              </FormGroup>
+              <FormGroup style={{ flex: 1 }}>
                 <OptimizedLabel>Hora</OptimizedLabel>
                 <Input
                   $theme={theme}
@@ -1261,8 +1187,8 @@ export default function AlertManagement() {
                   }
                   required
                 />
-              </FormGroupFlex>
-              <FormGroupFlex>
+              </FormGroup>
+              <FormGroup style={{ flex: 1 }}>
                 <OptimizedLabel>Frequência</OptimizedLabel>
                 <Select
                   $theme={theme}
@@ -1282,11 +1208,11 @@ export default function AlertManagement() {
                   <option value='monthly'>Mensalmente</option>
                   <option value='yearly'>Anualmente</option>
                 </Select>
-              </FormGroupFlex>
+              </FormGroup>
             </OptimizedFormRow>
 
             <OptimizedFormRow>
-              <FormGroupFlex>
+              <FormGroup style={{ flex: 1 }}>
                 <OptimizedLabel>Tipo de Notificação</OptimizedLabel>
                 <Select
                   $theme={theme}
@@ -1305,7 +1231,7 @@ export default function AlertManagement() {
                   <option value='sms'>SMS</option>
                   <option value='all'>Todos os tipos</option>
                 </Select>
-              </FormGroupFlex>
+              </FormGroup>
             </OptimizedFormRow>
 
             <FormGroup>
@@ -1359,3 +1285,9 @@ export default function AlertManagement() {
     </PageContainer>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: {},
+  };
+};

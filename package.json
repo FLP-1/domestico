@@ -1,6 +1,6 @@
 {
   "name": "dom-frontend",
-  "version": "0.1.0",
+  "version": "2.4.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -24,10 +24,15 @@
     "validate:naming": "node scripts/validate-file-naming-final.js",
     "fix:emergency": "node scripts/emergency-fix.js",
     "fix:naming": "node scripts/fix-file-naming.js",
-    "test": "echo \"Tests not implemented yet\" && exit 0",
-    "test:unit": "echo \"Unit tests not implemented yet\" && exit 0",
-    "test:integration": "echo \"Integration tests not implemented yet\" && exit 0",
-    "test:e2e": "echo \"E2E tests not implemented yet\" && exit 0",
+    "test": "jest --passWithNoTests",
+    "test:unit": "jest --testPathPattern=__tests__/components --passWithNoTests",
+    "test:integration": "jest --testPathPattern=__tests__/integration --passWithNoTests",
+    "test:e2e": "playwright test",
+    "test:watch": "jest --watch --passWithNoTests",
+    "test:coverage": "jest --coverage --passWithNoTests",
+    "performance:lighthouse": "npx lhci autorun --config=./lighthouse.config.js",
+    "performance:analyze": "next build --profile",
+    "performance:k6": "k6 run scripts/performance/load-test.js",
     "scripts:find-duplicates": "npx ts-node scripts/find-duplicate-components.ts",
     "scripts:migrate-pages": "npx ts-node scripts/migrate-pages-to-unified.ts",
     "scripts:fix-styles": "npx ts-node scripts/fix-inline-styles.ts",
@@ -47,7 +52,8 @@
     "db:studio": "npx prisma studio",
     "db:validate": "npx prisma validate",
     "db:format": "npx prisma format",
-    "db:push": "npx prisma db push"
+    "db:push": "npx prisma db push",
+    "esocial:hml": "tsx scripts/esocial/hml-run.ts"
   },
   "prisma": {
     "seed": "ts-node prisma/seed-completo.ts"
@@ -88,6 +94,7 @@
     "@testing-library/jest-dom": "^6.9.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@playwright/test": "^1.49.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/formidable": "^3.4.6",
     "@types/jest": "^30.0.0",

@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@/lib/prisma';
 import { dynamicConfig } from '../../../services/configService';
+import { handleApiError } from '@/lib/apiError';
 
 export default async function handler(
   req: NextApiRequest,
@@ -67,10 +68,9 @@ export default async function handler(
         .status(200)
         .json({ success: true, data: documentosFormatados });
     } catch (error) {
-      console.error('Erro ao buscar documentos:', error);
-      return res.status(500).json({
-        success: false,
-        error: 'Erro ao buscar documentos',
+      return handleApiError(res, error, {
+        defaultMessage: 'Erro ao buscar documentos',
+        context: { scope: 'documents.list', query: req.query },
       });
     }
   }
@@ -115,10 +115,9 @@ export default async function handler(
 
       return res.status(201).json({ success: true, data: novoDocumento });
     } catch (error) {
-      console.error('Erro ao criar documento:', error);
-      return res.status(500).json({
-        success: false,
-        error: 'Erro ao criar documento',
+      return handleApiError(res, error, {
+        defaultMessage: 'Erro ao criar documento',
+        context: { scope: 'documents.create', body: req.body },
       });
     }
   }

@@ -1,12 +1,16 @@
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { GetServerSideProps } from 'next';
 import styled, { keyframes } from 'styled-components';
 import AccessibleEmoji from '../components/AccessibleEmoji';
 import Sidebar from '../components/Sidebar';
 import WelcomeSection from '../components/WelcomeSection';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
+import type { Theme } from '../types/theme';
+import { getTextSecondary, getTextDark } from '../utils/themeTypeGuards';
+import { defaultColors } from '../utils/themeHelpers';
 import { getAuditService } from '../services/auditService';
 import { getBackupService } from '../services/backupService';
 import { getWebhookService } from '../services/webhookService';
@@ -79,8 +83,20 @@ const Container = styled.div`
   min-height: 100vh;
   background: linear-gradient(
     135deg,
-    ${props => props.theme?.background?.secondary || '#f5f7fa'} 0%,
-    ${props => props.theme?.background?.tertiary || '#c3cfe2'} 100%
+    ${props => {
+      const bg = props.theme?.colors?.background;
+      if (typeof bg === 'object' && bg && 'secondary' in bg) {
+        return bg.secondary || '#f5f7fa';
+      }
+      return '#f5f7fa';
+    }} 0%,
+    ${props => {
+      const bg = props.theme?.colors?.background;
+      if (typeof bg === 'object' && bg && 'secondary' in bg) {
+        return bg.secondary || '#c3cfe2';
+      }
+      return '#c3cfe2';
+    }} 100%
   );
   animation: ${fadeIn} 0.6s ease-out;
 `;
@@ -116,12 +132,12 @@ const Title = styled.h1`
 
 const Subtitle = styled.p`
   font-size: 1.1rem;
-  color: ${props => props.theme?.colors?.text?.secondary || '#666'};
+  color: ${props => getTextSecondary(props.theme)};
   margin: 0.5rem 0 0 0;
   opacity: 0.8;
 `;
 
-const StatusIndicator = styled.div<{ $status: string; $theme: any }>`
+const StatusIndicator = styled.div<{ $status: string; $theme?: Theme }>`
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -152,32 +168,19 @@ const DashboardGrid = styled.div`
   margin-bottom: 2rem;
 `;
 
-const MetricCard = styled.div<{ $theme: any }>`
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  border-left: 4px solid ${props => props.$theme?.colors?.primary || '#29ABE2'};
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-  }
-`;
+// MetricCard removido - agora usando UnifiedCard para padronização visual
 
 const MetricTitle = styled.h3`
   font-size: 1.1rem;
   font-weight: 600;
-  color: ${props => props.theme?.text?.dark || '#2c3e50'};
+  color: ${props => getTextDark(props.theme)};
   margin: 0 0 1rem 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 `;
 
-const MetricValue = styled.div<{ $theme: any }>`
+const MetricValue = styled.div<{ $theme?: Theme }>`
   font-size: 2.5rem;
   font-weight: 700;
   color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
@@ -189,19 +192,12 @@ const MetricSubtext = styled.div`
   color: #7f8c8d;
 `;
 
-const ChartContainer = styled.div`
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  margin-bottom: 2rem;
-`;
+// ChartContainer removido - agora usando UnifiedCard para padronização visual
 
 const ChartTitle = styled.h3`
   font-size: 1.3rem;
   font-weight: 600;
-  color: ${props => props.theme?.text?.dark || '#2c3e50'};
+  color: ${props => getTextDark(props.theme)};
   margin: 0 0 1.5rem 0;
   display: flex;
   align-items: center;
@@ -216,7 +212,7 @@ const ActivityList = styled.div`
   overflow-y: auto;
 `;
 
-const ActivityItem = styled.div<{ $type: string; $theme: any }>`
+const ActivityItem = styled.div<{ $type: string; $theme?: Theme }>`
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -261,7 +257,7 @@ const ActivityContent = styled.div`
 
 const ActivityTitle = styled.div`
   font-weight: 600;
-  color: ${props => props.theme?.text?.dark || '#2c3e50'};
+  color: ${props => getTextDark(props.theme)};
   margin-bottom: 0.25rem;
 `;
 
@@ -276,7 +272,7 @@ const ActivityTime = styled.div`
   text-align: right;
 `;
 
-const AlertBanner = styled.div<{ $type: string; $theme: any }>`
+const AlertBanner = styled.div<{ $type: string; $theme?: Theme }>`
   padding: 1rem 1.5rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
@@ -320,25 +316,11 @@ const AlertIcon = styled.span`
 
 const AlertText = styled.div`
   flex: 1;
-  color: ${props => props.theme?.text?.dark || '#2c3e50'};
+  color: ${props => getTextDark(props.theme)};
   font-weight: 500;
 `;
 
-const RefreshButton = styled(UnifiedButton)<{ $theme: any }>`
-  background: ${props => props.$theme?.colors?.primary || '#29ABE2'};
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(41, 171, 226, 0.3);
-  }
-`;
+// RefreshButton removido - usar UnifiedButton diretamente com variant='primary'
 
 const MonitoringDashboard: React.FC = () => {
   const router = useRouter();
@@ -500,14 +482,15 @@ const MonitoringDashboard: React.FC = () => {
             <OptimizedStatusIndicator $status={systemStatus} $theme={theme}>
               {getStatusIcon(systemStatus)} {getStatusText(systemStatus)}
             </OptimizedStatusIndicator>
-            <RefreshButton
+            <UnifiedButton
               $variant='primary'
               $theme={theme}
               onClick={handleRefresh}
               $disabled={isLoading}
+              $size='medium'
             >
-              {isLoading ? '⏳' : '🔄'} Atualizar
-            </RefreshButton>
+              <AccessibleEmoji emoji={isLoading ? '⏳' : '🔄'} label={isLoading ? 'Carregando' : 'Atualizar'} /> Atualizar
+            </UnifiedButton>
           </OptimizedFlexContainer>
         </Header>
 
@@ -521,73 +504,99 @@ const MonitoringDashboard: React.FC = () => {
 
         {/* Métricas Principais */}
         <DashboardGrid>
-          <MetricCard $theme={theme}>
-            <MetricTitle>
-              <AccessibleEmoji emoji='📤' label='Exportar' /> Eventos Enviados
-            </MetricTitle>
+          <UnifiedCard
+            theme={theme}
+            variant='default'
+            size='lg'
+            status='info'
+            icon={<AccessibleEmoji emoji='📤' label='Exportar' />}
+            title='Eventos Enviados'
+          >
             <MetricValue $theme={theme}>
               {metrics.eventosEnviados.toLocaleString()}
             </MetricValue>
             <MetricSubtext>
               Total de eventos enviados para eSocial
             </MetricSubtext>
-          </MetricCard>
+          </UnifiedCard>
 
-          <MetricCard $theme={theme}>
-            <MetricTitle>
-              <AccessibleEmoji emoji='✅' label='Sucesso' /> Eventos Processados
-            </MetricTitle>
+          <UnifiedCard
+            theme={theme}
+            variant='default'
+            size='lg'
+            status='success'
+            icon={<AccessibleEmoji emoji='✅' label='Sucesso' />}
+            title='Eventos Processados'
+          >
             <MetricValue $theme={theme}>
               {metrics.eventosProcessados.toLocaleString()}
             </MetricValue>
             <MetricSubtext>Eventos processados com sucesso</MetricSubtext>
-          </MetricCard>
+          </UnifiedCard>
 
-          <MetricCard $theme={theme}>
-            <MetricTitle>
-              <AccessibleEmoji emoji='❌' label='Erro' /> Eventos com Erro
-            </MetricTitle>
+          <UnifiedCard
+            theme={theme}
+            variant='default'
+            size='lg'
+            status='error'
+            icon={<AccessibleEmoji emoji='❌' label='Erro' />}
+            title='Eventos com Erro'
+          >
             <MetricValue $theme={theme}>
               {metrics.eventosComErro.toLocaleString()}
             </MetricValue>
             <MetricSubtext>Eventos que falharam no processamento</MetricSubtext>
-          </MetricCard>
+          </UnifiedCard>
 
-          <MetricCard $theme={theme}>
-            <MetricTitle>
-              <AccessibleEmoji emoji='🔗' label='Link' /> Webhooks Ativos
-            </MetricTitle>
+          <UnifiedCard
+            theme={theme}
+            variant='default'
+            size='lg'
+            status='info'
+            icon={<AccessibleEmoji emoji='🔗' label='Link' />}
+            title='Webhooks Ativos'
+          >
             <MetricValue $theme={theme}>{metrics.webhooksAtivos}</MetricValue>
             <MetricSubtext>Webhooks configurados e funcionando</MetricSubtext>
-          </MetricCard>
+          </UnifiedCard>
 
-          <MetricCard $theme={theme}>
-            <MetricTitle>
-              <AccessibleEmoji emoji='💾' label='Armazenar' /> Backups
-              Realizados
-            </MetricTitle>
+          <UnifiedCard
+            theme={theme}
+            variant='default'
+            size='lg'
+            status='success'
+            icon={<AccessibleEmoji emoji='💾' label='Armazenar' />}
+            title='Backups Realizados'
+          >
             <MetricValue $theme={theme}>
               {metrics.backupsRealizados}
             </MetricValue>
             <MetricSubtext>Backups executados com sucesso</MetricSubtext>
-          </MetricCard>
+          </UnifiedCard>
 
-          <MetricCard $theme={theme}>
-            <MetricTitle>
-              <AccessibleEmoji emoji='📋' label='Checklist' /> Logs de Auditoria
-            </MetricTitle>
+          <UnifiedCard
+            theme={theme}
+            variant='default'
+            size='lg'
+            status='info'
+            icon={<AccessibleEmoji emoji='📋' label='Checklist' />}
+            title='Logs de Auditoria'
+          >
             <MetricValue $theme={theme}>
               {metrics.logsAuditoria.toLocaleString()}
             </MetricValue>
             <MetricSubtext>Logs gerados nos últimos 30 dias</MetricSubtext>
-          </MetricCard>
+          </UnifiedCard>
         </DashboardGrid>
 
         {/* Atividade Recente */}
-        <ChartContainer>
-          <ChartTitle>
-            <AccessibleEmoji emoji='🕒' label='Tempo' /> Atividade Recente
-          </ChartTitle>
+        <UnifiedCard
+          theme={theme}
+          variant='default'
+          size='lg'
+          icon={<AccessibleEmoji emoji='🕒' label='Tempo' />}
+          title='Atividade Recente'
+        >
           <ActivityList>
             {recentActivity.map(activity => (
               <ActivityItem
@@ -606,10 +615,16 @@ const MonitoringDashboard: React.FC = () => {
               </ActivityItem>
             ))}
           </ActivityList>
-        </ChartContainer>
+        </UnifiedCard>
       </MainContent>
     </Container>
   );
 };
 
 export default MonitoringDashboard;
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: {},
+  };
+};

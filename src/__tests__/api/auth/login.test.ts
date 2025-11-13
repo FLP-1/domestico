@@ -143,7 +143,9 @@ describe('/api/auth/login', () => {
     const data = JSON.parse(res._getData());
     expect(data).toHaveProperty('token');
     expect(data).toHaveProperty('user');
-    expect(data.user.cpf).toBe('12345678901');
+    expect(data.user).toHaveProperty('id');
+    expect(data.user).toHaveProperty('nomeCompleto');
+    expect(data.user.nomeCompleto).toBe('Usuário Teste');
   });
 
   it('deve retornar 405 para métodos não permitidos', async () => {

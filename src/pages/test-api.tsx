@@ -45,7 +45,8 @@ export default function TestAPI() {
         const data = await response.json();
         setResult(`Status: ${response.status} - ${data.message || 'OK'}`);
       } catch (error) {
-        setResult(`Erro: ${error.message}`);
+        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+        setResult(`Erro: ${errorMessage}`);
       }
     };
 

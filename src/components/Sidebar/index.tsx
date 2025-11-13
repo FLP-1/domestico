@@ -32,7 +32,10 @@ const SidebarContainer = styled.aside<{ $collapsed: boolean; $theme?: any }>`
   background: ${props =>
     props.$theme?.colors?.background?.primary || '#ffffff'};
   border-right: 1px solid
-    ${props => props.$theme?.colors?.border?.light || '#e5e7eb'};
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border?.light) || '#e5e7eb';
+    }};
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1000;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
@@ -45,7 +48,10 @@ const SidebarContainer = styled.aside<{ $collapsed: boolean; $theme?: any }>`
 const SidebarHeader = styled.div<{ $collapsed: boolean; $theme?: any }>`
   padding: ${props => (props.$collapsed ? '1rem 0 1rem 1.5rem' : '1.5rem')};
   border-bottom: 1px solid
-    ${props => props.$theme?.colors?.border?.light || '#dee2e6'};
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border?.light) || '#dee2e6';
+    }};
   display: flex;
   align-items: center;
   justify-content: ${props =>

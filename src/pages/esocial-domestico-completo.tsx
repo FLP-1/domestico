@@ -10,11 +10,12 @@ import ReportModal from '../components/ReportModal';
 import Sidebar from '../components/Sidebar';
 import TaxGuideModalNew from '../components/TaxGuideModalNew';
 import WelcomeSection from '../components/WelcomeSection';
-import { UnifiedButton } from '../components/unified';
+import { UnifiedButton, UnifiedBadge } from '../components/unified';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useAlertManager } from '../hooks/useAlertManager';
 import { useTheme } from '../hooks/useTheme';
 import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import type { Theme } from '../types/theme';
 import { OptimizedSectionTitle } from '../components/shared/optimized-styles';
 
 // Animações
@@ -85,27 +86,7 @@ const Subtitle = styled.div`
   opacity: 0.8;
 `;
 
-const StatusBadge = styled.span<{ $status: string; $theme: any }>`
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  background: ${props => {
-    switch (props.$status) {
-      case 'connected':
-        return props.$theme?.colors?.success || '#90EE90';
-      case 'disconnected':
-        return '#e74c3c';
-      case 'pending':
-        return '#f39c12';
-      default:
-        return '#95a5a6';
-    }
-  }};
-  color: white;
-  animation: ${props => (props.$status === 'connected' ? pulse : 'none')} 2s
-    infinite;
-`;
+// StatusBadge removido - usar UnifiedBadge
 
 // ContentGrid removido - não utilizado
 
@@ -135,7 +116,7 @@ const StatsGrid = styled.div`
   margin-bottom: 2rem;
 `;
 
-const StatCard = styled.div<{ $theme: any }>`
+const StatCard = styled.div<{ $theme?: Theme }>`
   background: rgba(255, 255, 255, 0.95);
   border-radius: 12px;
   padding: 1.5rem;
@@ -145,7 +126,7 @@ const StatCard = styled.div<{ $theme: any }>`
   border-left: 4px solid ${props => props.$theme?.colors?.primary || '#29ABE2'};
 `;
 
-const StatNumber = styled.div<{ $theme: any }>`
+const StatNumber = styled.div<{ $theme?: Theme }>`
   font-size: 2rem;
   font-weight: 700;
   color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
@@ -165,7 +146,7 @@ const TabGrid = styled.div`
   margin-bottom: 2rem;
 `;
 
-const TabCard = styled.div<{ $active: boolean; $theme: any }>`
+const TabCard = styled.div<{ $active: boolean; $theme?: Theme }>`
   background: rgba(255, 255, 255, 0.95);
   border-radius: 16px;
   padding: 2rem;
@@ -186,7 +167,7 @@ const TabCard = styled.div<{ $active: boolean; $theme: any }>`
   }
 `;
 
-const TabTitle = styled.h3<{ $theme: any }>`
+const TabTitle = styled.h3<{ $theme?: Theme }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 1.2rem;
   font-weight: 700;
@@ -439,7 +420,9 @@ const ESocialDomesticoCompleto: React.FC = () => {
   };
 
   const handleSavePayroll = async (
-    payrollData: Omit<PayrollData, 'id' | 'salarioLiquido' | 'status'>
+    payrollData: Omit<PayrollData, 'id' | 'salarioLiquido' | 'status'> & {
+      employeeId?: string | string[];
+    }
   ) => {
     try {
       // Calcular salário líquido
@@ -457,8 +440,12 @@ const ESocialDomesticoCompleto: React.FC = () => {
       );
 
       // Se múltiplos funcionários, criar uma folha para cada
-      if (Array.isArray(payrollData.employeeId)) {
-        const newPayrolls = payrollData.employeeId.map(empId => ({
+      const employeeIds = Array.isArray((payrollData as any).employeeId) 
+        ? (payrollData as any).employeeId 
+        : [payrollData.employeeId];
+      
+      if (employeeIds.length > 1 || Array.isArray((payrollData as any).employeeId)) {
+        const newPayrolls = employeeIds.map((empId: string) => ({
           ...payrollData,
           employeeId: empId,
           id: `payroll_${Date.now()}_${empId}`,
@@ -469,7 +456,7 @@ const ESocialDomesticoCompleto: React.FC = () => {
         setPayrollData(prev => [...prev, ...newPayrolls]);
 
         // Gerar documentos e agendar pagamentos para cada funcionário
-        for (const empId of payrollData.employeeId) {
+        for (const empId of employeeIds) {
           await generateDocumentAndSchedulePayment('holerite', {
             ...payrollData,
             employeeId: empId,
@@ -478,7 +465,7 @@ const ESocialDomesticoCompleto: React.FC = () => {
         }
 
         alertManager.showSuccess(
-          `${payrollData.employeeId.length} folha(s) de pagamento gerada(s) com sucesso!`,
+          `${employeeIds.length} folha(s) de pagamento gerada(s) com sucesso!`,
           'Sucesso'
         );
       } else {
@@ -673,9 +660,9 @@ const ESocialDomesticoCompleto: React.FC = () => {
               Gestão completa de funcionários domésticos e folha de pagamento
             </Subtitle>
           </div>
-          <StatusBadge $status='connected' $theme={theme}>
-            <AccessibleEmoji emoji='🟢' label='Conectado' /> Conectado
-          </StatusBadge>
+          <UnifiedBadge variant="success" size="md" theme={theme} icon={<AccessibleEmoji emoji='🟢' label='Conectado' />}>
+            Conectado
+          </UnifiedBadge>
         </Header>
 
         {/* Estatísticas */}
@@ -982,7 +969,7 @@ const ESocialDomesticoCompleto: React.FC = () => {
         <PayrollModalNew
           isOpen={isPayrollUnifiedModalOpen}
           onClose={() => setIsPayrollUnifiedModalOpen(false)}
-          onSave={handleSavePayroll}
+          onSave={handleSavePayroll as any}
           employees={employees}
           $theme={theme}
         />

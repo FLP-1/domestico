@@ -1,12 +1,18 @@
 // API para CRUD de locais de trabalho
 import { NextApiRequest, NextApiResponse } from 'next';
+import { Prisma } from '@prisma/client';
 import prisma from '../../../lib/prisma';
+import { loadSystemConfig } from '../../../config/centralized-config';
 
 // Função para geocoding (endereço → coordenadas)
 async function geocodeAddress(endereco: string) {
   try {
+    const config = await loadSystemConfig();
+    const nominatimBaseUrl = config.urls.geocoding.nominatim || 'https://nominatim.openstreetmap.org/reverse';
+    const searchUrl = nominatimBaseUrl.replace('/reverse', '/search');
+    
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}&limit=1&countrycodes=br&addressdetails=1`,
+      `${searchUrl}?format=json&q=${encodeURIComponent(endereco)}&limit=1&countrycodes=br&addressdetails=1`,
       {
         headers: {
           'User-Agent': 'DOM-System/1.0 (Geofencing)',
@@ -48,8 +54,8 @@ async function logGeofencingAction(
       acao,
       dadosAnteriores: dadosAnteriores
         ? JSON.stringify(dadosAnteriores)
-        : undefined,
-      dadosNovos: dadosNovos ? JSON.stringify(dadosNovos) : undefined,
+        : Prisma.JsonNull,
+      dadosNovos: dadosNovos ? JSON.stringify(dadosNovos) : Prisma.JsonNull,
       ip:
         (req.headers['x-forwarded-for'] as string) ||
         req.connection.remoteAddress ||
