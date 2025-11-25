@@ -1,10 +1,9 @@
 import AccessibleEmoji from '../components/AccessibleEmoji';
 // src/pages/loan-management.tsx
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useAlertManager } from '../hooks/useAlertManager';
 import styled from 'styled-components';
 import { UnifiedButton, UnifiedBadge, UnifiedProgressBar, UnifiedCard, UnifiedModal } from '../components/unified';
 import FilterSection from '../components/FilterSection';
@@ -93,8 +92,8 @@ interface LoanSummary {
   totalApproved: number;
   totalPaid: number;
   totalOutstanding: number;
-  nextPaymentDate?: string;
-  nextPaymentAmount?: number;
+  nextPaymentDate: string | null;
+  nextPaymentAmount: number;
 }
 
 // Styled Components
@@ -552,6 +551,7 @@ export default function LoanManagement() {
   const { currentProfile } = useUserProfile();
   const themeObject = useTheme(currentProfile?.role.toLowerCase());
   const theme = { colors: themeObject.colors };
+  const alertManager = useAlertManager();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [modalOpen, setUnifiedModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<LoanRequest | null>(
@@ -563,66 +563,62 @@ export default function LoanManagement() {
     'approve'
   );
 
-  const [loanSummary] = useState<LoanSummary>({
-    totalPending: 2500,
-    totalApproved: 5000,
-    totalPaid: 3000,
-    totalOutstanding: 2000,
-    nextPaymentDate: '2024-02-15',
-    nextPaymentAmount: 500,
+  const [loanSummary, setLoanSummary] = useState<LoanSummary>({
+    totalPending: 0,
+    totalApproved: 0,
+    totalPaid: 0,
+    totalOutstanding: 0,
+    nextPaymentDate: null,
+    nextPaymentAmount: 0,
   });
+  const [requests, setRequests] = useState<LoanRequest[]>([]);
+  const [loadingLoans, setLoadingLoans] = useState(true);
+  const [loadingSummary, setLoadingSummary] = useState(true);
 
-  const [requests, setRequests] = useState<LoanRequest[]>([
-    {
-      id: '1',
-      employeeId: '1',
-      employeeName: 'Maria Santos',
-      type: 'advance',
-      amount: 1000,
-      installments: 1,
-      dueDate: '2024-02-15',
-      justification: 'Emergência médica familiar',
-      status: 'pending',
-      requestDate: '2024-01-15',
-      monthlyPayment: 1000,
-      interestRate: 0,
-      totalAmount: 1000,
-    },
-    {
-      id: '2',
-      employeeId: '2',
-      employeeName: 'Ana Costa',
-      type: 'loan',
-      amount: 3000,
-      installments: 6,
-      dueDate: '2024-07-15',
-      justification: 'Reforma da casa',
-      status: 'approved',
-      requestDate: '2024-01-10',
-      approvalDate: '2024-01-12',
-      approvedBy: 'João Silva',
-      monthlyPayment: 550,
-      interestRate: 2.5,
-      totalAmount: 3300,
-    },
-    {
-      id: '3',
-      employeeId: '1',
-      employeeName: 'Maria Santos',
-      type: 'loan',
-      amount: 2000,
-      installments: 4,
-      dueDate: '2024-05-15',
-      justification: 'Compra de eletrodomésticos',
-      status: 'paid',
-      requestDate: '2023-12-01',
-      approvalDate: '2023-12-03',
-      approvedBy: 'João Silva',
-      monthlyPayment: 500,
-      interestRate: 2.0,
-      totalAmount: 2000,
-    },
-  ]);
+  // Carregar dados de empréstimos
+  useEffect(() => {
+    const loadLoansData = async () => {
+      try {
+        setLoadingLoans(true);
+        setLoadingSummary(true);
+
+        // Obter ID do usuário atual (empregador)
+        // TODO: Obter do contexto de autenticação quando disponível
+        const usuarioId = currentProfile?.id || '';
+
+        if (!usuarioId) {
+          console.warn('ID do usuário não disponível');
+          setLoadingLoans(false);
+          setLoadingSummary(false);
+          return;
+        }
+
+        // Carregar empréstimos
+        const loansResponse = await fetch(`/api/loans?usuarioId=${usuarioId}`);
+        const loansResult = await loansResponse.json();
+
+        if (loansResult.success && loansResult.data) {
+          setRequests(loansResult.data);
+        }
+
+        // Carregar resumo
+        const summaryResponse = await fetch(`/api/loans/summary?usuarioId=${usuarioId}`);
+        const summaryResult = await summaryResponse.json();
+
+        if (summaryResult.success && summaryResult.data) {
+          setLoanSummary(summaryResult.data);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados de empréstimos:', error);
+        alertManager.showError('Erro ao carregar dados de empréstimos');
+      } finally {
+        setLoadingLoans(false);
+        setLoadingSummary(false);
+      }
+    };
+
+    loadLoansData();
+  }, [currentProfile?.id]);
 
   const [newRequest, setNewRequest] = useState({
     type: 'advance' as 'loan' | 'advance',
@@ -639,46 +635,79 @@ export default function LoanManagement() {
 
   const [approvalComment, setApprovalComment] = useState('');
 
-  const handleSubmitRequest = (e: React.FormEvent) => {
+  const handleSubmitRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newRequest.amount || !newRequest.justification) return;
 
-    const amount = parseFloat(
-      newRequest.amount.replace(/[^\d,]/g, '').replace(',', '.')
-    );
-    const interestRate = newRequest.type === 'loan' ? 2.5 : 0;
-    const totalAmount =
-      newRequest.type === 'loan' ? amount * (1 + interestRate / 100) : amount;
-    const monthlyPayment = totalAmount / newRequest.installments;
-
-    const request: LoanRequest = {
-      id: Date.now().toString(),
-      employeeId: currentProfile?.id || '1',
-      employeeName: currentProfile?.name || 'Usuário',
-      type: newRequest.type,
-      amount,
-      installments: newRequest.installments,
-      dueDate: new Date(
+    try {
+      const amount = parseFloat(
+        newRequest.amount.replace(/[^\d,]/g, '').replace(',', '.')
+      );
+      const interestRate = newRequest.type === 'loan' ? 2.5 : 0;
+      
+      // Calcular data de vencimento
+      const dueDate = new Date(
         Date.now() + newRequest.installments * 30 * 24 * 60 * 60 * 1000
-      )
-        .toISOString()
-        .split('T')[0]!,
-      justification: newRequest.justification,
-      status: 'pending',
-      requestDate: new Date().toISOString().split('T')[0]!,
-      monthlyPayment,
-      interestRate,
-      totalAmount,
-    };
+      ).toISOString().split('T')[0];
 
-    setRequests(prev => [request, ...prev]);
-    setNewRequest({
-      type: 'advance',
-      amount: '',
-      installments: 1,
-      justification: '',
-    });
-    toast.success('Solicitação enviada com sucesso!');
+      // Obter IDs necessários
+      const usuarioId = currentProfile?.id || '';
+      const empregadoId = currentProfile?.id || ''; // TODO: Obter do contexto quando disponível
+
+      if (!usuarioId || !empregadoId) {
+        alertManager.showError('ID do usuário não disponível');
+        return;
+      }
+
+      // Criar empréstimo via API
+      const response = await fetch('/api/loans', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          usuarioId,
+          empregadoId,
+          tipo: newRequest.type,
+          amount,
+          installments: newRequest.installments,
+          dueDate,
+          justification: newRequest.justification,
+          interestRate,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Recarregar lista de empréstimos
+        const loansResponse = await fetch(`/api/loans?usuarioId=${usuarioId}`);
+        const loansResult = await loansResponse.json();
+        if (loansResult.success && loansResult.data) {
+          setRequests(loansResult.data);
+        }
+
+        // Recarregar resumo
+        const summaryResponse = await fetch(`/api/loans/summary?usuarioId=${usuarioId}`);
+        const summaryResult = await summaryResponse.json();
+        if (summaryResult.success && summaryResult.data) {
+          setLoanSummary(summaryResult.data);
+        }
+
+        setNewRequest({
+          type: 'advance',
+          amount: '',
+          installments: 1,
+          justification: '',
+        });
+        alertManager.showSuccess('Solicitação enviada com sucesso!');
+      } else {
+        alertManager.showError(result.error || 'Erro ao criar empréstimo');
+      }
+    } catch (error) {
+      console.error('Erro ao criar empréstimo:', error);
+      alertManager.showError('Erro ao criar empréstimo');
+    }
   };
 
   const handleViewRequest = (request: LoanRequest) => {
@@ -686,9 +715,35 @@ export default function LoanManagement() {
     setUnifiedModalOpen(true);
   };
 
-  const handleCancelRequest = (requestId: string) => {
-    setRequests(prev => prev.filter(req => req.id !== requestId));
-    toast.success('Solicitação cancelada!');
+  const handleCancelRequest = async (requestId: string) => {
+    try {
+      const response = await fetch(`/api/loans?id=${requestId}`, {
+        method: 'DELETE',
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setRequests(prev => prev.filter(req => req.id !== requestId));
+        
+        // Recarregar resumo
+        const usuarioId = currentProfile?.id || '';
+        if (usuarioId) {
+          const summaryResponse = await fetch(`/api/loans/summary?usuarioId=${usuarioId}`);
+          const summaryResult = await summaryResponse.json();
+          if (summaryResult.success && summaryResult.data) {
+            setLoanSummary(summaryResult.data);
+          }
+        }
+        
+        alertManager.showSuccess('Solicitação cancelada!');
+      } else {
+        alertManager.showError(result.error || 'Erro ao cancelar solicitação');
+      }
+    } catch (error) {
+      console.error('Erro ao cancelar solicitação:', error);
+      alertManager.showError('Erro ao cancelar solicitação');
+    }
   };
 
   const handleApprovalAction = (
@@ -700,26 +755,57 @@ export default function LoanManagement() {
     setShowApprovalUnifiedModal(true);
   };
 
-  const handleConfirmApproval = () => {
+  const handleConfirmApproval = async () => {
     if (!selectedRequest) return;
 
-    const updatedRequest: LoanRequest = {
-      ...selectedRequest,
-      status: approvalAction === 'approve' ? 'approved' : 'rejected',
-      approvalDate: new Date().toISOString().split('T')[0]!,
-      approvedBy: currentProfile?.name || 'Usuário',
-      ...(approvalAction === 'reject' && { rejectionReason: approvalComment }),
-    };
+    try {
+      const status = approvalAction === 'approve' ? 'APROVADO' : 'REJEITADO';
+      
+      const response = await fetch(`/api/loans?id=${selectedRequest.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status,
+          approvedBy: currentProfile?.name || 'Usuário',
+          rejectionReason: approvalAction === 'reject' ? approvalComment : undefined,
+        }),
+      });
 
-    setRequests(prev =>
-      prev.map(req => (req.id === selectedRequest.id ? updatedRequest : req))
-    );
-    setShowApprovalUnifiedModal(false);
-    setSelectedRequest(null);
-    setApprovalComment('');
-    toast.success(
-      `Solicitação ${approvalAction === 'approve' ? 'aprovada' : 'rejeitada'} com sucesso!`
-    );
+      const result = await response.json();
+
+      if (result.success) {
+        // Recarregar lista de empréstimos
+        const usuarioId = currentProfile?.id || '';
+        if (usuarioId) {
+          const loansResponse = await fetch(`/api/loans?usuarioId=${usuarioId}`);
+          const loansResult = await loansResponse.json();
+          if (loansResult.success && loansResult.data) {
+            setRequests(loansResult.data);
+          }
+
+          // Recarregar resumo
+          const summaryResponse = await fetch(`/api/loans/summary?usuarioId=${usuarioId}`);
+          const summaryResult = await summaryResponse.json();
+          if (summaryResult.success && summaryResult.data) {
+            setLoanSummary(summaryResult.data);
+          }
+        }
+
+        setShowApprovalUnifiedModal(false);
+        setSelectedRequest(null);
+        setApprovalComment('');
+        alertManager.showSuccess(
+          `Solicitação ${approvalAction === 'approve' ? 'aprovada' : 'rejeitada'} com sucesso!`
+        );
+      } else {
+        alertManager.showError(result.error || 'Erro ao processar solicitação');
+      }
+    } catch (error) {
+      console.error('Erro ao processar solicitação:', error);
+      alertManager.showError('Erro ao processar solicitação');
+    }
   };
 
   const formatCurrency = (value: number) => {
@@ -824,7 +910,7 @@ export default function LoanManagement() {
             requests.filter(r => r.status === 'pending').length
           }
           onNotificationClick={() =>
-            toast.info('Notificações em desenvolvimento')
+            alertManager.showInfo('Notificações em desenvolvimento')
           }
         />
       </TopBar>
@@ -1349,18 +1435,6 @@ export default function LoanManagement() {
         )}
       </UnifiedModal>
 
-      <ToastContainer
-        position='top-center'
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
     </PageContainer>
   );
 }

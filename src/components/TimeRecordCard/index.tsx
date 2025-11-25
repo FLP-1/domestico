@@ -47,7 +47,7 @@ const TimeRecordContainer = styled.div<{
     
     &:hover {
       transform: translateY(-4px);
-      box-shadow: 0 12px 40px ${props.$theme.colors.shadow};
+      box-shadow: 0 12px 40px ${props.$theme?.colors?.shadow || props.$theme?.shadow || 'transparent'};
     }
     
     &:active {
@@ -86,15 +86,25 @@ const TimeDisplay = styled.div<{ $theme?: any; $status: string }>`
     color: ${props => {
       switch (props.$status) {
         case 'completed':
-          return props.$theme.colors.primary;
+          return props.$theme?.colors?.primary || props.$theme?.accent || 'inherit';
         case 'pending':
-          return props.$theme.colors.status.warning.color;
+          return props.$theme?.colors?.status?.warning?.text || 
+                 props.$theme?.status?.warning?.text ||
+                 'inherit';
         case 'available':
-          return props.$theme.colors.text.primary;
+          return props.$theme?.colors?.text?.primary || 
+                 props.$theme?.text?.primary ||
+                 props.$theme?.colors?.text ||
+                 'inherit';
         case 'disabled':
-          return props.$theme.colors.text.muted;
+          return props.$theme?.colors?.text?.secondary || 
+                 props.$theme?.text?.secondary ||
+                 'inherit';
         default:
-          return props.$theme.colors.text;
+          return props.$theme?.colors?.text?.dark || 
+                 props.$theme?.text?.dark ||
+                 props.$theme?.colors?.text ||
+                 'inherit';
       }
     }};
     line-height: 1.2;
@@ -106,15 +116,23 @@ const TimeDisplay = styled.div<{ $theme?: any; $status: string }>`
     color: ${props => {
       switch (props.$status) {
         case 'completed':
-          return props.$theme.colors.primary;
+          return props.$theme?.colors?.primary || props.$theme?.accent || 'inherit';
         case 'pending':
-          return props.$theme.colors.status.warning.color;
+          return props.$theme?.colors?.status?.warning?.text || 
+                 props.$theme?.status?.warning?.text ||
+                 'inherit';
         case 'available':
-          return props.$theme.colors.text.dark;
+          return props.$theme?.colors?.text?.dark || 
+                 props.$theme?.text?.dark ||
+                 'inherit';
         case 'disabled':
-          return props.$theme.colors.text.light;
+          return props.$theme?.colors?.text?.secondary || 
+                 props.$theme?.text?.secondary ||
+                 'inherit';
         default:
-          return props.$theme.colors.text.dark;
+          return props.$theme?.colors?.text?.dark || 
+                 props.$theme?.text?.dark ||
+                 'inherit';
       }
     }};
     text-transform: uppercase;
@@ -142,18 +160,43 @@ const StatusIndicator = styled.div<{
   background: ${props => {
     switch (props.$status) {
       case 'completed':
-        return props.$theme.colors.primary;
+        return props.$theme?.colors?.primary || props.$theme?.accent || 'transparent';
       case 'pending':
-        return props.$theme.colors.status.warning.color;
+        return props.$theme?.colors?.status?.warning?.background || 
+               props.$theme?.status?.warning?.background ||
+               'transparent';
       case 'available':
-        return props.$theme.colors.status.success.color;
+        return props.$theme?.colors?.status?.success?.background || 
+               props.$theme?.status?.success?.background ||
+               'transparent';
       case 'disabled':
-        return props.$theme.colors.text.muted;
+        return props.$theme?.colors?.background?.secondary || 
+               props.$theme?.background?.secondary ||
+               'transparent';
       default:
-        return props.$theme.colors.text.light;
+        return 'transparent';
     }
   }};
-  color: white;
+  color: ${props => {
+    switch (props.$status) {
+      case 'completed':
+        return props.$theme?.colors?.text?.primary || 
+               props.$theme?.text?.primary ||
+               'inherit';
+      case 'pending':
+        return props.$theme?.colors?.status?.warning?.text || 
+               props.$theme?.status?.warning?.text ||
+               'inherit';
+      case 'available':
+        return props.$theme?.colors?.status?.success?.text || 
+               props.$theme?.status?.success?.text ||
+               'inherit';
+      default:
+        return props.$theme?.colors?.text?.dark || 
+               props.$theme?.text?.dark ||
+               'inherit';
+    }
+  }};
   text-transform: uppercase;
   letter-spacing: 0.5px;
 `;
@@ -161,13 +204,40 @@ const StatusIndicator = styled.div<{
 const LocationInfo = styled.div<{ $theme?: any }>`
   margin-top: 1rem;
   padding: 0.75rem;
-  background: ${props => props.$theme.colors.primary}10;
+  background: ${props => {
+    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return props.$theme?.colors?.background?.secondary || 
+           props.$theme?.background?.secondary ||
+           'transparent';
+  }};
   border-radius: 8px;
-  border: 1px solid ${props => props.$theme.colors.primary}20;
+  border: 1px solid ${props => {
+    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.2)`;
+    }
+    return props.$theme?.colors?.border?.light || 
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
 
   .location-text {
     font-size: 0.8rem;
-    color: ${props => props.$theme.colors.textSecondary || '#7f8c8d'};
+    color: ${props => 
+      props.$theme?.colors?.text?.secondary || 
+      props.$theme?.text?.secondary ||
+      props.$theme?.colors?.textSecondary ||
+      'inherit'
+    };
     margin: 0 0 0.25rem 0;
     display: flex;
     align-items: center;
@@ -176,7 +246,12 @@ const LocationInfo = styled.div<{ $theme?: any }>`
 
   .wifi-text {
     font-size: 0.8rem;
-    color: ${props => props.$theme.colors.textSecondary || '#7f8c8d'};
+    color: ${props => 
+      props.$theme?.colors?.text?.secondary || 
+      props.$theme?.text?.secondary ||
+      props.$theme?.colors?.textSecondary ||
+      'inherit'
+    };
     margin: 0;
     display: flex;
     align-items: center;
@@ -187,20 +262,36 @@ const LocationInfo = styled.div<{ $theme?: any }>`
 const ObservationSection = styled.div<{ $theme?: any }>`
   margin-top: 1rem;
   padding: 0.75rem;
-  background: ${props => props.$theme?.background?.secondary || '#f8f9fa'};
+  background: ${props => 
+    props.$theme?.colors?.background?.secondary || 
+    props.$theme?.background?.secondary ||
+    'transparent'
+  };
   border-radius: 8px;
-  border: 1px solid ${props => props.$theme?.border?.secondary || '#e9ecef'};
+  border: 1px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light ||
+    'transparent'
+  };
 
   .observation-label {
     font-size: 0.8rem;
     font-weight: 600;
-    color: ${props => props.$theme?.text?.dark || '#2c3e50'};
+    color: ${props => 
+      props.$theme?.colors?.text?.dark || 
+      props.$theme?.text?.dark ||
+      'inherit'
+    };
     margin: 0 0 0.5rem 0;
   }
 
   .observation-text {
     font-size: 0.8rem;
-    color: ${props => props.$theme?.text?.secondary || '#7f8c8d'};
+    color: ${props => 
+      props.$theme?.colors?.text?.secondary || 
+      props.$theme?.text?.secondary ||
+      'inherit'
+    };
     margin: 0;
     font-style: italic;
   }
@@ -216,9 +307,20 @@ const ApprovalBadge = styled.div<{ $theme?: any; $approved: boolean }>`
   font-weight: 600;
   background: ${props =>
     props.$approved
-      ? props.$theme?.status?.success?.color || '#27ae60'
-      : props.$theme?.status?.warning?.color || '#f39c12'};
-  color: white;
+      ? props.$theme?.colors?.status?.success?.background ||
+        props.$theme?.status?.success?.background ||
+        'transparent'
+      : props.$theme?.colors?.status?.warning?.background ||
+        props.$theme?.status?.warning?.background ||
+        'transparent'};
+  color: ${props =>
+    props.$approved
+      ? props.$theme?.colors?.status?.success?.text ||
+        props.$theme?.status?.success?.text ||
+        'inherit'
+      : props.$theme?.colors?.status?.warning?.text ||
+        props.$theme?.status?.warning?.text ||
+        'inherit'};
   text-transform: uppercase;
   letter-spacing: 0.5px;
 `;
@@ -254,36 +356,37 @@ export interface TimeRecordCardProps {
 }
 
 // Configurações dos tipos de registro
+// Nota: As cores agora são obtidas do tema dinamicamente
 const recordConfig = {
   entrada: {
     label: 'Entrada',
     icon: '🕐',
-    color: '#27ae60', // Cor específica para entrada
+    // Cor será obtida do tema: status.success
   },
   saida_almoco: {
     label: 'Saída Almoço',
     icon: '🍽️',
-    color: '#f39c12', // Cor específica para saída almoço
+    // Cor será obtida do tema: status.warning
   },
   retorno_almoco: {
     label: 'Retorno Almoço',
     icon: '🔄',
-    color: '#3498db', // Cor específica para retorno almoço
+    // Cor será obtida do tema: primary ou accent
   },
   saida: {
     label: 'Saída',
     icon: '🏠',
-    color: '#e74c3c', // Cor específica para saída
+    // Cor será obtida do tema: status.error
   },
   inicio_extra: {
     label: 'Início Hora Extra',
     icon: '⏰',
-    color: '#9b59b6', // Cor específica para início extra
+    // Cor será obtida do tema: primary ou accent
   },
   fim_extra: {
     label: 'Fim Hora Extra',
     icon: '⏹️',
-    color: '#34495e', // Cor específica para fim extra
+    // Cor será obtida do tema: text.secondary
   },
 };
 
@@ -318,30 +421,59 @@ export const TimeRecordCard: React.FC<TimeRecordCardProps> = memo(
     const isProcessingRef = useRef(false);
 
     const handleClick = useCallback(async () => {
-      if (!clickable || !onClick) return;
-      if (isProcessingRef.current) return;
+      // ✅ Debug: Log para investigar por que não funciona
+      logger.geo(`🔍 handleClick chamado:`, {
+        clickable,
+        hasOnClick: !!onClick,
+        isProcessing: isProcessingRef.current,
+        actionName,
+        $criticalAction,
+      });
+      
+      if (!clickable || !onClick) {
+        logger.geo(`⚠️ handleClick bloqueado:`, {
+          clickable,
+          hasOnClick: !!onClick,
+        });
+        return;
+      }
+      if (isProcessingRef.current) {
+        logger.geo(`⚠️ handleClick já em processamento`);
+        return;
+      }
       isProcessingRef.current = true;
 
       try {
         if ($criticalAction) {
           logger.geo(`🎯 Registro de ponto crítico: ${actionName}`);
 
-          // ✅ Capturar localização atualizada antes de registrar
-          if (!isDataRecent || !isDataAccurate) {
-            logger.geo(
-              `🔄 Atualizando localização antes do registro: ${actionName}`
-            );
+          // ✅ SEMPRE capturar localização atualizada antes de registrar (forçar nova captura)
+          // Isso garante que a localização seja sempre atualizada ao clicar no card
+          logger.geo(
+            `🔄 Capturando localização atualizada antes do registro: ${actionName}`
+          );
+          try {
             await captureLocation();
+          } catch (error) {
+            logger.warn(`⚠️ Erro ao capturar localização antes do registro:`, error);
+            // Continuar mesmo se a captura falhar
           }
 
+          logger.geo(`📞 Criando criticalHandler para: ${actionName}`);
           const criticalHandler = createCriticalButtonHandler(
             onClick,
             actionName
           );
+          logger.geo(`▶️ Executando criticalHandler...`);
           await criticalHandler();
+          logger.geo(`✅ criticalHandler concluído`);
         } else {
+          logger.geo(`📞 Executando onClick diretamente (não crítico)`);
           onClick();
         }
+      } catch (error) {
+        logger.error(`❌ Erro em handleClick:`, error);
+        throw error;
       } finally {
         isProcessingRef.current = false;
       }

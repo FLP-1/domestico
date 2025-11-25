@@ -1,0 +1,7 @@
+zeep
+requests
+requests-pkcs12
+lxml
+certifi
+cryptography
+pyOpenSSL

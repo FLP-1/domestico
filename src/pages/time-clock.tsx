@@ -1,8 +1,7 @@
 import AccessibleEmoji from '../components/AccessibleEmoji';
 import { useRouter } from 'next/router';
 import { useEffect, useState, useMemo, useCallback, memo } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useAlertManager } from '../hooks/useAlertManager';
 import styled from 'styled-components';
 import { useTheme } from '../hooks/useTheme';
 import { useUserProfile } from '../contexts/UserProfileContext';
@@ -126,10 +125,21 @@ const CurrentTime = styled.h1<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'dark' in text && text.dark) {
       return text.dark;
     }
-    return getTextPrimary(props.$theme);
+    return props.$theme?.colors?.text?.dark || 
+           props.$theme?.text?.dark ||
+           'inherit';
   }};
   margin: 0 0 0.5rem 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 2px 4px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1)`;
+      }
+    }
+    return 'none';
+  }};
 `;
 
 const CurrentDate = styled.p<{ $theme?: Theme }>`
@@ -171,12 +181,23 @@ const ScheduleTitle = styled.h3<{ $theme?: Theme }>`
   gap: 0.5rem;
 `;
 
-const ScheduleItem = styled.div`
+const ScheduleItem = styled.div<{ $theme?: any }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid ${props => {
+    const borderColor = props.$theme?.colors?.border?.light || props.$theme?.border?.light;
+    if (borderColor && borderColor.startsWith('#')) {
+      const r = parseInt(borderColor.slice(1, 3), 16);
+      const g = parseInt(borderColor.slice(3, 5), 16);
+      const b = parseInt(borderColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return props.$theme?.colors?.border?.light || 
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
 
   &:last-child {
     border-bottom: none;
@@ -202,15 +223,44 @@ const ScheduleTime = styled.span<{ $theme?: Theme }>`
 `;
 
 const HistorySection = styled.div<{ $theme?: Theme }>`
-  background: rgba(255, 255, 255, 0.95);
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.95)`;
+    }
+    return props.$theme?.colors?.background?.primary || 
+           props.$theme?.background?.primary ||
+           'transparent';
+  }};
   backdrop-filter: blur(20px);
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 4px 16px
-    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
-  border: 1px solid
-    ${props => (props.$theme?.colors?.primary || defaultColors.primary) + '20'};
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 4px 16px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1)`;
+      }
+    }
+    return 'none';
+  }};
+  border: 1px solid ${props => {
+    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.2)`;
+    }
+    return props.$theme?.colors?.border?.light || 
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
 `;
 
 // SectionTitle removido - usar OptimizedSectionTitle com $size='lg'
@@ -352,6 +402,7 @@ export default function TimeClock() {
     ? currentProfile.role.toLowerCase()
     : undefined;
   const { colors: profileColors } = useTheme(profileThemeKey);
+  const alertManager = useAlertManager();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [modalOpen, setModalOpen] = useState(false);
@@ -800,7 +851,7 @@ export default function TimeClock() {
 
           if (response.status === 409) {
             // Duplicidade do mesmo tipo no dia
-            toast.warning(message, { position: 'top-center', autoClose: 3000 });
+            alertManager.showWarning(message);
             setLastCaptureStatus &&
               setLastCaptureStatus({
                 pending: false,
@@ -812,7 +863,7 @@ export default function TimeClock() {
           }
           if (response.status === 422) {
             // Ordem inválida
-            toast.warning(message, { position: 'top-center', autoClose: 3000 });
+            alertManager.showWarning(message);
             // Se for precisão insuficiente/idade, oferecer override via modal
             if (/Precisão|Localização antiga/i.test(message)) {
               setOverrideDraft({ data: locationData, type });
@@ -829,10 +880,7 @@ export default function TimeClock() {
             return;
           }
           if (response.status === 401) {
-            toast.error('Sessão expirada. Faça login novamente.', {
-              position: 'top-center',
-              autoClose: 3000,
-            });
+            alertManager.showError('Sessão expirada. Faça login novamente.');
             setLastCaptureStatus &&
               setLastCaptureStatus({
                 pending: false,
@@ -884,10 +932,7 @@ export default function TimeClock() {
         };
 
         setTimeRecords(prev => [...prev, newRecord]);
-        toast.success(`Ponto registrado com sucesso: ${timeString}`, {
-          position: 'top-center',
-          autoClose: 3000,
-        });
+        alertManager.showSuccess(`Ponto registrado com sucesso: ${timeString}`);
 
         // Revalidar registros do servidor após sucesso
         try {
@@ -921,10 +966,7 @@ export default function TimeClock() {
           error?.name === 'AbortError'
             ? 'Tempo esgotado ao registrar ponto'
             : error?.message || 'Erro ao registrar ponto. Tente novamente.';
-        toast.error(msg, {
-          position: 'top-center',
-          autoClose: 3000,
-        });
+        alertManager.showError(msg);
       }
     },
     [
@@ -970,9 +1012,9 @@ export default function TimeClock() {
         reviewComment: r.observacao || undefined,
       };
       setOvertimeRequests(prev => [mapped, ...prev]);
-      toast.success('Solicitação de hora extra enviada para aprovação!');
+      alertManager.showSuccess('Solicitação de hora extra enviada para aprovação!');
     } catch (e: any) {
-      toast.error(e?.message || 'Erro ao solicitar hora extra');
+      alertManager.showError(e?.message || 'Erro ao solicitar hora extra');
     }
   };
 
@@ -1003,23 +1045,23 @@ export default function TimeClock() {
             : r
         )
       );
-      toast.success(approve ? 'Solicitação aprovada' : 'Solicitação rejeitada');
+      alertManager.showSuccess(approve ? 'Solicitação aprovada' : 'Solicitação rejeitada');
     } catch (e: any) {
-      toast.error(e?.message || 'Erro ao atualizar solicitação');
+      alertManager.showError(e?.message || 'Erro ao atualizar solicitação');
     }
   };
 
   // Handler para upload de documentos
   const handleDocumentUpload = (files: FileList) => {
     // Aqui seria integrado com o sistema de gestão de documentos
-    toast.success(`${files.length} documento(s) enviado(s) com sucesso!`);
+    alertManager.showSuccess(`${files.length} documento(s) enviado(s) com sucesso!`);
   };
 
   // Handler para transferir para folha de pagamento
   const handlePayrollTransfer = async () => {
     // Simular transferência
     await new Promise(resolve => setTimeout(resolve, 2000));
-    toast.success('Dados transferidos para folha de pagamento com sucesso!');
+    alertManager.showSuccess('Dados transferidos para folha de pagamento com sucesso!');
   };
 
   // Handlers para modal de geofencing
@@ -1052,10 +1094,7 @@ export default function TimeClock() {
       });
 
       if (response.ok) {
-        toast.success(`Ponto registrado com justificativa: ${timeString}`, {
-          position: 'top-center',
-          autoClose: 3000,
-        });
+        alertManager.showSuccess(`Ponto registrado com justificativa: ${timeString}`);
 
         // Recarregar registros
         const refresh = await fetch('/api/time-clock/records');
@@ -1086,7 +1125,7 @@ export default function TimeClock() {
         throw new Error('Erro ao registrar ponto');
       }
     } catch (error: any) {
-      toast.error(
+      alertManager.showError(
         'Erro ao registrar ponto com justificativa: ' +
           (error?.message || 'Erro desconhecido')
       );
@@ -1236,7 +1275,7 @@ export default function TimeClock() {
       label: 'Editar registros',
       variant: 'primary',
       onClick: (item: DataListItem) => {
-        toast.info('Funcionalidade de edição em desenvolvimento');
+        alertManager.showInfo('Funcionalidade de edição em desenvolvimento');
       },
     },
     {
@@ -1244,7 +1283,7 @@ export default function TimeClock() {
       label: 'Ver detalhes',
       variant: 'secondary',
       onClick: (item: DataListItem) => {
-        toast.info('Funcionalidade de detalhes em desenvolvimento');
+        alertManager.showInfo('Funcionalidade de detalhes em desenvolvimento');
       },
     },
   ];
@@ -1363,7 +1402,7 @@ export default function TimeClock() {
           userRole={currentUser?.role || 'Usuário'}
           notificationCount={unreadCount}
           onNotificationClick={() =>
-            toast.info('Notificações em desenvolvimento')
+            alertManager.showInfo('Notificações em desenvolvimento')
           }
         />
 
@@ -1422,23 +1461,23 @@ export default function TimeClock() {
         {horariosOficiais.length > 0 ? (
           horariosOficiais.map((horario: any) => (
             <div key={horario.id}>
-              <ScheduleItem>
+              <ScheduleItem $theme={theme}>
                 <ScheduleLabel $theme={theme}>Entrada:</ScheduleLabel>
                 <ScheduleTime $theme={theme}>{horario.entrada}</ScheduleTime>
               </ScheduleItem>
-              <ScheduleItem>
+              <ScheduleItem $theme={theme}>
                 <ScheduleLabel $theme={theme}>Saída Almoço:</ScheduleLabel>
                 <ScheduleTime $theme={theme}>
                   {horario.intervaloInicio || '--:--'}
                 </ScheduleTime>
               </ScheduleItem>
-              <ScheduleItem>
+              <ScheduleItem $theme={theme}>
                 <ScheduleLabel $theme={theme}>Retorno Almoço:</ScheduleLabel>
                 <ScheduleTime $theme={theme}>
                   {horario.intervaloFim || '--:--'}
                 </ScheduleTime>
               </ScheduleItem>
-              <ScheduleItem>
+              <ScheduleItem $theme={theme}>
                 <ScheduleLabel $theme={theme}>Saída:</ScheduleLabel>
                 <ScheduleTime $theme={theme}>{horario.saida}</ScheduleTime>
               </ScheduleItem>
@@ -1502,7 +1541,7 @@ export default function TimeClock() {
           ...payrollData, // Incluir dados reais da API
         }}
         onTransfer={handlePayrollTransfer}
-        onViewDetails={() => toast.info('Detalhes em desenvolvimento')}
+        onViewDetails={() => alertManager.showInfo('Detalhes em desenvolvimento')}
       />
 
       {/* Filtros para Histórico */}
@@ -1580,7 +1619,7 @@ export default function TimeClock() {
             columns={historyColumns}
             actions={historyActions}
             onItemClick={(item: any) => {
-              toast.info('Detalhes do registro em desenvolvimento');
+              alertManager.showInfo('Detalhes do registro em desenvolvimento');
             }}
             emptyMessage='Nenhum registro encontrado para o período selecionado.'
             variant='detailed'
@@ -1692,18 +1731,6 @@ export default function TimeClock() {
         />
       )}
 
-      <ToastContainer
-        position='top-center'
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
 
       {/* Modal de Aprovação de Registros Pendentes */}
       <PendingApprovalModal

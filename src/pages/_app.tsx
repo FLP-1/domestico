@@ -3,7 +3,10 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
+
+// Sentry será inicializado automaticamente via sentry.client.config.js
+// Helper para integração está disponível em src/lib/sentry.ts
 import {
   UserProfileProvider,
   useUserProfile,
@@ -22,14 +25,208 @@ import { UnifiedButton, UnifiedCard } from '../components/unified';
 import { UnifiedModal } from '../design-system/components/UnifiedModal';
 import SelectionModal from '../components/SelectionModal';
 import { AntifaudeProvider } from '../components/AntifaudeProvider';
+import ErrorBoundary from '../components/ErrorBoundary';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function AppContent({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [key, setKey] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isHydrated, setIsHydrated] = useState(false);
-  const { getCurrentPosition } = useGeolocation();
   const { updateLastLocationIfBetter } = useGeolocationContext();
+
+  // Registrar Service Worker para PWA
+  useEffect(() => {
+    if (
+      typeof window !== 'undefined' &&
+      'serviceWorker' in navigator &&
+      process.env.NODE_ENV === 'production'
+    ) {
+      navigator.serviceWorker
+        .register('/sw.js')
+        .then((registration) => {
+          console.log('Service Worker registrado:', registration);
+        })
+        .catch((error) => {
+          console.warn('Falha ao registrar Service Worker:', error);
+        });
+    }
+  }, []);
+
+  // Inicializar feature flags padrão (apenas no servidor)
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      import('../lib/featureFlags').then(({ initializeDefaultFeatureFlags }) => {
+        initializeDefaultFeatureFlags().catch((error) => {
+          console.warn('Erro ao inicializar feature flags:', error);
+        });
+      });
+    }
+  }, []);
+
+  // ✅ Rastrear primeira interação do usuário
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  const isCapturingRef = useRef(false);
+
+  useEffect(() => {
+    // ❌ Não detectar primeira interação na página de login - permissão será solicitada no checkbox
+    // ❌ Não detectar primeira interação na página principal (/) - permissão será solicitada no checkbox de login
+    if (router.pathname === '/login' || router.pathname === '/') {
+      return;
+    }
+
+    // ✅ Detectar primeira interação do usuário (click, touch, keypress)
+    const handleFirstInteraction = () => {
+      setHasUserInteracted(true);
+    };
+
+    // Adicionar listeners para detectar primeira interação
+    window.addEventListener('click', handleFirstInteraction, { once: true });
+    window.addEventListener('touchstart', handleFirstInteraction, { once: true });
+    window.addEventListener('keydown', handleFirstInteraction, { once: true });
+
+    return () => {
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+    };
+  }, [router.pathname]);
+
+  // ✅ 3. Capturar localização antes de mostrar qualquer página (apenas após primeira interação)
+  const captureLocationBeforePage = useCallback(async () => {
+    // ❌ Não capturar se usuário ainda não interagiu - viola política do navegador
+    if (!hasUserInteracted) {
+      return;
+    }
+
+    // ❌ Não capturar na página de login - permissão será solicitada no checkbox
+    // ❌ Não capturar na página principal (/) - permissão será solicitada no checkbox de login
+    if (router.pathname === '/login' || router.pathname === '/') {
+      return;
+    }
+
+    // ❌ Evitar múltiplas capturas simultâneas
+    if (isCapturingRef.current) {
+      return;
+    }
+
+    isCapturingRef.current = true;
+
+    try {
+      // ✅ Usar watchPosition para forçar GPS real (não IP/WiFi aproximado)
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        let watchId: number | null = null;
+        let bestPos: GeolocationPosition | null = null;
+        let bestAccuracy = Infinity;
+        let positionsReceived = 0;
+        
+        const watchTimeout = setTimeout(() => {
+          if (watchId !== null) {
+            navigator.geolocation.clearWatch(watchId);
+            watchId = null;
+          }
+          if (bestPos) {
+            resolve(bestPos);
+          } else {
+            reject(new Error('Timeout na captura de geolocalização'));
+          }
+        }, 30000); // 30 segundos para GPS estabilizar
+
+        watchId = navigator.geolocation.watchPosition(
+          (pos) => {
+            positionsReceived++;
+            
+            // ✅ Aceitar apenas se accuracy for boa (< 200m) - ignorar coordenadas ruins (IP)
+            // Não atualizar bestPos se accuracy > 1000m (localização por IP)
+            if (pos.coords.accuracy < 1000 && pos.coords.accuracy < bestAccuracy) {
+              bestPos = pos;
+              bestAccuracy = pos.coords.accuracy;
+              
+              // Se accuracy muito boa (< 50m), aceitar imediatamente
+              if (pos.coords.accuracy < 50) {
+                clearTimeout(watchTimeout);
+                if (watchId !== null) {
+                  navigator.geolocation.clearWatch(watchId);
+                  watchId = null;
+                }
+                resolve(pos);
+                return;
+              }
+            }
+            
+            // ✅ Após 2 posições recebidas (reduzido de 3), usar a melhor se accuracy < 200m
+            // Isso permite atualização mais rápida ao mudar de página
+            if (positionsReceived >= 2 && bestPos && bestAccuracy < 200) {
+              clearTimeout(watchTimeout);
+              if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+              }
+              resolve(bestPos);
+            }
+          },
+          (error) => {
+            clearTimeout(watchTimeout);
+            if (watchId !== null) {
+              navigator.geolocation.clearWatch(watchId);
+              watchId = null;
+            }
+            reject(error);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 30000,
+            maximumAge: 0, // Forçar nova captura sempre
+          }
+        );
+      });
+      
+      // Obter endereço via geocoding
+      let address = 'Endereço indisponível';
+      let addressComponents = null;
+      
+      try {
+        const geocodingResponse = await fetch(
+          `/api/geocoding/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&zoom=18`
+        );
+        if (geocodingResponse.ok) {
+          const geocodingData = await geocodingResponse.json();
+          if (geocodingData.success) {
+            address = geocodingData.formattedAddress || geocodingData.address || address;
+            addressComponents = geocodingData.components || null;
+          }
+        }
+      } catch (geocodingError) {
+        // Ignorar erros de geocoding
+      }
+      
+      if (position) {
+        updateLastLocationIfBetter({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+          address,
+          addressComponents,
+          wifiName: undefined,
+          networkInfo: undefined,
+          timestamp: new Date(),
+        });
+      }
+    } catch (error) {
+      // Silenciosamente falhar - não bloquear navegação
+      // Não logar timeouts ou violações de política (são esperados)
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (
+        !errorMessage.includes('user gesture') &&
+        !errorMessage.includes('Timeout')
+      ) {
+        console.warn('⚠️ Erro ao capturar localização antes da página:', error);
+      }
+    } finally {
+      isCapturingRef.current = false;
+    }
+  }, [updateLastLocationIfBetter, hasUserInteracted]);
   const {
     handleProfileSelection,
     currentProfile,
@@ -66,8 +263,21 @@ function AppContent({ Component, pageProps }: AppProps) {
   const { setLastCaptureLocation, setLastCaptureStatus } =
     useGeolocationContext();
   useEffect(() => {
-    const handleRouteChange = () => {
+    // ❌ Não fazer nada na página de login - permissão será solicitada no checkbox
+    // ❌ Não fazer nada na página principal (/) - permissão será solicitada no checkbox de login
+    if (router.pathname === '/login' || router.pathname === '/') {
+      return;
+    }
+
+    const handleRouteChange = async () => {
       setKey(prev => prev + 1);
+      
+      // ✅ 3. Capturar localização antes de mostrar qualquer página (exceto login)
+      if (router.pathname !== '/login') {
+        // Capturar localização antes de mostrar a página
+        await captureLocationBeforePage();
+      }
+      
       // Só hidratar dados se não estivermos na página de login
       if (router.pathname !== '/login') {
         // Hidratar "última captura usada no registro" do servidor
@@ -105,12 +315,8 @@ function AppContent({ Component, pageProps }: AppProps) {
       router.events.off('routeChangeComplete', handleRouteChange);
       router.events.off('beforeHistoryChange', handleRouteChange);
     };
-  }, [
-    router.events,
-    router.pathname,
-    setLastCaptureLocation,
-    setLastCaptureStatus,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.events, router.pathname, captureLocationBeforePage]);
 
   const handleProfileSelect = (profile: any) => {
     handleProfileSelection(profile);
@@ -243,6 +449,20 @@ function AppContent({ Component, pageProps }: AppProps) {
             icon='👥'
             type='group'
           />
+
+          {/* ToastContainer Global - Centralizado */}
+          <ToastContainer
+            position='top-right'
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme='light'
+          />
         </>
       )}
     </div>
@@ -250,6 +470,20 @@ function AppContent({ Component, pageProps }: AppProps) {
 }
 
 export default function App(props: AppProps) {
+  // Inicializar Sentry quando disponível
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      import('../lib/sentry').then(({ initSentry }) => {
+        initSentry({
+          environment: process.env.NODE_ENV,
+          release: process.env.NEXT_PUBLIC_APP_VERSION,
+        });
+      }).catch(() => {
+        // Sentry não disponível, continuar sem ele
+      });
+    }
+  }, []);
+
   return (
     <>
       <Head>
@@ -267,17 +501,19 @@ export default function App(props: AppProps) {
         <meta httpEquiv='Expires' content='0' />
       </Head>
 
-      <UserProfileProvider>
-        <GroupProvider>
-          <UserGroupProvider>
-            <GeolocationProvider>
-              <AntifaudeProvider>
-                <AppContent {...props} />
-              </AntifaudeProvider>
-            </GeolocationProvider>
-          </UserGroupProvider>
-        </GroupProvider>
-      </UserProfileProvider>
+      <ErrorBoundary>
+        <UserProfileProvider>
+          <GroupProvider>
+            <UserGroupProvider>
+              <GeolocationProvider>
+                <AntifaudeProvider>
+                  <AppContent {...props} />
+                </AntifaudeProvider>
+              </GeolocationProvider>
+            </UserGroupProvider>
+          </GroupProvider>
+        </UserProfileProvider>
+      </ErrorBoundary>
     </>
   );
 }

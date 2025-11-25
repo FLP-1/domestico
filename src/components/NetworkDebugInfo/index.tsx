@@ -115,7 +115,12 @@ const NetworkDebugInfo: React.FC = () => {
   }, [detectNetworkInfo, refreshRealSSID]);
 
   useEffect(() => {
-    collectDebugInfo();
+    // ✅ Debounce para evitar múltiplas chamadas simultâneas
+    const timeoutId = setTimeout(() => {
+      collectDebugInfo();
+    }, 1000); // Aguardar 1 segundo antes de coletar
+    
+    return () => clearTimeout(timeoutId);
   }, [collectDebugInfo]);
 
   if (error) {

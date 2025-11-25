@@ -2,8 +2,7 @@ import AccessibleEmoji from '../components/AccessibleEmoji';
 // src/pages/shopping-management.tsx
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useAlertManager } from '../hooks/useAlertManager';
 import styled from 'styled-components';
 import FilterSection from '../components/FilterSection';
 import {
@@ -272,6 +271,7 @@ export default function ShoppingManagement() {
   const { currentProfile } = useUserProfile();
   const themeObject = useTheme(currentProfile?.role.toLowerCase());
   const theme = { colors: themeObject.colors };
+  const alertManager = useAlertManager();
 
   // Usar dados centralizados
   const [categories, setCategories] = useState<ShoppingCategory[]>([]);
@@ -349,12 +349,12 @@ export default function ShoppingManagement() {
 
     setShoppingLists(prev => [list, ...prev]);
     setNewList({ name: '', category: '' });
-    toast.success('Lista de compras criada com sucesso!');
+    alertManager.showSuccess('Lista de compras criada com sucesso!');
   };
 
   const handleDeleteList = (id: string) => {
     setShoppingLists(prev => prev.filter(list => list.id !== id));
-    toast.success('Lista excluída com sucesso!');
+    alertManager.showSuccess('Lista excluída com sucesso!');
   };
 
   const handleToggleItem = (listId: string, itemId: string) => {
@@ -409,7 +409,7 @@ export default function ShoppingManagement() {
     );
 
     setNewItemName('');
-    toast.success('Item adicionado à lista!');
+    alertManager.showSuccess('Item adicionado à lista!');
   };
 
   const handleDeleteItem = (listId: string, itemId: string) => {
@@ -431,7 +431,7 @@ export default function ShoppingManagement() {
         return list;
       })
     );
-    toast.success('Item removido da lista!');
+    alertManager.showSuccess('Item removido da lista!');
   };
 
   const openListUnifiedModal = (list: ShoppingList) => {
@@ -482,7 +482,7 @@ export default function ShoppingManagement() {
           userRole={currentProfile?.role || 'Usuário'}
           notificationCount={getTotalLists()}
           onNotificationClick={() =>
-            toast.info('Notificações em desenvolvimento')
+            alertManager.showInfo('Notificações em desenvolvimento')
           }
         />
       </TopBar>
@@ -676,7 +676,7 @@ export default function ShoppingManagement() {
                     $variant='primary'
                     onClick={e => {
                       e.stopPropagation();
-                      toast.info('Compartilhamento em desenvolvimento');
+                      alertManager.showInfo('Compartilhamento em desenvolvimento');
                     }}
                   >
                     <AccessibleEmoji emoji='🔗' label='Compartilhar' />{' '}
@@ -781,18 +781,6 @@ export default function ShoppingManagement() {
         )}
       </UnifiedModal>
 
-      <ToastContainer
-        position='top-center'
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
     </PageContainer>
   );
 }

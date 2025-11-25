@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import { componentShadows, createThemedStyles } from '../../design-system';
 
 // Animações
@@ -46,23 +46,35 @@ const CardContainer = styled.div<{
     const themedStyles = createThemedStyles(props.$theme);
     switch (props.$variant) {
       case 'elevated':
-        return themedStyles.background || '#ffffff';
+        return props.$theme?.colors?.background?.primary || 
+               props.$theme?.background?.primary || 
+               themedStyles.background || 
+               'transparent';
       case 'outlined':
         return 'transparent';
       case 'filled':
-        return themedStyles.surface || '#f8f9fa';
+        return props.$theme?.colors?.background?.secondary || 
+               props.$theme?.background?.secondary || 
+               themedStyles.surface || 
+               'transparent';
       case 'glass':
-        return 'rgba(255, 255, 255, 0.1)';
+        return 'transparent'; // Glass effect será aplicado via backdrop-filter
       default:
-        return themedStyles.background || '#ffffff';
+        return props.$theme?.colors?.background?.primary || 
+               props.$theme?.background?.primary || 
+               themedStyles.background || 
+               'transparent';
     }
   }};
   border: ${props => {
     switch (props.$variant) {
       case 'outlined':
-        return `1px solid ${props.$theme?.colors?.border || '#e5e7eb'}`;
+        return `1px solid ${props.$theme?.colors?.border?.light || 
+                          props.$theme?.border?.light || 
+                          props.$theme?.colors?.border || 
+                          'transparent'}`;
       case 'glass':
-        return '1px solid rgba(255, 255, 255, 0.2)';
+        return '1px solid transparent'; // Glass effect será aplicado via backdrop-filter
       default:
         return 'none';
     }
@@ -107,17 +119,19 @@ const CardContainer = styled.div<{
     const getStatusStyles = () => {
       if (!props.$status || props.$status === 'default') return '';
 
-      const statusColors = {
-        success: '#27ae60',
-        warning: '#f39c12',
-        error: '#e74c3c',
-        info: '#3498db',
-      };
-
-      const color = statusColors[props.$status as keyof typeof statusColors];
+      const statusColor = props.$theme?.colors?.status?.[props.$status]?.border ||
+                         props.$theme?.status?.[props.$status]?.border ||
+                         props.$theme?.colors?.status?.[props.$status] ||
+                         props.$theme?.status?.[props.$status] ||
+                         'transparent';
+      
+      const statusBg = props.$theme?.colors?.status?.[props.$status]?.background ||
+                       props.$theme?.status?.[props.$status]?.background ||
+                       'transparent';
+      
       return `
-        border-left: 4px solid ${color};
-        background: linear-gradient(90deg, ${color}10 0%, transparent 100%);
+        border-left: 4px solid ${statusColor};
+        background: linear-gradient(90deg, ${statusBg} 0%, transparent 100%);
       `;
     };
 
@@ -142,9 +156,9 @@ const CardContainer = styled.div<{
   /* Status animations */
   ${props =>
     props.$status === 'success'
-      ? `
-    animation: ${fadeIn} 0.6s ease-out, ${pulse} 2s infinite;
-  `
+      ? css`
+          animation: ${fadeIn} 0.6s ease-out, ${pulse} 2s infinite;
+        `
       : ''}
 
   /* Glass effect */
@@ -174,31 +188,24 @@ const CardIcon = styled.div<{ $theme?: any; $status?: string }>`
   height: 48px;
   border-radius: 12px;
   background: ${props => {
-    const themedStyles = createThemedStyles(props.$theme);
-    const statusColors = {
-      success: '#d4edda',
-      warning: '#fff3cd',
-      error: '#f8d7da',
-      info: '#d1ecf1',
-    };
-    return (
-      statusColors[props.$status as keyof typeof statusColors] ||
-      themedStyles.primary ||
-      '#e3f2fd'
-    );
+    if (props.$status && props.$status !== 'default') {
+      return props.$theme?.colors?.status?.[props.$status]?.background ||
+             props.$theme?.status?.[props.$status]?.background ||
+             'transparent';
+    }
+    return props.$theme?.colors?.primary ||
+           props.$theme?.accent ||
+           'transparent';
   }};
   color: ${props => {
-    const statusColors = {
-      success: '#155724',
-      warning: '#856404',
-      error: '#721c24',
-      info: '#0c5460',
-    };
-    return (
-      statusColors[props.$status as keyof typeof statusColors] ||
-      props.$theme?.colors?.primary ||
-      '#1976d2'
-    );
+    if (props.$status && props.$status !== 'default') {
+      return props.$theme?.colors?.status?.[props.$status]?.text ||
+             props.$theme?.status?.[props.$status]?.text ||
+             'inherit';
+    }
+    return props.$theme?.colors?.primary ||
+           props.$theme?.accent ||
+           'inherit';
   }};
   font-size: 1.5rem;
   animation: ${slideIn} 0.6s ease-out;
@@ -216,7 +223,12 @@ const CardTitle = styled.h3<{ $size?: 'sm' | 'md' | 'lg'; $theme?: any }>`
     }
   }};
   font-weight: 600;
-  color: ${props => props.$theme?.colors?.text || '#2c3e50'};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark || 
+    props.$theme?.colors?.text || 
+    'inherit'
+  };
   margin: 0;
   line-height: 1.4;
 `;
@@ -236,7 +248,7 @@ const CardFooter = styled.div<{ $centered?: boolean; $theme?: any }>`
 `;
 
 // Stats Card Components
-const StatValue = styled.div<{ $color?: string; $size?: 'sm' | 'md' | 'lg' }>`
+const StatValue = styled.div<{ $color?: string; $size?: 'sm' | 'md' | 'lg'; $theme?: any }>`
   font-size: ${props => {
     switch (props.$size) {
       case 'sm':
@@ -248,12 +260,18 @@ const StatValue = styled.div<{ $color?: string; $size?: 'sm' | 'md' | 'lg' }>`
     }
   }};
   font-weight: 700;
-  color: ${props => props.$color || '#2c3e50'};
+  color: ${props => 
+    props.$color || 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark || 
+    props.$theme?.colors?.text || 
+    'inherit'
+  };
   line-height: 1.2;
   margin-bottom: 0.25rem;
 `;
 
-const StatLabel = styled.div<{ $size?: 'sm' | 'md' | 'lg' }>`
+const StatLabel = styled.div<{ $size?: 'sm' | 'md' | 'lg'; $theme?: any }>`
   font-size: ${props => {
     switch (props.$size) {
       case 'sm':
@@ -264,13 +282,17 @@ const StatLabel = styled.div<{ $size?: 'sm' | 'md' | 'lg' }>`
         return '0.875rem';
     }
   }};
-  color: #6c757d;
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary || 
+    'inherit'
+  };
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 `;
 
-const StatDescription = styled.div<{ $size?: 'sm' | 'md' | 'lg' }>`
+const StatDescription = styled.div<{ $size?: 'sm' | 'md' | 'lg'; $theme?: any }>`
   font-size: ${props => {
     switch (props.$size) {
       case 'sm':
@@ -281,7 +303,11 @@ const StatDescription = styled.div<{ $size?: 'sm' | 'md' | 'lg' }>`
         return '0.8rem';
     }
   }};
-  color: #6c757d;
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary || 
+    'inherit'
+  };
   margin-top: 0.5rem;
   line-height: 1.4;
 `;
@@ -299,26 +325,20 @@ const StatusIndicator = styled.div<{
   font-size: 0.75rem;
   font-weight: 500;
   background: ${props => {
-    const statusColors = {
-      success: '#d4edda',
-      warning: '#fff3cd',
-      error: '#f8d7da',
-      info: '#d1ecf1',
-    };
-    return (
-      statusColors[props.$status as keyof typeof statusColors] || '#e9ecef'
-    );
+    if (props.$status) {
+      return props.$theme?.colors?.status?.[props.$status]?.background ||
+             props.$theme?.status?.[props.$status]?.background ||
+             'transparent';
+    }
+    return 'transparent';
   }};
   color: ${props => {
-    const statusColors = {
-      success: '#155724',
-      warning: '#856404',
-      error: '#721c24',
-      info: '#0c5460',
-    };
-    return (
-      statusColors[props.$status as keyof typeof statusColors] || '#495057'
-    );
+    if (props.$status) {
+      return props.$theme?.colors?.status?.[props.$status]?.text ||
+             props.$theme?.status?.[props.$status]?.text ||
+             'inherit';
+    }
+    return 'inherit';
   }};
   animation: ${props => (props.$status === 'success' ? pulse : 'none')} 2s
     infinite;
@@ -381,12 +401,12 @@ export const UnifiedCard: React.FC<UnifiedCardProps> = ({
               {icon}
             </CardIcon>
           )}
-          <StatValue $color={statsColor} $size={size}>
+          <StatValue $color={statsColor} $size={size} $theme={theme}>
             {statsValue}
           </StatValue>
-          <StatLabel $size={size}>{statsLabel}</StatLabel>
+          <StatLabel $size={size} $theme={theme}>{statsLabel}</StatLabel>
           {statsDescription && (
-            <StatDescription $size={size}>{statsDescription}</StatDescription>
+            <StatDescription $size={size} $theme={theme}>{statsDescription}</StatDescription>
           )}
         </CardContent>
       </CardContainer>

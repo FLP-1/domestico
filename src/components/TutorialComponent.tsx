@@ -813,7 +813,7 @@ export default function TutorialComponent({
                   alt='Logo DOM'
                   width={80}
                   height={80}
-                  priority
+                  // Removido priority para evitar warning de preload não usado
                 />
               </Logo>
             </LogoContainer>

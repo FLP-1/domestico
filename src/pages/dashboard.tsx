@@ -1,7 +1,7 @@
 // src/pages/dashboard.tsx
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
+import { useAlertManager } from '../hooks/useAlertManager';
 import 'react-toastify/dist/ReactToastify.css';
 import styled, { keyframes } from 'styled-components';
 import PageContainer from '../components/PageContainer';
@@ -120,6 +120,7 @@ const PendingCardTitle = styled.h3`
 
 export default function Dashboard() {
   const router = useRouter();
+  const alertManager = useAlertManager();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [selectedWidget, setSelectedWidget] = useState<string | null>(null);
   const [modalOpen, setUnifiedModalOpen] = useState(false);
@@ -374,7 +375,7 @@ export default function Dashboard() {
           userRole={currentProfile?.role || 'Usuário'}
           notificationCount={3}
           onNotificationClick={() =>
-            toast.info('Notificações em desenvolvimento')
+            alertManager.showInfo('Notificações em desenvolvimento')
           }
         />
       </TopBar>
@@ -406,7 +407,7 @@ export default function Dashboard() {
             <UnifiedButton
               $variant='primary'
               onClick={() => {
-                toast.success('Ação executada com sucesso!');
+                alertManager.showSuccess('Ação executada com sucesso!');
                 setUnifiedModalOpen(false);
               }}
               $theme={theme}
@@ -422,18 +423,6 @@ export default function Dashboard() {
           : 'Nenhum widget selecionado.'}
       </UnifiedModal>
 
-      <ToastContainer
-        position='top-right'
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
     </PageContainer>
   );
 }

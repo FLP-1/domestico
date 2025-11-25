@@ -2,7 +2,6 @@ import AccessibleEmoji from '../components/AccessibleEmoji';
 // src/pages/subscription-plans.tsx
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styled from 'styled-components';
 import PageContainer from '../components/PageContainer';
@@ -599,16 +598,16 @@ export default function SubscriptionPlans() {
       name: 'Ultra Pro',
       tagline: 'O plano que vai te dar superpoderes domésticos!',
       description: 'Organize, planeje e execute com a eficiência de um ninja.',
-      monthlyPrice: 79.9,
-      annualPrice: 799,
+      monthlyPrice: 69.9, // Ajustado: sem eSocial automático, preço reduzido
+      annualPrice: 699, // Ajustado proporcionalmente
       annualDiscount: '2 meses grátis',
       features: [
         'Tudo do Super Doméstica',
-        'Integração com wearables',
+        'Sistema Anti-Fraude Completo',
+        'Ferramentas Auxiliares eSocial',
         'Relatórios personalizados',
         'Gamificação (sistema de recompensas)',
         'Gestão de planos de assinatura',
-        'Integração com eSocial Doméstico',
         'Gestão de empréstimos e adiantamentos',
         'API personalizada',
       ],
@@ -1203,19 +1202,6 @@ export default function SubscriptionPlans() {
           </div>
         )}
       </UnifiedModal>
-
-      <ToastContainer
-        position='top-center'
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
     </PageContainer>
   );
 }

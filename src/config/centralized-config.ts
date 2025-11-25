@@ -146,9 +146,9 @@ const DEFAULT_CONFIG: SystemConfig = {
   geolocation: {
     maxDistance: parseInt(process.env.GEOLOCATION_MAX_DISTANCE || '200'),
     accuracyThreshold: parseInt(
-      process.env.GEOLOCATION_ACCURACY_THRESHOLD || '100'
+      process.env.GEOLOCATION_ACCURACY_THRESHOLD || '50'
     ),
-    timeout: parseInt(process.env.GEOLOCATION_TIMEOUT || '10000'),
+    timeout: parseInt(process.env.GEOLOCATION_TIMEOUT || '30000'),
   },
 
   antifraud: {

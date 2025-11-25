@@ -28,12 +28,23 @@ export default async function handler(
       .json({ error: 'Latitude and longitude are required' });
   }
 
+  // ✅ Preservar precisão máxima das coordenadas (não arredondar)
   const latitude = parseFloat(lat as string);
   const longitude = parseFloat(lon as string);
 
   if (isNaN(latitude) || isNaN(longitude)) {
     return res.status(400).json({ error: 'Invalid latitude or longitude' });
   }
+
+  // ✅ Log para debug: verificar coordenadas recebidas
+  console.log('🌐 Geocoding reverso solicitado:', {
+    lat: lat as string,
+    lon: lon as string,
+    latitude,
+    longitude,
+    latPrecision: (lat as string).split('.')[1]?.length || 0,
+    lonPrecision: (lon as string).split('.')[1]?.length || 0,
+  });
 
   try {
     // 🎯 SISTEMA SIMPLIFICADO: Nominatim + OpenCage
@@ -72,7 +83,8 @@ export default async function handler(
       const { loadSystemConfig } = await import('../../../config/centralized-config');
       const config = await loadSystemConfig();
       const nominatimBaseUrl = config.urls.geocoding.nominatim || 'https://nominatim.openstreetmap.org/reverse';
-      const nominatimUrl = `${nominatimBaseUrl}?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1&accept-language=pt-BR&zoom=19`;
+      // ✅ Usar zoom=19 para máxima precisão e incluir no_annotations=1 para melhor performance
+      const nominatimUrl = `${nominatimBaseUrl}?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1&accept-language=pt-BR&zoom=19&no_annotations=1`;
 
       const nominatimResponse = await fetch(nominatimUrl, {
         headers: {
@@ -88,9 +100,10 @@ export default async function handler(
         if (nominatimData && nominatimData.display_name) {
           const address = nominatimData.display_name;
           const components = {
-            street: nominatimData.address?.road || '',
-            number: nominatimData.address?.house_number || '',
-            neighborhood: nominatimData.address?.suburb || '',
+            street: nominatimData.address?.road || nominatimData.address?.street || '',
+            number: nominatimData.address?.house_number || nominatimData.address?.housenumber || nominatimData.address?.number || '',
+            house_number: nominatimData.address?.house_number || nominatimData.address?.housenumber || nominatimData.address?.number || '',
+            neighborhood: nominatimData.address?.suburb || nominatimData.address?.neighbourhood || '',
             city:
               nominatimData.address?.city || nominatimData.address?.town || '',
             state: nominatimData.address?.state || '',

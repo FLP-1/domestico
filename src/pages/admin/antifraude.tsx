@@ -44,54 +44,98 @@ const StatsGrid = styled.div`
 
 const StatCard = styled.div<{
   variant?: 'success' | 'warning' | 'danger' | 'info';
+  $theme?: any;
 }>`
-  background: white;
+  background: ${props => 
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary ||
+    'transparent'};
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 2px 4px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.05)`;
+      }
+    }
+    return 'none';
+  }};
   border-left: 4px solid
     ${props => {
       switch (props.variant) {
         case 'success':
-          return props.theme?.status?.success?.color || '#48bb78';
+          return props.$theme?.colors?.status?.success?.border ||
+                 props.$theme?.status?.success?.border ||
+                 'transparent';
         case 'warning':
-          return props.theme?.status?.warning?.color || '#ed8936';
+          return props.$theme?.colors?.status?.warning?.border ||
+                 props.$theme?.status?.warning?.border ||
+                 'transparent';
         case 'danger':
-          return props.theme?.status?.error?.color || '#f56565';
+          return props.$theme?.colors?.status?.error?.border ||
+                 props.$theme?.status?.error?.border ||
+                 'transparent';
         case 'info':
-          return props.theme?.status?.info?.color || '#4299e1';
+          return props.$theme?.colors?.status?.info?.border ||
+                 props.$theme?.status?.info?.border ||
+                 'transparent';
         default:
-          return getTextSecondary(props.theme);
+          return props.$theme?.colors?.border?.light || 
+                 props.$theme?.border?.light ||
+                 'transparent';
       }
     }};
 `;
 
-const StatLabel = styled.div`
+const StatLabel = styled.div<{ $theme?: any }>`
   font-size: 0.875rem;
-  color: ${props => getTextSecondary(props.theme)};
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'};
   margin-bottom: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 `;
 
-const StatValue = styled.div`
+const StatValue = styled.div<{ $theme?: any }>`
   font-size: 2rem;
   font-weight: 700;
-  color: ${props => getTextDark(props.theme)};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
 `;
 
-const StatSubtext = styled.div`
+const StatSubtext = styled.div<{ $theme?: any }>`
   font-size: 0.75rem;
-  color: #a0aec0;
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'};
   margin-top: 0.25rem;
 `;
 
-const Section = styled.div`
-  background: white;
+const Section = styled.div<{ $theme?: any }>`
+  background: ${props => 
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary ||
+    'transparent'};
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 2px 4px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.05)`;
+      }
+    }
+    return 'none';
+  }};
 `;
 
 const SectionTitle = styled.h2`
@@ -106,25 +150,41 @@ const Table = styled.table`
   border-collapse: collapse;
 `;
 
-const Th = styled.th`
+const Th = styled.th<{ $theme?: any }>`
   text-align: left;
   padding: 0.75rem;
-  background: #f7fafc;
-  border-bottom: 2px solid #e2e8f0;
+  background: ${props => 
+    props.$theme?.colors?.background?.secondary || 
+    props.$theme?.background?.secondary ||
+    'transparent'};
+  border-bottom: 2px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light ||
+    'transparent'};
   font-size: 0.875rem;
   font-weight: 600;
-  color: #4a5568;
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
 `;
 
-const Td = styled.td`
+const Td = styled.td<{ $theme?: any }>`
   padding: 0.75rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light ||
+    'transparent'};
   font-size: 0.875rem;
-  color: #2d3748;
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
 `;
 
 const Badge = styled.span<{
   variant?: 'success' | 'warning' | 'danger' | 'info';
+  $theme?: any;
 }>`
   display: inline-block;
   padding: 0.25rem 0.75rem;
@@ -134,29 +194,49 @@ const Badge = styled.span<{
   background: ${props => {
     switch (props.variant) {
       case 'success':
-        return '#c6f6d5';
+        return props.$theme?.colors?.status?.success?.background ||
+               props.$theme?.status?.success?.background ||
+               'transparent';
       case 'warning':
-        return '#feebc8';
+        return props.$theme?.colors?.status?.warning?.background ||
+               props.$theme?.status?.warning?.background ||
+               'transparent';
       case 'danger':
-        return '#fed7d7';
+        return props.$theme?.colors?.status?.error?.background ||
+               props.$theme?.status?.error?.background ||
+               'transparent';
       case 'info':
-        return '#bee3f8';
+        return props.$theme?.colors?.status?.info?.background ||
+               props.$theme?.status?.info?.background ||
+               'transparent';
       default:
-        return '#e2e8f0';
+        return props.$theme?.colors?.background?.secondary || 
+               props.$theme?.background?.secondary ||
+               'transparent';
     }
   }};
   color: ${props => {
     switch (props.variant) {
       case 'success':
-        return '#22543d';
+        return props.$theme?.colors?.status?.success?.text ||
+               props.$theme?.status?.success?.text ||
+               'inherit';
       case 'warning':
-        return '#7c2d12';
+        return props.$theme?.colors?.status?.warning?.text ||
+               props.$theme?.status?.warning?.text ||
+               'inherit';
       case 'danger':
-        return '#742a2a';
+        return props.$theme?.colors?.status?.error?.text ||
+               props.$theme?.status?.error?.text ||
+               'inherit';
       case 'info':
-        return '#2c5282';
+        return props.$theme?.colors?.status?.info?.text ||
+               props.$theme?.status?.info?.text ||
+               'inherit';
       default:
-        return '#2d3748';
+        return props.$theme?.colors?.text?.dark || 
+               props.$theme?.text?.dark ||
+               'inherit';
     }
   }};
 `;
@@ -168,9 +248,15 @@ const LoadingContainer = styled.div`
   min-height: 400px;
 `;
 
-const ErrorContainer = styled.div`
-  background: #fed7d7;
-  color: #742a2a;
+const ErrorContainer = styled.div<{ $theme?: any }>`
+  background: ${props => 
+    props.$theme?.colors?.status?.error?.background ||
+    props.$theme?.status?.error?.background ||
+    'transparent'};
+  color: ${props => 
+    props.$theme?.colors?.status?.error?.text ||
+    props.$theme?.status?.error?.text ||
+    'inherit'};
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
@@ -244,7 +330,7 @@ export default function AntifaudeDashboard() {
 
   if (carregando) {
     return (
-      <PageContainer>
+      <PageContainer $theme={theme}>
         <LoadingContainer>
           <div>Carregando estatísticas...</div>
         </LoadingContainer>
@@ -254,8 +340,8 @@ export default function AntifaudeDashboard() {
 
   if (erro || !estatisticas) {
     return (
-      <PageContainer>
-        <ErrorContainer>
+      <PageContainer $theme={theme}>
+        <ErrorContainer $theme={theme}>
           <strong>Erro:</strong>{' '}
           {erro || 'Não foi possível carregar as estatísticas'}
         </ErrorContainer>
@@ -269,100 +355,100 @@ export default function AntifaudeDashboard() {
         <title>Dashboard Antifraude - DOM</title>
       </Head>
 
-      <PageContainer>
-        <Header>
-          <Title>
+      <PageContainer $theme={theme}>
+        <Header $theme={theme}>
+          <Title $theme={theme}>
             <span role='img' aria-label='Escudo'>
               🛡️
             </span>{' '}
             Dashboard Antifraude
           </Title>
-          <Subtitle>
+          <Subtitle $theme={theme}>
             Monitoramento em tempo real de segurança e detecção de fraudes
           </Subtitle>
         </Header>
 
         <StatsGrid>
-          <StatCard variant='info'>
-            <StatLabel>Total de Análises</StatLabel>
-            <StatValue>
+          <StatCard variant='info' $theme={theme}>
+            <StatLabel $theme={theme}>Total de Análises</StatLabel>
+            <StatValue $theme={theme}>
               {estatisticas.totais.analises.toLocaleString()}
             </StatValue>
-            <StatSubtext>
+            <StatSubtext $theme={theme}>
               {estatisticas.totais.analisesHoje} hoje •{' '}
               {estatisticas.totais.analisesSemana} esta semana
             </StatSubtext>
           </StatCard>
 
-          <StatCard variant='danger'>
-            <StatLabel>Alto Risco</StatLabel>
-            <StatValue>
+          <StatCard variant='danger' $theme={theme}>
+            <StatLabel $theme={theme}>Alto Risco</StatLabel>
+            <StatValue $theme={theme}>
               {estatisticas.deteccoes.altoRisco.toLocaleString()}
             </StatValue>
-            <StatSubtext>
+            <StatSubtext $theme={theme}>
               {estatisticas.taxas.altoRisco.toFixed(2)}% do total
             </StatSubtext>
           </StatCard>
 
-          <StatCard variant='warning'>
-            <StatLabel>Bloqueadas</StatLabel>
-            <StatValue>
+          <StatCard variant='warning' $theme={theme}>
+            <StatLabel $theme={theme}>Bloqueadas</StatLabel>
+            <StatValue $theme={theme}>
               {estatisticas.deteccoes.bloqueadas.toLocaleString()}
             </StatValue>
-            <StatSubtext>
+            <StatSubtext $theme={theme}>
               {estatisticas.taxas.bloqueio.toFixed(2)}% taxa de bloqueio
             </StatSubtext>
           </StatCard>
 
-          <StatCard variant='success'>
-            <StatLabel>Dispositivos Únicos</StatLabel>
-            <StatValue>
+          <StatCard variant='success' $theme={theme}>
+            <StatLabel $theme={theme}>Dispositivos Únicos</StatLabel>
+            <StatValue $theme={theme}>
               {estatisticas.totais.dispositivosUnicos.toLocaleString()}
             </StatValue>
-            <StatSubtext>
+            <StatSubtext $theme={theme}>
               {estatisticas.deteccoes.dispositivosNovos} novos recentemente
             </StatSubtext>
           </StatCard>
         </StatsGrid>
 
         <StatsGrid>
-          <StatCard>
-            <StatLabel>VPNs Detectadas</StatLabel>
-            <StatValue>
+          <StatCard $theme={theme}>
+            <StatLabel $theme={theme}>VPNs Detectadas</StatLabel>
+            <StatValue $theme={theme}>
               {estatisticas.deteccoes.vpns.toLocaleString()}
             </StatValue>
           </StatCard>
 
-          <StatCard>
-            <StatLabel>Bots Detectados</StatLabel>
-            <StatValue>
+          <StatCard $theme={theme}>
+            <StatLabel $theme={theme}>Bots Detectados</StatLabel>
+            <StatValue $theme={theme}>
               {estatisticas.deteccoes.bots.toLocaleString()}
             </StatValue>
           </StatCard>
 
-          <StatCard>
-            <StatLabel>IPs Únicos</StatLabel>
-            <StatValue>
+          <StatCard $theme={theme}>
+            <StatLabel $theme={theme}>IPs Únicos</StatLabel>
+            <StatValue $theme={theme}>
               {estatisticas.totais.ipsUnicos.toLocaleString()}
             </StatValue>
           </StatCard>
 
-          <StatCard>
-            <StatLabel>Velocidades Impossíveis</StatLabel>
-            <StatValue>
+          <StatCard $theme={theme}>
+            <StatLabel $theme={theme}>Velocidades Impossíveis</StatLabel>
+            <StatValue $theme={theme}>
               {estatisticas.deteccoes.velocidadesImpossiveis.toLocaleString()}
             </StatValue>
           </StatCard>
         </StatsGrid>
 
-        <Section>
-          <SectionTitle>Distribuição por Nível de Risco</SectionTitle>
-          <Table>
+        <Section $theme={theme}>
+          <SectionTitle $theme={theme}>Distribuição por Nível de Risco</SectionTitle>
+          <Table $theme={theme}>
             <thead>
               <tr>
-                <Th>Nível</Th>
-                <Th>Quantidade</Th>
-                <Th>Porcentagem</Th>
+                <Th $theme={theme}>Nível</Th>
+                <Th $theme={theme}>Quantidade</Th>
+                <Th $theme={theme}>Porcentagem</Th>
               </tr>
             </thead>
             <tbody>
@@ -380,11 +466,11 @@ export default function AntifaudeDashboard() {
 
                 return (
                   <tr key={item.nivel}>
-                    <Td>
-                      <Badge variant={variant}>{item.nivel}</Badge>
+                    <Td $theme={theme}>
+                      <Badge variant={variant} $theme={theme}>{item.nivel}</Badge>
                     </Td>
-                    <Td>{item.quantidade.toLocaleString()}</Td>
-                    <Td>{porcentagem}%</Td>
+                    <Td $theme={theme}>{item.quantidade.toLocaleString()}</Td>
+                    <Td $theme={theme}>{porcentagem}%</Td>
                   </tr>
                 );
               })}
@@ -392,41 +478,41 @@ export default function AntifaudeDashboard() {
           </Table>
         </Section>
 
-        <Section>
-          <SectionTitle>Top 10 IPs Mais Vistos</SectionTitle>
-          <Table>
+        <Section $theme={theme}>
+          <SectionTitle $theme={theme}>Top 10 IPs Mais Vistos</SectionTitle>
+          <Table $theme={theme}>
             <thead>
               <tr>
-                <Th>IP</Th>
-                <Th>Localização</Th>
-                <Th>Visitas</Th>
-                <Th>Tipo</Th>
-                <Th>Status</Th>
+                <Th $theme={theme}>IP</Th>
+                <Th $theme={theme}>Localização</Th>
+                <Th $theme={theme}>Visitas</Th>
+                <Th $theme={theme}>Tipo</Th>
+                <Th $theme={theme}>Status</Th>
               </tr>
             </thead>
             <tbody>
               {estatisticas.topIPs.map(ip => (
                 <tr key={ip.ipAddress}>
-                  <Td>{ip.ipAddress}</Td>
-                  <Td>
+                  <Td $theme={theme}>{ip.ipAddress}</Td>
+                  <Td $theme={theme}>
                     {ip.cidade && ip.pais ? `${ip.cidade}, ${ip.pais}` : 'N/D'}
                   </Td>
-                  <Td>{ip.vezesVisto.toLocaleString()}</Td>
-                  <Td>
-                    {ip.isVPN && <Badge variant='warning'>VPN</Badge>}
-                    {ip.isProxy && <Badge variant='warning'>Proxy</Badge>}
+                  <Td $theme={theme}>{ip.vezesVisto.toLocaleString()}</Td>
+                  <Td $theme={theme}>
+                    {ip.isVPN && <Badge variant='warning' $theme={theme}>VPN</Badge>}
+                    {ip.isProxy && <Badge variant='warning' $theme={theme}>Proxy</Badge>}
                     {ip.isDatacenter && (
-                      <Badge variant='info'>Datacenter</Badge>
+                      <Badge variant='info' $theme={theme}>Datacenter</Badge>
                     )}
                     {!ip.isVPN && !ip.isProxy && !ip.isDatacenter && (
-                      <Badge variant='success'>Normal</Badge>
+                      <Badge variant='success' $theme={theme}>Normal</Badge>
                     )}
                   </Td>
-                  <Td>
+                  <Td $theme={theme}>
                     {ip.bloqueado ? (
-                      <Badge variant='danger'>Bloqueado</Badge>
+                      <Badge variant='danger' $theme={theme}>Bloqueado</Badge>
                     ) : (
-                      <Badge variant='success'>Permitido</Badge>
+                      <Badge variant='success' $theme={theme}>Permitido</Badge>
                     )}
                   </Td>
                 </tr>

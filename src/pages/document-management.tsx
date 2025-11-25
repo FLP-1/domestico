@@ -3,8 +3,7 @@ import AccessibleEmoji from '../components/AccessibleEmoji';
 
 import { useRouter } from 'next/router';
 import { useRef, useState, useEffect } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useAlertManager } from '../hooks/useAlertManager';
 import styled from 'styled-components';
 import FilterSection from '../components/FilterSection';
 import { FormGroup, Input, Label, Select } from '../components/FormComponents';
@@ -238,6 +237,7 @@ const DocumentSubtitle = styled.p<{ $theme?: Theme }>`
 
 export default function DocumentManagement() {
   const router = useRouter();
+  const alertManager = useAlertManager();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [modalOpen, setUnifiedModalOpen] = useState(false);
   const [modalType, setUnifiedModalType] = useState<'view' | 'edit' | 'upload'>(
@@ -467,7 +467,7 @@ export default function DocumentManagement() {
         setCategories(defaultCategories);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
-        toast.error('Erro ao carregar documentos');
+        alertManager.showError('Erro ao carregar documentos');
       }
     };
 
@@ -549,12 +549,12 @@ export default function DocumentManagement() {
     });
     setUnifiedModalOpen(false);
     setUploadProgress(0);
-    toast.success('Documento criado com sucesso!');
+    alertManager.showSuccess('Documento criado com sucesso!');
   };
 
   const handleDeleteDocument = (id: string) => {
     setDocuments(prev => prev.filter(doc => doc.id !== id));
-    toast.success('Documento excluído com sucesso!');
+    alertManager.showSuccess('Documento excluído com sucesso!');
   };
 
   const openUnifiedModal = (
@@ -611,7 +611,7 @@ export default function DocumentManagement() {
           userRole={currentProfile?.role || 'Usuário'}
           notificationCount={getExpiringDocumentsCount()}
           onNotificationClick={() =>
-            toast.info('Notificações em desenvolvimento')
+            alertManager.showInfo('Notificações em desenvolvimento')
           }
         />
       </TopBar>
@@ -950,18 +950,6 @@ export default function DocumentManagement() {
         )}
       </UnifiedModal>
 
-      <ToastContainer
-        position='top-center'
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
     </PageContainer>
   );
 }

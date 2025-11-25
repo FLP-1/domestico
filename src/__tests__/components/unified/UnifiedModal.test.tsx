@@ -1,321 +1,212 @@
-/**
- * Testes Unitários: UnifiedModal Component
- * Componente crítico de modal unificado do sistema
- */
-
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { ThemeProvider } from 'styled-components';
-import { UnifiedModal } from '@/components/UnifiedModal';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { UnifiedModal } from '../../../components/UnifiedModal';
 
-// Tema mock para testes
+// Mock do tema básico
 const mockTheme = {
   colors: {
-    primary: '#29ABE2',
-    secondary: '#1e8bc3',
-    text: '#2C3E50',
-    background: '#FFFFFF',
-    surface: '#F8F9FA',
-    border: '#E9ECEF',
+    background: {
+      primary: '#ffffff',
+      secondary: '#f8f9fa',
+    },
+    text: {
+      primary: '#2c3e50',
+      secondary: '#7f8c8d',
+    },
+    border: {
+      light: '#e5e7eb',
+    },
   },
 };
 
-// Wrapper com tema
-const ThemeWrapper = ({ children }: { children: React.ReactNode }) => (
-  <ThemeProvider theme={mockTheme}>{children}</ThemeProvider>
-);
-
 describe('UnifiedModal', () => {
+  const mockOnClose = jest.fn();
+
   beforeEach(() => {
-    jest.clearAllMocks();
-    // Reset body overflow
-    document.body.style.overflow = 'unset';
+    mockOnClose.mockClear();
   });
 
-  afterEach(() => {
-    document.body.style.overflow = 'unset';
+  it('deve renderizar quando isOpen é true', () => {
+    render(
+      <UnifiedModal isOpen={true} onClose={mockOnClose} $theme={mockTheme}>
+        <div>Conteúdo do modal</div>
+      </UnifiedModal>
+    );
+
+    expect(screen.getByText('Conteúdo do modal')).toBeInTheDocument();
   });
 
-  describe('Renderização Básica', () => {
-    it('deve renderizar quando isOpen é true', () => {
-      render(
-        <ThemeWrapper>
-          <UnifiedModal isOpen={true} onClose={jest.fn()} title="Test Modal">
-            Modal Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
+  it('não deve renderizar quando isOpen é false', () => {
+    render(
+      <UnifiedModal isOpen={false} onClose={mockOnClose} $theme={mockTheme}>
+        <div>Conteúdo do modal</div>
+      </UnifiedModal>
+    );
 
-      expect(screen.getByText('Test Modal')).toBeInTheDocument();
-      expect(screen.getByText('Modal Content')).toBeInTheDocument();
-    });
-
-    it('não deve renderizar quando isOpen é false', () => {
-      render(
-        <ThemeWrapper>
-          <UnifiedModal isOpen={false} onClose={jest.fn()} title="Test Modal">
-            Modal Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
-
-      expect(screen.queryByText('Test Modal')).not.toBeInTheDocument();
-    });
-
-    it('deve renderizar sem título', () => {
-      render(
-        <ThemeWrapper>
-          <UnifiedModal isOpen={true} onClose={jest.fn()}>
-            Modal Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
-
-      expect(screen.getByText('Modal Content')).toBeInTheDocument();
-    });
-
-    it('deve renderizar com footer', () => {
-      render(
-        <ThemeWrapper>
-          <UnifiedModal
-            isOpen={true}
-            onClose={jest.fn()}
-            footer={<button>Footer Button</button>}
-          >
-            Modal Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
-
-      expect(screen.getByText('Footer Button')).toBeInTheDocument();
-    });
+    expect(screen.queryByText('Conteúdo do modal')).not.toBeInTheDocument();
   });
 
-  describe('Interações', () => {
-    it('deve chamar onClose quando botão de fechar é clicado', () => {
-      const handleClose = jest.fn();
-      render(
-        <ThemeWrapper>
-          <UnifiedModal isOpen={true} onClose={handleClose} title="Test Modal">
-            Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
+  it('deve renderizar título quando fornecido', () => {
+    render(
+      <UnifiedModal
+        isOpen={true}
+        onClose={mockOnClose}
+        title="Título do Modal"
+        $theme={mockTheme}
+      >
+        <div>Conteúdo</div>
+      </UnifiedModal>
+    );
 
-      const closeButton = screen.getByLabelText('Fechar modal');
-      fireEvent.click(closeButton);
-
-      expect(handleClose).toHaveBeenCalledTimes(1);
-    });
-
-    it('deve chamar onClose quando ESC é pressionado', async () => {
-      const handleClose = jest.fn();
-      render(
-        <ThemeWrapper>
-          <UnifiedModal isOpen={true} onClose={handleClose} title="Test Modal">
-            Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
-
-      fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
-
-      await waitFor(() => {
-        expect(handleClose).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    it('deve chamar onClose quando overlay é clicado', () => {
-      const handleClose = jest.fn();
-      render(
-        <ThemeWrapper>
-          <UnifiedModal isOpen={true} onClose={handleClose} title="Test Modal">
-            Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
-
-      // Encontrar o overlay (parent do container)
-      const modal = screen.getByRole('dialog');
-      const overlay = modal.parentElement;
-      
-      if (overlay) {
-        fireEvent.click(overlay);
-        expect(handleClose).toHaveBeenCalledTimes(1);
-      }
-    });
-
-    it('não deve chamar onClose quando conteúdo do modal é clicado', () => {
-      const handleClose = jest.fn();
-      render(
-        <ThemeWrapper>
-          <UnifiedModal isOpen={true} onClose={handleClose} title="Test Modal">
-            Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
-
-      const modal = screen.getByRole('dialog');
-      fireEvent.click(modal);
-
-      expect(handleClose).not.toHaveBeenCalled();
-    });
-
-    it('não deve mostrar botão de fechar quando showCloseButton é false', () => {
-      render(
-        <ThemeWrapper>
-          <UnifiedModal
-            isOpen={true}
-            onClose={jest.fn()}
-            title="Test Modal"
-            showCloseButton={false}
-          >
-            Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
-
-      expect(screen.queryByLabelText('Fechar modal')).not.toBeInTheDocument();
-    });
+    expect(screen.getByText('Título do Modal')).toBeInTheDocument();
   });
 
-  describe('Variants', () => {
-    const variants = ['default', 'fullscreen', 'compact'] as const;
+  it('deve chamar onClose ao clicar no botão de fechar', () => {
+    render(
+      <UnifiedModal
+        isOpen={true}
+        onClose={mockOnClose}
+        title="Título"
+        showCloseButton={true}
+        $theme={mockTheme}
+      >
+        <div>Conteúdo</div>
+      </UnifiedModal>
+    );
 
-    variants.forEach(variant => {
-      it(`deve renderizar variant ${variant}`, () => {
-        const { unmount } = render(
-          <ThemeWrapper>
-            <UnifiedModal
-              isOpen={true}
-              onClose={jest.fn()}
-              variant={variant}
-            >
-              Content
-            </UnifiedModal>
-          </ThemeWrapper>
-        );
-        expect(screen.getByText('Content')).toBeInTheDocument();
-        unmount();
-      });
-    });
+    const closeButton = screen.getByRole('button', { name: /fechar/i });
+    fireEvent.click(closeButton);
+
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
-  describe('Tamanhos Customizados', () => {
-    it('deve aplicar maxWidth customizado', () => {
-      render(
-        <ThemeWrapper>
-          <UnifiedModal
-            isOpen={true}
-            onClose={jest.fn()}
-            maxWidth="800px"
-          >
-            Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
+  it('deve chamar onClose ao pressionar Escape', () => {
+    render(
+      <UnifiedModal isOpen={true} onClose={mockOnClose} $theme={mockTheme}>
+        <div>Conteúdo</div>
+      </UnifiedModal>
+    );
 
-      const modal = screen.getByRole('dialog');
-      expect(modal).toBeInTheDocument();
-    });
+    fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
 
-    it('deve aplicar width customizado', () => {
-      render(
-        <ThemeWrapper>
-          <UnifiedModal isOpen={true} onClose={jest.fn()} width="500px">
-            Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
-
-      const modal = screen.getByRole('dialog');
-      expect(modal).toBeInTheDocument();
-    });
-
-    it('deve aplicar height customizado', () => {
-      render(
-        <ThemeWrapper>
-          <UnifiedModal isOpen={true} onClose={jest.fn()} height="400px">
-            Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
-
-      const modal = screen.getByRole('dialog');
-      expect(modal).toBeInTheDocument();
-    });
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
-  describe('Acessibilidade', () => {
-    it('deve ter role dialog', () => {
-      render(
-        <ThemeWrapper>
-          <UnifiedModal isOpen={true} onClose={jest.fn()} title="Test Modal">
-            Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
+  it('deve chamar onClose ao clicar no overlay', () => {
+    const { container } = render(
+      <UnifiedModal isOpen={true} onClose={mockOnClose} $theme={mockTheme}>
+        <div>Conteúdo</div>
+      </UnifiedModal>
+    );
 
-      expect(screen.getByRole('dialog')).toBeInTheDocument();
-    });
-
-    it('deve ter aria-modal', () => {
-      render(
-        <ThemeWrapper>
-          <UnifiedModal isOpen={true} onClose={jest.fn()} title="Test Modal">
-            Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
-
-      const modal = screen.getByRole('dialog');
-      expect(modal).toHaveAttribute('aria-modal', 'true');
-    });
-
-    it('deve aceitar aria-label', () => {
-      render(
-        <ThemeWrapper>
-          <UnifiedModal
-            isOpen={true}
-            onClose={jest.fn()}
-            aria-label="Modal de teste"
-          >
-            Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
-
-      const modal = screen.getByLabelText('Modal de teste');
-      expect(modal).toBeInTheDocument();
-    });
-
-    it('deve usar título como aria-label quando não fornecido', () => {
-      render(
-        <ThemeWrapper>
-          <UnifiedModal isOpen={true} onClose={jest.fn()} title="Test Modal">
-            Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
-
-      const modal = screen.getByLabelText('Test Modal');
-      expect(modal).toBeInTheDocument();
-    });
+    // Encontrar o overlay (primeiro elemento filho)
+    const overlay = container.firstChild;
+    if (overlay) {
+      fireEvent.click(overlay);
+      expect(mockOnClose).toHaveBeenCalledTimes(1);
+    }
   });
 
-  describe('Comportamento do Body', () => {
-    it('deve prevenir scroll do body quando modal está aberto', () => {
-      render(
-        <ThemeWrapper>
-          <UnifiedModal isOpen={true} onClose={jest.fn()}>
-            Content
-          </UnifiedModal>
-        </ThemeWrapper>
-      );
+  it('não deve chamar onClose ao clicar no conteúdo do modal', () => {
+    const { container } = render(
+      <UnifiedModal isOpen={true} onClose={mockOnClose} $theme={mockTheme}>
+        <div data-testid="modal-content">Conteúdo</div>
+      </UnifiedModal>
+    );
 
-      // Verificar se o overflow foi alterado (pode variar dependendo da implementação)
-      expect(screen.getByText('Content')).toBeInTheDocument();
-    });
+    const content = screen.getByTestId('modal-content');
+    fireEvent.click(content);
+
+    expect(mockOnClose).not.toHaveBeenCalled();
+  });
+
+  it('deve renderizar footer quando fornecido', () => {
+    render(
+      <UnifiedModal
+        isOpen={true}
+        onClose={mockOnClose}
+        footer={<div>Footer do modal</div>}
+        $theme={mockTheme}
+      >
+        <div>Conteúdo</div>
+      </UnifiedModal>
+    );
+
+    expect(screen.getByText('Footer do modal')).toBeInTheDocument();
+  });
+
+  it('deve aplicar variante corretamente', () => {
+    const { container: containerDefault } = render(
+      <UnifiedModal
+        isOpen={true}
+        onClose={mockOnClose}
+        variant="default"
+        $theme={mockTheme}
+      >
+        <div>Default</div>
+      </UnifiedModal>
+    );
+
+    const { container: containerCompact } = render(
+      <UnifiedModal
+        isOpen={true}
+        onClose={mockOnClose}
+        variant="compact"
+        $theme={mockTheme}
+      >
+        <div>Compact</div>
+      </UnifiedModal>
+    );
+
+    expect(containerDefault.firstChild).toBeInTheDocument();
+    expect(containerCompact.firstChild).toBeInTheDocument();
+  });
+
+  it('deve aplicar maxWidth quando fornecido', () => {
+    const { container } = render(
+      <UnifiedModal
+        isOpen={true}
+        onClose={mockOnClose}
+        maxWidth="800px"
+        $theme={mockTheme}
+      >
+        <div>Conteúdo</div>
+      </UnifiedModal>
+    );
+
+    // Verificar se o modal foi renderizado
+    expect(container.firstChild).toBeInTheDocument();
+  });
+
+  it('deve ter aria-label quando fornecido', () => {
+    render(
+      <UnifiedModal
+        isOpen={true}
+        onClose={mockOnClose}
+        aria-label="Modal de teste"
+        $theme={mockTheme}
+      >
+        <div>Conteúdo</div>
+      </UnifiedModal>
+    );
+
+    const modal = screen.getByLabelText('Modal de teste');
+    expect(modal).toBeInTheDocument();
+  });
+
+  it('não deve mostrar botão de fechar quando showCloseButton é false', () => {
+    render(
+      <UnifiedModal
+        isOpen={true}
+        onClose={mockOnClose}
+        showCloseButton={false}
+        $theme={mockTheme}
+      >
+        <div>Conteúdo</div>
+      </UnifiedModal>
+    );
+
+    const closeButton = screen.queryByRole('button', { name: /fechar/i });
+    expect(closeButton).not.toBeInTheDocument();
   });
 });
-

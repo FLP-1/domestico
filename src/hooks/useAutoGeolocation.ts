@@ -54,8 +54,8 @@ export const useAutoGeolocation = (options: UseAutoGeolocationOptions = {}) => {
             },
             {
               enableHighAccuracy: true,
-              timeout: 10000,
-              maximumAge: 60000, // Aceitar posição de até 1 minuto
+              timeout: 30000, // 30 segundos para dar mais tempo ao GPS de alta precisão
+              maximumAge: 0, // Forçar captura sempre (sem cache) para melhor precisão
             }
           );
         }

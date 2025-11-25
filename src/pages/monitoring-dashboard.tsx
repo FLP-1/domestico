@@ -6,6 +6,9 @@ import styled, { keyframes } from 'styled-components';
 import AccessibleEmoji from '../components/AccessibleEmoji';
 import Sidebar from '../components/Sidebar';
 import WelcomeSection from '../components/WelcomeSection';
+import PageContainer from '../components/PageContainer';
+import PageHeader from '../components/PageHeader';
+import TopBar from '../components/TopBar';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
 import type { Theme } from '../types/theme';
@@ -23,6 +26,7 @@ import {
   OptimizedFlexContainer,
   OptimizedStatusIndicator,
 } from '../components/shared/optimized-styles';
+import { fadeIn, pulse } from '../components/shared/animations';
 
 // Funções auxiliares
 const getActivityIcon = (tipo: string) => {
@@ -59,17 +63,6 @@ const formatTimeAgo = (dateString: string) => {
   return `${diffInDays} dia${diffInDays > 1 ? 's' : ''} atrás`;
 };
 
-// Animações
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-const pulse = keyframes`
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-`;
-
 // Styled Component para flex container
 const FlexContainer = styled.div`
   display: flex;
@@ -77,65 +70,7 @@ const FlexContainer = styled.div`
   gap: 1rem;
 `;
 
-// Styled Components
-const Container = styled.div`
-  display: flex;
-  min-height: 100vh;
-  background: linear-gradient(
-    135deg,
-    ${props => {
-      const bg = props.theme?.colors?.background;
-      if (typeof bg === 'object' && bg && 'secondary' in bg) {
-        return bg.secondary || '#f5f7fa';
-      }
-      return '#f5f7fa';
-    }} 0%,
-    ${props => {
-      const bg = props.theme?.colors?.background;
-      if (typeof bg === 'object' && bg && 'secondary' in bg) {
-        return bg.secondary || '#c3cfe2';
-      }
-      return '#c3cfe2';
-    }} 100%
-  );
-  animation: ${fadeIn} 0.6s ease-out;
-`;
-
-const MainContent = styled.div`
-  flex: 1;
-  padding: 2rem;
-  margin-left: 280px;
-  max-width: calc(100vw - 280px);
-  overflow-x: auto;
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-`;
-
-const Title = styled.h1`
-  font-family: 'Montserrat', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: ${props => props.theme?.colors?.primary || '#29ABE2'};
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const Subtitle = styled.p`
-  font-size: 1.1rem;
-  color: ${props => getTextSecondary(props.theme)};
-  margin: 0.5rem 0 0 0;
-  opacity: 0.8;
-`;
+// Header, Title e Subtitle removidos - usando PageHeader melhorado
 
 const StatusIndicator = styled.div<{ $status: string; $theme?: Theme }>`
   display: flex;
@@ -147,16 +82,47 @@ const StatusIndicator = styled.div<{ $status: string; $theme?: Theme }>`
   background: ${props => {
     switch (props.$status) {
       case 'online':
-        return props.$theme?.colors?.success || '#90EE90';
+        return props.$theme?.colors?.status?.success?.background ||
+               props.$theme?.status?.success?.background ||
+               props.$theme?.colors?.success ||
+               'transparent';
       case 'warning':
-        return props.theme?.colors?.warning || '#f39c12';
+        return props.$theme?.colors?.status?.warning?.background ||
+               props.$theme?.status?.warning?.background ||
+               props.$theme?.colors?.warning ||
+               'transparent';
       case 'error':
-        return props.theme?.colors?.error || '#e74c3c';
+        return props.$theme?.colors?.status?.error?.background ||
+               props.$theme?.status?.error?.background ||
+               props.$theme?.colors?.error ||
+               'transparent';
       default:
-        return props.theme?.colors?.info || '#95a5a6';
+        return props.$theme?.colors?.status?.info?.background ||
+               props.$theme?.status?.info?.background ||
+               props.$theme?.colors?.info ||
+               'transparent';
     }
   }};
-  color: white;
+  color: ${props => {
+    switch (props.$status) {
+      case 'online':
+        return props.$theme?.colors?.status?.success?.text ||
+               props.$theme?.status?.success?.text ||
+               'inherit';
+      case 'warning':
+        return props.$theme?.colors?.status?.warning?.text ||
+               props.$theme?.status?.warning?.text ||
+               'inherit';
+      case 'error':
+        return props.$theme?.colors?.status?.error?.text ||
+               props.$theme?.status?.error?.text ||
+               'inherit';
+      default:
+        return props.$theme?.colors?.status?.info?.text ||
+               props.$theme?.status?.info?.text ||
+               'inherit';
+    }
+  }};
   animation: ${props => (props.$status === 'online' ? pulse : 'none')} 2s
     infinite;
 `;
@@ -183,21 +149,30 @@ const MetricTitle = styled.h3`
 const MetricValue = styled.div<{ $theme?: Theme }>`
   font-size: 2.5rem;
   font-weight: 700;
-  color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
+  color: ${props => 
+    props.$theme?.colors?.primary || 
+    props.$theme?.accent ||
+    'inherit'};
   margin-bottom: 0.5rem;
 `;
 
-const MetricSubtext = styled.div`
+const MetricSubtext = styled.div<{ $theme?: any }>`
   font-size: 0.9rem;
-  color: #7f8c8d;
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'};
 `;
 
 // ChartContainer removido - agora usando UnifiedCard para padronização visual
 
-const ChartTitle = styled.h3`
+const ChartTitle = styled.h3<{ $theme?: any }>`
   font-size: 1.3rem;
   font-weight: 600;
-  color: ${props => getTextDark(props.theme)};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
   margin: 0 0 1.5rem 0;
   display: flex;
   align-items: center;
@@ -218,29 +193,48 @@ const ActivityItem = styled.div<{ $type: string; $theme?: Theme }>`
   gap: 1rem;
   padding: 1rem;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
+  background: ${props => 
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary ||
+    'transparent'};
   border-left: 4px solid
     ${props => {
       switch (props.$type) {
         case 'success':
-          return props.$theme?.colors?.success || '#90EE90';
+          return props.$theme?.colors?.status?.success?.border ||
+                 props.$theme?.status?.success?.border ||
+                 props.$theme?.colors?.success ||
+                 'transparent';
         case 'error':
-          return '#e74c3c';
+          return props.$theme?.colors?.status?.error?.border ||
+                 props.$theme?.status?.error?.border ||
+                 'transparent';
         case 'warning':
-          return '#f39c12';
+          return props.$theme?.colors?.status?.warning?.border ||
+                 props.$theme?.status?.warning?.border ||
+                 'transparent';
         default:
-          return '#95a5a6';
+          return 'transparent';
       }
     }};
   transition: all 0.3s ease;
 
   &:hover {
     transform: translateX(5px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: ${props => {
+      const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+      if (shadowColor && shadowColor.startsWith('rgba')) {
+        const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (match) {
+          return `0 4px 16px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1)`;
+        }
+      }
+      return 'none';
+    }};
   }
 `;
 
-const ActivityIcon = styled.div`
+const ActivityIcon = styled.div<{ $theme?: any }>`
   font-size: 1.5rem;
   width: 40px;
   height: 40px;
@@ -248,27 +242,47 @@ const ActivityIcon = styled.div`
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.9)`;
+    }
+    return props.$theme?.colors?.background?.primary || 
+           props.$theme?.background?.primary ||
+           'transparent';
+  }};
 `;
 
 const ActivityContent = styled.div`
   flex: 1;
 `;
 
-const ActivityTitle = styled.div`
+const ActivityTitle = styled.div<{ $theme?: any }>`
   font-weight: 600;
-  color: ${props => getTextDark(props.theme)};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
   margin-bottom: 0.25rem;
 `;
 
-const ActivityDescription = styled.div`
+const ActivityDescription = styled.div<{ $theme?: any }>`
   font-size: 0.9rem;
-  color: #7f8c8d;
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'};
 `;
 
-const ActivityTime = styled.div`
+const ActivityTime = styled.div<{ $theme?: any }>`
   font-size: 0.8rem;
-  color: #95a5a6;
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'};
   text-align: right;
 `;
 
@@ -282,30 +296,46 @@ const AlertBanner = styled.div<{ $type: string; $theme?: Theme }>`
   background: ${props => {
     switch (props.$type) {
       case 'warning':
-        return '#fff3cd';
+        return props.$theme?.colors?.status?.warning?.background ||
+               props.$theme?.status?.warning?.background ||
+               'transparent';
       case 'error':
-        return '#f8d7da';
+        return props.$theme?.colors?.status?.error?.background ||
+               props.$theme?.status?.error?.background ||
+               'transparent';
       case 'success':
-        return '#d4edda';
+        return props.$theme?.colors?.status?.success?.background ||
+               props.$theme?.status?.success?.background ||
+               'transparent';
       case 'info':
-        return '#d1ecf1';
+        return props.$theme?.colors?.status?.info?.background ||
+               props.$theme?.status?.info?.background ||
+               'transparent';
       default:
-        return '#e2e3e5';
+        return 'transparent';
     }
   }};
   border-left: 4px solid
     ${props => {
       switch (props.$type) {
         case 'warning':
-          return '#ffc107';
+          return props.$theme?.colors?.status?.warning?.border ||
+                 props.$theme?.status?.warning?.border ||
+                 'transparent';
         case 'error':
-          return '#dc3545';
+          return props.$theme?.colors?.status?.error?.border ||
+                 props.$theme?.status?.error?.border ||
+                 'transparent';
         case 'success':
-          return '#28a745';
+          return props.$theme?.colors?.status?.success?.border ||
+                 props.$theme?.status?.success?.border ||
+                 'transparent';
         case 'info':
-          return '#17a2b8';
+          return props.$theme?.colors?.status?.info?.border ||
+                 props.$theme?.status?.info?.border ||
+                 'transparent';
         default:
-          return '#6c757d';
+          return 'transparent';
       }
     }};
 `;
@@ -452,13 +482,19 @@ const MonitoringDashboard: React.FC = () => {
   };
 
   return (
-    <Container>
+    <PageContainer
+      $theme={theme}
+      sidebarCollapsed={collapsed}
+      variant="dashboard"
+      background="solid"
+      animation={true}
+    >
       <Sidebar
         collapsed={collapsed}
         onToggle={() => setCollapsed(!collapsed)}
         currentPath={router.pathname}
       />
-      <MainContent>
+      <TopBar $theme={theme}>
         <WelcomeSection
           $theme={theme}
           userAvatar={currentProfile?.avatar || 'U'}
@@ -467,17 +503,19 @@ const MonitoringDashboard: React.FC = () => {
           notificationCount={alerts.length}
           onNotificationClick={() => {}}
         />
+      </TopBar>
 
-        <Header>
-          <div>
-            <Title>
-              <AccessibleEmoji emoji='📊' label='Dashboard' /> Dashboard de
-              Monitoramento
-            </Title>
-            <Subtitle>
-              Acompanhe o status e performance do sistema eSocial
-            </Subtitle>
-          </div>
+      <PageHeader
+        $theme={theme}
+        title={
+          <>
+            <AccessibleEmoji emoji='📊' label='Dashboard' /> Dashboard de
+            Monitoramento
+          </>
+        }
+        subtitle="Acompanhe o status e performance do sistema eSocial"
+        variant="inline"
+        actions={
           <OptimizedFlexContainer>
             <OptimizedStatusIndicator $status={systemStatus} $theme={theme}>
               {getStatusIcon(systemStatus)} {getStatusText(systemStatus)}
@@ -492,13 +530,15 @@ const MonitoringDashboard: React.FC = () => {
               <AccessibleEmoji emoji={isLoading ? '⏳' : '🔄'} label={isLoading ? 'Carregando' : 'Atualizar'} /> Atualizar
             </UnifiedButton>
           </OptimizedFlexContainer>
-        </Header>
+        }
+        animation={true}
+      />
 
         {/* Alertas */}
         {alerts.map((alert: any, index: any) => (
           <AlertBanner key={index} $type={alert.type} $theme={theme}>
             <AlertIcon>{alert.icon}</AlertIcon>
-            <AlertText>{alert.text}</AlertText>
+            <AlertText $theme={theme}>{alert.text}</AlertText>
           </AlertBanner>
         ))}
 
@@ -515,7 +555,7 @@ const MonitoringDashboard: React.FC = () => {
             <MetricValue $theme={theme}>
               {metrics.eventosEnviados.toLocaleString()}
             </MetricValue>
-            <MetricSubtext>
+            <MetricSubtext $theme={theme}>
               Total de eventos enviados para eSocial
             </MetricSubtext>
           </UnifiedCard>
@@ -531,7 +571,7 @@ const MonitoringDashboard: React.FC = () => {
             <MetricValue $theme={theme}>
               {metrics.eventosProcessados.toLocaleString()}
             </MetricValue>
-            <MetricSubtext>Eventos processados com sucesso</MetricSubtext>
+            <MetricSubtext $theme={theme}>Eventos processados com sucesso</MetricSubtext>
           </UnifiedCard>
 
           <UnifiedCard
@@ -545,7 +585,7 @@ const MonitoringDashboard: React.FC = () => {
             <MetricValue $theme={theme}>
               {metrics.eventosComErro.toLocaleString()}
             </MetricValue>
-            <MetricSubtext>Eventos que falharam no processamento</MetricSubtext>
+            <MetricSubtext $theme={theme}>Eventos que falharam no processamento</MetricSubtext>
           </UnifiedCard>
 
           <UnifiedCard
@@ -557,7 +597,7 @@ const MonitoringDashboard: React.FC = () => {
             title='Webhooks Ativos'
           >
             <MetricValue $theme={theme}>{metrics.webhooksAtivos}</MetricValue>
-            <MetricSubtext>Webhooks configurados e funcionando</MetricSubtext>
+            <MetricSubtext $theme={theme}>Webhooks configurados e funcionando</MetricSubtext>
           </UnifiedCard>
 
           <UnifiedCard
@@ -571,7 +611,7 @@ const MonitoringDashboard: React.FC = () => {
             <MetricValue $theme={theme}>
               {metrics.backupsRealizados}
             </MetricValue>
-            <MetricSubtext>Backups executados com sucesso</MetricSubtext>
+            <MetricSubtext $theme={theme}>Backups executados com sucesso</MetricSubtext>
           </UnifiedCard>
 
           <UnifiedCard
@@ -585,7 +625,7 @@ const MonitoringDashboard: React.FC = () => {
             <MetricValue $theme={theme}>
               {metrics.logsAuditoria.toLocaleString()}
             </MetricValue>
-            <MetricSubtext>Logs gerados nos últimos 30 dias</MetricSubtext>
+            <MetricSubtext $theme={theme}>Logs gerados nos últimos 30 dias</MetricSubtext>
           </UnifiedCard>
         </DashboardGrid>
 
@@ -604,14 +644,14 @@ const MonitoringDashboard: React.FC = () => {
                 $type={activity.type}
                 $theme={theme}
               >
-                <ActivityIcon>{activity.icon}</ActivityIcon>
+                <ActivityIcon $theme={theme}>{activity.icon}</ActivityIcon>
                 <ActivityContent>
-                  <ActivityTitle>{activity.title}</ActivityTitle>
-                  <ActivityDescription>
+                  <ActivityTitle $theme={theme}>{activity.title}</ActivityTitle>
+                  <ActivityDescription $theme={theme}>
                     {activity.description}
                   </ActivityDescription>
                 </ActivityContent>
-                <ActivityTime>{activity.time}</ActivityTime>
+                <ActivityTime $theme={theme}>{activity.time}</ActivityTime>
               </ActivityItem>
             ))}
           </ActivityList>

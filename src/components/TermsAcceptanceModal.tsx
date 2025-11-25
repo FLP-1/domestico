@@ -11,7 +11,9 @@ const TermsContent = styled.div<{ $theme?: any }>`
   flex-direction: column;
   height: 100%;
   background: ${props =>
-    props.$theme?.colors?.background?.primary || '#ffffff'};
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary ||
+    'transparent'};
 `;
 
 const TermsHeader = styled.div<{ $theme?: any }>`
@@ -27,7 +29,11 @@ const TermsHeader = styled.div<{ $theme?: any }>`
 const TermsTitle = styled.h2<{ $theme?: any }>`
   font-size: 1.5rem;
   font-weight: 600;
-  color: ${props => props.$theme?.colors?.text?.dark || '#333'};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'
+  };
   margin: 0 0 0.5rem 0;
   display: flex;
   align-items: center;
@@ -36,7 +42,11 @@ const TermsTitle = styled.h2<{ $theme?: any }>`
 `;
 
 const TermsSubtitle = styled.p<{ $theme?: any }>`
-  color: ${props => props.$theme?.colors?.text?.secondary || '#666'};
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'
+  };
   margin: 0;
   font-size: 0.9rem;
 `;
@@ -53,10 +63,14 @@ const TermsTabs = styled.div<{ $theme?: any }>`
   border-bottom: 1px solid
     ${props => {
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) || '#e0e0e0';
+      return (typeof border === 'object' && border?.light) || 
+             props.$theme?.border?.light ||
+             'transparent';
     }};
   background: ${props =>
-    props.$theme?.colors?.background?.secondary || '#f8f9fa'};
+    props.$theme?.colors?.background?.secondary || 
+    props.$theme?.background?.secondary ||
+    'transparent'};
 `;
 
 const TabButton = styled.button<{ $active: boolean; $theme?: any }>`
@@ -65,10 +79,19 @@ const TabButton = styled.button<{ $active: boolean; $theme?: any }>`
   border: none;
   background: ${props =>
     props.$active
-      ? props.$theme?.colors?.navigation?.active || '#007bff'
+      ? props.$theme?.colors?.navigation?.active || 
+        props.$theme?.colors?.primary ||
+        props.$theme?.accent ||
+        'transparent'
       : 'transparent'};
   color: ${props =>
-    props.$active ? '#ffffff' : props.$theme?.colors?.text?.primary || '#333'};
+    props.$active 
+      ? props.$theme?.colors?.text?.primary || 
+        props.$theme?.text?.primary ||
+        'inherit'
+      : props.$theme?.colors?.text?.dark || 
+        props.$theme?.text?.dark ||
+        'inherit'};
   font-weight: ${props => (props.$active ? '600' : '400')};
   cursor: pointer;
   transition: all 0.2s ease;
@@ -78,10 +101,21 @@ const TabButton = styled.button<{ $active: boolean; $theme?: any }>`
   gap: 0.5rem;
 
   &:hover {
-    background: ${props =>
-      props.$active
-        ? props.$theme?.colors?.primary || '#007bff'
-        : props.$theme?.colors?.primary + '20' || '#007bff20'};
+    background: ${props => {
+      if (props.$active) {
+        return props.$theme?.colors?.primary ||
+               props.$theme?.accent ||
+               'transparent';
+      }
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      return 'transparent';
+    }};
   }
 `;
 
@@ -94,13 +128,21 @@ const DocumentViewer = styled.div<{ $theme?: any }>`
 const DocumentHeader = styled.div<{ $theme?: any }>`
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid ${props => props.theme?.colors?.border || '#e0e0e0'};
+  border-bottom: 1px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light ||
+    props.$theme?.colors?.border ||
+    'transparent'};
 `;
 
 const DocumentTitle = styled.h3<{ $theme?: any }>`
   font-size: 1.25rem;
   font-weight: 600;
-  color: ${props => props.theme?.colors?.text || '#333'};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin: 0 0 1rem 0;
 `;
 
@@ -112,8 +154,15 @@ const VersionInfo = styled.div<{ $theme?: any }>`
 `;
 
 const VersionBadge = styled.span<{ $theme?: any }>`
-  background: ${props => props.$theme?.colors?.success || '#28a745'};
-  color: white;
+  background: ${props => 
+    props.$theme?.colors?.status?.success?.background ||
+    props.$theme?.status?.success?.background ||
+    props.$theme?.colors?.success ||
+    'transparent'};
+  color: ${props => 
+    props.$theme?.colors?.status?.success?.text ||
+    props.$theme?.status?.success?.text ||
+    'inherit'};
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
   font-size: 0.8rem;
@@ -121,16 +170,27 @@ const VersionBadge = styled.span<{ $theme?: any }>`
 `;
 
 const EffectiveDate = styled.span<{ $theme?: any }>`
-  color: ${props => props.theme?.colors?.textSecondary || '#666'};
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.textSecondary ||
+    'inherit'};
   font-size: 0.9rem;
 `;
 
 const DocumentContent = styled.div<{ $theme?: any }>`
   line-height: 1.6;
-  color: ${props => props.theme?.colors?.text || '#333'};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 
   h3 {
-    color: ${props => props.theme?.colors?.primary || '#007bff'};
+    color: ${props => 
+      props.$theme?.colors?.primary || 
+      props.$theme?.accent ||
+      'inherit'};
     margin: 2rem 0 1rem 0;
     font-size: 1.1rem;
   }
@@ -151,8 +211,16 @@ const DocumentContent = styled.div<{ $theme?: any }>`
 
 const TermsFooter = styled.div<{ $theme?: any }>`
   padding: 2rem;
-  border-top: 1px solid ${props => props.theme?.colors?.border || '#e0e0e0'};
-  background: ${props => props.theme?.colors?.backgroundSecondary || '#f8f9fa'};
+  border-top: 1px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light ||
+    props.$theme?.colors?.border ||
+    'transparent'};
+  background: ${props => 
+    props.$theme?.colors?.background?.secondary || 
+    props.$theme?.background?.secondary ||
+    props.$theme?.colors?.backgroundSecondary ||
+    'transparent'};
 `;
 
 const AcceptCheckbox = styled.div<{ $theme?: any }>`
@@ -168,7 +236,11 @@ const CheckboxInput = styled.input<{ $theme?: any }>`
 `;
 
 const CheckboxLabel = styled.label<{ $theme?: any }>`
-  color: ${props => props.theme?.colors?.text || '#333'};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
   line-height: 1.4;
   cursor: pointer;
@@ -183,8 +255,14 @@ const ActionButtons = styled.div<{ $theme?: any }>`
 const RetryButton = styled.button<{ $theme?: any }>`
   margin-top: 1rem;
   padding: 0.5rem 1rem;
-  background: #007bff;
-  color: white;
+  background: ${props => 
+    props.$theme?.colors?.primary || 
+    props.$theme?.accent ||
+    'transparent'};
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary ||
+    'inherit'};
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
@@ -192,7 +270,7 @@ const RetryButton = styled.button<{ $theme?: any }>`
   transition: background-color 0.2s ease;
 
   &:hover {
-    background: #0056b3;
+    opacity: 0.9;
   }
 `;
 
@@ -211,21 +289,21 @@ const Button = styled.button<{
   ${props =>
     props.$variant === 'primary'
       ? `
-    background: ${props.$theme?.colors?.primary || '#007bff'};
-    color: white;
+    background: ${props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'};
+    color: ${props.$theme?.colors?.text?.primary || props.$theme?.text?.primary || 'inherit'};
     
     &:hover:not(:disabled) {
-      background: ${props.$theme?.colors?.primaryDark || '#0056b3'};
+      opacity: 0.9;
       transform: translateY(-1px);
     }
   `
       : `
     background: transparent;
-    color: ${props.$theme?.colors?.text || '#333'};
-    border: 1px solid ${props.$theme?.colors?.border || '#e0e0e0'};
+    color: ${props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || props.$theme?.colors?.text || 'inherit'};
+    border: 1px solid ${props.$theme?.colors?.border?.light || props.$theme?.border?.light || props.$theme?.colors?.border || 'transparent'};
     
     &:hover:not(:disabled) {
-      background: ${props.$theme?.colors?.backgroundSecondary || '#f8f9fa'};
+      background: ${props.$theme?.colors?.background?.secondary || props.$theme?.background?.secondary || props.$theme?.colors?.backgroundSecondary || 'transparent'};
     }
   `}
 
@@ -240,12 +318,22 @@ const LoadingSpinner = styled.div<{ $theme?: any }>`
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  color: ${props => props.theme?.colors?.textSecondary || '#666'};
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.textSecondary ||
+    'inherit'};
 `;
 
 const ErrorMessage = styled.div<{ $theme?: any }>`
-  background: #f8d7da;
-  color: #721c24;
+  background: ${props => 
+    props.$theme?.colors?.status?.error?.background ||
+    props.$theme?.status?.error?.background ||
+    'transparent'};
+  color: ${props => 
+    props.$theme?.colors?.status?.error?.text ||
+    props.$theme?.status?.error?.text ||
+    'inherit'};
   padding: 1rem;
   border-radius: 0.5rem;
   margin: 1rem 0;

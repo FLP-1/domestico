@@ -78,7 +78,7 @@ const TutorialComponent = dynamic(
               alt='Logo DOM'
               width={60}
               height={60}
-              priority
+              // Removido priority para evitar warning de preload não usado em componentes dinâmicos
             />
           </LogoImage>
         </LogoContainer>

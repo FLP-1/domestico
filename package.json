@@ -1,6 +1,6 @@
 {
   "name": "dom-frontend",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -46,6 +46,7 @@
     "db:generate": "npx prisma generate",
     "db:seed": "npx prisma db seed",
     "db:seed:incremental": "npx ts-node prisma/seed-novo-empregado.ts",
+    "db:seed:completo": "npx ts-node prisma/seeds/seed-completo-testes.ts",
     "db:reset": "npx prisma migrate reset",
     "db:reset:full": "npx prisma migrate reset --skip-seed && npm run db:seed",
     "db:studio": "npx prisma studio",

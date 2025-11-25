@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSystemConfig } from './useSystemConfig';
 import { geofencingColors } from '../design-system/tokens/geofencing-colors';
 
@@ -229,7 +229,7 @@ export const useTheme = (
   profileId?: string,
   useCentralizedConfig: boolean = true
 ) => {
-  const { config, loading, error } = useSystemConfig();
+  const { config } = useSystemConfig();
   const [currentTheme, setCurrentTheme] = useState<ProfileTheme>(() => {
     return (
       profileThemes['empregado'] ||
@@ -250,11 +250,21 @@ export const useTheme = (
       }
     );
   });
+  const lastProfileIdRef = useRef<string | undefined>(undefined);
+  const isLoadingRef = useRef(false);
 
   // Aplicar tema por perfil
   useEffect(() => {
     const loadTheme = async () => {
       if (!profileId) return;
+      
+      // Evitar chamadas duplicadas para o mesmo profileId
+      if (lastProfileIdRef.current === profileId || isLoadingRef.current) {
+        return;
+      }
+      
+      lastProfileIdRef.current = profileId;
+      isLoadingRef.current = true;
 
       // 1. Tentar buscar do banco de dados (se useCentralizedConfig)
       if (useCentralizedConfig) {
@@ -292,12 +302,15 @@ export const useTheme = (
               };
               
               setCurrentTheme(profileTheme);
+              isLoadingRef.current = false;
               return; // Tema do banco carregado, não precisa continuar
             }
           }
         } catch (error) {
           console.warn('Erro ao carregar tema do banco, usando fallback:', error);
           // Continuar com fallback
+        } finally {
+          // Garantir que o flag seja resetado mesmo em caso de erro
         }
       }
 
@@ -337,10 +350,13 @@ export const useTheme = (
           setCurrentTheme(baseTheme);
         }
       }
+      
+      isLoadingRef.current = false;
     };
 
     loadTheme();
-  }, [profileId, useCentralizedConfig, config, loading, error]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileId, useCentralizedConfig]); // Removido config, loading, error para evitar loops
 
   const updateTheme = (profileId: string) => {
     if (profileThemes[profileId]) {
@@ -385,7 +401,5 @@ export const useTheme = (
     colors, // Estrutura compatível com useCentralizedColors
     updateTheme,
     availableThemes: Object.values(profileThemes),
-    loading,
-    error,
   };
 };

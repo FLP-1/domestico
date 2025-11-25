@@ -21,9 +21,8 @@ export default async function handler(
     return res
       .status(500)
       .json({ success: false, error: 'Erro interno do servidor' });
-  } finally {
-    await prisma.$disconnect();
   }
+  // Removido prisma.$disconnect() - não deve desconectar em cada request
 }
 
 async function getActivity(req: NextApiRequest, res: NextApiResponse) {
@@ -61,34 +60,42 @@ async function getActivity(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function createActivity(req: NextApiRequest, res: NextApiResponse) {
-  const { tipo, titulo, descricao, usuarioId, dados } = req.body;
+  try {
+    const { tipo, titulo, descricao, usuarioId, dados } = req.body;
 
-  if (!tipo || !titulo) {
-    return res.status(400).json({
-      success: false,
-      error: 'Campos obrigatórios: tipo, titulo',
-    });
-  }
+    if (!tipo || !titulo) {
+      return res.status(400).json({
+        success: false,
+        error: 'Campos obrigatórios: tipo, titulo',
+      });
+    }
 
-  const activity = await prisma.atividadeRecente.create({
-    data: {
-      tipo,
-      titulo,
-      descricao,
-      usuarioId,
-      dados,
-    },
-    include: {
-      usuario: {
-        select: {
-          id: true,
-          nomeCompleto: true,
-          cpf: true,
-          email: true,
+    const activity = await prisma.atividadeRecente.create({
+      data: {
+        tipo,
+        titulo,
+        descricao,
+        usuarioId,
+        dados,
+      },
+      include: {
+        usuario: {
+          select: {
+            id: true,
+            nomeCompleto: true,
+            cpf: true,
+            email: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  return res.status(201).json({ success: true, data: activity });
+    return res.status(201).json({ success: true, data: activity });
+  } catch (error: any) {
+    console.error('Erro ao criar atividade:', error);
+    return res.status(500).json({
+      success: false,
+      error: error?.message || 'Erro ao criar atividade',
+    });
+  }
 }

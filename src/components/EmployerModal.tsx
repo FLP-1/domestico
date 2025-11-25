@@ -54,8 +54,12 @@ const ValidationContainer = styled.div`
   align-items: center;
 `;
 
-const SuccessMessage = styled.span`
-  color: #27ae60;
+const SuccessMessage = styled.span<{ $theme?: any }>`
+  color: ${props => 
+    props.$theme?.colors?.status?.success?.text ||
+    props.$theme?.status?.success?.text ||
+    props.$theme?.colors?.success ||
+    'inherit'};
   font-weight: bold;
 `;
 
@@ -77,27 +81,61 @@ const CheckboxContainer = styled.div`
   gap: 0.5rem;
 `;
 
-const StatusIndicator = styled.div<{ $success?: boolean }>`
+const StatusIndicator = styled.div<{ $success?: boolean; $theme?: any }>`
   margin-top: 1rem;
   padding: 1rem;
-  background: ${props => (props.$success ? '#d4edda' : '#f8d7da')};
-  border: 1px solid ${props => (props.$success ? '#c3e6cb' : '#f5c6cb')};
+  background: ${props => 
+    props.$success
+      ? props.$theme?.colors?.status?.success?.background ||
+        props.$theme?.status?.success?.background ||
+        'transparent'
+      : props.$theme?.colors?.status?.error?.background ||
+        props.$theme?.status?.error?.background ||
+        'transparent'};
+  border: 1px solid ${props => 
+    props.$success
+      ? props.$theme?.colors?.status?.success?.border ||
+        props.$theme?.status?.success?.border ||
+        'transparent'
+      : props.$theme?.colors?.status?.error?.border ||
+        props.$theme?.status?.error?.border ||
+        'transparent'};
   border-radius: 8px;
-  color: ${props => (props.$success ? '#155724' : '#721c24')};
+  color: ${props => 
+    props.$success
+      ? props.$theme?.colors?.status?.success?.text ||
+        props.$theme?.status?.success?.text ||
+        'inherit'
+      : props.$theme?.colors?.status?.error?.text ||
+        props.$theme?.status?.error?.text ||
+        'inherit'};
 `;
 
-const ValidationLabel = styled.label<{ $isValid?: boolean }>`
+const ValidationLabel = styled.label<{ $isValid?: boolean; $theme?: any }>`
   display: block;
   font-size: 0.9rem;
-  color: ${props => (props.$isValid ? '#27ae60' : '#e74c3c')};
+  color: ${props => 
+    props.$isValid
+      ? props.$theme?.colors?.status?.success?.text ||
+        props.$theme?.status?.success?.text ||
+        'inherit'
+      : props.$theme?.colors?.status?.error?.text ||
+        props.$theme?.status?.error?.text ||
+        'inherit'};
   cursor: pointer;
   margin-bottom: 0.5rem;
 `;
 
-const ValidationButton = styled.button`
+const ValidationButton = styled.button<{ $theme?: any }>`
   padding: 0.5rem;
-  background: #29abe2;
-  color: white;
+  background: ${props => 
+    props.$theme?.colors?.primary || 
+    props.$theme?.accent ||
+    'transparent'};
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary ||
+    'inherit'};
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -106,107 +144,196 @@ const ValidationButton = styled.button`
   transition: background 0.3s ease;
 
   &:hover {
-    background: #1e8bc3;
+    opacity: 0.9;
   }
 
   &:disabled {
-    background: #ccc;
+    opacity: 0.5;
     cursor: not-allowed;
   }
 `;
 
-const CepButton = styled.button<{ $disabled?: boolean }>`
+const CepButton = styled.button<{ $disabled?: boolean; $theme?: any }>`
   padding: 0.5rem 1rem;
-  background: ${props => (props.$disabled ? '#ccc' : '#29abe2')};
-  color: white;
+  background: ${props => 
+    props.$disabled
+      ? props.$theme?.colors?.background?.secondary ||
+        props.$theme?.background?.secondary ||
+        'transparent'
+      : props.$theme?.colors?.primary || 
+        props.$theme?.accent ||
+        'transparent'};
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary ||
+    'inherit'};
   border: none;
   border-radius: 4px;
   cursor: ${props => (props.$disabled ? 'not-allowed' : 'pointer')};
   font-size: 0.8rem;
   white-space: nowrap;
   transition: background 0.3s ease;
+  opacity: ${props => (props.$disabled ? 0.5 : 1)};
 
   &:hover {
-    background: ${props => (props.$disabled ? '#ccc' : '#1e8bc3')};
+    opacity: ${props => (props.$disabled ? 0.5 : 0.9)};
   }
 `;
 
-const CertificateStatus = styled.span<{ $isValid?: boolean }>`
-  color: ${props => (props.$isValid ? '#27ae60' : '#e74c3c')};
+const CertificateStatus = styled.span<{ $isValid?: boolean; $theme?: any }>`
+  color: ${props => 
+    props.$isValid
+      ? props.$theme?.colors?.status?.success?.text ||
+        props.$theme?.status?.success?.text ||
+        'inherit'
+      : props.$theme?.colors?.status?.error?.text ||
+        props.$theme?.status?.error?.text ||
+        'inherit'};
   font-size: 1.2rem;
 `;
 
-const SectionTitle = styled.h3`
+const SectionTitle = styled.h3<{ $theme?: any }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 1rem;
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
   margin: 0 0 1rem 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid #29abe2;
+  border-bottom: 2px solid ${props => 
+    props.$theme?.colors?.primary || 
+    props.$theme?.accent ||
+    'transparent'};
 `;
 
-const Label = styled.label`
+const Label = styled.label<{ $theme?: any }>`
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
   font-size: 0.85rem;
   margin-bottom: 0.4rem;
   display: block;
 `;
 
-const InputStyled = styled(Input)<{ $hasError?: boolean }>`
+const InputStyled = styled(Input)<{ $hasError?: boolean; $theme?: any }>`
   width: 100%;
   padding: 0.6rem;
-  border: 2px solid ${props => (props.$hasError ? '#e74c3c' : '#e9ecef')};
+  border: 2px solid ${props => 
+    props.$hasError
+      ? props.$theme?.colors?.status?.error?.border ||
+        props.$theme?.status?.error?.border ||
+        'transparent'
+      : props.$theme?.colors?.border?.light ||
+        props.$theme?.border?.light ||
+        'transparent'};
   border-radius: 8px;
   font-size: 0.9rem;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
+  background: ${props => 
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary ||
+    'transparent'};
 
   &:focus {
     outline: none;
-    border-color: #29abe2;
-    box-shadow: 0 0 0 3px rgba(41, 171, 226, 0.1);
+    border-color: ${props => 
+      props.$theme?.colors?.primary || 
+      props.$theme?.accent ||
+      'transparent'};
+    box-shadow: 0 0 0 3px ${props => {
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   }
 `;
 
-const SelectStyled = styled(Select)<{ $hasError?: boolean }>`
+const SelectStyled = styled(Select)<{ $hasError?: boolean; $theme?: any }>`
   width: 100%;
   padding: 0.6rem;
-  border: 2px solid ${props => (props.$hasError ? '#e74c3c' : '#e9ecef')};
+  border: 2px solid ${props => 
+    props.$hasError
+      ? props.$theme?.colors?.status?.error?.border ||
+        props.$theme?.status?.error?.border ||
+        'transparent'
+      : props.$theme?.colors?.border?.light ||
+        props.$theme?.border?.light ||
+        'transparent'};
   border-radius: 8px;
   font-size: 0.9rem;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
+  background: ${props => 
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary ||
+    'transparent'};
   cursor: pointer;
 
   &:focus {
     outline: none;
-    border-color: #29abe2;
-    box-shadow: 0 0 0 3px rgba(41, 171, 226, 0.1);
+    border-color: ${props => 
+      props.$theme?.colors?.primary || 
+      props.$theme?.accent ||
+      'transparent'};
+    box-shadow: 0 0 0 3px ${props => {
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   }
 `;
 
-const ErrorMessage = styled.div`
-  color: #e74c3c;
+const ErrorMessage = styled.div<{ $theme?: any }>`
+  color: ${props => 
+    props.$theme?.colors?.status?.error?.text ||
+    props.$theme?.status?.error?.text ||
+    'inherit'};
   font-size: 0.75rem;
   margin-top: 0.2rem;
   font-weight: 500;
 `;
 
-const HelpText = styled.div`
-  color: #7f8c8d;
+const HelpText = styled.div<{ $theme?: any }>`
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'};
   font-size: 0.7rem;
   margin-top: 0.2rem;
   font-style: italic;
 `;
 
-const InfoCard = styled.div`
-  background: linear-gradient(135deg, #29abe2, #1e8bc3);
-  color: white;
+const InfoCard = styled.div<{ $theme?: any }>`
+  background: ${props => {
+    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `linear-gradient(135deg, ${primaryColor}, rgba(${r}, ${g}, ${b}, 0.8))`;
+    }
+    return 'transparent';
+  }};
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary ||
+    'inherit'};
   border-radius: 12px;
   padding: 1rem;
   margin-bottom: 1rem;
@@ -1335,7 +1462,7 @@ const EmployerModal: React.FC<EmployerModalProps> = ({
         </OptimizedFormSection>
 
         {/* Informações importantes */}
-        <InfoCard>
+        <InfoCard $theme={theme}>
           <InfoTitle>
             <AccessibleEmoji emoji='ℹ️' label='Info' /> Informações Importantes
           </InfoTitle>

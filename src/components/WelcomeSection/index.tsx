@@ -235,19 +235,25 @@ const WelcomeSection = memo(
     );
 
     // ✅ Geolocalização inteligente para localização ATUAL (não registros antigos)
+    // ❌ REMOVIDO: Não usar captureLocation aqui para evitar vulnerabilidade de antifraude
+    // A localização só deve ser atualizada através de ações críticas validadas (ex: registro de ponto)
     const {
       isCapturing,
-      isDataRecent,
-      isDataAccurate,
-      canCapture,
-      captureLocation,
     } = useSmartGeolocation(getGeolocationConfig('welcomeSection'));
 
     // ✅ Localização atual do contexto (não de registros antigos)
+    // Esta localização só é atualizada através de ações críticas validadas pelo sistema antifraude
     const { lastLocation: currentLocation } = useGeolocationContext();
+    
+    // ✅ Estados devem ser declarados ANTES de serem usados em useEffect
     const [currentTime, setCurrentTime] = useState(new Date());
     const [isClient, setIsClient] = useState(false);
     const [wifiStatus, setWifiStatus] = useState('WiFi: Verificando...');
+
+    // ❌ REMOVIDO: Captura automática viola política de geolocalização do navegador
+    // A geolocalização só pode ser solicitada em resposta a uma ação do usuário
+    // O WelcomeSection mostrará a última localização conhecida do contexto
+    // Se não houver localização, o usuário precisará interagir (ex: registrar ponto) para capturar
 
     // Atualizar hora a cada segundo (otimizado para evitar reflows)
     useEffect(() => {
@@ -352,7 +358,7 @@ const WelcomeSection = memo(
                       <LocationMessage>
                         {isCapturing
                           ? 'Capturando localização atual...'
-                          : 'Não foi possível identificar a localização'}
+                          : 'Localização será capturada ao registrar ponto'}
                       </LocationMessage>
                     );
                   }

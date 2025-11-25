@@ -47,12 +47,15 @@ const fadeIn = keyframes`
 `;
 
 // CSS Global para textarea
-const GlobalStyle = styled.div`
+const GlobalStyle = styled.div<{ $theme?: any }>`
   .document-textarea {
     width: 100%;
     height: 400px;
     padding: 1rem;
-    border: 2px solid #e0e0e0;
+    border: 2px solid ${props => 
+      props.$theme?.colors?.border?.light || 
+      props.$theme?.border?.light ||
+      'transparent'};
     border-radius: 8px;
     font-size: 1rem;
     font-family: 'Roboto', sans-serif;
@@ -61,16 +64,22 @@ const GlobalStyle = styled.div`
 
     &:focus {
       outline: none;
-      border-color: #29abe2;
+      border-color: ${props => 
+        props.$theme?.colors?.primary || 
+        props.$theme?.accent ||
+        'transparent'};
     }
   }
 `;
 
-const DocumentTextarea = styled.textarea`
+const DocumentTextarea = styled.textarea<{ $theme?: any }>`
   width: 100%;
   height: 400px;
   padding: 1rem;
-  border: 2px solid #e0e0e0;
+  border: 2px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light ||
+    'transparent'};
   border-radius: 8px;
   font-size: 1rem;
   font-family: 'Roboto', sans-serif;
@@ -79,7 +88,10 @@ const DocumentTextarea = styled.textarea`
 
   &:focus {
     outline: none;
-    border-color: #29abe2;
+    border-color: ${props => 
+      props.$theme?.colors?.primary || 
+      props.$theme?.accent ||
+      'transparent'};
   }
 `;
 
@@ -92,30 +104,57 @@ const ContentGrid = styled.div`
   margin-bottom: 2rem;
 `;
 
-const DocumentSection = styled.div`
-  background: rgba(255, 255, 255, 0.95);
+const DocumentSection = styled.div<{ $theme?: any }>`
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.95)`;
+    }
+    return props.$theme?.colors?.background?.primary || 
+           props.$theme?.background?.primary ||
+           'transparent';
+  }};
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 8px 32px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1)`;
+      }
+    }
+    return 'none';
+  }};
   backdrop-filter: blur(10px);
 `;
 
 // DocumentTabs e TabButton removidos - usar UnifiedTabs
 
-const DocumentHeader = styled.div`
+const DocumentHeader = styled.div<{ $theme?: any }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid ${props => props.theme?.colors?.border || '#e0e0e0'};
+  border-bottom: 2px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light ||
+    props.$theme?.colors?.border ||
+    'transparent'};
 `;
 
-const DocumentTitle = styled.h2`
+const DocumentTitle = styled.h2<{ $theme?: any }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 1.8rem;
   font-weight: 700;
-  color: ${props => props.theme?.colors?.primary || '#29ABE2'};
+  color: ${props => 
+    props.$theme?.colors?.primary || 
+    props.$theme?.accent ||
+    'inherit'};
   margin: 0;
 `;
 
@@ -127,30 +166,48 @@ const VersionInfo = styled.div`
 
 // VersionBadge removido - usar UnifiedBadge
 
-const EffectiveDate = styled.span`
-  color: ${props => props.theme?.colors?.text || '#666'};
+const EffectiveDate = styled.span<{ $theme?: any }>`
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
 `;
 
-const DocumentContent = styled.div`
+const DocumentContent = styled.div<{ $theme?: any }>`
   max-height: 600px;
   overflow-y: auto;
   padding: 1rem;
-  background: #fafafa;
+  background: ${props => 
+    props.$theme?.colors?.background?.secondary || 
+    props.$theme?.background?.secondary ||
+    'transparent'};
   border-radius: 8px;
-  border: 1px solid ${props => props.theme?.colors?.border || '#e0e0e0'};
+  border: 1px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light ||
+    props.$theme?.colors?.border ||
+    'transparent'};
   line-height: 1.6;
   font-size: 0.95rem;
 
   h3 {
-    color: ${props => props.theme?.colors?.primary || '#29ABE2'};
+    color: ${props => 
+      props.$theme?.colors?.primary || 
+      props.$theme?.accent ||
+      'inherit'};
     margin-top: 2rem;
     margin-bottom: 1rem;
     font-family: 'Montserrat', sans-serif;
   }
 
   h4 {
-    color: ${props => props.theme?.colors?.text || '#333'};
+    color: ${props => 
+      props.$theme?.colors?.text?.dark || 
+      props.$theme?.text?.dark ||
+      props.$theme?.colors?.text ||
+      'inherit'};
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
   }
@@ -171,39 +228,73 @@ const DocumentContent = styled.div`
   }
 
   strong {
-    color: ${props => props.theme?.colors?.primary || '#29ABE2'};
+    color: ${props => 
+      props.$theme?.colors?.primary || 
+      props.$theme?.accent ||
+      'inherit'};
   }
 `;
 
-const DocumentActions = styled.div`
+const DocumentActions = styled.div<{ $theme?: any }>`
   display: flex;
   gap: 1rem;
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 2px solid ${props => props.theme?.colors?.border || '#e0e0e0'};
+  border-top: 2px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light ||
+    props.$theme?.colors?.border ||
+    'transparent'};
 `;
 
-const SidebarSection = styled.div`
-  background: rgba(255, 255, 255, 0.95);
+const SidebarSection = styled.div<{ $theme?: any }>`
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.95)`;
+    }
+    return props.$theme?.colors?.background?.primary || 
+           props.$theme?.background?.primary ||
+           'transparent';
+  }};
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 8px 32px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1)`;
+      }
+    }
+    return 'none';
+  }};
   backdrop-filter: blur(10px);
   height: fit-content;
 `;
 
-const SidebarTitle = styled.h3`
+const SidebarTitle = styled.h3<{ $theme?: any }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 1.3rem;
   font-weight: 700;
-  color: ${props => props.theme?.colors?.primary || '#29ABE2'};
+  color: ${props => 
+    props.$theme?.colors?.primary || 
+    props.$theme?.accent ||
+    'inherit'};
   margin: 0 0 1.5rem 0;
 `;
 
-const LoadingContainer = styled.div`
+const LoadingContainer = styled.div<{ $theme?: any }>`
   text-align: center;
   padding: 2rem;
-  color: ${props => props.theme?.colors?.text || '#2c3e50'};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 1.1rem;
 `;
 
@@ -219,30 +310,65 @@ const VersionItem = styled.div<{ $active?: boolean; $theme?: Theme }>`
   border: 2px solid
     ${props =>
       props.$active
-        ? props.$theme?.colors?.primary || '#29ABE2'
-        : props.$theme?.colors?.border || '#e0e0e0'};
-  background: ${props =>
-    props.$active
-      ? `${props.$theme?.colors?.primary || '#29ABE2'}10`
-      : 'white'};
+        ? props.$theme?.colors?.primary || 
+          props.$theme?.accent ||
+          'transparent'
+        : props.$theme?.colors?.border?.light || 
+          props.$theme?.border?.light ||
+          props.$theme?.colors?.border ||
+          'transparent'};
+  background: ${props => {
+    if (props.$active) {
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }
+    return props.$theme?.colors?.background?.primary || 
+           props.$theme?.background?.primary ||
+           'transparent';
+  }};
   cursor: pointer;
   transition: all 0.3s ease;
 
   &:hover {
-    border-color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
-    background: ${props => props.$theme?.colors?.primary || '#29ABE2'}10;
+    border-color: ${props => 
+      props.$theme?.colors?.primary || 
+      props.$theme?.accent ||
+      'transparent'};
+    background: ${props => {
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   }
 `;
 
-const VersionNumber = styled.div`
+const VersionNumber = styled.div<{ $theme?: any }>`
   font-weight: 600;
-  color: ${props => props.theme?.colors?.primary || '#29ABE2'};
+  color: ${props => 
+    props.$theme?.colors?.primary || 
+    props.$theme?.accent ||
+    'inherit'};
   margin-bottom: 0.5rem;
 `;
 
-const VersionDate = styled.div`
+const VersionDate = styled.div<{ $theme?: any }>`
   font-size: 0.9rem;
-  color: ${props => props.theme?.colors?.text || '#666'};
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
 const VersionStatus = styled.span<{ $theme?: Theme }>`
@@ -252,21 +378,34 @@ const VersionStatus = styled.span<{ $theme?: Theme }>`
   font-size: 0.8rem;
   font-weight: 600;
   margin-top: 0.5rem;
-  background: ${props => props.$theme?.colors?.success || '#90EE90'};
-  color: white;
+  background: ${props => 
+    props.$theme?.colors?.status?.success?.background ||
+    props.$theme?.status?.success?.background ||
+    props.$theme?.colors?.success ||
+    'transparent'};
+  color: ${props => 
+    props.$theme?.colors?.status?.success?.text ||
+    props.$theme?.status?.success?.text ||
+    'inherit'};
 `;
 
-const AdminSection = styled.div`
+const AdminSection = styled.div<{ $theme?: any }>`
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 2px solid ${props => props.theme?.colors?.border || '#e0e0e0'};
+  border-top: 2px solid ${props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light ||
+    props.$theme?.colors?.border ||
+    'transparent'};
 `;
 
-const AdminTitle = styled.h4`
+const AdminTitle = styled.h4<{ $theme?: any }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 1.1rem;
   font-weight: 600;
-  color: ${props => props.theme?.colors?.primary || '#29ABE2'};
+  color: ${props => 
+    props.$theme?.colors?.primary || 
+    props.$theme?.accent ||
+    'inherit'};
   margin: 0 0 1rem 0;
 `;
 
@@ -428,7 +567,7 @@ const TermsManagement: React.FC = () => {
 
   return (
     <>
-      <GlobalStyle />
+      <GlobalStyle $theme={theme} />
       <PageContainer $theme={theme} sidebarCollapsed={collapsed}>
         <Sidebar
           collapsed={collapsed}
@@ -456,7 +595,7 @@ const TermsManagement: React.FC = () => {
         />
 
         {isLoading ? (
-          <LoadingContainer>
+          <LoadingContainer $theme={theme}>
             <p>Carregando dados...</p>
           </LoadingContainer>
         ) : (
@@ -512,7 +651,7 @@ const TermsManagement: React.FC = () => {
         )}
 
         <ContentGrid>
-          <DocumentSection>
+          <DocumentSection $theme={theme}>
             <UnifiedTabs
               tabs={[
                 { id: 'terms', label: 'Termos de Uso', icon: <AccessibleEmoji emoji='📋' label='Checklist' /> },
@@ -524,9 +663,9 @@ const TermsManagement: React.FC = () => {
               theme={theme}
             />
 
-            <DocumentHeader>
+            <DocumentHeader $theme={theme}>
               <div>
-                <DocumentTitle>
+                <DocumentTitle $theme={theme}>
                   {activeTab === 'terms'
                     ? 'Termos de Uso'
                     : 'Políticas de Privacidade'}
@@ -536,7 +675,7 @@ const TermsManagement: React.FC = () => {
                     <UnifiedBadge variant="success" size="md" theme={theme}>
                       {activeVersion.versao} - Atual
                     </UnifiedBadge>
-                    <EffectiveDate>
+                    <EffectiveDate $theme={theme}>
                       Vigente desde:{' '}
                       {new Date(activeVersion.dataVigencia).toLocaleDateString(
                         'pt-BR'
@@ -548,12 +687,13 @@ const TermsManagement: React.FC = () => {
             </DocumentHeader>
 
             <DocumentContent
+              $theme={theme}
               dangerouslySetInnerHTML={{
                 __html: currentDocument?.conteudo || '',
               }}
             />
 
-            <DocumentActions>
+            <DocumentActions $theme={theme}>
               <UnifiedButton
                 $variant='primary'
                 $theme={theme}
@@ -580,8 +720,8 @@ const TermsManagement: React.FC = () => {
             </DocumentActions>
           </DocumentSection>
 
-          <SidebarSection>
-            <SidebarTitle>Histórico de Versões</SidebarTitle>
+          <SidebarSection $theme={theme}>
+            <SidebarTitle $theme={theme}>Histórico de Versões</SidebarTitle>
             <VersionList>
               {currentVersions.map(version => (
                 <VersionItem
@@ -590,8 +730,8 @@ const TermsManagement: React.FC = () => {
                   $theme={theme}
                   onClick={() => setSelectedVersion(version.id)}
                 >
-                  <VersionNumber>{version.versao}</VersionNumber>
-                  <VersionDate>
+                  <VersionNumber $theme={theme}>{version.versao}</VersionNumber>
+                  <VersionDate $theme={theme}>
                     {new Date(version.dataVigencia).toLocaleDateString('pt-BR')}
                   </VersionDate>
                   {version.ativo && (
@@ -602,8 +742,8 @@ const TermsManagement: React.FC = () => {
             </VersionList>
 
             {isAdmin && (
-              <AdminSection>
-                <AdminTitle>Área Administrativa</AdminTitle>
+              <AdminSection $theme={theme}>
+                <AdminTitle $theme={theme}>Área Administrativa</AdminTitle>
                 <UnifiedButton
                   $variant='success'
                   $theme={theme}
@@ -672,6 +812,7 @@ const TermsManagement: React.FC = () => {
                     Conteúdo do Documento:
                   </label>
                   <DocumentTextarea
+                    $theme={theme}
                     id='document-content'
                     value={editingDocument?.conteudo || ''}
                     onChange={e =>

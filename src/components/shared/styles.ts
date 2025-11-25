@@ -26,9 +26,19 @@ export const FormRow = styled.div<{ $theme?: any }>`
 export const FormSection = styled.div<{ $theme?: any }>`
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background: ${props => props.$theme?.colors?.surface || '#f8f9fa'};
+  background: ${props => 
+    props.$theme?.colors?.background?.secondary || 
+    props.$theme?.background?.secondary || 
+    props.$theme?.colors?.surface || 
+    'transparent'
+  };
   border-radius: 8px;
-  border: 1px solid ${props => props.$theme?.colors?.border || '#e5e7eb'};
+  border: 1px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light || 
+    props.$theme?.colors?.border || 
+    'transparent'
+  };
 
   ${props => {
     const themedStyles = createThemedStyles(props.$theme);
@@ -51,13 +61,23 @@ export const SectionTitle = styled.h3<{
     }
   }};
   font-weight: 600;
-  color: ${props => props.$theme?.colors?.text || '#2c3e50'};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark || 
+    props.$theme?.colors?.text || 
+    'inherit'
+  };
   margin: 0 0 1rem 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid ${props => props.$theme?.colors?.border || '#e5e7eb'};
+  border-bottom: 1px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light || 
+    props.$theme?.colors?.border || 
+    'transparent'
+  };
 
   ${props => {
     const themedStyles = createThemedStyles(props.$theme);
@@ -67,7 +87,12 @@ export const SectionTitle = styled.h3<{
 
 export const Label = styled.label<{ $theme?: any; $size?: 'sm' | 'md' | 'lg' }>`
   font-weight: 600;
-  color: ${props => props.$theme?.colors?.text || '#2c3e50'};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark || 
+    props.$theme?.colors?.text || 
+    'inherit'
+  };
   font-size: ${props => {
     switch (props.$size) {
       case 'sm':
@@ -106,8 +131,14 @@ export const InputStyled = styled.input<{
   border: 1px solid
     ${props =>
       props.$hasError
-        ? props.$theme?.colors?.error || '#dc3545'
-        : props.$theme?.colors?.border || '#d1d5db'};
+        ? props.$theme?.colors?.status?.error?.border ||
+          props.$theme?.status?.error?.border ||
+          props.$theme?.colors?.error ||
+          'transparent'
+        : props.$theme?.colors?.border?.light ||
+          props.$theme?.border?.light ||
+          props.$theme?.colors?.border ||
+          'transparent'};
   border-radius: 6px;
   font-size: ${props => {
     switch (props.$size) {
@@ -120,25 +151,58 @@ export const InputStyled = styled.input<{
     }
   }};
   transition: all 0.2s ease;
-  background: ${props => props.$theme?.colors?.background || '#ffffff'};
-  color: ${props => props.$theme?.colors?.text || '#2c3e50'};
+  background: ${props => 
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary || 
+    props.$theme?.colors?.background || 
+    'transparent'
+  };
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark || 
+    props.$theme?.colors?.text || 
+    'inherit'
+  };
 
   &:focus {
     outline: none;
-    border-color: ${props => props.$theme?.colors?.primary || '#29abe2'};
-    box-shadow: 0 0 0 3px
-      ${props =>
-        props.$theme?.colors?.primaryLight || 'rgba(41, 171, 226, 0.1)'};
+    border-color: ${props => 
+      props.$theme?.colors?.primary || 
+      props.$theme?.accent || 
+      'transparent'
+    };
+    box-shadow: 0 0 0 3px ${props => {
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   }
 
   &:disabled {
-    background: ${props => props.$theme?.colors?.disabled || '#f8f9fa'};
-    color: ${props => props.$theme?.colors?.textDisabled || '#6c757d'};
+    background: ${props => 
+      props.$theme?.colors?.background?.secondary || 
+      props.$theme?.background?.secondary || 
+      'transparent'
+    };
+    color: ${props => 
+      props.$theme?.colors?.text?.secondary || 
+      props.$theme?.text?.secondary || 
+      'inherit'
+    };
     cursor: not-allowed;
   }
 
   &::placeholder {
-    color: ${props => props.$theme?.colors?.placeholder || '#9ca3af'};
+    color: ${props => 
+      props.$theme?.colors?.text?.secondary || 
+      props.$theme?.text?.secondary || 
+      'inherit'
+    };
   }
 
   ${props => {
@@ -168,8 +232,14 @@ export const SelectStyled = styled.select<{
   border: 1px solid
     ${props =>
       props.$hasError
-        ? props.$theme?.colors?.error || '#dc3545'
-        : props.$theme?.colors?.border || '#d1d5db'};
+        ? props.$theme?.colors?.status?.error?.border ||
+          props.$theme?.status?.error?.border ||
+          props.$theme?.colors?.error ||
+          'transparent'
+        : props.$theme?.colors?.border?.light ||
+          props.$theme?.border?.light ||
+          props.$theme?.colors?.border ||
+          'transparent'};
   border-radius: 6px;
   font-size: ${props => {
     switch (props.$size) {
@@ -181,22 +251,51 @@ export const SelectStyled = styled.select<{
         return '0.85rem';
     }
   }};
-  background: ${props => props.$theme?.colors?.background || '#ffffff'};
-  color: ${props => props.$theme?.colors?.text || '#2c3e50'};
+  background: ${props => 
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary || 
+    props.$theme?.colors?.background || 
+    'transparent'
+  };
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark || 
+    props.$theme?.colors?.text || 
+    'inherit'
+  };
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:focus {
     outline: none;
-    border-color: ${props => props.$theme?.colors?.primary || '#29abe2'};
-    box-shadow: 0 0 0 3px
-      ${props =>
-        props.$theme?.colors?.primaryLight || 'rgba(41, 171, 226, 0.1)'};
+    border-color: ${props => 
+      props.$theme?.colors?.primary || 
+      props.$theme?.accent || 
+      'transparent'
+    };
+    box-shadow: 0 0 0 3px ${props => {
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   }
 
   &:disabled {
-    background: ${props => props.$theme?.colors?.disabled || '#f8f9fa'};
-    color: ${props => props.$theme?.colors?.textDisabled || '#6c757d'};
+    background: ${props => 
+      props.$theme?.colors?.background?.secondary || 
+      props.$theme?.background?.secondary || 
+      'transparent'
+    };
+    color: ${props => 
+      props.$theme?.colors?.text?.secondary || 
+      props.$theme?.text?.secondary || 
+      'inherit'
+    };
     cursor: not-allowed;
   }
 
@@ -210,7 +309,12 @@ export const ErrorMessage = styled.div<{
   $theme?: any;
   $size?: 'sm' | 'md' | 'lg';
 }>`
-  color: ${props => props.$theme?.colors?.error || '#dc3545'};
+  color: ${props => 
+    props.$theme?.colors?.status?.error?.text ||
+    props.$theme?.status?.error?.text ||
+    props.$theme?.colors?.error ||
+    'inherit'
+  };
   font-size: ${props => {
     switch (props.$size) {
       case 'sm':
@@ -237,7 +341,12 @@ export const HelpText = styled.div<{
   $theme?: any;
   $size?: 'sm' | 'md' | 'lg';
 }>`
-  color: ${props => props.$theme?.colors?.textSecondary || '#6c757d'};
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary || 
+    props.$theme?.colors?.textSecondary || 
+    'inherit'
+  };
   font-size: ${props => {
     switch (props.$size) {
       case 'sm':
@@ -308,22 +417,40 @@ export const CheckboxItem = styled.label<{ $variant?: 'default' | 'card' }>`
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.8rem;
-  ${props =>
-    props.$variant === 'card'
-      ? `
-    border: 1px solid rgba(41, 171, 226, 0.2);
-    background: rgba(255, 255, 255, 0.8);
-    &:hover {
-      border-color: #29abe2;
+  ${props => {
+    if (props.$variant === 'card') {
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      let rgbaPrimary = 'transparent';
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        rgbaPrimary = `rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      return `
+        border: 1px solid ${rgbaPrimary};
+        background: ${props.$theme?.colors?.background?.primary || 
+                     props.$theme?.background?.primary || 
+                     'transparent'};
+        &:hover {
+          border-color: ${primaryColor || 'transparent'};
+        }
+      `;
     }
-  `
-      : ''}
+    return '';
+  }}
 
   &:hover {
-    background: ${props =>
-      props.$variant === 'card'
-        ? 'rgba(41, 171, 226, 0.1)'
-        : 'rgba(41, 171, 226, 0.1)'};
+    background: ${props => {
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   }
 
   input[type='checkbox'] {
@@ -334,7 +461,12 @@ export const CheckboxItem = styled.label<{ $variant?: 'default' | 'card' }>`
 
 export const CheckboxLabel = styled.span<{ $theme?: any }>`
   font-weight: 500;
-  color: ${props => props.$theme?.colors?.text || '#2c3e50'};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark || 
+    props.$theme?.colors?.text || 
+    'inherit'
+  };
   line-height: 1.4;
 
   ${props => {
@@ -374,9 +506,19 @@ export const PeriodGroup = styled.div<{ $theme?: any }>`
   align-items: center;
   margin: 0.75rem 0;
   padding: 1rem;
-  background: ${props => props.$theme?.colors?.surface || '#f8f9fa'};
+  background: ${props => 
+    props.$theme?.colors?.background?.secondary || 
+    props.$theme?.background?.secondary || 
+    props.$theme?.colors?.surface || 
+    'transparent'
+  };
   border-radius: 8px;
-  border: 1px solid ${props => props.$theme?.colors?.border || '#e5e7eb'};
+  border: 1px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light || 
+    props.$theme?.colors?.border || 
+    'transparent'
+  };
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -393,9 +535,19 @@ export const PeriodGroup = styled.div<{ $theme?: any }>`
 export const ValidationContainer = styled.div<{ $theme?: any }>`
   margin-top: 1rem;
   padding: 1rem;
-  background: ${props => props.$theme?.colors?.surface || '#f8f9fa'};
+  background: ${props => 
+    props.$theme?.colors?.background?.secondary || 
+    props.$theme?.background?.secondary || 
+    props.$theme?.colors?.surface || 
+    'transparent'
+  };
   border-radius: 8px;
-  border: 1px solid ${props => props.$theme?.colors?.border || '#e5e7eb'};
+  border: 1px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light || 
+    props.$theme?.colors?.border || 
+    'transparent'
+  };
 
   ${props => {
     const themedStyles = createThemedStyles(props.$theme);
@@ -404,11 +556,25 @@ export const ValidationContainer = styled.div<{ $theme?: any }>`
 `;
 
 export const SuccessMessage = styled.div<{ $theme?: any }>`
-  color: ${props => props.$theme?.colors?.success || '#28a745'};
-  background: ${props => props.$theme?.colors?.successLight || '#d4edda'};
+  color: ${props => 
+    props.$theme?.colors?.status?.success?.text ||
+    props.$theme?.status?.success?.text ||
+    props.$theme?.colors?.success ||
+    'inherit'
+  };
+  background: ${props => 
+    props.$theme?.colors?.status?.success?.background ||
+    props.$theme?.status?.success?.background ||
+    'transparent'
+  };
   padding: 0.75rem;
   border-radius: 6px;
-  border: 1px solid ${props => props.$theme?.colors?.success || '#28a745'};
+  border: 1px solid ${props => 
+    props.$theme?.colors?.status?.success?.border ||
+    props.$theme?.status?.success?.border ||
+    props.$theme?.colors?.success ||
+    'transparent'
+  };
   font-size: 0.85rem;
   font-weight: 500;
   margin-top: 0.5rem;
@@ -431,26 +597,20 @@ export const StatusIndicator = styled.div<{
   font-size: 0.75rem;
   font-weight: 500;
   background: ${props => {
-    const statusColors = {
-      success: '#d4edda',
-      warning: '#fff3cd',
-      error: '#f8d7da',
-      info: '#d1ecf1',
-    };
-    return (
-      statusColors[props.$status as keyof typeof statusColors] || '#e9ecef'
-    );
+    if (props.$status) {
+      return props.$theme?.colors?.status?.[props.$status]?.background ||
+             props.$theme?.status?.[props.$status]?.background ||
+             'transparent';
+    }
+    return 'transparent';
   }};
   color: ${props => {
-    const statusColors = {
-      success: '#155724',
-      warning: '#856404',
-      error: '#721c24',
-      info: '#0c5460',
-    };
-    return (
-      statusColors[props.$status as keyof typeof statusColors] || '#495057'
-    );
+    if (props.$status) {
+      return props.$theme?.colors?.status?.[props.$status]?.text ||
+             props.$theme?.status?.[props.$status]?.text ||
+             'inherit';
+    }
+    return 'inherit';
   }};
 
   ${props => {
@@ -471,26 +631,40 @@ export const CertificateStatus = styled.div<{
   font-size: 0.8rem;
   font-weight: 500;
   background: ${props => {
-    const statusColors = {
-      valid: '#d4edda',
-      invalid: '#f8d7da',
-      expired: '#fff3cd',
-      pending: '#d1ecf1',
-    };
-    return (
-      statusColors[props.$status as keyof typeof statusColors] || '#e9ecef'
-    );
+    if (props.$status === 'valid') {
+      return props.$theme?.colors?.status?.success?.background ||
+             props.$theme?.status?.success?.background ||
+             'transparent';
+    }
+    if (props.$status === 'invalid' || props.$status === 'expired') {
+      return props.$theme?.colors?.status?.error?.background ||
+             props.$theme?.status?.error?.background ||
+             'transparent';
+    }
+    if (props.$status === 'pending') {
+      return props.$theme?.colors?.status?.info?.background ||
+             props.$theme?.status?.info?.background ||
+             'transparent';
+    }
+    return 'transparent';
   }};
   color: ${props => {
-    const statusColors = {
-      valid: '#155724',
-      invalid: '#721c24',
-      expired: '#856404',
-      pending: '#0c5460',
-    };
-    return (
-      statusColors[props.$status as keyof typeof statusColors] || '#495057'
-    );
+    if (props.$status === 'valid') {
+      return props.$theme?.colors?.status?.success?.text ||
+             props.$theme?.status?.success?.text ||
+             'inherit';
+    }
+    if (props.$status === 'invalid' || props.$status === 'expired') {
+      return props.$theme?.colors?.status?.error?.text ||
+             props.$theme?.status?.error?.text ||
+             'inherit';
+    }
+    if (props.$status === 'pending') {
+      return props.$theme?.colors?.status?.info?.text ||
+             props.$theme?.status?.info?.text ||
+             'inherit';
+    }
+    return 'inherit';
   }};
 
   ${props => {
@@ -541,19 +715,33 @@ export const LoadingOverlay = styled.div<{ $isLoading: boolean }>`
 `;
 
 // Validation and form utilities
-export const ValidationButton = styled.button<{ $disabled?: boolean }>`
+export const ValidationButton = styled.button<{ $disabled?: boolean; $theme?: any }>`
   padding: 0.5rem;
-  background: ${props => (props.$disabled ? '#ccc' : '#29abe2')};
-  color: white;
+  background: ${props => {
+    if (props.$disabled) {
+      return props.$theme?.colors?.background?.secondary ||
+             props.$theme?.background?.secondary ||
+             'transparent';
+    }
+    return props.$theme?.colors?.primary ||
+           props.$theme?.accent ||
+           'transparent';
+  }};
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary || 
+    'inherit'
+  };
   border: none;
   border-radius: 4px;
   cursor: ${props => (props.$disabled ? 'not-allowed' : 'pointer')};
   font-size: 0.8rem;
   white-space: nowrap;
   transition: background 0.3s ease;
+  opacity: ${props => (props.$disabled ? 0.5 : 1)};
 
   &:hover {
-    background: ${props => (props.$disabled ? '#ccc' : '#1e8bc3')};
+    opacity: ${props => (props.$disabled ? 0.5 : 0.9)};
   }
 `;
 
@@ -567,44 +755,38 @@ export const InfoMessage = styled.div<{
   font-size: 0.85rem;
   font-weight: 500;
   background: ${props => {
-    const variantColors = {
-      success: '#d4edda',
-      warning: '#fff3cd',
-      error: '#f8d7da',
-      info: '#d1ecf1',
-    };
-    return (
-      variantColors[props.$variant as keyof typeof variantColors] ||
-      props.$theme?.colors?.surface ||
-      '#f8f9fa'
-    );
+    if (props.$variant) {
+      return props.$theme?.colors?.status?.[props.$variant]?.background ||
+             props.$theme?.status?.[props.$variant]?.background ||
+             'transparent';
+    }
+    return props.$theme?.colors?.background?.secondary ||
+           props.$theme?.background?.secondary ||
+           props.$theme?.colors?.surface ||
+           'transparent';
   }};
   color: ${props => {
-    const variantColors = {
-      success: '#155724',
-      warning: '#856404',
-      error: '#721c24',
-      info: '#0c5460',
-    };
-    return (
-      variantColors[props.$variant as keyof typeof variantColors] ||
-      props.$theme?.colors?.text ||
-      '#2c3e50'
-    );
+    if (props.$variant) {
+      return props.$theme?.colors?.status?.[props.$variant]?.text ||
+             props.$theme?.status?.[props.$variant]?.text ||
+             'inherit';
+    }
+    return props.$theme?.colors?.text?.dark ||
+           props.$theme?.text?.dark ||
+           props.$theme?.colors?.text ||
+           'inherit';
   }};
   border: 1px solid
     ${props => {
-      const variantColors = {
-        success: '#c3e6cb',
-        warning: '#ffeaa7',
-        error: '#f5c6cb',
-        info: '#bee5eb',
-      };
-      return (
-        variantColors[props.$variant as keyof typeof variantColors] ||
-        props.$theme?.colors?.border ||
-        '#e5e7eb'
-      );
+      if (props.$variant) {
+        return props.$theme?.colors?.status?.[props.$variant]?.border ||
+               props.$theme?.status?.[props.$variant]?.border ||
+               'transparent';
+      }
+      return props.$theme?.colors?.border?.light ||
+             props.$theme?.border?.light ||
+             props.$theme?.colors?.border ||
+             'transparent';
     }};
 
   ${props => {

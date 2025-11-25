@@ -52,7 +52,8 @@ export async function reverseGeocodeOpenCage(
 
     logger.geo('🌐 Tentando OpenCage Data API...');
 
-    const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${apiKey}&language=pt&countrycode=br&no_annotations=1`;
+    // ✅ Preservar precisão máxima nas coordenadas (usar todas as casas decimais)
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${apiKey}&language=pt&countrycode=br&no_annotations=1&no_dedupe=1`;
 
     const response = await fetch(url, {
       headers: {
@@ -97,7 +98,8 @@ export async function reverseGeocodeOpenCage(
       formattedAddress: formattedAddress + postalCode,
       components: {
         street: components.road,
-        number: components.house_number,
+        number: components.house_number || components.housenumber || components.number || '',
+        house_number: components.house_number || components.housenumber || components.number || '',
         neighborhood: components.suburb || components.neighbourhood,
         city: components.city || components.town,
         state: components.state,

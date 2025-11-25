@@ -13,13 +13,22 @@ interface ProfileSelectionModalProps {
   currentProfile?: UserProfile | null;
 }
 
-const ProfileModal = styled.div<{ $isOpen: boolean }>`
+const ProfileModal = styled.div<{ $isOpen: boolean; $theme?: any }>`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.5)`;
+      }
+    }
+    return 'rgba(0, 0, 0, 0.5)'; // Fallback absoluto para overlay
+  }};
   display: ${props => (props.$isOpen ? 'flex' : 'none')};
   align-items: center;
   justify-content: center;
@@ -28,22 +37,51 @@ const ProfileModal = styled.div<{ $isOpen: boolean }>`
 
   /* CSS inline para evitar FOUC */
   &[style*='display: flex'] {
-    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(10px);
   }
 `;
 
 const ProfileModalContent = styled.div<{ $theme?: any }>`
-  background: rgba(255, 255, 255, 0.98);
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.98)`;
+    }
+    return props.$theme?.colors?.background?.primary || 
+           props.$theme?.background?.primary ||
+           'transparent';
+  }};
   backdrop-filter: blur(20px);
   border-radius: 24px;
   padding: 2.5rem;
-  max-width: 500px;
-  width: 90%;
+ 90%;
   max-height: 85vh;
   overflow-y: auto;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(41, 171, 226, 0.3);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 25px 50px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.25)`;
+      }
+    }
+    return '0 25px 50px transparent';
+  }};
+  border: 1px solid ${props => {
+    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.3)`;
+    }
+    return props.$theme?.colors?.border?.light || 
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 
   @keyframes fadeIn {
@@ -74,7 +112,9 @@ const ProfileModalContent = styled.div<{ $theme?: any }>`
     border-bottom: 2px solid
       ${props => {
         const border = props.$theme?.colors?.border;
-        return (typeof border === 'object' && border?.light) || '#f1f3f4';
+        return (typeof border === 'object' && border?.light) || 
+               props.$theme?.border?.light ||
+               'transparent';
       }};
     padding-bottom: 1.5rem;
 
@@ -82,7 +122,11 @@ const ProfileModalContent = styled.div<{ $theme?: any }>`
       font-family: 'Montserrat', sans-serif;
       font-size: 1.75rem;
       font-weight: 700;
-      color: ${props => props.$theme?.colors?.text?.dark || '#2c3e50'};
+      color: ${props => 
+        props.$theme?.colors?.text?.dark || 
+        props.$theme?.text?.dark ||
+        'inherit'
+      };
       margin: 0;
       display: flex;
       align-items: center;
@@ -93,33 +137,66 @@ const ProfileModalContent = styled.div<{ $theme?: any }>`
       font-family: 'Montserrat', sans-serif;
       font-size: 1.5rem;
       font-weight: 800;
-      color: ${props => props.$theme?.colors?.navigation?.primary || '#29abe2'};
+      color: ${props => 
+        props.$theme?.colors?.navigation?.primary || 
+        props.$theme?.colors?.primary ||
+        props.$theme?.accent ||
+        'inherit'
+      };
       margin: 0.5rem 0 0.25rem 0;
       background: linear-gradient(
         135deg,
-        ${props => props.$theme?.colors?.navigation?.primary || '#29abe2'},
-        ${props => props.$theme?.colors?.accent?.green || '#90ee90'}
+        ${props => 
+          props.$theme?.colors?.navigation?.primary || 
+          props.$theme?.colors?.primary ||
+          props.$theme?.accent ||
+          'transparent'
+        },
+        ${props => 
+          props.$theme?.colors?.secondary ||
+          props.$theme?.accent ||
+          'transparent'
+        }
       );
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      text-shadow: 0 2px 4px rgba(41, 171, 226, 0.1);
+      text-shadow: ${props => {
+        const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+        if (primaryColor && primaryColor.startsWith('#')) {
+          const r = parseInt(primaryColor.slice(1, 3), 16);
+          const g = parseInt(primaryColor.slice(3, 5), 16);
+          const b = parseInt(primaryColor.slice(5, 7), 16);
+          return `0 2px 4px rgba(${r}, ${g}, ${b}, 0.1)`;
+        }
+        return 'none';
+      }};
     }
 
     .user-name {
       font-family: 'Roboto', sans-serif;
       font-size: 1rem;
-      color: ${props => props.$theme?.colors?.text?.secondary || '#6c757d'};
+      color: ${props => 
+        props.$theme?.colors?.text?.secondary || 
+        props.$theme?.text?.secondary ||
+        'inherit'
+      };
       margin: 0;
       font-weight: 500;
     }
 
     .close-button {
       background: ${props =>
-        props.$theme?.colors?.background?.secondary || '#f8f9fa'};
+        props.$theme?.colors?.background?.secondary || 
+        props.$theme?.background?.secondary ||
+        'transparent'};
       border: none;
       font-size: 1.25rem;
-      color: ${props => props.$theme?.colors?.text?.secondary || '#6c757d'};
+      color: ${props => 
+        props.$theme?.colors?.text?.secondary || 
+        props.$theme?.text?.secondary ||
+        'inherit'
+      };
       cursor: pointer;
       padding: 0.75rem;
       border-radius: 12px;
@@ -130,9 +207,16 @@ const ProfileModalContent = styled.div<{ $theme?: any }>`
 
       &:hover {
         background: ${props =>
-          props.$theme?.colors?.background?.tertiary || '#e9ecef'};
-        color: ${props => props.$theme?.colors?.text?.primary || '#495057'};
+          props.$theme?.colors?.background?.secondary || 
+          props.$theme?.background?.secondary ||
+          'transparent'};
+        color: ${props => 
+          props.$theme?.colors?.text?.primary || 
+          props.$theme?.text?.primary ||
+          'inherit'
+        };
         transform: scale(1.05);
+        opacity: 0.9;
       }
     }
   }
@@ -147,7 +231,11 @@ const ProfileList = styled.div<{ $theme?: any }>`
 const ModalSubtitle = styled.p<{ $theme?: any }>`
   font-family: 'Roboto', sans-serif;
   font-size: 1rem;
-  color: #6c757d;
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'
+  };
   margin: 0 0 1.5rem 0;
   text-align: center;
   line-height: 1.5;
@@ -162,7 +250,15 @@ const ProfileItem = styled.div<{ $isSelected: boolean; $color: string }>`
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid
     ${props => (props.$isSelected ? props.$color : 'transparent')};
-  background: ${props => (props.$isSelected ? `${props.$color}12` : '#f8f9fa')};
+  background: ${props => {
+    if (props.$isSelected && props.$color && props.$color.startsWith('#')) {
+      const r = parseInt(props.$color.slice(1, 3), 16);
+      const g = parseInt(props.$color.slice(3, 5), 16);
+      const b = parseInt(props.$color.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.12)`;
+    }
+    return 'transparent';
+  }};
   position: relative;
   overflow: hidden;
 
@@ -173,29 +269,67 @@ const ProfileItem = styled.div<{ $isSelected: boolean; $color: string }>`
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-      135deg,
-      ${props => props.$color}08,
-      transparent
-    );
+    background: ${props => {
+      if (props.$color && props.$color.startsWith('#')) {
+        const r = parseInt(props.$color.slice(1, 3), 16);
+        const g = parseInt(props.$color.slice(3, 5), 16);
+        const b = parseInt(props.$color.slice(5, 7), 16);
+        return `linear-gradient(135deg, rgba(${r}, ${g}, ${b}, 0.08), transparent)`;
+      }
+      return 'transparent';
+    }};
     opacity: ${props => (props.$isSelected ? 1 : 0)};
     transition: opacity 0.3s ease;
   }
 
   &:hover {
-    background: ${props =>
-      props.$isSelected ? `${props.$color}18` : '#e9ecef'};
+    background: ${props => {
+      if (props.$isSelected && props.$color && props.$color.startsWith('#')) {
+        const r = parseInt(props.$color.slice(1, 3), 16);
+        const g = parseInt(props.$color.slice(3, 5), 16);
+        const b = parseInt(props.$color.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.18)`;
+      }
+      return 'transparent';
+    }};
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    border-color: ${props => props.$color}40;
+    box-shadow: ${props => {
+      const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+      if (shadowColor && shadowColor.startsWith('rgba')) {
+        const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (match) {
+          return `0 8px 25px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.15)`;
+        }
+      }
+      return '0 8px 25px transparent';
+    }};
+    border-color: ${props => {
+      if (props.$color && props.$color.startsWith('#')) {
+        const r = parseInt(props.$color.slice(1, 3), 16);
+        const g = parseInt(props.$color.slice(3, 5), 16);
+        const b = parseInt(props.$color.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.4)`;
+      }
+      return 'transparent';
+    }};
   }
 
   .profile-avatar {
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: ${props => props.$color};
-    color: white;
+    background: ${props => props.$color || 'transparent'};
+    color: ${props => {
+      // Determinar cor de texto baseado no brilho da cor de fundo
+      if (props.$color && props.$color.startsWith('#')) {
+        const r = parseInt(props.$color.slice(1, 3), 16);
+        const g = parseInt(props.$color.slice(3, 5), 16);
+        const b = parseInt(props.$color.slice(5, 7), 16);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness > 128 ? 'inherit' : 'inherit'; // Sempre usar inherit para deixar o tema decidir
+      }
+      return 'inherit';
+    }};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -205,12 +339,28 @@ const ProfileItem = styled.div<{ $isSelected: boolean; $color: string }>`
     flex-shrink: 0;
     position: relative;
     z-index: 1;
-    box-shadow: 0 4px 12px ${props => props.$color}40;
+    box-shadow: ${props => {
+      if (props.$color && props.$color.startsWith('#')) {
+        const r = parseInt(props.$color.slice(1, 3), 16);
+        const g = parseInt(props.$color.slice(3, 5), 16);
+        const b = parseInt(props.$color.slice(5, 7), 16);
+        return `0 4px 12px rgba(${r}, ${g}, ${b}, 0.4)`;
+      }
+      return 'none';
+    }};
     transition: all 0.3s ease;
 
     &:hover {
       transform: scale(1.05);
-      box-shadow: 0 6px 20px ${props => props.$color}50;
+      box-shadow: ${props => {
+        if (props.$color && props.$color.startsWith('#')) {
+          const r = parseInt(props.$color.slice(1, 3), 16);
+          const g = parseInt(props.$color.slice(3, 5), 16);
+          const b = parseInt(props.$color.slice(5, 7), 16);
+          return `0 6px 20px rgba(${r}, ${g}, ${b}, 0.5)`;
+        }
+        return 'none';
+      }};
     }
   }
 
@@ -223,7 +373,11 @@ const ProfileItem = styled.div<{ $isSelected: boolean; $color: string }>`
       font-family: 'Montserrat', sans-serif;
       font-size: 1.125rem;
       font-weight: 700;
-      color: #2c3e50;
+      color: ${props => 
+        props.$theme?.colors?.text?.dark || 
+        props.$theme?.text?.dark ||
+        'inherit'
+      };
       margin: 0;
       transition: color 0.3s ease;
     }
@@ -247,7 +401,17 @@ const ProfileItem = styled.div<{ $isSelected: boolean; $color: string }>`
 
     &::before {
       content: '✓';
-      color: white;
+      color: ${props => {
+        // Determinar cor de texto baseado no brilho da cor de fundo
+        if (props.$color && props.$color.startsWith('#')) {
+          const r = parseInt(props.$color.slice(1, 3), 16);
+          const g = parseInt(props.$color.slice(3, 5), 16);
+          const b = parseInt(props.$color.slice(5, 7), 16);
+          const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+          return brightness > 128 ? 'inherit' : 'inherit'; // Sempre usar inherit
+        }
+        return 'inherit';
+      }};
       font-size: 0.875rem;
       font-weight: 700;
     }
@@ -271,8 +435,8 @@ const ProfileSelectionModal: React.FC<ProfileSelectionModalProps> = ({
     safeProfiles.length > 0 ? safeProfiles[0].nickname || 'Usuário' : 'Usuário';
 
   return (
-    <ProfileModal $isOpen={isOpen}>
-      <ProfileModalContent>
+    <ProfileModal $isOpen={isOpen} $theme={theme}>
+      <ProfileModalContent $theme={theme}>
         <div className='header'>
           <div>
             <h2 className='title'>
@@ -291,16 +455,17 @@ const ProfileSelectionModal: React.FC<ProfileSelectionModalProps> = ({
           </button>
         </div>
 
-        <ModalSubtitle>
+        <ModalSubtitle $theme={theme}>
           Escolha o tipo de perfil que deseja usar para acessar o sistema
         </ModalSubtitle>
 
-        <ProfileList>
+        <ProfileList $theme={theme}>
           {safeProfiles.map(profile => (
             <ProfileItem
               key={profile.id}
               $isSelected={currentProfile?.id === profile.id}
               $color={profile.color}
+              $theme={theme}
               onClick={() => onProfileSelect(profile)}
             >
               <div className='profile-avatar'>{profile.avatar}</div>

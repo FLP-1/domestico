@@ -13,6 +13,21 @@ interface NetworkInfo {
   ssidError?: string | null;
 }
 
+// ✅ Cache compartilhado para evitar múltiplas requisições simultâneas
+interface SSIDCache {
+  data: { ssid: string; platform: string; error?: string } | null;
+  timestamp: number;
+  pendingPromise: Promise<{ ssid: string; platform: string; error?: string }> | null;
+}
+
+const SSID_CACHE: SSIDCache = {
+  data: null,
+  timestamp: 0,
+  pendingPromise: null,
+};
+
+const CACHE_DURATION = 5000; // 5 segundos de cache
+
 interface UseNetworkDetectionOptions {
   enableLogging?: boolean;
   updateInterval?: number; // em milissegundos
@@ -249,35 +264,87 @@ export const useNetworkDetection = (
     }
   }, []);
 
-  // ✅ Função para capturar SSID real do sistema operacional
+  // ✅ Função para capturar SSID real do sistema operacional com cache compartilhado
   const fetchRealSSID = useCallback(async (): Promise<{
     ssid: string;
     platform: string;
     error?: string;
   }> => {
-    try {
-      const response = await fetch('/api/wifi/ssid');
-      const data = await response.json();
-
-      if (data.success) {
-        return {
-          ssid: data.ssid,
-          platform: data.platform,
-        };
-      } else {
-        return {
-          ssid: 'Não detectado',
-          platform: 'desconhecido',
-          error: data.error,
-        };
-      }
-    } catch (error) {
-      return {
-        ssid: 'Erro ao capturar',
-        platform: 'desconhecido',
-        error: error instanceof Error ? error.message : 'Erro desconhecido',
-      };
+    const now = Date.now();
+    
+    // ✅ Verificar cache válido
+    if (SSID_CACHE.data && (now - SSID_CACHE.timestamp) < CACHE_DURATION) {
+      return SSID_CACHE.data;
     }
+    
+    // ✅ Se já há uma requisição pendente, aguardar ela
+    if (SSID_CACHE.pendingPromise) {
+      try {
+        return await SSID_CACHE.pendingPromise;
+      } catch {
+        // Se a requisição pendente falhar, continuar para fazer nova
+      }
+    }
+    
+    // ✅ Criar nova requisição
+    const fetchPromise = (async () => {
+      try {
+        const response = await fetch('/api/wifi/ssid');
+        
+        // ✅ Tratar erro 429 (Too Many Requests) silenciosamente
+        if (response.status === 429) {
+          // Se há cache antigo, usar ele mesmo que expirado
+          if (SSID_CACHE.data) {
+            return SSID_CACHE.data;
+          }
+          // Caso contrário, retornar erro suave
+          return {
+            ssid: 'Aguardando...',
+            platform: 'desconhecido',
+            error: 'Rate limit atingido',
+          };
+        }
+        
+        const data = await response.json();
+
+        if (data.success) {
+          const result = {
+            ssid: data.ssid,
+            platform: data.platform,
+          };
+          // ✅ Atualizar cache
+          SSID_CACHE.data = result;
+          SSID_CACHE.timestamp = now;
+          return result;
+        } else {
+          const result = {
+            ssid: 'Não detectado',
+            platform: 'desconhecido',
+            error: data.error,
+          };
+          // ✅ Cache mesmo em caso de erro (para evitar requisições repetidas)
+          SSID_CACHE.data = result;
+          SSID_CACHE.timestamp = now;
+          return result;
+        }
+      } catch (error) {
+        const result = {
+          ssid: 'Erro ao capturar',
+          platform: 'desconhecido',
+          error: error instanceof Error ? error.message : 'Erro desconhecido',
+        };
+        // ✅ Não cachear erros de rede (pode ser temporário)
+        throw error;
+      } finally {
+        // ✅ Limpar promise pendente após completar
+        SSID_CACHE.pendingPromise = null;
+      }
+    })();
+    
+    // ✅ Armazenar promise pendente
+    SSID_CACHE.pendingPromise = fetchPromise;
+    
+    return await fetchPromise;
   }, []);
 
   // Atualizar informações de rede com proteções robustas
@@ -370,7 +437,7 @@ export const useNetworkDetection = (
       } finally {
         setIsUpdating(false);
       }
-    }, 2000); // 2 segundos de debounce para maior estabilidade
+    }, 3000); // ✅ 3 segundos de debounce para evitar requisições excessivas
 
     setDebounceTimeout(timeout);
   }, [
@@ -389,7 +456,7 @@ export const useNetworkDetection = (
     // ✅ Proteção: Evitar chamadas excessivas na inicialização
     const initTimeout = setTimeout(() => {
       updateNetworkInfo();
-    }, 1000); // Aguardar 1 segundo antes da primeira chamada
+    }, 2000); // ✅ Aguardar 2 segundos antes da primeira chamada (aumentado)
 
     // Listener para mudanças na conexão
     const handleConnectionChange = () => {

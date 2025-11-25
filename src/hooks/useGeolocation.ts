@@ -46,8 +46,8 @@ export const useGeolocation = (): UseGeolocationReturn => {
     async (options: GeolocationOptions = {}): Promise<GeolocationData> => {
       const defaultOptions = {
         enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000, // 5 minutos
+        timeout: 30000, // 30 segundos para dar mais tempo ao GPS de alta precisão
+        maximumAge: 0, // Forçar captura sempre (sem cache) para melhor precisão
         ...options,
       };
 
@@ -101,8 +101,8 @@ export const useGeolocation = (): UseGeolocationReturn => {
     ): number => {
       const defaultOptions = {
         enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000,
+        timeout: 30000, // 30 segundos para dar mais tempo ao GPS de alta precisão
+        maximumAge: 0, // Forçar captura sempre (sem cache) para melhor precisão
         ...options,
       };
 

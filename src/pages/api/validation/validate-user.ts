@@ -76,7 +76,8 @@ export default async function handler(
         validationResult = await ValidationService.validateUniqueCPFInGroup(
           data.cpf,
           data.grupoId,
-          data.usuarioId
+          data.usuarioId,
+          data.perfilId
         );
         break;
 

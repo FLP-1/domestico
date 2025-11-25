@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { ToastContainer } from 'react-toastify';
 import styled, { keyframes } from 'styled-components';
 import AccessibleEmoji from '../components/AccessibleEmoji';
 import { UnifiedButton, UnifiedBadge, UnifiedProgressBar } from '../components/unified';
@@ -11,6 +10,9 @@ import { UnifiedModal } from '../components/unified';
 import ProxyUploadModal from '../components/ProxyUploadModal';
 import Sidebar from '../components/Sidebar';
 import WelcomeSection from '../components/WelcomeSection';
+import PageContainer from '../components/PageContainer';
+import PageHeader from '../components/PageHeader';
+import TopBar from '../components/TopBar';
 import { ESOCIAL_CONFIG } from '../config/esocial';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useAlertManager } from '../hooks/useAlertManager';
@@ -35,17 +37,7 @@ import {
   OptimizedHelpText,
   OptimizedFlexContainer,
 } from '../components/shared/optimized-styles';
-
-// Animações
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-const pulse = keyframes`
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-`;
+import { fadeIn, pulse } from '../components/shared/animations';
 
 // Styled Components para substituir estilos inline
 const CenterText = styled.div`
@@ -54,8 +46,11 @@ const CenterText = styled.div`
   margin-top: 0.5rem;
 `;
 
-const ErrorText = styled.div`
-  color: ${props => props.theme?.status?.error?.color || '#e74c3c'};
+const ErrorText = styled.div<{ $theme?: any }>`
+  color: ${props => 
+    props.$theme?.colors?.status?.error?.text ||
+    props.$theme?.status?.error?.text ||
+    'inherit'};
   font-weight: 600;
   margin-bottom: 0.5rem;
 `;
@@ -65,11 +60,12 @@ const SmallText = styled.div`
   color: ${props => getTextSecondary(props.theme)};
 `;
 
-const ApiStatusIndicator = styled.span<{ $isReal: boolean }>`
+const ApiStatusIndicator = styled.span<{ $isReal: boolean; $theme?: any }>`
   color: ${props =>
     props.$isReal
-      ? props.theme?.status?.success?.color || '#27ae60'
-      : props.theme?.status?.warning?.color || '#f39c12'};
+      ? props.$theme?.colors?.status?.[props.$isReal ? 'success' : 'warning']?.text ||
+    props.$theme?.status?.[props.$isReal ? 'success' : 'warning']?.text ||
+    'inherit'};
   font-weight: bold;
 `;
 
@@ -79,8 +75,11 @@ const FlexContainer = styled.div`
   gap: 1rem;
 `;
 
-const SSLWarningText = styled.div`
-  color: ${props => props.theme?.accent?.orange || '#ff6b35'};
+const SSLWarningText = styled.div<{ $theme?: any }>`
+  color: ${props => 
+    props.$theme?.colors?.status?.warning?.text ||
+    props.$theme?.status?.warning?.text ||
+    'inherit'};
   font-weight: bold;
 `;
 
@@ -89,88 +88,40 @@ const SSLWarningDescription = styled.div`
   margin-top: 8px;
 `;
 
-const DataSourceIndicator = styled.span<{ $isReal: boolean }>`
+const DataSourceIndicator = styled.span<{ $isReal: boolean; $theme?: any }>`
   font-size: 0.8rem;
   color: ${props =>
     props.$isReal
-      ? props.theme?.status?.success?.color || '#27ae60'
-      : props.theme?.status?.warning?.color || '#f39c12'};
+      ? props.$theme?.colors?.status?.success?.text ||
+        props.$theme?.status?.success?.text ||
+        'inherit'
+      : props.$theme?.colors?.status?.warning?.text ||
+        props.$theme?.status?.warning?.text ||
+        'inherit'};
   margin-left: 10px;
   font-weight: bold;
 `;
 
-const SuccessText = styled.span`
-  color: ${props => props.theme?.accent?.green || '#90ee90'};
+const SuccessText = styled.span<{ $theme?: any }>`
+  color: ${props => 
+    props.$theme?.colors?.status?.success?.text ||
+    props.$theme?.status?.success?.text ||
+    'inherit'};
   font-weight: 600;
 `;
 
-const ErrorSpan = styled.span`
-  color: ${props => props.theme?.status?.error?.color || '#e74c3c'};
+const ErrorSpan = styled.span<{ $theme?: any }>`
+  color: ${props => 
+    props.$theme?.colors?.status?.error?.text ||
+    props.$theme?.status?.error?.text ||
+    'inherit'};
 `;
 
 const SelectWrapper = styled.div`
   width: 120px;
 `;
 
-// Styled Components
-const Container = styled.div`
-  display: flex;
-  min-height: 100vh;
-  background: linear-gradient(
-    135deg,
-    ${props => {
-      const bg = props.theme?.colors?.background;
-      if (typeof bg === 'object' && bg && 'secondary' in bg) {
-        return bg.secondary || '#f5f7fa';
-      }
-      return '#f5f7fa';
-    }} 0%,
-    ${props => {
-      const bg = props.theme?.colors?.background;
-      if (typeof bg === 'object' && bg && 'secondary' in bg) {
-        return bg.secondary || '#c3cfe2';
-      }
-      return '#c3cfe2';
-    }} 100%
-  );
-  animation: ${fadeIn} 0.6s ease-out;
-`;
-
-const MainContent = styled.div`
-  flex: 1;
-  padding: 2rem;
-  margin-left: 280px;
-  max-width: calc(100vw - 280px);
-  overflow-x: auto;
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-`;
-
-const Title = styled.h1`
-  font-family: 'Montserrat', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: ${props => props.theme?.colors?.primary || '#29ABE2'};
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const Subtitle = styled.div`
-  font-size: 1.1rem;
-  color: ${props => props.theme?.colors?.text || '#666'};
-  margin: 0.5rem 0 0 0;
-  opacity: 0.8;
-`;
+// Container, MainContent, Header, Title e Subtitle removidos - usando PageContainer e PageHeader melhorados
 
 // StatusBadge removido - usar UnifiedBadge
 
@@ -185,19 +136,42 @@ const ContentGrid = styled.div`
   }
 `;
 
-const Section = styled.div`
-  background: rgba(255, 255, 255, 0.95);
+const Section = styled.div<{ $theme?: any }>`
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.95)`;
+    }
+    return props.$theme?.colors?.background?.primary || 
+           props.$theme?.background?.primary ||
+           'transparent';
+  }};
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 8px 32px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1)`;
+      }
+    }
+    return 'none';
+  }};
   backdrop-filter: blur(10px);
 `;
 
-const SectionTitle = styled.h2`
+const SectionTitle = styled.h2<{ $theme?: any }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 1.5rem;
   font-weight: 700;
-  color: ${props => props.theme?.colors?.primary || '#29ABE2'};
+  color: ${props => 
+    props.$theme?.colors?.primary || 
+    props.$theme?.accent ||
+    'inherit'};
   margin: 0 0 1.5rem 0;
   display: flex;
   align-items: center;
@@ -219,9 +193,12 @@ const FormGroupStyled = styled(FormGroup)`
   position: relative;
 `;
 
-const Label = styled.label`
+const Label = styled.label<{ $theme?: any }>`
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
   display: block;
@@ -230,38 +207,85 @@ const Label = styled.label`
 const InputStyled = styled(Input)<{ $theme?: Theme; $hasError?: boolean }>`
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid ${props => (props.$hasError ? '#e74c3c' : '#e9ecef')};
+  border: 2px solid ${props => 
+    props.$hasError
+      ? props.$theme?.colors?.status?.error?.border ||
+        props.$theme?.status?.error?.border ||
+        'transparent'
+      : props.$theme?.colors?.border?.light ||
+        props.$theme?.border?.light ||
+        'transparent'};
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
+  background: ${props => 
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary ||
+    'transparent'};
 
   &:focus {
     outline: none;
-    border-color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
-    box-shadow: 0 0 0 3px rgba(41, 171, 226, 0.1);
+    border-color: ${props => 
+      props.$theme?.colors?.primary || 
+      props.$theme?.accent ||
+      'transparent'};
+    box-shadow: 0 0 0 3px ${props => {
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   }
 `;
 
 const SelectStyled = styled(Select)<{ $theme?: Theme; $hasError?: boolean }>`
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid ${props => (props.$hasError ? '#e74c3c' : '#e9ecef')};
+  border: 2px solid ${props => 
+    props.$hasError
+      ? props.$theme?.colors?.status?.error?.border ||
+        props.$theme?.status?.error?.border ||
+        'transparent'
+      : props.$theme?.colors?.border?.light ||
+        props.$theme?.border?.light ||
+        'transparent'};
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
+  background: ${props => 
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary ||
+    'transparent'};
   cursor: pointer;
 
   &:focus {
     outline: none;
-    border-color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
-    box-shadow: 0 0 0 3px rgba(41, 171, 226, 0.1);
+    border-color: ${props => 
+      props.$theme?.colors?.primary || 
+      props.$theme?.accent ||
+      'transparent'};
+    box-shadow: 0 0 0 3px ${props => {
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   }
 `;
 
-const ErrorMessage = styled.div`
-  color: ${props => props.theme?.status?.error?.color || '#e74c3c'};
+const ErrorMessage = styled.div<{ $theme?: any }>`
+  color: ${props => 
+    props.$theme?.colors?.status?.error?.text ||
+    props.$theme?.status?.error?.text ||
+    'inherit'};
   font-size: 0.8rem;
   margin-top: 0.25rem;
   font-weight: 500;
@@ -287,24 +311,53 @@ const EventCard = styled.div<{ $status: string; $theme?: Theme }>`
     ${props => {
       switch (props.$status) {
         case 'pending':
-          return '#f39c12';
+          return props.$theme?.colors?.status?.warning?.border ||
+                 props.$theme?.status?.warning?.border ||
+                 'transparent';
         case 'sent':
-          return props.$theme?.colors?.primary || '#29ABE2';
+          return props.$theme?.colors?.primary || 
+                 props.$theme?.accent ||
+                 'transparent';
         case 'processed':
-          return props.$theme?.colors?.success || '#90EE90';
+          return props.$theme?.colors?.status?.success?.border ||
+                 props.$theme?.status?.success?.border ||
+                 'transparent';
         case 'error':
-          return '#e74c3c';
+          return props.$theme?.colors?.status?.error?.border ||
+                 props.$theme?.status?.error?.border ||
+                 'transparent';
         default:
-          return '#95a5a6';
+          return 'transparent';
       }
     }};
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  background: ${props => 
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary ||
+    'transparent'};
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 4px 16px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1)`;
+      }
+    }
+    return 'none';
+  }};
   transition: all 0.3s ease;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: ${props => {
+      const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+      if (shadowColor && shadowColor.startsWith('rgba')) {
+        const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (match) {
+          return `0 8px 24px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.15)`;
+        }
+      }
+      return 'none';
+    }};
   }
 `;
 
@@ -315,10 +368,13 @@ const EventHeader = styled.div`
   margin-bottom: 1rem;
 `;
 
-const EventTitle = styled.h3`
+const EventTitle = styled.h3<{ $theme?: any }>`
   font-size: 1.1rem;
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
   margin: 0;
 `;
 
@@ -330,18 +386,47 @@ const EventStatus = styled.span<{ $status: string; $theme?: Theme }>`
   background: ${props => {
     switch (props.$status) {
       case 'pending':
-        return '#f39c12';
+        return props.$theme?.colors?.status?.warning?.background ||
+               props.$theme?.status?.warning?.background ||
+               'transparent';
       case 'sent':
-        return props.$theme?.colors?.primary || '#29ABE2';
+        return props.$theme?.colors?.primary || 
+               props.$theme?.accent ||
+               'transparent';
       case 'processed':
-        return props.$theme?.colors?.success || '#90EE90';
+        return props.$theme?.colors?.status?.success?.background ||
+               props.$theme?.status?.success?.background ||
+               'transparent';
       case 'error':
-        return '#e74c3c';
+        return props.$theme?.colors?.status?.error?.background ||
+               props.$theme?.status?.error?.background ||
+               'transparent';
       default:
-        return '#95a5a6';
+        return 'transparent';
     }
   }};
-  color: white;
+  color: ${props => {
+    switch (props.$status) {
+      case 'pending':
+        return props.$theme?.colors?.status?.warning?.text ||
+               props.$theme?.status?.warning?.text ||
+               'inherit';
+      case 'sent':
+        return props.$theme?.colors?.text?.primary || 
+               props.$theme?.text?.primary ||
+               'inherit';
+      case 'processed':
+        return props.$theme?.colors?.status?.success?.text ||
+               props.$theme?.status?.success?.text ||
+               'inherit';
+      case 'error':
+        return props.$theme?.colors?.status?.error?.text ||
+               props.$theme?.status?.error?.text ||
+               'inherit';
+      default:
+        return 'inherit';
+    }
+  }};
 `;
 
 const EventDescription = styled.div`
@@ -369,30 +454,46 @@ const AlertBanner = styled.div<{ $type: string; $theme?: Theme }>`
   background: ${props => {
     switch (props.$type) {
       case 'warning':
-        return '#fff3cd';
+        return props.$theme?.colors?.status?.warning?.background ||
+               props.$theme?.status?.warning?.background ||
+               'transparent';
       case 'error':
-        return '#f8d7da';
+        return props.$theme?.colors?.status?.error?.background ||
+               props.$theme?.status?.error?.background ||
+               'transparent';
       case 'success':
-        return '#d4edda';
+        return props.$theme?.colors?.status?.success?.background ||
+               props.$theme?.status?.success?.background ||
+               'transparent';
       case 'info':
-        return '#d1ecf1';
+        return props.$theme?.colors?.status?.info?.background ||
+               props.$theme?.status?.info?.background ||
+               'transparent';
       default:
-        return '#e2e3e5';
+        return 'transparent';
     }
   }};
   border-left: 4px solid
     ${props => {
       switch (props.$type) {
         case 'warning':
-          return '#ffc107';
+          return props.$theme?.colors?.status?.warning?.border ||
+                 props.$theme?.status?.warning?.border ||
+                 'transparent';
         case 'error':
-          return '#dc3545';
+          return props.$theme?.colors?.status?.error?.border ||
+                 props.$theme?.status?.error?.border ||
+                 'transparent';
         case 'success':
-          return '#28a745';
+          return props.$theme?.colors?.status?.success?.border ||
+                 props.$theme?.status?.success?.border ||
+                 'transparent';
         case 'info':
-          return '#17a2b8';
+          return props.$theme?.colors?.status?.info?.border ||
+                 props.$theme?.status?.info?.border ||
+                 'transparent';
         default:
-          return '#6c757d';
+          return 'transparent';
       }
     }};
 `;
@@ -401,9 +502,12 @@ const AlertIcon = styled.span`
   font-size: 1.5rem;
 `;
 
-const AlertText = styled.div`
+const AlertText = styled.div<{ $theme?: any }>`
   flex: 1;
-  color: #2c3e50;
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
   font-weight: 500;
 `;
 
@@ -415,52 +519,108 @@ const StatsGrid = styled.div`
 `;
 
 const StatCard = styled.div<{ $theme?: Theme }>`
-  background: rgba(255, 255, 255, 0.95);
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.95)`;
+    }
+    return props.$theme?.colors?.background?.primary || 
+           props.$theme?.background?.primary ||
+           'transparent';
+  }};
   border-radius: 12px;
   padding: 1.5rem;
   text-align: center;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 4px 16px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1)`;
+      }
+    }
+    return 'none';
+  }};
   backdrop-filter: blur(10px);
-  border-left: 4px solid ${props => props.$theme?.colors?.primary || '#29ABE2'};
+  border-left: 4px solid ${props => 
+    props.$theme?.colors?.primary || 
+    props.$theme?.accent ||
+    'transparent'};
 `;
 
 const StatNumber = styled.div<{ $theme?: Theme }>`
   font-size: 2rem;
   font-weight: 700;
-  color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
+  color: ${props => 
+    props.$theme?.colors?.primary || 
+    props.$theme?.accent ||
+    'inherit'};
   margin-bottom: 0.5rem;
 `;
 
-const StatLabel = styled.div`
-  color: ${props => props.theme?.colors?.text || '#666'};
+const StatLabel = styled.div<{ $theme?: any }>`
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
   font-weight: 500;
 `;
 
-const ConfigSection = styled.div`
-  background: rgba(255, 255, 255, 0.95);
+const ConfigSection = styled.div<{ $theme?: any }>`
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.95)`;
+    }
+    return props.$theme?.colors?.background?.primary || 
+           props.$theme?.background?.primary ||
+           'transparent';
+  }};
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 8px 32px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1)`;
+      }
+    }
+    return 'none';
+  }};
   backdrop-filter: blur(10px);
   margin-bottom: 2rem;
 `;
 
-const ConfigItem = styled.div`
+const ConfigItem = styled.div<{ $theme?: any }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 0;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light ||
+    'transparent'};
 
   &:last-child {
     border-bottom: none;
   }
 `;
 
-const ConfigLabel = styled.div`
+const ConfigLabel = styled.div<{ $theme?: any }>`
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
 `;
 
 const ConfigValue = styled.div`
@@ -978,52 +1138,14 @@ const ESocialIntegration: React.FC = () => {
         }
       }
 
-      // Fallback para dados simulados
-      const dadosEmpregador = {
-        cpf: esocialConfig.companyId,
-        nome: 'FRANCISCO JOSE LATTARI PAPALEO',
-        razaoSocial: 'FLP Business Strategy',
-        endereco: {
-          logradouro: 'Rua das Flores, 123',
-          bairro: 'Centro',
-          cidade: 'São Paulo',
-          uf: 'SP',
-          cep: '01234567',
-        },
-        contato: {
-          telefone: '(11) 99999-9999',
-          email: 'francisco@flpbusiness.com',
-        },
-        situacao: 'ATIVO',
-        dataCadastro: '2024-01-01',
-        ultimaAtualizacao: new Date().toISOString(),
-        fonte: 'SIMULADO',
-      };
-
-      // Armazenar dados carregados
-      setLoadedEmployerData(dadosEmpregador);
-
-      // Atualizar dados do empregador na interface
-      setEmployerData(prev => ({
-        ...prev,
-        cpf: dadosEmpregador.cpf,
-        nome: dadosEmpregador.nome,
-        endereco: {
-          logradouro: dadosEmpregador.endereco.logradouro,
-          numero: '',
-          complemento: '',
-          bairro: dadosEmpregador.endereco.bairro,
-          cidade: dadosEmpregador.endereco.cidade,
-          uf: dadosEmpregador.endereco.uf,
-          cep: dadosEmpregador.endereco.cep,
-        },
-        contato: {
-          telefone: dadosEmpregador.contato.telefone,
-          email: dadosEmpregador.contato.email,
-        },
-      }));
-
-      alertManager.showSuccess('Dados do empregador carregados (simulação)!');
+      // API eSocial temporariamente indisponível
+      // Não usar dados simulados - mostrar mensagem clara ao usuário
+      alertManager.showWarning(
+        'A integração com eSocial está temporariamente indisponível. ' +
+        'Os dados do empregador serão carregados automaticamente quando o serviço estiver disponível.'
+      );
+      
+      // Não preencher com dados simulados - manter dados existentes ou vazios
     } catch (error) {
       alertManager.showError(
         `Erro ao carregar dados do empregador: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
@@ -1066,35 +1188,13 @@ const ESocialIntegration: React.FC = () => {
       // const esocialApi = getESocialApiService(esocialConfig);
       // eventosEnviados = await esocialApi.consultarEventosEnviados();
 
-      // Fallback para dados simulados
-      const eventosEnviados = [
-        {
-          id: '1',
-          tipo: 'S1000',
-          descricao: 'Cadastramento Inicial do Vínculo',
-          dataEnvio: '2024-01-01T10:00:00Z',
-          status: 'PROCESSADO',
-          protocolo: '12345678901234567890',
-          fonte: 'SIMULADO_TEMPORARIO',
-        },
-        {
-          id: '2',
-          tipo: 'S2200',
-          descricao:
-            'Cadastramento Inicial do Vínculo e Admissão/Ingresso de Trabalhador',
-          dataEnvio: '2024-01-02T10:00:00Z',
-          status: 'PROCESSADO',
-          protocolo: '12345678901234567891',
-          fonte: 'SIMULADO_TEMPORARIO',
-        },
-      ];
-
-      // Armazenar dados carregados
-      setLoadedEventsData(eventosEnviados);
-
-      // Mostrar eventos em um modal ou toast
-      alertManager.showSuccess(
-        `${eventosEnviados.length} eventos encontrados!`
+      // API eSocial temporariamente indisponível
+      // Não usar dados simulados - mostrar mensagem clara ao usuário
+      setLoadedEventsData([]);
+      
+      alertManager.showWarning(
+        'A integração com eSocial está temporariamente indisponível. ' +
+        'Os eventos serão carregados automaticamente quando o serviço estiver disponível.'
       );
     } catch (error) {
       alertManager.showError(
@@ -1140,13 +1240,19 @@ const ESocialIntegration: React.FC = () => {
   const processedEvents = events.filter(e => e.status === 'processed').length;
 
   return (
-    <Container>
+    <PageContainer
+      $theme={theme}
+      sidebarCollapsed={collapsed}
+      variant="dashboard"
+      background="solid"
+      animation={true}
+    >
       <Sidebar
         collapsed={collapsed}
         onToggle={() => setCollapsed(!collapsed)}
         currentPath={router.pathname}
       />
-      <MainContent>
+      <TopBar $theme={theme}>
         <WelcomeSection
           $theme={theme}
           userAvatar={currentProfile?.avatar || 'U'}
@@ -1155,17 +1261,20 @@ const ESocialIntegration: React.FC = () => {
           notificationCount={pendingEvents + errorEvents}
           onNotificationClick={() => {}}
         />
+      </TopBar>
 
-        <Header>
-          <div>
-            <Title>
-              <AccessibleEmoji emoji='🏛' label='Governo' /> Integração eSocial
-              Doméstico
-            </Title>
-            <Subtitle>
-              Gerencie a integração com o eSocial para empregados domésticos
-            </Subtitle>
-          </div>
+      <PageHeader
+        $theme={theme}
+        title={
+          <>
+            <AccessibleEmoji emoji='🏛' label='Governo' /> Ferramentas Auxiliares eSocial
+            Doméstico
+          </>
+        }
+        subtitle="Ferramentas auxiliares para facilitar o processo eSocial. Templates, cálculos e validações para empregados domésticos."
+        variant="default"
+        animation={true}
+      />
           <UnifiedBadge variant="success" size="md" theme={theme} icon={<AccessibleEmoji emoji='🟢' label='Conectado' />}>
             Conectado
           </UnifiedBadge>
@@ -1177,7 +1286,7 @@ const ESocialIntegration: React.FC = () => {
             <AlertIcon>
               <AccessibleEmoji emoji='⚠' label='Aviso' />
             </AlertIcon>
-            <AlertText>
+            <AlertText $theme={theme}>
               {errorEvents} evento(s) com erro. Verifique os detalhes e corrija
               os problemas.
             </AlertText>
@@ -1189,7 +1298,7 @@ const ESocialIntegration: React.FC = () => {
             <AlertIcon>
               <AccessibleEmoji emoji='⏳' label='Carregando' />
             </AlertIcon>
-            <AlertText>
+            <AlertText $theme={theme}>
               {pendingEvents} evento(s) pendente(s) de envio para o eSocial.
             </AlertText>
           </AlertBanner>
@@ -1199,15 +1308,15 @@ const ESocialIntegration: React.FC = () => {
         <StatsGrid>
           <StatCard $theme={theme}>
             <StatNumber $theme={theme}>{events.length}</StatNumber>
-            <StatLabel>Total de Eventos</StatLabel>
+            <StatLabel $theme={theme}>Total de Eventos</StatLabel>
           </StatCard>
           <StatCard $theme={theme}>
             <StatNumber $theme={theme}>{processedEvents}</StatNumber>
-            <StatLabel>Processados</StatLabel>
+            <StatLabel $theme={theme}>Processados</StatLabel>
           </StatCard>
           <StatCard $theme={theme}>
             <StatNumber $theme={theme}>{pendingEvents}</StatNumber>
-            <StatLabel>Pendentes</StatLabel>
+            <StatLabel $theme={theme}>Pendentes</StatLabel>
           </StatCard>
           <StatCard $theme={theme}>
             <StatNumber $theme={theme}>{errorEvents}</StatNumber>
@@ -1664,8 +1773,8 @@ const ESocialIntegration: React.FC = () => {
           <OptimizedSectionTitle>
             <AccessibleEmoji emoji='⚙' label='Configurações' /> Configurações
           </OptimizedSectionTitle>
-          <ConfigItem>
-            <ConfigLabel>Certificado Digital</ConfigLabel>
+          <ConfigItem $theme={theme}>
+            <ConfigLabel $theme={theme}>Certificado Digital</ConfigLabel>
             <OptimizedFlexContainer>
               <ConfigValue>
                 {certificateInfo ? (
@@ -1686,8 +1795,8 @@ const ESocialIntegration: React.FC = () => {
               </UnifiedButton>
             </OptimizedFlexContainer>
           </ConfigItem>
-          <ConfigItem>
-            <ConfigLabel>Procuração Eletrônica</ConfigLabel>
+          <ConfigItem $theme={theme}>
+            <ConfigLabel $theme={theme}>Procuração Eletrônica</ConfigLabel>
             <OptimizedFlexContainer>
               <ConfigValue>
                 {proxyInfo ? (
@@ -1737,12 +1846,12 @@ const ESocialIntegration: React.FC = () => {
           </ConfigItem>
           {/* Modo de operação removido - usando apenas gov.br */}
           <ConfigItem>
-            <ConfigLabel>Envio Automático</ConfigLabel>
+            <ConfigLabel>Preparação de Dados</ConfigLabel>
             <ToggleSwitch $theme={theme}>
               <input
                 type='checkbox'
-                aria-label='Ativar envio automático de eventos'
-                title='Ativar envio automático de eventos'
+                aria-label='Preparar dados para envio manual de eventos'
+                title='Preparar dados para envio manual de eventos'
               />
               <span className='slider'></span>
             </ToggleSwitch>
@@ -1842,15 +1951,9 @@ const ESocialIntegration: React.FC = () => {
             <OptimizedSectionTitle>
               <AccessibleEmoji emoji='🏢' label='Empregador' /> Dados Carregados
               do Empregador
-              {loadedEmployerData.fonte && (
-                <DataSourceIndicator
-                  $isReal={loadedEmployerData.fonte === 'SOAP_REAL'}
-                >
-                  (
-                  {loadedEmployerData.fonte === 'SOAP_REAL'
-                    ? '✅ Dados Reais'
-                    : '⚠️ Dados Simulados'}
-                  )
+              {loadedEmployerData.fonte && loadedEmployerData.fonte === 'SOAP_REAL' && (
+                <DataSourceIndicator $isReal={true} $theme={theme}>
+                  (✅ Dados Reais)
                 </DataSourceIndicator>
               )}
             </OptimizedSectionTitle>
@@ -1858,8 +1961,8 @@ const ESocialIntegration: React.FC = () => {
               <ConfigLabel>Nome</ConfigLabel>
               <ConfigValue>{loadedEmployerData.nome}</ConfigValue>
             </ConfigItem>
-            <ConfigItem>
-              <ConfigLabel>CPF</ConfigLabel>
+            <ConfigItem $theme={theme}>
+              <ConfigLabel $theme={theme}>CPF</ConfigLabel>
               <ConfigValue>{loadedEmployerData.cpf}</ConfigValue>
             </ConfigItem>
             <ConfigItem>
@@ -1896,25 +1999,19 @@ const ESocialIntegration: React.FC = () => {
 
         {/* Seção de Lista de Empregados Carregados */}
         {loadedEmployeesData.length > 0 && (
-          <ConfigSection>
+          <ConfigSection $theme={theme}>
             <OptimizedSectionTitle>
               <AccessibleEmoji emoji='👥' label='Empregados' /> Lista de
               Empregados Carregados
-              {loadedEmployeesData[0]?.fonte && (
-                <DataSourceIndicator
-                  $isReal={loadedEmployeesData[0].fonte === 'SOAP_REAL'}
-                >
-                  (
-                  {loadedEmployeesData[0].fonte === 'SOAP_REAL'
-                    ? '✅ Dados Reais'
-                    : '⚠️ Dados Simulados'}
-                  )
+              {loadedEmployeesData[0]?.fonte === 'SOAP_REAL' && (
+                <DataSourceIndicator $isReal={true} $theme={theme}>
+                  (✅ Dados Reais)
                 </DataSourceIndicator>
               )}
             </OptimizedSectionTitle>
             {loadedEmployeesData.map((empregado: any, index: any) => (
-              <ConfigItem key={index}>
-                <ConfigLabel>Empregado {index + 1}</ConfigLabel>
+              <ConfigItem key={index} $theme={theme}>
+                <ConfigLabel $theme={theme}>Empregado {index + 1}</ConfigLabel>
                 <ConfigValue>
                   <strong>Nome:</strong> {empregado.nome}
                   <br />
@@ -1939,15 +2036,9 @@ const ESocialIntegration: React.FC = () => {
             <OptimizedSectionTitle>
               <AccessibleEmoji emoji='📋' label='Eventos' /> Histórico de
               Eventos Carregados
-              {loadedEventsData[0]?.fonte && (
-                <DataSourceIndicator
-                  $isReal={loadedEventsData[0].fonte === 'SOAP_REAL'}
-                >
-                  (
-                  {loadedEventsData[0].fonte === 'SOAP_REAL'
-                    ? '✅ Dados Reais'
-                    : '⚠️ Dados Simulados'}
-                  )
+              {loadedEventsData[0]?.fonte === 'SOAP_REAL' && (
+                <DataSourceIndicator $isReal={true} $theme={theme}>
+                  (✅ Dados Reais)
                 </DataSourceIndicator>
               )}
             </OptimizedSectionTitle>
@@ -2047,20 +2138,9 @@ const ESocialIntegration: React.FC = () => {
         />
 
         {/* Toast Container */}
-        <ToastContainer
-          position='top-right'
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-      </MainContent>
-    </Container>
+      </PageContainer>
   );
 };
 
 export default ESocialIntegration;
+

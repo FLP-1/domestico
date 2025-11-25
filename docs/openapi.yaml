@@ -1,0 +1,335 @@
+openapi: 3.0.3
+info:
+  title: Sistema DOM API
+  description: |
+    API completa do Sistema DOM - Gestão Doméstica e Empresarial
+    
+    ## Autenticação
+    Todas as rotas protegidas requerem um token JWT no header `Authorization`.
+    
+    ## Rate Limiting
+    Diferentes endpoints têm diferentes limites de taxa. Verifique os headers de resposta para informações sobre rate limiting.
+    
+    ## Códigos de Erro
+    - 400: Bad Request - Dados inválidos ou ausentes
+    - 401: Unauthorized - Token ausente ou inválido
+    - 403: Forbidden - Permissão insuficiente
+    - 404: Not Found - Recurso não encontrado
+    - 429: Too Many Requests - Rate limit excedido
+    - 500: Internal Server Error - Erro no servidor
+  version: 2.4.0
+  contact:
+    name: Suporte Sistema DOM
+    email: suporte@sistemadom.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.sistemadom.com
+    description: Produção
+  - url: http://localhost:3000
+    description: Desenvolvimento
+
+tags:
+  - name: Autenticação
+    description: Endpoints de autenticação e autorização
+  - name: Ponto
+    description: Endpoints de controle de ponto
+  - name: Documentos
+    description: Endpoints de gestão de documentos
+  - name: Tarefas
+    description: Endpoints de gestão de tarefas
+  - name: Usuários
+    description: Endpoints de gestão de usuários
+  - name: Geofencing
+    description: Endpoints de geofencing e localização
+
+paths:
+  /api/auth/login:
+    post:
+      tags:
+        - Autenticação
+      summary: Autentica um usuário
+      description: Autentica um usuário e retorna um token JWT
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cpf
+                - senha
+              properties:
+                cpf:
+                  type: string
+                  description: CPF do usuário (apenas números)
+                  example: "12345678901"
+                senha:
+                  type: string
+                  format: password
+                  description: Senha do usuário
+                  example: "senha123"
+                locationData:
+                  type: object
+                  description: Dados de localização (opcional)
+                  properties:
+                    latitude:
+                      type: number
+                      example: -23.55052
+                    longitude:
+                      type: number
+                      example: -46.633308
+                    accuracy:
+                      type: number
+                      example: 10
+      responses:
+        '200':
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Token JWT para autenticação
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Credenciais inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Muitas tentativas de login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitError'
+        '400':
+          description: Dados inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/csrf:
+    get:
+      tags:
+        - Autenticação
+      summary: Obtém token CSRF
+      description: Obtém um token CSRF para proteção contra ataques CSRF
+      operationId: getCsrfToken
+      security: []
+      responses:
+        '200':
+          description: Token CSRF gerado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  csrfToken:
+                    type: string
+                    description: Token CSRF para usar no header x-csrf-token
+
+  /api/time-clock/records:
+    post:
+      tags:
+        - Ponto
+      summary: Registra um ponto
+      description: Registra entrada, saída ou intervalo
+      operationId: registerTimeClock
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tipo
+              properties:
+                tipo:
+                  type: string
+                  enum: [ENTRADA, SAIDA, SAIDA_ALMOCO, RETORNO_ALMOCO]
+                  description: Tipo de registro de ponto
+                observacao:
+                  type: string
+                  description: Observação opcional
+      responses:
+        '200':
+          description: Ponto registrado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeClockRecord'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+    get:
+      tags:
+        - Ponto
+      summary: Lista registros de ponto
+      description: Retorna lista de registros de ponto do usuário
+      operationId: listTimeClockRecords
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Lista de registros
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TimeClockRecord'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  pageSize:
+                    type: integer
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        cpf:
+          type: string
+        nomeCompleto:
+          type: string
+        email:
+          type: string
+          format: email
+        perfis:
+          type: array
+          items:
+            $ref: '#/components/schemas/Profile'
+        grupos:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+
+    Profile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        nome:
+          type: string
+        codigo:
+          type: string
+          enum: [EMPREGADO, EMPREGADOR, FAMILIA, ADMIN]
+
+    Group:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        nome:
+          type: string
+
+    TimeClockRecord:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        tipo:
+          type: string
+          enum: [ENTRADA, SAIDA, SAIDA_ALMOCO, RETORNO_ALMOCO]
+        dataHora:
+          type: string
+          format: date-time
+        enderecoCompleto:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        precisao:
+          type: number
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+
+    RateLimitError:
+      allOf:
+        - $ref: '#/components/schemas/Error'
+        - type: object
+          properties:
+            retryAfter:
+              type: integer
+              description: Segundos até poder tentar novamente
+
+  responses:
+    Unauthorized:
+      description: Não autorizado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    BadRequest:
+      description: Dados inválidos
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Recurso não encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    TooManyRequests:
+      description: Muitas requisições
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RateLimitError'
+

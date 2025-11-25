@@ -274,7 +274,46 @@ const ValidationService = {
       });
 
       if (membership && membership.ativo) {
+        // Usuário já está no grupo atual - não pode adicionar novamente ao mesmo grupo
         errors.push('Usuário já está associado ao grupo');
+      } else {
+        // Usuário não está no grupo atual - verificar se pode adicionar
+        // REGRA: Verificar se está em outro grupo com o mesmo perfil (exceto empregado)
+        if (perfilCodigo !== 'EMPREGADO') {
+          const usuarioGrupos = await prisma.usuarioGrupo.findMany({
+            where: {
+              usuarioId,
+              ativo: true,
+            },
+            select: {
+              grupoId: true,
+            },
+          });
+
+          const usuarioPerfis = await prisma.usuarioPerfil.findMany({
+            where: {
+              usuarioId,
+              ativo: true,
+            },
+            include: {
+              perfil: {
+                select: { codigo: true },
+              },
+            },
+          });
+
+          const temMesmoPerfil = usuarioPerfis.some(
+            (up) => up.perfil.codigo?.toUpperCase() === perfilCodigo
+          );
+
+          if (temMesmoPerfil && usuarioGrupos.length > 0) {
+            // Usuário já tem este perfil e está em outro grupo
+            errors.push(
+              `Usuário já possui o perfil ${perfilCodigo} e está associado a outro grupo. Não é permitido ter o mesmo perfil em múltiplos grupos (exceto EMPREGADO).`
+            );
+          }
+        }
+        // Se perfilCodigo === 'EMPREGADO', permitir participar de múltiplos grupos
       }
     }
 
@@ -475,13 +514,15 @@ const ValidationService = {
   async validateUniqueCPFInGroup(
     cpf: string,
     grupoId: string,
-    usuarioId?: string
+    usuarioId?: string,
+    perfilId?: string
   ): Promise<UserValidationResult> {
     const loggerContext = logger.child({
       module: 'ValidationService',
       action: 'validateUniqueCPFInGroup',
       grupoId,
       usuarioId,
+      perfilId,
     });
 
     const normalizedCpf = normalizeCpf(cpf);
@@ -499,6 +540,7 @@ const ValidationService = {
     }
 
     let detectedUserId = usuarioId ?? null;
+    let perfilCodigo: string | null = null;
 
     if (errors.length === 0) {
       if (!detectedUserId) {
@@ -509,7 +551,17 @@ const ValidationService = {
         }
       }
 
+      // Obter código do perfil se perfilId foi fornecido
+      if (perfilId) {
+        const perfil = await prisma.perfil.findUnique({
+          where: { id: perfilId },
+          select: { codigo: true },
+        });
+        perfilCodigo = perfil?.codigo?.toUpperCase() ?? null;
+      }
+
       if (detectedUserId) {
+        // Verificar se usuário já está no grupo
         const membership = await prisma.usuarioGrupo.findUnique({
           where: {
             usuarioId_grupoId: {
@@ -520,8 +572,55 @@ const ValidationService = {
           select: { id: true, ativo: true },
         });
 
-        if (membership && membership.ativo && membership.id) {
-          errors.push('Usuário já associado ao grupo');
+        if (membership && membership.ativo) {
+          // Se já está no grupo, verificar regras de perfil
+          if (perfilCodigo) {
+            // Buscar perfis do usuário neste grupo
+            const usuarioPerfis = await prisma.usuarioPerfil.findMany({
+              where: {
+                usuarioId: detectedUserId,
+                ativo: true,
+              },
+              include: {
+                perfil: {
+                  select: { codigo: true },
+                },
+              },
+            });
+
+            // Buscar grupos do usuário para verificar perfis em outros grupos
+            const usuarioGrupos = await prisma.usuarioGrupo.findMany({
+              where: {
+                usuarioId: detectedUserId,
+                ativo: true,
+              },
+              include: {
+                grupo: {
+                  select: { id: true },
+                },
+              },
+            });
+
+            // Verificar se o mesmo CPF já está no grupo com o mesmo perfil
+            const mesmoPerfilNoGrupo = usuarioPerfis.some(
+              (up) => up.perfil.codigo?.toUpperCase() === perfilCodigo
+            );
+
+            // REGRA: Empregado pode ter o mesmo perfil em múltiplos grupos
+            if (perfilCodigo === 'EMPREGADO') {
+              // Permitir empregado em múltiplos grupos
+              // Não bloquear
+            } else if (mesmoPerfilNoGrupo) {
+              // Para outros perfis, verificar se já está no grupo com esse perfil
+              // Se já está no grupo, não pode adicionar novamente
+              errors.push(
+                `Usuário já está associado ao grupo com o perfil ${perfilCodigo}`
+              );
+            }
+          } else {
+            // Se não tem perfil especificado, apenas verificar se já está no grupo
+            errors.push('Usuário já associado ao grupo');
+          }
         }
       }
     }
@@ -530,6 +629,7 @@ const ValidationService = {
       {
         normalizedCpf,
         detectedUserId,
+        perfilCodigo,
         errors,
         warnings,
       },
@@ -538,6 +638,7 @@ const ValidationService = {
 
     return buildResult(errors, warnings, {
       detectedUserId,
+      perfilCodigo,
     });
   },
 };

@@ -13,9 +13,9 @@ export const SYSTEM_CONFIG = {
 
   // Configurações de Geolocalização
   GEOLOCATION: {
-    MAX_ACCURACY: 100, // metros
-    MAX_AGE_SECONDS: 300, // 5 minutos
-    TIMEOUT: 10000, // 10 segundos
+    MAX_ACCURACY: 50, // metros (reduzido de 100m para melhor precisão)
+    MAX_AGE_SECONDS: 0, // Sem cache - sempre capturar nova posição
+    TIMEOUT: 30000, // 30 segundos (aumentado para dar mais tempo ao GPS)
     ENABLE_HIGH_ACCURACY: true,
   },
 

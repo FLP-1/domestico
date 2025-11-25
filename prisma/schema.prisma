@@ -97,6 +97,7 @@ model Usuario {
   configuracoesAntifraude  ConfiguracaoAntifraude[]
   historicosConfiguracao   HistoricoConfiguracao[]
   guideProgress            GuideProgress[]
+  mensagensHistorico       MensagemHistorico[]
 
   @@index([cpf])
   @@index([email])
@@ -108,8 +109,8 @@ model LocalTrabalho {
   id            String                @id @default(uuid())
   nome          String                @db.VarChar(255)
   endereco      String                @db.VarChar(500)
-  latitude      Float
-  longitude     Float
+  latitude      Float                 @db.DoublePrecision
+  longitude     Float                 @db.DoublePrecision
   raio          Int                   @default(200)
   ativo         Boolean               @default(true)
   grupoId       String
@@ -154,8 +155,8 @@ model GeofencingValidacao {
   id              String        @id @default(uuid())
   localTrabalhoId String
   usuarioId       String
-  latitude        Float
-  longitude       Float
+  latitude        Float                 @db.DoublePrecision
+  longitude       Float                 @db.DoublePrecision
   distancia       Float
   dentroGeofence  Boolean
   precisao        Float
@@ -293,8 +294,8 @@ model Dispositivo {
   tipo           String          @db.VarChar(50)
   nomeRedeWiFi   String?         @db.VarChar(255)
   enderecoIP     String?         @db.VarChar(45)
-  latitude       Float?
-  longitude      Float?
+  latitude       Float?          @db.DoublePrecision
+  longitude      Float?          @db.DoublePrecision
   precisao       Float?
   confiavel      Boolean         @default(false)
   ativo          Boolean         @default(true)
@@ -341,8 +342,8 @@ model HistoricoLogin {
   userAgent          String?
   navegador          String?  @db.VarChar(100)
   sistemaOperacional String?  @db.VarChar(100)
-  latitude           Float?
-  longitude          Float?
+  latitude           Float?   @db.DoublePrecision
+  longitude          Float?   @db.DoublePrecision
   cidade             String?  @db.VarChar(100)
   pais               String?  @db.VarChar(50)
   motivoFalha        String?
@@ -704,8 +705,8 @@ model RegistroPonto {
   dispositivoId   String
   dataHora        DateTime       @default(now()) @db.Timestamptz(6)
   tipo            String         @db.VarChar(50)
-  latitude        Float
-  longitude       Float
+  latitude        Float          @db.DoublePrecision
+  longitude       Float          @db.DoublePrecision
   precisao        Float
   dentroGeofence  Boolean        @default(false)
   enderecoIP      String         @db.VarChar(45)
@@ -971,6 +972,27 @@ model AlertaHistorico {
   @@index([alertaId])
   @@index([disparadoEm])
   @@map("alertas_historico")
+}
+
+/// @description Histórico de Mensagens Exibidas (Toast/Notificações)
+model MensagemHistorico {
+  id            String   @id @default(uuid())
+  usuarioId     String?
+  tipo          String   @db.VarChar(20) // success, error, warning, info
+  titulo        String?  @db.VarChar(255)
+  mensagem      String   @db.Text
+  origem        String   @db.VarChar(50) // 'toast', 'alerta', 'sistema'
+  alertaId      String?
+  exibidoEm     DateTime @default(now())
+  duracao       Int?     // Duração em ms
+  lido          Boolean  @default(false)
+  usuario       Usuario? @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([tipo])
+  @@index([exibidoEm])
+  @@index([origem])
+  @@map("mensagens_historico")
 }
 
 model ListaCompras {
@@ -1539,8 +1561,8 @@ model GeolocationHistory {
   id                     String             @id @default(uuid())
   usuarioId              String?
   fingerprintId          String?
-  latitude               Float
-  longitude              Float
+  latitude               Float                 @db.DoublePrecision
+  longitude              Float                 @db.DoublePrecision
   precisao               Float?
   altitude               Float?
   altitudePrecisao       Float?
@@ -1584,8 +1606,8 @@ model IPAnalysis {
   pais           String?        @db.VarChar(100)
   codigoPais     String?        @db.VarChar(2)
   continente     String?        @db.VarChar(50)
-  latitude       Float?
-  longitude      Float?
+  latitude       Float?         @db.DoublePrecision
+  longitude      Float?         @db.DoublePrecision
   timezone       String?        @db.VarChar(100)
   isVPN          Boolean        @default(false)
   isProxy        Boolean        @default(false)

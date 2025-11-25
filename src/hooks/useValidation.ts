@@ -197,7 +197,8 @@ export const useValidation = () => {
     async (
       cpf: string,
       grupoId: string,
-      usuarioId?: string
+      usuarioId?: string,
+      perfilId?: string
     ): Promise<ValidationResult> => {
       setLoading(true);
       try {
@@ -208,7 +209,7 @@ export const useValidation = () => {
           },
           body: JSON.stringify({
             type: 'unique-cpf-in-group',
-            data: { cpf, grupoId, usuarioId },
+            data: { cpf, grupoId, usuarioId, perfilId },
           }),
         });
 

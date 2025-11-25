@@ -1,10 +1,9 @@
 import AccessibleEmoji from '../components/AccessibleEmoji';
 // src/pages/alert-management.tsx
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { GetServerSideProps } from 'next';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useAlertManager } from '../hooks/useAlertManager';
 import styled from 'styled-components';
 import FilterSection from '../components/FilterSection';
 import {
@@ -348,6 +347,7 @@ export default function AlertManagement() {
   const { currentProfile } = useUserProfile();
   const themeObject = useTheme(currentProfile?.role.toLowerCase());
   const theme = { colors: themeObject.colors };
+  const alertManager = useAlertManager();
 
   const alertTypes: AlertType[] = [
     {
@@ -408,54 +408,100 @@ export default function AlertManagement() {
     },
   ];
 
-  const [alerts, setAlerts] = useState<Alert[]>([
-    {
-      id: '1',
-      title: 'Vencimento do Contrato',
-      description: 'O contrato de prestação de serviços vence em 30 dias',
-      type: alertTypes[0]!,
-      date: '2024-02-15',
-      time: '09:00',
-      frequency: 'once',
-      notificationType: 'email',
-      notificationText:
-        'O documento {{nome_documento}} vence em {{data_vencimento}}',
-      status: 'active',
-      createdAt: '2024-01-15',
-      triggerCount: 0,
-    },
-    {
-      id: '2',
-      title: 'Pagamento da Mensalidade',
-      description: 'Lembrete para pagamento da mensalidade da escola',
-      type: alertTypes[1]!,
-      date: '2024-01-25',
-      time: '08:00',
-      frequency: 'monthly',
-      notificationType: 'push',
-      notificationText:
-        'Não esqueça do pagamento de R$ {{valor}} que vence em {{data_vencimento}}',
-      status: 'active',
-      createdAt: '2024-01-10',
-      lastTriggered: '2024-01-25',
-      triggerCount: 1,
-    },
-    {
-      id: '3',
-      title: 'Limpeza da Piscina',
-      description: 'Manutenção semanal da piscina',
-      type: alertTypes[7]!,
-      date: '2024-01-28',
-      time: '14:00',
-      frequency: 'weekly',
-      notificationType: 'all',
-      notificationText: 'Hora da limpeza semanal da piscina',
-      status: 'active',
-      createdAt: '2024-01-20',
-      lastTriggered: '2024-01-21',
-      triggerCount: 1,
-    },
-  ]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [loadingAlerts, setLoadingAlerts] = useState(true);
+
+  // Carregar alertas da API
+  useEffect(() => {
+    const loadAlerts = async () => {
+      try {
+        setLoadingAlerts(true);
+        const response = await fetch('/api/alerts');
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          // Mapear dados da API para formato esperado pelo componente
+          const mappedAlerts: Alert[] = result.data.map((alerta: any) => {
+            // Encontrar o tipo de alerta correspondente
+            const alertType = alertTypes.find(
+              t => t.name.toLowerCase() === alerta.type?.toLowerCase() ||
+                   t.category.toLowerCase() === alerta.category?.toLowerCase()
+            ) || alertTypes[0]!;
+
+            return {
+              id: alerta.id,
+              title: alerta.title,
+              description: alerta.description,
+              type: alertType,
+              date: alerta.date,
+              time: alerta.time || '09:00',
+              frequency: alerta.frequency || 'once',
+              notificationType: alerta.notifyEmail ? 'email' : 
+                                alerta.notifyPush ? 'push' : 
+                                alerta.notifySMS ? 'sms' : 'email',
+              notificationText: alerta.notificationText || alerta.description,
+              status: alerta.status === 'ativo' || alerta.status === 'active' ? 'active' : 'inactive',
+              createdAt: alerta.createdAt || new Date().toISOString().split('T')[0],
+              lastTriggered: alerta.lastTrigger,
+              triggerCount: alerta.triggerCount || 0,
+              conditions: alerta.conditions,
+            };
+          });
+          setAlerts(mappedAlerts);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar alertas:', error);
+        alertManager.showError('Erro ao carregar alertas');
+      } finally {
+        setLoadingAlerts(false);
+      }
+    };
+
+    loadAlerts();
+  }, [alertManager]);
+
+  // Função auxiliar para recarregar alertas
+  const reloadAlerts = useCallback(async () => {
+    try {
+      setLoadingAlerts(true);
+      const response = await fetch('/api/alerts');
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        const mappedAlerts: Alert[] = result.data.map((alerta: any) => {
+          const alertType = alertTypes.find(
+            t => t.name.toLowerCase() === alerta.type?.toLowerCase() ||
+                 t.category.toLowerCase() === alerta.category?.toLowerCase()
+          ) || alertTypes[0]!;
+
+          return {
+            id: alerta.id,
+            title: alerta.title,
+            description: alerta.description,
+            type: alertType,
+            date: alerta.date,
+            time: alerta.time || '09:00',
+            frequency: alerta.frequency || 'once',
+            notificationType: alerta.notifyEmail ? 'email' : 
+                              alerta.notifyPush ? 'push' : 
+                              alerta.notifySMS ? 'sms' : 'email',
+            notificationText: alerta.notificationText || alerta.description,
+            status: alerta.status === 'ativo' || alerta.status === 'active' ? 'active' : 'inactive',
+            createdAt: alerta.createdAt || new Date().toISOString().split('T')[0],
+            lastTriggered: alerta.lastTrigger,
+            triggerCount: alerta.triggerCount || 0,
+            conditions: alerta.conditions,
+          };
+        });
+        setAlerts(mappedAlerts);
+      }
+    } catch (error) {
+      console.error('Erro ao recarregar alertas:', error);
+      alertManager.showError('Erro ao recarregar alertas');
+    } finally {
+      setLoadingAlerts(false);
+    }
+  }, [alertManager, alertTypes]);
 
   const [newAlert, setNewAlert] = useState({
     title: '',
@@ -476,44 +522,62 @@ export default function AlertManagement() {
 
   const [conditions, setConditions] = useState<AlertCondition[]>([]);
 
-  const handleCreateAlert = (e: React.FormEvent) => {
+  const handleCreateAlert = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newAlert.title.trim() || !newAlert.type) return;
 
     const alertType = alertTypes.find(t => t.id === newAlert.type);
     if (!alertType) return;
 
-    const alert: Alert = {
-      id: Date.now().toString(),
-      title: newAlert.title,
-      description: newAlert.description,
-      type: alertType,
-      date: newAlert.date,
-      time: newAlert.time,
-      frequency: newAlert.frequency,
-      notificationType: newAlert.notificationType,
-      notificationText: newAlert.notificationText,
-      conditions: conditions.length > 0 ? conditions : undefined,
-      status: 'active',
-      createdAt:
-        new Date().toISOString().split('T')[0] || new Date().toISOString(),
-      triggerCount: 0,
-    };
+    try {
+      const response = await fetch('/api/alerts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          titulo: newAlert.title,
+          descricao: newAlert.description,
+          tipo: alertType.name,
+          prioridade: 'NORMAL',
+          categoria: alertType.category,
+          dataAlerta: newAlert.date,
+          usuarioId: currentProfile?.id,
+          notificarEmail: newAlert.notificationType === 'email' || newAlert.notificationType === 'all',
+          notificarPush: newAlert.notificationType === 'push' || newAlert.notificationType === 'all',
+          horaAlerta: newAlert.time,
+          frequencia: newAlert.frequency,
+          textoNotificacao: newAlert.notificationText,
+          condicoes: conditions.length > 0 ? conditions : null,
+        }),
+      });
 
-    setAlerts(prev => [alert, ...prev]);
-    setNewAlert({
-      title: '',
-      description: '',
-      type: '',
-      date: '',
-      time: '',
-      frequency: 'once',
-      notificationType: 'email',
-      notificationText: '',
-    });
-    setConditions([]);
-    setShowConditions(false);
-    toast.success('Alerta criado com sucesso!');
+      const result = await response.json();
+
+      if (result.success) {
+        // Recarregar alertas da API
+        await reloadAlerts();
+
+        setNewAlert({
+          title: '',
+          description: '',
+          type: '',
+          date: '',
+          time: '',
+          frequency: 'once',
+          notificationType: 'email',
+          notificationText: '',
+        });
+        setConditions([]);
+        setShowConditions(false);
+        alertManager.showSuccess('Alerta criado com sucesso!');
+      } else {
+        alertManager.showError(result.error || 'Erro ao criar alerta');
+      }
+    } catch (error) {
+      console.error('Erro ao criar alerta:', error);
+      alertManager.showError('Erro ao criar alerta');
+    }
   };
 
   const handleEditAlert = (alert: Alert) => {
@@ -533,63 +597,115 @@ export default function AlertManagement() {
     setUnifiedModalOpen(true);
   };
 
-  const handleUpdateAlert = (e: React.FormEvent) => {
+  const handleUpdateAlert = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingAlert || !newAlert.title.trim() || !newAlert.type) return;
 
     const alertType = alertTypes.find(t => t.id === newAlert.type);
     if (!alertType) return;
 
-    const updatedAlert: Alert = {
-      ...editingAlert,
-      title: newAlert.title,
-      description: newAlert.description,
-      type: alertType,
-      date: newAlert.date,
-      time: newAlert.time,
-      frequency: newAlert.frequency,
-      notificationType: newAlert.notificationType,
-      notificationText: newAlert.notificationText,
-      conditions: conditions.length > 0 ? conditions : undefined,
-    };
+    try {
+      const response = await fetch(`/api/alerts/${editingAlert.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          titulo: newAlert.title,
+          descricao: newAlert.description,
+          tipo: alertType.name,
+          prioridade: 'NORMAL',
+          categoria: alertType.category,
+          dataAlerta: newAlert.date,
+          horaAlerta: newAlert.time,
+          frequencia: newAlert.frequency,
+          textoNotificacao: newAlert.notificationText,
+          notificarEmail: newAlert.notificationType === 'email' || newAlert.notificationType === 'all',
+          notificarPush: newAlert.notificationType === 'push' || newAlert.notificationType === 'all',
+          condicoes: conditions.length > 0 ? conditions : null,
+        }),
+      });
 
-    setAlerts(prev =>
-      prev.map(alert => (alert.id === editingAlert.id ? updatedAlert : alert))
-    );
-    setUnifiedModalOpen(false);
-    setEditingAlert(null);
-    setNewAlert({
-      title: '',
-      description: '',
-      type: '',
-      date: '',
-      time: '',
-      frequency: 'once',
-      notificationType: 'email',
-      notificationText: '',
-    });
-    setConditions([]);
-    setShowConditions(false);
-    toast.success('Alerta atualizado com sucesso!');
+      const result = await response.json();
+
+      if (result.success) {
+        // Recarregar alertas da API
+        await reloadAlerts();
+
+        setUnifiedModalOpen(false);
+        setEditingAlert(null);
+        setNewAlert({
+          title: '',
+          description: '',
+          type: '',
+          date: '',
+          time: '',
+          frequency: 'once',
+          notificationType: 'email',
+          notificationText: '',
+        });
+        setConditions([]);
+        setShowConditions(false);
+        alertManager.showSuccess('Alerta atualizado com sucesso!');
+      } else {
+        alertManager.showError(result.error || 'Erro ao atualizar alerta');
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar alerta:', error);
+      alertManager.showError('Erro ao atualizar alerta');
+    }
   };
 
-  const handleToggleAlertStatus = (id: string) => {
-    setAlerts(prev =>
-      prev.map(alert =>
-        alert.id === id
-          ? {
-              ...alert,
-              status: alert.status === 'active' ? 'inactive' : 'active',
-            }
-          : alert
-      )
-    );
-    toast.success('Status do alerta alterado!');
+  const handleToggleAlertStatus = async (id: string) => {
+    try {
+      const alert = alerts.find(a => a.id === id);
+      if (!alert) return;
+
+      const newStatus = alert.status === 'active' ? 'inactive' : 'active';
+      const response = await fetch(`/api/alerts/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: newStatus,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Recarregar alertas da API
+        await reloadAlerts();
+        alertManager.showSuccess('Status do alerta alterado!');
+      } else {
+        alertManager.showError(result.error || 'Erro ao alterar status do alerta');
+      }
+    } catch (error) {
+      console.error('Erro ao alterar status do alerta:', error);
+      alertManager.showError('Erro ao alterar status do alerta');
+    }
   };
 
-  const handleDeleteAlert = (id: string) => {
-    setAlerts(prev => prev.filter(alert => alert.id !== id));
-    toast.success('Alerta excluído com sucesso!');
+  const handleDeleteAlert = async (id: string) => {
+    try {
+      const response = await fetch(`/api/alerts/${id}`, {
+        method: 'DELETE',
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Recarregar alertas da API
+        await reloadAlerts();
+        alertManager.showSuccess('Alerta excluído com sucesso!');
+      } else {
+        alertManager.showError(result.error || 'Erro ao excluir alerta');
+      }
+    } catch (error) {
+      console.error('Erro ao excluir alerta:', error);
+      alertManager.showError('Erro ao excluir alerta');
+    }
   };
 
   const addCondition = () => {
@@ -677,7 +793,7 @@ export default function AlertManagement() {
           userRole={currentProfile?.role || 'Usuário'}
           notificationCount={stats.activeAlerts}
           onNotificationClick={() =>
-            toast.info('Notificações em desenvolvimento')
+            alertManager.showInfo('Notificações em desenvolvimento')
           }
         />
       </TopBar>
@@ -1270,18 +1386,6 @@ export default function AlertManagement() {
         )}
       </UnifiedModal>
 
-      <ToastContainer
-        position='top-center'
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
     </PageContainer>
   );
 }

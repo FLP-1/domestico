@@ -41,8 +41,8 @@ const DEFAULT_CONFIG: SystemConfig = {
   },
   geolocation: {
     maxDistance: 200,
-    accuracyThreshold: 100,
-    timeout: 10000,
+    accuracyThreshold: 50, // Reduzido de 100m para 50m para melhor precisão
+    timeout: 30000, // Aumentado de 10s para 30s para dar mais tempo ao GPS
   },
   antifraud: {
     maxAttempts: 3,

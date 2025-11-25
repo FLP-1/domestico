@@ -5,8 +5,10 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { useGeofencingTheme } from '../../hooks/useGeofencingTheme';
 import { geofencingColors } from '../../design-system/tokens/geofencing-colors';
-import { UnifiedCard, UnifiedBadge, UnifiedMetaInfo } from '../../components/unified';
+import { UnifiedCard, UnifiedBadge, UnifiedMetaInfo, UnifiedButton } from '../../components/unified';
 import { Label } from '../../components/FormComponents';
+import PageContainer from '../../components/PageContainer';
+import PageHeader from '../../components/PageHeader';
 import type { Theme } from '../../types/theme';
 
 interface LocalTrabalho {
@@ -27,46 +29,7 @@ interface LocalTrabalho {
   criadoEm: string;
 }
 
-const Container = styled.div<{ $theme?: Theme }>`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-`;
-
-const Header = styled.div<{ $theme?: Theme }>`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-`;
-
-const Title = styled.h1<{ $theme?: Theme }>`
-  color: ${props => {
-    const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.primary) || geofencingColors.text.primary;
-  }};
-  margin: 0;
-`;
-
-const Button = styled.button<{ $theme?: Theme }>`
-  background: ${props =>
-    props.$theme?.colors?.button?.primary?.background ||
-    geofencingColors.button.primary.background};
-  color: ${props =>
-    props.$theme?.colors?.button?.primary?.text ||
-    geofencingColors.button.primary.text};
-  border: none;
-  padding: 12px 24px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-
-  &:hover {
-    background: ${props =>
-      props.$theme?.colors?.button?.primary?.hover ||
-      geofencingColors.button.primary.hover};
-  }
-`;
+// Container, Header, Title e Button removidos - usando PageContainer, PageHeader e UnifiedButton
 
 // Card removido - usar UnifiedCard
 // CardHeader removido - usar title prop do UnifiedCard
@@ -435,20 +398,32 @@ export default function LocaisTrabalho() {
 
   return (
     <Container>
-      <Header>
-        <Title $theme={theme}>
-          <span role='img' aria-label='office'>
-            🏢
-          </span>{' '}
-          Locais de Trabalho
-        </Title>
-        <Button $theme={theme} onClick={openModal}>
-          <span role='img' aria-label='plus'>
-            ➕
-          </span>{' '}
-          Novo Local
-        </Button>
-      </Header>
+      <PageHeader
+        $theme={theme}
+        title={
+          <>
+            <span role='img' aria-label='office'>
+              🏢
+            </span>{' '}
+            Locais de Trabalho
+          </>
+        }
+        variant="inline"
+        actions={
+          <UnifiedButton
+            $theme={theme}
+            onClick={openModal}
+            $variant="primary"
+            $size="medium"
+          >
+            <span role='img' aria-label='plus'>
+              ➕
+            </span>{' '}
+            Novo Local
+          </UnifiedButton>
+        }
+        animation={true}
+      />
 
       {error && <Error $theme={theme}>{error}</Error>}
 
@@ -615,6 +590,6 @@ export default function LocaisTrabalho() {
           </Form>
         </ModalContent>
       </Modal>
-    </Container>
+    </PageContainer>
   );
 }

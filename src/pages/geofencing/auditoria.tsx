@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import { useGeofencingTheme } from '../../hooks/useGeofencingTheme';
 import { geofencingColors } from '../../design-system/tokens/geofencing-colors';
 import { UnifiedCard, UnifiedBadge, UnifiedMetaInfo } from '../../components/unified';
+import PageContainer from '../../components/PageContainer';
+import PageHeader from '../../components/PageHeader';
 import type { Theme } from '../../types/theme';
 import { getTextSecondary } from '../../utils/themeTypeGuards';
 
@@ -43,31 +45,7 @@ interface ValidacaoEntry {
   };
 }
 
-const Container = styled.div<{ $theme?: Theme }>`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-`;
-
-const Header = styled.div<{ $theme?: Theme }>`
-  margin-bottom: 30px;
-`;
-
-const Title = styled.h1<{ $theme?: Theme }>`
-  color: ${props => {
-    const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.primary) || geofencingColors.text.primary;
-  }};
-  margin: 0 0 10px 0;
-`;
-
-const Subtitle = styled.p<{ $theme?: Theme }>`
-  color: ${props => {
-    const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || geofencingColors.text.secondary;
-  }};
-  margin: 0;
-`;
+// Container, Header, Title e Subtitle removidos - usando PageContainer e PageHeader melhorados
 
 const Tabs = styled.div<{ $theme?: Theme }>`
   display: flex;
@@ -318,35 +296,57 @@ export default function AuditoriaGeofencing() {
   // Loading state para tema
   if (themeLoading || !theme) {
     return (
-      <Container>
+      <PageContainer
+        $theme={theme}
+        variant="minimal"
+        background="transparent"
+        padding="lg"
+        maxWidth="1200px"
+      >
         <Loading $theme={theme}>
           Carregando tema...
         </Loading>
-      </Container>
+      </PageContainer>
     );
   }
 
   if (loading) {
     return (
-      <Container>
+      <PageContainer
+        $theme={theme}
+        variant="minimal"
+        background="transparent"
+        padding="lg"
+        maxWidth="1200px"
+      >
         <Loading $theme={theme}>Carregando dados de auditoria...</Loading>
-      </Container>
+      </PageContainer>
     );
   }
 
   return (
-    <Container>
-      <Header>
-        <Title $theme={theme}>
-          <span role='img' aria-label='audit'>
-            🔍
-          </span>{' '}
-          Auditoria de Geofencing
-        </Title>
-        <Subtitle $theme={theme}>
-          Logs e validações do sistema de geofencing
-        </Subtitle>
-      </Header>
+    <PageContainer
+      $theme={theme}
+      variant="minimal"
+      background="transparent"
+      padding="lg"
+      maxWidth="1200px"
+      animation={true}
+    >
+      <PageHeader
+        $theme={theme}
+        title={
+          <>
+            <span role='img' aria-label='audit'>
+              🔍
+            </span>{' '}
+            Auditoria de Geofencing
+          </>
+        }
+        subtitle="Logs e validações do sistema de geofencing"
+        variant="default"
+        animation={true}
+      />
 
       {error && <Error $theme={theme}>{error}</Error>}
 
@@ -559,6 +559,6 @@ export default function AuditoriaGeofencing() {
           </UnifiedCard>
         ))
       )}
-    </Container>
+    </PageContainer>
   );
 }

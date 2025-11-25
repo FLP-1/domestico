@@ -21,9 +21,8 @@ export default async function handler(
     return res
       .status(500)
       .json({ success: false, error: 'Erro interno do servidor' });
-  } finally {
-    await prisma.$disconnect();
   }
+  // Removido prisma.$disconnect() - não deve desconectar em cada request
 }
 
 async function getMetrics(req: NextApiRequest, res: NextApiResponse) {
@@ -59,32 +58,40 @@ async function getMetrics(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function updateMetrics(req: NextApiRequest, res: NextApiResponse) {
-  const { chave, valor, descricao, categoria, dadosExtras } = req.body;
+  try {
+    const { chave, valor, descricao, categoria, dadosExtras } = req.body;
 
-  if (!chave || valor === undefined) {
-    return res.status(400).json({
+    if (!chave || valor === undefined) {
+      return res.status(400).json({
+        success: false,
+        error: 'Campos obrigatórios: chave, valor',
+      });
+    }
+
+    const metric = await prisma.metricaSistema.upsert({
+      where: { chave },
+      update: {
+        valor: parseInt(valor),
+        descricao,
+        categoria: categoria || 'GERAL',
+        dadosExtras,
+        atualizadaEm: new Date(),
+      },
+      create: {
+        chave,
+        valor: parseInt(valor),
+        descricao,
+        categoria: categoria || 'GERAL',
+        dadosExtras,
+      },
+    });
+
+    return res.status(200).json({ success: true, data: metric });
+  } catch (error: any) {
+    console.error('Erro ao atualizar métricas:', error);
+    return res.status(500).json({
       success: false,
-      error: 'Campos obrigatórios: chave, valor',
+      error: error?.message || 'Erro ao atualizar métricas',
     });
   }
-
-  const metric = await prisma.metricaSistema.upsert({
-    where: { chave },
-    update: {
-      valor: parseInt(valor),
-      descricao,
-      categoria: categoria || 'GERAL',
-      dadosExtras,
-      atualizadaEm: new Date(),
-    },
-    create: {
-      chave,
-      valor: parseInt(valor),
-      descricao,
-      categoria: categoria || 'GERAL',
-      dadosExtras,
-    },
-  });
-
-  return res.status(200).json({ success: true, data: metric });
 }

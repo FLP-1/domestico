@@ -36,114 +36,202 @@ const FormSection = styled.div`
   margin-bottom: 1.5rem;
 `;
 
-const SectionTitle = styled.h3`
+const SectionTitle = styled.h3<{ $theme?: any }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 1rem;
   font-weight: 600;
-  color: ${props => props.theme?.text?.dark || '#2c3e50'};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
   margin: 0 0 1rem 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid
-    ${props => props.theme?.navigation?.primary || '#29abe2'};
+    ${props => 
+      props.$theme?.colors?.navigation?.primary || 
+      props.$theme?.colors?.primary ||
+      props.$theme?.accent ||
+      'transparent'};
 `;
 
-const Label = styled.label`
+const Label = styled.label<{ $theme?: any }>`
   font-weight: 600;
-  color: ${props => props.theme?.text?.dark || '#2c3e50'};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
   font-size: 0.85rem;
   margin-bottom: 0.4rem;
   display: block;
 `;
 
-const InputStyled = styled(Input)<{ $hasError?: boolean }>`
+const InputStyled = styled(Input)<{ $hasError?: boolean; $theme?: any }>`
   width: 100%;
   padding: 0.6rem;
   border: 2px solid
     ${props =>
       props.$hasError
-        ? props.theme?.status?.error?.color || '#e74c3c'
-        : props.theme?.border?.light || '#e9ecef'};
+        ? props.$theme?.colors?.status?.error?.border ||
+          props.$theme?.status?.error?.border ||
+          'transparent'
+        : props.$theme?.colors?.border?.light ||
+          props.$theme?.border?.light ||
+          'transparent'};
   border-radius: 8px;
   font-size: 0.9rem;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
+  background: ${props => 
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary ||
+    'transparent'};
 
   &:focus {
     outline: none;
-    border-color: ${props => props.theme?.navigation?.primary || '#29abe2'};
-    box-shadow: 0 0 0 3px rgba(41, 171, 226, 0.1);
+    border-color: ${props => 
+      props.$theme?.colors?.navigation?.primary || 
+      props.$theme?.colors?.primary ||
+      props.$theme?.accent ||
+      'transparent'};
+    box-shadow: 0 0 0 3px ${props => {
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   }
 `;
 
-const SelectStyled = styled(Select).attrs<{ $hasError?: boolean }>(() => ({
+const SelectStyled = styled(Select).attrs<{ $hasError?: boolean; $theme?: any }>(() => ({
   'aria-label': 'Selecionar opção',
   title: 'Selecionar opção',
-}))<{ $hasError?: boolean }>`
+}))<{ $hasError?: boolean; $theme?: any }>`
   width: 100%;
   padding: 0.6rem;
   border: 2px solid
     ${props =>
       props.$hasError
-        ? props.theme?.status?.error?.color || '#e74c3c'
-        : props.theme?.border?.light || '#e9ecef'};
+        ? props.$theme?.colors?.status?.error?.border ||
+          props.$theme?.status?.error?.border ||
+          'transparent'
+        : props.$theme?.colors?.border?.light ||
+          props.$theme?.border?.light ||
+          'transparent'};
   border-radius: 8px;
   font-size: 0.9rem;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
+  background: ${props => 
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary ||
+    'transparent'};
   cursor: pointer;
 
   &:focus {
     outline: none;
-    border-color: ${props => props.theme?.navigation?.primary || '#29abe2'};
-    box-shadow: 0 0 0 3px rgba(41, 171, 226, 0.1);
+    border-color: ${props => 
+      props.$theme?.colors?.navigation?.primary || 
+      props.$theme?.colors?.primary ||
+      props.$theme?.accent ||
+      'transparent'};
+    box-shadow: 0 0 0 3px ${props => {
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   }
 `;
 
-const ErrorMessage = styled.div`
-  color: ${props => props.theme?.status?.error?.color || '#e74c3c'};
+const ErrorMessage = styled.div<{ $theme?: any }>`
+  color: ${props => 
+    props.$theme?.colors?.status?.error?.text ||
+    props.$theme?.status?.error?.text ||
+    'inherit'};
   font-size: 0.75rem;
   margin-top: 0.2rem;
   font-weight: 500;
 `;
 
-const HelpText = styled.div`
-  color: ${props => props.theme?.text?.muted || '#7f8c8d'};
+const HelpText = styled.div<{ $theme?: any }>`
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'};
   font-size: 0.7rem;
   margin-top: 0.2rem;
   font-style: italic;
 `;
 
-const CheckboxContainer = styled.div`
+const CheckboxContainer = styled.div<{ $theme?: any }>`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 0.5rem;
   margin: 0.75rem 0;
   max-height: 120px;
   overflow-y: auto;
-  border: 1px solid rgba(41, 171, 226, 0.2);
+  border: 1px solid ${props => {
+    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.2)`;
+    }
+    return props.$theme?.colors?.border?.light || 
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   border-radius: 8px;
   padding: 0.75rem;
-  background: rgba(248, 250, 252, 0.8);
+  background: ${props => 
+    props.$theme?.colors?.background?.secondary || 
+    props.$theme?.background?.secondary ||
+    'transparent'};
 
   &::-webkit-scrollbar {
     width: 4px;
   }
 
   &::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
+    background: ${props => {
+      const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+      if (shadowColor && shadowColor.startsWith('rgba')) {
+        const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (match) {
+          return `rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1)`;
+        }
+      }
+      return 'transparent';
+    }};
     border-radius: 2px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(41, 171, 226, 0.5);
+    background: ${props => {
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.5)`;
+      }
+      return 'transparent';
+    }};
     border-radius: 2px;
   }
 `;
 
-const CheckboxItem = styled.label`
+const CheckboxItem = styled.label<{ $theme?: any }>`
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -154,7 +242,16 @@ const CheckboxItem = styled.label`
   font-size: 0.8rem;
 
   &:hover {
-    background: rgba(41, 171, 226, 0.1);
+    background: ${props => {
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   }
 
   input[type='checkbox'] {
@@ -162,15 +259,24 @@ const CheckboxItem = styled.label`
   }
 `;
 
-const CheckboxLabel = styled.span`
+const CheckboxLabel = styled.span<{ $theme?: any }>`
   font-weight: 500;
-  color: ${props => props.theme?.text?.dark || '#2c3e50'};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
   font-size: 0.8rem;
 `;
 
-const SelectAllButton = styled.button`
-  background: #29abe2;
-  color: white;
+const SelectAllButton = styled.button<{ $theme?: any }>`
+  background: ${props => 
+    props.$theme?.colors?.primary || 
+    props.$theme?.accent ||
+    'transparent'};
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary ||
+    'inherit'};
   border: none;
   padding: 0.4rem 0.8rem;
   border-radius: 6px;
@@ -180,7 +286,7 @@ const SelectAllButton = styled.button`
   margin-bottom: 0.5rem;
 
   &:hover {
-    background: #1e8bc3;
+    opacity: 0.9;
   }
 `;
 
@@ -204,9 +310,21 @@ const PeriodGroup = styled.div`
   gap: 0.5rem;
 `;
 
-const SummaryCard = styled.div`
-  background: linear-gradient(135deg, #29abe2, #1e8bc3);
-  color: white;
+const SummaryCard = styled.div<{ $theme?: any }>`
+  background: ${props => {
+    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `linear-gradient(135deg, ${primaryColor}, rgba(${r}, ${g}, ${b}, 0.8))`;
+    }
+    return 'transparent';
+  }};
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary ||
+    'inherit'};
   border-radius: 12px;
   padding: 1rem;
   text-align: center;
@@ -524,7 +642,7 @@ const PayrollModalNew: React.FC<PayrollModalProps> = ({
               </OptimizedSelectStyled>
             ) : (
               <div>
-                <SelectAllButton onClick={handleSelectAll}>
+                <SelectAllButton $theme={theme} onClick={handleSelectAll}>
                   {selectedEmployees.length === employees.length
                     ? 'Desmarcar Todos'
                     : 'Selecionar Todos'}
@@ -775,7 +893,7 @@ const PayrollModalNew: React.FC<PayrollModalProps> = ({
 
           {/* Resumo */}
           {formData.salarioBase && (
-            <SummaryCard>
+            <SummaryCard $theme={theme}>
               <div>Salário Líquido</div>
               <SummaryValue>
                 R$ {calculation.salarioLiquido.toFixed(2)}

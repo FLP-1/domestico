@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState, useCallback } from 'react';
-import { ToastContainer } from 'react-toastify';
 import styled, { keyframes } from 'styled-components';
 import AccessibleEmoji from '../components/AccessibleEmoji';
 import { EmployeeModalNew } from '../components/EmployeeModalNew';
@@ -10,6 +9,9 @@ import ReportModal from '../components/ReportModal';
 import Sidebar from '../components/Sidebar';
 import TaxGuideModalNew from '../components/TaxGuideModalNew';
 import WelcomeSection from '../components/WelcomeSection';
+import PageContainer from '../components/PageContainer';
+import PageHeader from '../components/PageHeader';
+import TopBar from '../components/TopBar';
 import { UnifiedButton, UnifiedBadge } from '../components/unified';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useAlertManager } from '../hooks/useAlertManager';
@@ -17,74 +19,7 @@ import { useTheme } from '../hooks/useTheme';
 import { defaultColors, addOpacity } from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
 import { OptimizedSectionTitle } from '../components/shared/optimized-styles';
-
-// Animações
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-// Componentes styled para CSS inline
-// FlexContainer removido - não utilizado
-
-// FlexColumn removido - não utilizado
-
-// FlexWrap removido - não utilizado
-
-// GridContainer removido - não utilizado
-
-// ButtonGroup removido - não utilizado
-
-// EmployeeCard removido - não utilizado
-
-const pulse = keyframes`
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-`;
-
-// Styled Components
-const Container = styled.div`
-  display: flex;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  animation: ${fadeIn} 0.6s ease-out;
-`;
-
-const MainContent = styled.div`
-  flex: 1;
-  padding: 2rem;
-  margin-left: 280px;
-  max-width: calc(100vw - 280px);
-  overflow-x: auto;
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-`;
-
-const Title = styled.h1`
-  font-family: 'Montserrat', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: ${props => props.theme?.colors?.primary || '#29ABE2'};
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const Subtitle = styled.div`
-  font-size: 1.1rem;
-  color: ${props => props.theme?.colors?.text || '#666'};
-  margin: 0.5rem 0 0 0;
-  opacity: 0.8;
-`;
+import { fadeIn, pulse } from '../components/shared/animations';
 
 // StatusBadge removido - usar UnifiedBadge
 
@@ -339,13 +274,16 @@ const ESocialDomesticoCompleto: React.FC = () => {
         console.error('Erro ao carregar guias de impostos:', error);
       }
     } catch (error) {
+      // Usar showError diretamente sem depender do objeto alertManager
       alertManager.showError('Erro ao carregar dados iniciais');
     }
-  }, [alertManager]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Removido alertManager das dependências - métodos são estáveis
 
   useEffect(() => {
     loadInitialData();
-  }, [loadInitialData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Executar apenas uma vez na montagem do componente
 
   const handleAddEmployee = () => {
     setSelectedEmployee(null);
@@ -634,13 +572,19 @@ const ESocialDomesticoCompleto: React.FC = () => {
   ).length;
 
   return (
-    <Container>
+    <PageContainer
+      $theme={theme}
+      sidebarCollapsed={collapsed}
+      variant="dashboard"
+      background="gradient"
+      animation={true}
+    >
       <Sidebar
         collapsed={collapsed}
         onToggle={() => setCollapsed(!collapsed)}
         currentPath={router.pathname}
       />
-      <MainContent>
+      <TopBar $theme={theme}>
         <WelcomeSection
           $theme={theme}
           userAvatar={currentProfile?.avatar || 'U'}
@@ -649,21 +593,25 @@ const ESocialDomesticoCompleto: React.FC = () => {
           notificationCount={pendingTaxes}
           onNotificationClick={() => setActiveTab('taxes')}
         />
+      </TopBar>
 
-        <Header>
-          <div>
-            <Title>
-              <AccessibleEmoji emoji='🏠' label='Casa' /> eSocial Doméstico
-              Completo
-            </Title>
-            <Subtitle>
-              Gestão completa de funcionários domésticos e folha de pagamento
-            </Subtitle>
-          </div>
+      <PageHeader
+        $theme={theme}
+        title={
+          <>
+            <AccessibleEmoji emoji='🏠' label='Casa' /> eSocial Doméstico
+            Completo
+          </>
+        }
+        subtitle="Gestão completa de funcionários domésticos e folha de pagamento"
+        variant="inline"
+        actions={
           <UnifiedBadge variant="success" size="md" theme={theme} icon={<AccessibleEmoji emoji='🟢' label='Conectado' />}>
             Conectado
           </UnifiedBadge>
-        </Header>
+        }
+        animation={true}
+      />
 
         {/* Estatísticas */}
         <StatsGrid>
@@ -996,19 +944,7 @@ const ESocialDomesticoCompleto: React.FC = () => {
           $theme={theme}
         />
 
-        <ToastContainer
-          position='top-right'
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-      </MainContent>
-    </Container>
+    </PageContainer>
   );
 };
 

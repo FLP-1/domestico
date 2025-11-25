@@ -3,15 +3,16 @@ import { EmployerModalNew } from '../components/EmployerModalNew';
 import { LoginPageStyles } from '../components/LoginPageStyles';
 // src/pages/login-biometric.tsx
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styled, { keyframes } from 'styled-components';
 import { UserProfile, useUserProfile } from '../contexts/UserProfileContext';
 import { Group, useGroup } from '../contexts/GroupContext';
 import { useAlertManager } from '../hooks/useAlertManager';
-import { useGeolocation } from '../hooks/useGeolocation';
+// ❌ REMOVIDO: useGeolocation não é necessário aqui - pode estar causando solicitação automática
+// import { useGeolocation } from '../hooks/useGeolocation';
 import { useGeolocationContext } from '../contexts/GeolocationContext';
 import { useSystemConfig } from '../hooks/useSystemConfig';
 import { useTheme } from '../hooks/useTheme';
@@ -123,6 +124,13 @@ const LoginCard = styled.div`
 const LogoSection = styled.div`
   text-align: center;
   margin-bottom: 0.5rem;
+`;
+
+const LogoContainer = styled.div`
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
 `;
 
 const Logo = styled.img`
@@ -425,8 +433,11 @@ const ErrorMessage = styled.div`
 export default function LoginBiometric() {
   const router = useRouter();
   const alertManager = useAlertManager();
-  const { getCurrentPosition } = useGeolocation();
-  const { setLastLocation } = useGeolocationContext();
+  // ❌ REMOVIDO: useGeolocation não é necessário aqui - pode estar causando solicitação automática
+  // A geolocalização será solicitada apenas quando checkbox de termos for marcado
+  //   // ❌ REMOVIDO: useGeolocation não é necessário aqui - pode estar causando solicitação automática
+  // const { getCurrentPosition } = useGeolocation();
+  const { updateLastLocationIfBetter } = useGeolocationContext();
   const { config, loading: configLoading } = useSystemConfig();
   const [cpf, setCpf] = useState('');
   const [password, setPassword] = useState('');
@@ -556,7 +567,7 @@ export default function LoginBiometric() {
   };
 
   /**
-   * Solicitar permissão de geolocalização após login
+   * Solicitar permissão de geolocalização quando checkbox de termos é marcado
    * O popup aparece aqui (primeira vez) para que não apareça nos registros de ponto
    */
   const requestGeolocationPermission = async () => {
@@ -566,23 +577,58 @@ export default function LoginBiometric() {
         return;
       }
 
-      // Apenas solicitar permissão (popup aparece aqui)
-      // Não precisa capturar dados completos, apenas disparar o popup
+      // ✅ Solicitar permissão e capturar localização com alta precisão
       navigator.geolocation.getCurrentPosition(
-        async () => {
-          // Permissão concedida; capturar localização manual com maior precisão e salvar no contexto
+        async (position) => {
+          // Permissão concedida; capturar localização com maior precisão e salvar no contexto
           try {
-            const data = await getCurrentPosition();
-            setLastLocation({
-              latitude: data.latitude,
-              longitude: data.longitude,
-              accuracy: data.accuracy,
-              address: '', // Será preenchido posteriormente
-              wifiName: '', // Será preenchido posteriormente
-              networkInfo: {}, // Será preenchido posteriormente
+            // Obter endereço via geocoding
+            let address = 'Endereço indisponível';
+            let addressComponents = null;
+            
+            try {
+              const geocodingResponse = await fetch(
+                `/api/geocoding/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&zoom=18`
+              );
+              if (geocodingResponse.ok) {
+                const geocodingData = await geocodingResponse.json();
+                if (geocodingData.success) {
+                  address = geocodingData.formattedAddress || geocodingData.address || address;
+                  addressComponents = geocodingData.components || null;
+                }
+              }
+            } catch (geocodingError) {
+              // Ignorar erros de geocoding
+            }
+            
+            // ✅ Salvar localização no contexto SEMPRE (forçar atualização após login)
+            // Após login, sempre atualizar mesmo que seja menos precisa (usuário acabou de conceder permissão)
+            updateLastLocationIfBetter({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              accuracy: position.coords.accuracy,
+              address,
+              addressComponents,
+              wifiName: undefined,
+              networkInfo: undefined,
               timestamp: new Date(),
             });
-          } catch {}
+            
+            console.log('✅ Localização capturada e salva após permissão concedida:', {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              accuracy: position.coords.accuracy,
+              address,
+            });
+            
+            // ✅ Forçar atualização imediata do contexto após login
+            // Aguardar um pouco para garantir que o contexto foi atualizado
+            setTimeout(() => {
+              console.log('🔄 Verificando atualização do contexto após login...');
+            }, 500);
+          } catch (error) {
+            console.error('❌ Erro ao processar localização após permissão:', error);
+          }
         },
         (error: any) => {
           console.warn(
@@ -592,9 +638,9 @@ export default function LoginBiometric() {
           // Não bloqueia o login se usuário negar
         },
         {
-          enableHighAccuracy: false, // Não precisa de alta precisão aqui
-          timeout: 5000, // Timeout curto (só queremos disparar o popup)
-          maximumAge: Infinity, // Aceita cache (só queremos a permissão)
+          enableHighAccuracy: true, // ✅ Alta precisão para captura inicial
+          timeout: 30000, // ✅ Timeout maior para GPS real
+          maximumAge: 0, // ✅ Sem cache - sempre capturar nova localização
         }
       );
     } catch (error) {
@@ -629,16 +675,28 @@ export default function LoginBiometric() {
         locationData: null,
       }),
     })
-      .then(response => response.json())
+      .then(response => {
+        // ✅ Verificar status antes de parsear JSON para evitar erros silenciosos
+        if (!response.ok && response.status === 401) {
+          // Erro 401 é esperado quando credenciais são inválidas
+          return response.json().then(data => {
+            setIsLoading(false);
+            if (data.error) {
+              alertManager.showError(data.error);
+            }
+            return { success: false, data: null };
+          });
+        }
+        return response.json();
+      })
       .then(result => {
         setIsLoading(false);
 
         if (result.success && result.data) {
           alertManager.showSuccess('Login realizado com sucesso!');
 
-          // ✅ Solicitar permissão de geolocalização logo após login bem-sucedido
-          // Popup aparece aqui (primeira vez) para que não apareça nos registros de ponto
-          requestGeolocationPermission();
+          // ❌ REMOVIDO: Solicitação de geolocalização agora acontece quando checkbox de termos é marcado
+          // requestGeolocationPermission();
 
           const rawProfiles = result.data.userProfiles;
           const rawGroups = result.data.userGroups;
@@ -686,8 +744,12 @@ export default function LoginBiometric() {
       })
       .catch(error => {
         setIsLoading(false);
-        console.error('Erro ao fazer login:', error);
-        alertManager.showError('Erro ao conectar com o servidor');
+        // ✅ Não logar erros 401 (credenciais inválidas são esperadas)
+        // O erro 401 já é tratado no .then() anterior
+        if (!error?.message?.includes('401')) {
+          console.error('Erro ao fazer login:', error);
+          alertManager.showError('Erro ao conectar com o servidor');
+        }
       });
   };
 
@@ -711,16 +773,28 @@ export default function LoginBiometric() {
           senha: password,
         }),
       })
-        .then(response => response.json())
+        .then(response => {
+          // ✅ Verificar status antes de parsear JSON para evitar erros silenciosos
+          if (!response.ok && response.status === 401) {
+            // Erro 401 é esperado quando credenciais são inválidas
+            return response.json().then(data => {
+              setIsLoading(false);
+              if (data.error) {
+                alertManager.showError(data.error);
+              }
+              return { success: false, data: null };
+            });
+          }
+          return response.json();
+        })
         .then(result => {
           setIsLoading(false);
 
           if (result.success && result.data) {
             alertManager.showSuccess('Login realizado com sucesso!');
 
-            // ✅ Solicitar permissão de geolocalização logo após login bem-sucedido
-            // Popup aparece aqui (primeira vez) para que não apareça nos registros de ponto
-            requestGeolocationPermission();
+            // ❌ REMOVIDO: Solicitação de geolocalização agora acontece quando checkbox de termos é marcado
+            // requestGeolocationPermission();
 
             const rawData = result.data;
             const rawProfiles = rawData?.userProfiles ?? rawData;
@@ -746,8 +820,12 @@ export default function LoginBiometric() {
         })
         .catch(error => {
           setIsLoading(false);
-          console.error('Erro ao fazer login:', error);
-          alertManager.showError('Erro ao conectar com o servidor');
+          // ✅ Não logar erros 401 (credenciais inválidas são esperadas)
+          // O erro 401 já é tratado no .then() anterior
+          if (!error?.message?.includes('401')) {
+            console.error('Erro ao fazer login:', error);
+            alertManager.showError('Erro ao conectar com o servidor');
+          }
         });
       return;
     }
@@ -778,7 +856,15 @@ export default function LoginBiometric() {
       <PageContainer data-page-container>
         <LoginCard>
           <LogoSection>
-            <Logo src='/Logo.png' alt='Logo DOM' />
+            <LogoContainer>
+              <Image
+                src='/Logo.png'
+                alt='Logo DOM'
+                width={80}
+                height={80}
+                priority
+              />
+            </LogoContainer>
             <Title>DOM</Title>
           </LogoSection>
 
@@ -959,18 +1045,6 @@ export default function LoginBiometric() {
           }}
         />
 
-        <ToastContainer
-          position='top-center'
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme='light'
-        />
       </PageContainer>
     </>
   );

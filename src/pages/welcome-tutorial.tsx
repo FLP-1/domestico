@@ -3,8 +3,7 @@ import AccessibleEmoji from '../components/AccessibleEmoji';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useAlertManager } from '../hooks/useAlertManager';
 import styled, { keyframes } from 'styled-components';
 import { publicColors, addOpacity } from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
@@ -107,7 +106,7 @@ const WelcomeContainer = styled.div<{ $theme?: Theme }>`
   overflow: hidden;
 `;
 
-const BackgroundPattern = styled.div`
+const BackgroundPattern = styled.div<{ $theme?: any }>`
   position: absolute;
   top: 0;
   left: 0;
@@ -116,17 +115,44 @@ const BackgroundPattern = styled.div`
   background-image:
     radial-gradient(
       circle at 20% 80%,
-      rgba(255, 255, 255, 0.1) 0%,
+      ${props => {
+        const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+        if (bgColor && bgColor.startsWith('#')) {
+          const r = parseInt(bgColor.slice(1, 3), 16);
+          const g = parseInt(bgColor.slice(3, 5), 16);
+          const b = parseInt(bgColor.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, 0.1)`;
+        }
+        return 'rgba(255, 255, 255, 0.1)';
+      }} 0%,
       transparent 50%
     ),
     radial-gradient(
       circle at 80% 20%,
-      rgba(255, 255, 255, 0.1) 0%,
+      ${props => {
+        const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+        if (bgColor && bgColor.startsWith('#')) {
+          const r = parseInt(bgColor.slice(1, 3), 16);
+          const g = parseInt(bgColor.slice(3, 5), 16);
+          const b = parseInt(bgColor.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, 0.1)`;
+        }
+        return 'rgba(255, 255, 255, 0.1)';
+      }} 0%,
       transparent 50%
     ),
     radial-gradient(
       circle at 40% 40%,
-      rgba(255, 255, 255, 0.05) 0%,
+      ${props => {
+        const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+        if (bgColor && bgColor.startsWith('#')) {
+          const r = parseInt(bgColor.slice(1, 3), 16);
+          const g = parseInt(bgColor.slice(3, 5), 16);
+          const b = parseInt(bgColor.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, 0.05)`;
+        }
+        return 'rgba(255, 255, 255, 0.05)';
+      }} 0%,
       transparent 50%
     );
   animation: ${float} 6s ease-in-out infinite;
@@ -150,18 +176,43 @@ const Logo = styled.div<{ $theme?: Theme }>`
   width: 120px;
   height: 120px;
   border-radius: 30px;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.9),
-    rgba(255, 255, 255, 0.7)
-  );
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `linear-gradient(135deg, rgba(${r}, ${g}, ${b}, 0.9), rgba(${r}, ${g}, ${b}, 0.7))`;
+    }
+    return props.$theme?.colors?.background?.primary || 
+           props.$theme?.background?.primary ||
+           'transparent';
+  }};
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 20px 40px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1)`;
+      }
+    }
+    return 'none';
+  }};
   backdrop-filter: blur(20px);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.3)`;
+    }
+    return 'transparent';
+  }};
 
   img {
     width: 80px;
@@ -174,26 +225,60 @@ const WelcomeTitle = styled.h1<{ $theme?: Theme }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 3.5rem;
   font-weight: 800;
-  color: white;
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary ||
+    'inherit'};
   margin: 0 0 1rem 0;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(45deg, #ffffff, #f0f8ff);
+  text-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 4px 8px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.3)`;
+      }
+    }
+    return 'none';
+  }};
+  background: ${props => {
+    const textColor = props.$theme?.colors?.text?.primary || props.$theme?.text?.primary;
+    const secondaryColor = props.$theme?.colors?.text?.secondary || props.$theme?.text?.secondary;
+    if (textColor && secondaryColor && textColor.startsWith('#') && secondaryColor.startsWith('#')) {
+      return `linear-gradient(45deg, ${textColor}, ${secondaryColor})`;
+    }
+    return 'inherit';
+  }};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 `;
 
-const WelcomeSubtitle = styled.p`
+const WelcomeSubtitle = styled.p<{ $theme?: any }>`
   font-size: 1.3rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary ||
+    'inherit'};
   margin: 0 0 2rem 0;
   font-weight: 500;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 2px 4px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.2)`;
+      }
+    }
+    return 'none';
+  }};
 `;
 
-const WelcomeDescription = styled.p`
+const WelcomeDescription = styled.p<{ $theme?: any }>`
   font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'};
   margin: 0 0 3rem 0;
   line-height: 1.6;
   max-width: 600px;
@@ -210,22 +295,52 @@ const ButtonContainer = styled.div`
   margin-bottom: 2rem;
 `;
 
-const SkipButton = styled.button`
+const SkipButton = styled.button<{ $theme?: any }>`
   position: absolute;
   top: 2rem;
   right: 2rem;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.2)`;
+    }
+    return 'transparent';
+  }};
+  border: 1px solid ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.3)`;
+    }
+    return 'transparent';
+  }};
   border-radius: 25px;
   padding: 0.75rem 1.5rem;
-  color: white;
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary ||
+    'inherit'};
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: ${props => {
+      const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+      if (bgColor && bgColor.startsWith('#')) {
+        const r = parseInt(bgColor.slice(1, 3), 16);
+        const g = parseInt(bgColor.slice(3, 5), 16);
+        const b = parseInt(bgColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.3)`;
+      }
+      return 'transparent';
+    }};
     transform: translateY(-2px);
   }
 `;
@@ -243,12 +358,42 @@ const TutorialContainer = styled.div<{ $theme?: Theme }>`
 `;
 
 const TutorialHeader = styled.header<{ $theme?: Theme }>`
-  background: rgba(255, 255, 255, 0.95);
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.95)`;
+    }
+    return props.$theme?.colors?.background?.primary || 
+           props.$theme?.background?.primary ||
+           'transparent';
+  }};
   backdrop-filter: blur(20px);
   padding: 1.5rem 2rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid
-    ${props => (props.$theme?.colors?.primary || publicColors.primary) + '33'};
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 4px 16px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1)`;
+      }
+    }
+    return 'none';
+  }};
+  border-bottom: 1px solid ${props => {
+    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.2)`;
+    }
+    return props.$theme?.colors?.border?.light || 
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -262,9 +407,12 @@ const ProgressContainer = styled.div`
 
 // ProgressBar e ProgressFill removidos - usar UnifiedProgressBar
 
-const ProgressText = styled.span`
+const ProgressText = styled.span<{ $theme?: any }>`
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
   font-size: 0.9rem;
 `;
 
@@ -304,9 +452,12 @@ const SlideTitle = styled.h2<{ $color: string }>`
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const SlideDescription = styled.p`
+const SlideDescription = styled.p<{ $theme?: any }>`
   font-size: 1.2rem;
-  color: #5a6c7d;
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'};
   margin: 0 0 2rem 0;
   line-height: 1.6;
 `;
@@ -317,13 +468,16 @@ const FeaturesList = styled.ul`
   margin: 0 0 2rem 0;
 `;
 
-const FeatureItem = styled.li`
+const FeatureItem = styled.li<{ $theme?: any }>`
   display: flex;
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 0.75rem;
   font-size: 1rem;
-  color: #2c3e50;
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
 
   &::before {
     content: '✨';
@@ -337,13 +491,16 @@ const BenefitsList = styled.ul`
   margin: 0;
 `;
 
-const BenefitItem = styled.li`
+const BenefitItem = styled.li<{ $theme?: any }>`
   display: flex;
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 0.75rem;
   font-size: 0.95rem;
-  color: #7f8c8d;
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'};
 
   &::before {
     content: '🎯';
@@ -364,22 +521,47 @@ const SlideIllustration = styled.div<{ $color: string }>`
   }
 `;
 
-const NavigationContainer = styled.div`
+const NavigationContainer = styled.div<{ $theme?: any }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.95);
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.95)`;
+    }
+    return props.$theme?.colors?.background?.primary || 
+           props.$theme?.background?.primary ||
+           'transparent';
+  }};
   backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light ||
+    'transparent'};
 `;
 
 const NavigationButton = styled.button<{ $theme?: Theme; $disabled?: boolean }>`
   background: ${props =>
     props.$disabled
-      ? '#e0e0e0'
-      : props.$theme?.colors?.primary || publicColors.primary};
-  color: ${props => (props.$disabled ? '#9e9e9e' : 'white')};
+      ? props.$theme?.colors?.background?.secondary || 
+        props.$theme?.background?.secondary ||
+        'transparent'
+      : props.$theme?.colors?.primary || 
+        props.$theme?.accent ||
+        'transparent'};
+  color: ${props => 
+    props.$disabled
+      ? props.$theme?.colors?.text?.secondary || 
+        props.$theme?.text?.secondary ||
+        'inherit'
+      : props.$theme?.colors?.text?.primary || 
+        props.$theme?.text?.primary ||
+        'inherit'};
   border: none;
   border-radius: 12px;
   padding: 1rem 2rem;
@@ -393,8 +575,16 @@ const NavigationButton = styled.button<{ $theme?: Theme; $disabled?: boolean }>`
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px
-      ${props => (props.$theme?.colors?.primary || publicColors.primary) + '66'};
+    box-shadow: ${props => {
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `0 8px 20px rgba(${r}, ${g}, ${b}, 0.4)`;
+      }
+      return 'none';
+    }};
   }
 
   &:disabled {
@@ -429,18 +619,33 @@ const CompletionIcon = styled.div`
   animation: ${bounce} 2s ease-in-out infinite;
 `;
 
-const CompletionTitle = styled.h1`
+const CompletionTitle = styled.h1<{ $theme?: any }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 3rem;
   font-weight: 700;
-  color: white;
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary ||
+    'inherit'};
   margin: 0 0 1rem 0;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  text-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 4px 8px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.3)`;
+      }
+    }
+    return 'none';
+  }};
 `;
 
-const CompletionDescription = styled.p`
+const CompletionDescription = styled.p<{ $theme?: any }>`
   font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'};
   margin: 0 0 3rem 0;
   line-height: 1.6;
 `;
@@ -476,15 +681,21 @@ const SecondaryButton = styled(UnifiedButton)<{ $theme?: Theme }>`
   backdrop-filter: blur(10px) !important;
 `;
 
-const TutorialHeaderTitle = styled.h3`
+const TutorialHeaderTitle = styled.h3<{ $theme?: any }>`
   margin: 0;
-  color: #2c3e50;
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
   font-size: 1.2rem;
 `;
 
-const TutorialHeaderSubtitle = styled.p`
+const TutorialHeaderSubtitle = styled.p<{ $theme?: any }>`
   margin: 0.25rem 0 0 0;
-  color: #7f8c8d;
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'};
   font-size: 0.9rem;
 `;
 
@@ -494,9 +705,13 @@ const DotIndicator = styled.div<{ $active: boolean; $theme?: Theme }>`
   border-radius: 50%;
   background: ${props =>
     props.$active
-      ? props.$theme?.colors?.primary || publicColors.primary
-      : '#e0e0e0'};
-  cursor: pointer;
+      ? props.$theme?.colors?.primary || 
+        props.$theme?.accent ||
+        'transparent'
+      : props.$theme?.colors?.background?.secondary || 
+        props.$theme?.background?.secondary ||
+        'transparent'};
+  cursor: pointer
   transition: all 0.3s ease;
 `;
 
@@ -507,6 +722,7 @@ const DotsContainer = styled.div`
 
 export default function WelcomeTutorial() {
   const router = useRouter();
+  const alertManager = useAlertManager();
   const [currentStep, setCurrentStep] = useState<
     'welcome' | 'tutorial' | 'completion'
   >('welcome');
@@ -676,14 +892,14 @@ export default function WelcomeTutorial() {
 
   const handleStartTutorial = () => {
     setCurrentStep('tutorial');
-    toast.success(
-      'Bem-vindo ao tutorial do Sistema DOM! <AccessibleEmoji emoji="🎉" label="Parabéns" />'
+    alertManager.showSuccess(
+      'Bem-vindo ao tutorial do Sistema DOM! 🎉'
     );
   };
 
   const handleSkipTutorial = () => {
     router.push('/dashboard');
-    toast.info(
+    alertManager.showInfo(
       'Tutorial pulado. Você pode acessá-lo novamente a qualquer momento!'
     );
   };
@@ -704,8 +920,8 @@ export default function WelcomeTutorial() {
 
   const handleGoToDashboard = () => {
     router.push('/dashboard');
-    toast.success(
-      'Bem-vindo ao Sistema DOM! <AccessibleEmoji emoji="🚀" label="Iniciar" />'
+    alertManager.showSuccess(
+      'Bem-vindo ao Sistema DOM! 🚀'
     );
   };
 
@@ -719,8 +935,8 @@ export default function WelcomeTutorial() {
   if (currentStep === 'welcome') {
     return (
       <WelcomeContainer $theme={theme}>
-        <BackgroundPattern />
-        <SkipButton onClick={handleSkipTutorial}>Pular Tour</SkipButton>
+        <BackgroundPattern $theme={theme} />
+        <SkipButton $theme={theme} onClick={handleSkipTutorial}>Pular Tour</SkipButton>
 
         <WelcomeContent>
           <LogoContainer>
@@ -730,7 +946,7 @@ export default function WelcomeTutorial() {
                 alt='Logo DOM'
                 width={80}
                 height={80}
-                priority
+                // Removido priority para evitar warning de preload não usado
               />
             </Logo>
           </LogoContainer>
@@ -758,18 +974,6 @@ export default function WelcomeTutorial() {
           </ButtonContainer>
         </WelcomeContent>
 
-        <ToastContainer
-          position='top-center'
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme='light'
-        />
       </WelcomeContainer>
     );
   }
@@ -785,14 +989,14 @@ export default function WelcomeTutorial() {
       <TutorialContainer $theme={theme}>
         <TutorialHeader $theme={theme}>
           <div>
-            <TutorialHeaderTitle>Tutorial do Sistema DOM</TutorialHeaderTitle>
-            <TutorialHeaderSubtitle>
+            <TutorialHeaderTitle $theme={theme}>Tutorial do Sistema DOM</TutorialHeaderTitle>
+            <TutorialHeaderSubtitle $theme={theme}>
               Conhecendo as funcionalidades
             </TutorialHeaderSubtitle>
           </div>
 
           <ProgressContainer>
-            <ProgressText>
+            <ProgressText $theme={theme}>
               {currentSlide + 1} de {tutorialSlides.length}
             </ProgressText>
             <UnifiedProgressBar 
@@ -831,8 +1035,9 @@ export default function WelcomeTutorial() {
           </SlideContainer>
         </TutorialContent>
 
-        <NavigationContainer>
+        <NavigationContainer $theme={theme}>
           <NavigationButton
+            $theme={theme}
             $theme={theme}
             disabled={currentSlide === 0}
             onClick={handlePreviousSlide}
@@ -870,9 +1075,9 @@ export default function WelcomeTutorial() {
             <AccessibleEmoji emoji='🎉' label='Parabéns' />
           </CompletionIcon>
 
-          <CompletionTitle>Pronto para começar?</CompletionTitle>
+          <CompletionTitle $theme={theme}>Pronto para começar?</CompletionTitle>
 
-          <CompletionDescription>
+          <CompletionDescription $theme={theme}>
             Você agora conhece todas as funcionalidades do Sistema DOM! Sua
             jornada rumo a uma casa mais organizada, segura e eficiente começa
             agora.
@@ -941,18 +1146,6 @@ export default function WelcomeTutorial() {
           </ButtonContainer>
         </CompletionContent>
 
-        <ToastContainer
-          position='top-center'
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme='light'
-        />
       </CompletionContainer>
     );
   }

@@ -2,7 +2,7 @@ import AccessibleEmoji from '../components/AccessibleEmoji';
 // task-management.tsx
 
 import React, { useState } from 'react';
-import { toast } from 'react-toastify';
+import { useAlertManager } from '../hooks/useAlertManager';
 import styled from 'styled-components';
 
 import FilterSection from '../components/FilterSection';
@@ -34,24 +34,46 @@ import {
 } from '../components/shared/optimized-styles';
 
 // Styled Components
-const TaskCount = styled.span`
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+const TaskCount = styled.span<{ $theme?: any }>`
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.2)`;
+    }
+    return 'transparent';
+  }};
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary ||
+    'inherit'};
   padding: 0.25rem 0.5rem;
   border-radius: 12px;
   font-size: 0.8rem;
   font-weight: 600;
 `;
 
-const TaskAssignee = styled.div`
+const TaskAssignee = styled.div<{ $theme?: any }>`
   font-size: 0.8rem;
-  color: #7f8c8d;
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'};
   margin-top: 0.5rem;
 `;
 
-const TaskDueDate = styled.div<{ $isOverdue: boolean }>`
+const TaskDueDate = styled.div<{ $isOverdue: boolean; $theme?: any }>`
   font-size: 0.8rem;
-  color: ${props => (props.$isOverdue ? '#e74c3c' : '#7f8c8d')};
+  color: ${props => 
+    props.$isOverdue
+      ? props.$theme?.colors?.status?.error?.text ||
+        props.$theme?.status?.error?.text ||
+        'inherit'
+      : props.$theme?.colors?.text?.secondary || 
+        props.$theme?.text?.secondary ||
+        'inherit'};
   margin-top: 0.5rem;
   font-weight: ${props => (props.$isOverdue ? '600' : '400')};
 `;
@@ -88,13 +110,28 @@ interface ChecklistItem {
 
 const TaskCreationSection = styled.section<{ $theme?: Theme }>`
   background: ${props =>
-    props.$theme?.colors?.background || defaultColors.background};
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary ||
+    'transparent'};
   border: 1px solid
-    ${props => props.$theme?.colors?.border || defaultColors.border};
+    ${props => 
+      props.$theme?.colors?.border?.light || 
+      props.$theme?.border?.light ||
+      props.$theme?.colors?.border ||
+      'transparent'};
   border-radius: 12px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 2px 8px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1)`;
+      }
+    }
+    return 'none';
+  }};
 `;
 
 // SectionTitle removido - usar OptimizedSectionTitle
@@ -123,13 +160,28 @@ const TaskBoard = styled.div`
 
 const TaskColumn = styled.div<{ $theme?: Theme }>`
   background: ${props =>
-    props.$theme?.colors?.background || defaultColors.background};
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary ||
+    'transparent'};
   border: 1px solid
-    ${props => props.$theme?.colors?.border || defaultColors.border};
+    ${props => 
+      props.$theme?.colors?.border?.light || 
+      props.$theme?.border?.light ||
+      props.$theme?.colors?.border ||
+      'transparent'};
   border-radius: 12px;
   padding: 1.5rem;
   min-height: 500px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 2px 8px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1)`;
+      }
+    }
+    return 'none';
+  }};
 `;
 
 const ColumnHeader = styled.div<{ $theme?: Theme; $status: string }>`
@@ -142,19 +194,30 @@ const ColumnHeader = styled.div<{ $theme?: Theme; $status: string }>`
     ${props => {
       switch (props.$status) {
         case 'todo':
-          return '#f59e0b';
+          return props.$theme?.colors?.status?.warning?.border ||
+                 props.$theme?.status?.warning?.border ||
+                 'transparent';
         case 'in-progress':
-          return '#3b82f6';
+          return props.$theme?.colors?.primary || 
+                 props.$theme?.accent ||
+                 'transparent';
         case 'completed':
-          return '#10b981';
+          return props.$theme?.colors?.status?.success?.border ||
+                 props.$theme?.status?.success?.border ||
+                 'transparent';
         default:
-          return props.$theme?.colors?.border || defaultColors.border;
+          return props.$theme?.colors?.border?.light || 
+                 props.$theme?.border?.light ||
+                 props.$theme?.colors?.border ||
+                 'transparent';
       }
     }};
 
   h3 {
     color: ${props =>
-      getTextPrimary(props.$theme)};
+      props.$theme?.colors?.text?.dark || 
+      props.$theme?.text?.dark ||
+      'inherit'};
     font-size: 1.2rem;
     font-weight: 600;
     margin: 0;
@@ -164,25 +227,41 @@ const ColumnHeader = styled.div<{ $theme?: Theme; $status: string }>`
     background: ${props => {
       switch (props.$status) {
         case 'todo':
-          return '#fef3c7';
+          return props.$theme?.colors?.status?.warning?.background ||
+                 props.$theme?.status?.warning?.background ||
+                 'transparent';
         case 'in-progress':
-          return '#dbeafe';
+          return props.$theme?.colors?.primary || 
+                 props.$theme?.accent ||
+                 'transparent';
         case 'completed':
-          return '#d1fae5';
+          return props.$theme?.colors?.status?.success?.background ||
+                 props.$theme?.status?.success?.background ||
+                 'transparent';
         default:
-          return props.$theme?.colors?.background || defaultColors.background;
+          return props.$theme?.colors?.background?.secondary || 
+                 props.$theme?.background?.secondary ||
+                 'transparent';
       }
     }};
     color: ${props => {
       switch (props.$status) {
         case 'todo':
-          return '#92400e';
+          return props.$theme?.colors?.status?.warning?.text ||
+                 props.$theme?.status?.warning?.text ||
+                 'inherit';
         case 'in-progress':
-          return '#1e40af';
+          return props.$theme?.colors?.text?.primary || 
+                 props.$theme?.text?.primary ||
+                 'inherit';
         case 'completed':
-          return '#065f46';
+          return props.$theme?.colors?.status?.success?.text ||
+                 props.$theme?.status?.success?.text ||
+                 'inherit';
         default:
-          return getTextPrimary(props.$theme);
+          return props.$theme?.colors?.text?.dark || 
+                 props.$theme?.text?.dark ||
+                 'inherit';
       }
     }};
     padding: 0.25rem 0.75rem;
@@ -194,31 +273,50 @@ const ColumnHeader = styled.div<{ $theme?: Theme; $status: string }>`
 
 const TaskCard = styled.div<{ $theme?: Theme; $priority: string }>`
   background: ${props =>
-    props.$theme?.colors?.background || defaultColors.background};
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary ||
+    'transparent'};
   border: 1px solid
     ${props => {
       switch (props.$priority) {
         case 'high':
-          return '#ef4444';
+          return props.$theme?.colors?.status?.error?.border ||
+                 props.$theme?.status?.error?.border ||
+                 'transparent';
         case 'medium':
-          return '#f59e0b';
+          return props.$theme?.colors?.status?.warning?.border ||
+                 props.$theme?.status?.warning?.border ||
+                 'transparent';
         case 'low':
-          return '#10b981';
+          return props.$theme?.colors?.status?.success?.border ||
+                 props.$theme?.status?.success?.border ||
+                 'transparent';
         default:
-          return props.$theme?.colors?.border || defaultColors.border;
+          return props.$theme?.colors?.border?.light || 
+                 props.$theme?.border?.light ||
+                 props.$theme?.colors?.border ||
+                 'transparent';
       }
     }};
   border-left: 4px solid
     ${props => {
       switch (props.$priority) {
         case 'high':
-          return '#ef4444';
+          return props.$theme?.colors?.status?.error?.border ||
+                 props.$theme?.status?.error?.border ||
+                 'transparent';
         case 'medium':
-          return '#f59e0b';
+          return props.$theme?.colors?.status?.warning?.border ||
+                 props.$theme?.status?.warning?.border ||
+                 'transparent';
         case 'low':
-          return '#10b981';
+          return props.$theme?.colors?.status?.success?.border ||
+                 props.$theme?.status?.success?.border ||
+                 'transparent';
         default:
-          return props.$theme?.colors?.primary || defaultColors.primary;
+          return props.$theme?.colors?.primary || 
+                 props.$theme?.accent ||
+                 'transparent';
       }
     }};
   border-radius: 8px;
@@ -226,23 +324,46 @@ const TaskCard = styled.div<{ $theme?: Theme; $priority: string }>`
   margin-bottom: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    if (shadowColor && shadowColor.startsWith('rgba')) {
+      const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        return `0 2px 8px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1)`;
+      }
+    }
+    return 'none';
+  }};
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    box-shadow: ${props => {
+      const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+      if (shadowColor && shadowColor.startsWith('rgba')) {
+        const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (match) {
+          return `0 4px 16px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.15)`;
+        }
+      }
+      return 'none';
+    }};
   }
 
   h4 {
     color: ${props =>
-      getTextPrimary(props.$theme)};
+      props.$theme?.colors?.text?.dark || 
+      props.$theme?.text?.dark ||
+      'inherit'};
     font-size: 1rem;
     font-weight: 600;
     margin: 0 0 0.5rem 0;
   }
 
   p {
-    color: ${props => getTextSecondary(props.$theme)};
+    color: ${props => 
+      props.$theme?.colors?.text?.secondary || 
+      props.$theme?.text?.secondary ||
+      'inherit'};
     font-size: 0.875rem;
     margin: 0 0 0.75rem 0;
     line-height: 1.4;
@@ -255,7 +376,9 @@ const TaskMeta = styled.div<{ $theme?: Theme }>`
   align-items: center;
   font-size: 0.75rem;
   color: ${props =>
-    getTextSecondary(props.$theme)};
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'};
 
   .assignee {
     font-weight: 500;
@@ -263,13 +386,16 @@ const TaskMeta = styled.div<{ $theme?: Theme }>`
 
   .due-date {
     &.overdue {
-      color: #ef4444;
+      color: ${props =>
+        props.$theme?.colors?.status?.error?.text ||
+        props.$theme?.status?.error?.text ||
+        'inherit'};
       font-weight: 600;
     }
   }
 `;
 
-const PriorityBadge = styled.span<{ $priority: string }>`
+const PriorityBadge = styled.span<{ $priority: string; $theme?: any }>`
   display: inline-block;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
@@ -279,25 +405,41 @@ const PriorityBadge = styled.span<{ $priority: string }>`
   background: ${props => {
     switch (props.$priority) {
       case 'high':
-        return '#fef2f2';
+        return props.$theme?.colors?.status?.error?.background ||
+               props.$theme?.status?.error?.background ||
+               'transparent';
       case 'medium':
-        return '#fffbeb';
+        return props.$theme?.colors?.status?.warning?.background ||
+               props.$theme?.status?.warning?.background ||
+               'transparent';
       case 'low':
-        return '#f0fdf4';
+        return props.$theme?.colors?.status?.success?.background ||
+               props.$theme?.status?.success?.background ||
+               'transparent';
       default:
-        return '#f3f4f6';
+        return props.$theme?.colors?.background?.secondary || 
+               props.$theme?.background?.secondary ||
+               'transparent';
     }
   }};
   color: ${props => {
     switch (props.$priority) {
       case 'high':
-        return '#dc2626';
+        return props.$theme?.colors?.status?.error?.text ||
+               props.$theme?.status?.error?.text ||
+               'inherit';
       case 'medium':
-        return '#d97706';
+        return props.$theme?.colors?.status?.warning?.text ||
+               props.$theme?.status?.warning?.text ||
+               'inherit';
       case 'low':
-        return '#059669';
+        return props.$theme?.colors?.status?.success?.text ||
+               props.$theme?.status?.success?.text ||
+               'inherit';
       default:
-        return '#374151';
+        return props.$theme?.colors?.text?.dark || 
+               props.$theme?.text?.dark ||
+               'inherit';
     }
   }};
 `;
@@ -314,9 +456,15 @@ const CommentForm = styled.form<{ $theme?: Theme }>`
 
 const CommentItem = styled.div<{ $theme?: Theme }>`
   background: ${props =>
-    props.$theme?.colors?.background || defaultColors.background};
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary ||
+    'transparent'};
   border: 1px solid
-    ${props => props.$theme?.colors?.border || defaultColors.border};
+    ${props => 
+      props.$theme?.colors?.border?.light || 
+      props.$theme?.border?.light ||
+      props.$theme?.colors?.border ||
+      'transparent'};
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
@@ -334,8 +482,13 @@ const CommentAvatar = styled.div<{ $theme?: Theme }>`
   height: 32px;
   border-radius: 50%;
   background: ${props =>
-    props.$theme?.colors?.primary || defaultColors.primary};
-  color: white;
+    props.$theme?.colors?.primary || 
+    props.$theme?.accent ||
+    'transparent'};
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary ||
+    'inherit'};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -344,14 +497,19 @@ const CommentAvatar = styled.div<{ $theme?: Theme }>`
 `;
 
 const CommentText = styled.p<{ $theme?: Theme }>`
-  color: ${props => getTextPrimary(props.$theme)};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark ||
+    'inherit'};
   margin: 0;
   line-height: 1.4;
 `;
 
 const CommentTime = styled.span<{ $theme?: Theme }>`
   color: ${props =>
-    getTextSecondary(props.$theme)};
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    'inherit'};
   font-size: 0.75rem;
 `;
 
@@ -371,7 +529,11 @@ const ChecklistItem = styled.div<{ $theme?: Theme }>`
   gap: 0.75rem;
   padding: 0.5rem 0;
   border-bottom: 1px solid
-    ${props => props.$theme?.colors?.border || defaultColors.border};
+    ${props => 
+      props.$theme?.colors?.border?.light || 
+      props.$theme?.border?.light ||
+      props.$theme?.colors?.border ||
+      'transparent'};
 
   &:last-child {
     border-bottom: none;
@@ -438,6 +600,7 @@ interface TaskData {
 }
 
 const TaskManagement: React.FC = () => {
+  const alertManager = useAlertManager();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [tasks, setTasks] = useState<TaskData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -461,11 +624,11 @@ const TaskManagement: React.FC = () => {
       if (result.success && result.data) {
         setTasks(result.data);
       } else {
-        toast.error(result.error || 'Erro ao carregar tarefas');
+        alertManager.showError(result.error || 'Erro ao carregar tarefas');
       }
     } catch (error) {
       console.error('Erro ao carregar tarefas:', error);
-      toast.error('Erro ao conectar com o servidor');
+      alertManager.showError('Erro ao conectar com o servidor');
     } finally {
       setIsLoading(false);
     }
@@ -494,7 +657,7 @@ const TaskManagement: React.FC = () => {
     e.preventDefault();
 
     if (!newTask.title.trim()) {
-      toast.error('Por favor, preencha o título da tarefa');
+      alertManager.showError('Por favor, preencha o título da tarefa');
       return;
     }
 
@@ -529,13 +692,13 @@ const TaskManagement: React.FC = () => {
           dueDate: '',
         });
 
-        toast.success('Tarefa criada com sucesso!');
+        alertManager.showSuccess('Tarefa criada com sucesso!');
       } else {
-        toast.error(result.error || 'Erro ao criar tarefa');
+        alertManager.showError(result.error || 'Erro ao criar tarefa');
       }
     } catch (error) {
       console.error('Erro ao criar tarefa:', error);
-      toast.error('Erro ao conectar com o servidor');
+      alertManager.showError('Erro ao conectar com o servidor');
     }
   };
 
@@ -548,7 +711,7 @@ const TaskManagement: React.FC = () => {
         task.id === taskId ? { ...task, status: newStatus } : task
       )
     );
-    toast.success('Status da tarefa atualizado!');
+    alertManager.showSuccess('Status da tarefa atualizado!');
   };
 
   const handleTaskClick = (task: TaskData, type: 'comments' | 'checklist') => {
@@ -577,7 +740,7 @@ const TaskManagement: React.FC = () => {
     );
 
     setNewComment('');
-    toast.success('Comentário adicionado!');
+    alertManager.showSuccess('Comentário adicionado!');
   };
 
   const addChecklistItem = () => {
@@ -598,7 +761,7 @@ const TaskManagement: React.FC = () => {
     );
 
     setNewChecklistItem('');
-    toast.success('Item adicionado ao checklist!');
+    alertManager.showSuccess('Item adicionado ao checklist!');
   };
 
   const toggleChecklistItem = (taskId: string, itemId: string) => {
@@ -806,7 +969,7 @@ const TaskManagement: React.FC = () => {
         <TaskColumn $theme={theme}>
           <ColumnHeader $theme={theme} $status='todo'>
             <h3>A Fazer</h3>
-            <TaskCount>{getTasksByStatus('pending').length}</TaskCount>
+            <TaskCount $theme={theme}>{getTasksByStatus('pending').length}</TaskCount>
           </ColumnHeader>
           {getTasksByStatus('pending').map(task => (
             <TaskCard
@@ -819,7 +982,7 @@ const TaskManagement: React.FC = () => {
               <p>{task.description}</p>
               <TaskMeta $theme={theme}>
                 <div>
-                  <PriorityBadge $priority={task.priority}>
+                  <PriorityBadge $priority={task.priority} $theme={theme}>
                     {task.priority === 'high'
                       ? 'Alta'
                       : task.priority === 'medium'
@@ -827,10 +990,10 @@ const TaskManagement: React.FC = () => {
                         : 'Baixa'}
                   </PriorityBadge>
                 </div>
-                <TaskAssignee>{task.assignee}</TaskAssignee>
+                <TaskAssignee $theme={theme}>{task.assignee}</TaskAssignee>
               </TaskMeta>
               <TaskMeta $theme={theme}>
-                <TaskDueDate $isOverdue={isOverdue(task.dueDate)}>
+                <TaskDueDate $isOverdue={isOverdue(task.dueDate)} $theme={theme}>
                   {new Date(task.dueDate).toLocaleDateString('pt-BR')}
                 </TaskDueDate>
                 <div>
@@ -880,7 +1043,7 @@ const TaskManagement: React.FC = () => {
               <p>{task.description}</p>
               <TaskMeta $theme={theme}>
                 <div>
-                  <PriorityBadge $priority={task.priority}>
+                  <PriorityBadge $priority={task.priority} $theme={theme}>
                     {task.priority === 'high'
                       ? 'Alta'
                       : task.priority === 'medium'
@@ -888,10 +1051,10 @@ const TaskManagement: React.FC = () => {
                         : 'Baixa'}
                   </PriorityBadge>
                 </div>
-                <TaskAssignee>{task.assignee}</TaskAssignee>
+                <TaskAssignee $theme={theme}>{task.assignee}</TaskAssignee>
               </TaskMeta>
               <TaskMeta $theme={theme}>
-                <TaskDueDate $isOverdue={isOverdue(task.dueDate)}>
+                <TaskDueDate $isOverdue={isOverdue(task.dueDate)} $theme={theme}>
                   {new Date(task.dueDate).toLocaleDateString('pt-BR')}
                 </TaskDueDate>
                 <div>
@@ -941,7 +1104,7 @@ const TaskManagement: React.FC = () => {
               <p>{task.description}</p>
               <TaskMeta $theme={theme}>
                 <div>
-                  <PriorityBadge $priority={task.priority}>
+                  <PriorityBadge $priority={task.priority} $theme={theme}>
                     {task.priority === 'high'
                       ? 'Alta'
                       : task.priority === 'medium'
@@ -949,10 +1112,10 @@ const TaskManagement: React.FC = () => {
                         : 'Baixa'}
                   </PriorityBadge>
                 </div>
-                <TaskAssignee>{task.assignee}</TaskAssignee>
+                <TaskAssignee $theme={theme}>{task.assignee}</TaskAssignee>
               </TaskMeta>
               <TaskMeta $theme={theme}>
-                <TaskDueDate $isOverdue={isOverdue(task.dueDate)}>
+                <TaskDueDate $isOverdue={isOverdue(task.dueDate)} $theme={theme}>
                   {new Date(task.dueDate).toLocaleDateString('pt-BR')}
                 </TaskDueDate>
                 <div>

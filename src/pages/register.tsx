@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
+import { useAlertManager } from '../hooks/useAlertManager';
 import 'react-toastify/dist/ReactToastify.css';
 import styled, { keyframes } from 'styled-components';
 import AccessibleEmoji from '../components/AccessibleEmoji';
@@ -306,6 +306,7 @@ interface FormErrors {
 // Componente principal
 const Register: React.FC = () => {
   const router = useRouter();
+  const alertManager = useAlertManager();
   const [formData, setFormData] = useState<FormData>({
     name: '',
     nickname: '',
@@ -407,7 +408,7 @@ const Register: React.FC = () => {
     e.preventDefault();
 
     if (!validateForm()) {
-      toast.error('Por favor, corrija os erros no formulário');
+      alertManager.showError('Por favor, corrija os erros no formulário');
       return;
     }
 
@@ -417,14 +418,14 @@ const Register: React.FC = () => {
       // Simular envio para API
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      toast.success('Cadastro realizado com sucesso!');
+      alertManager.showSuccess('Cadastro realizado com sucesso!');
 
       // Redirecionar para login
       setTimeout(() => {
         router.push('/login');
       }, 1500);
     } catch (error) {
-      toast.error('Erro ao realizar cadastro. Tente novamente.');
+      alertManager.showError('Erro ao realizar cadastro. Tente novamente.');
     } finally {
       setIsLoading(false);
     }
@@ -622,18 +623,6 @@ const Register: React.FC = () => {
         </RegisterForm>
       </RegisterCard>
 
-      <ToastContainer
-        position='top-center'
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
     </PageContainer>
   );
 };

@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styled from 'styled-components';
+import PageContainer from '../components/PageContainer';
+import PageHeader from '../components/PageHeader';
+import { useTheme } from '../hooks/useTheme';
+import { useUserProfile } from '../contexts/UserProfileContext';
 
 // Interface simples para TimeRecord
 interface TimeRecord {
@@ -13,18 +17,7 @@ interface TimeRecord {
   timestamp: Date;
 }
 
-const Container = styled.div`
-  padding: 2rem;
-  font-family: Arial, sans-serif;
-  max-width: 1200px;
-  margin: 0 auto;
-`;
-
-const Title = styled.h1`
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #2c3e50;
-`;
+// Container e Title removidos - usando PageContainer e PageHeader melhorados
 
 const Center = styled.div`
   text-align: center;
@@ -98,6 +91,8 @@ const InfoBox = styled.div`
 `;
 
 export default function TimeClock() {
+  const { currentProfile } = useUserProfile();
+  const theme = useTheme(currentProfile?.role.toLowerCase());
   const [currentTime, setCurrentTime] = useState(new Date());
   const [timeRecords, setTimeRecords] = useState<TimeRecord[]>([]);
 
@@ -190,8 +185,21 @@ export default function TimeClock() {
   };
 
   return (
-    <Container>
-      <Title>Controle de Ponto</Title>
+    <PageContainer
+      $theme={theme}
+      variant="minimal"
+      background="transparent"
+      padding="lg"
+      maxWidth="1200px"
+      animation={true}
+    >
+      <PageHeader
+        $theme={theme}
+        title="Controle de Ponto"
+        variant="centered"
+        size="lg"
+        animation={true}
+      />
 
       {/* Relógio Atual */}
       <Center>
@@ -287,6 +295,6 @@ export default function TimeClock() {
         pauseOnHover
         theme='light'
       />
-    </Container>
+    </PageContainer>
   );
 }

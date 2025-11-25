@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useTheme } from '../hooks/useTheme';
-import { useUserProfile } from '../contexts/UserProfileContext';
+import { useSafeTheme } from '../hooks/useSafeTheme';
 import { HelpText } from './shared/styles';
 
 interface GeofencingModalProps {
@@ -35,7 +34,11 @@ const ModalOverlay = styled.div<{ isOpen: boolean }>`
 `;
 
 const ModalContent = styled.div<{ $theme?: any }>`
-  background: white;
+  background: ${props => 
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary || 
+    'transparent'
+  };
   border-radius: 12px;
   padding: 24px;
   max-width: 500px;
@@ -53,13 +56,21 @@ const ModalHeader = styled.div<{ $theme?: any }>`
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid ${props => props.$theme.colors.border.light};
+  border-bottom: 1px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light || 
+    'transparent'
+  };
 `;
 
 const ModalTitle = styled.h2<{ $theme?: any }>`
   font-size: 1.5rem;
   font-weight: 600;
-  color: ${props => props.$theme.colors.text.dark};
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark || 
+    'inherit'
+  };
   margin: 0;
 `;
 
@@ -68,31 +79,55 @@ const CloseButton = styled.button<{ $theme?: any }>`
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: ${props => props.$theme.colors.text.secondary};
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary || 
+    'inherit'
+  };
   padding: 4px;
 
   &:hover {
-    color: ${props => props.$theme.colors.text.primary};
+    color: ${props => 
+      props.$theme?.colors?.text?.primary || 
+      props.$theme?.text?.primary || 
+      'inherit'
+    };
   }
 `;
 
 const AlertBox = styled.div<{ $theme?: any }>`
-  background-color: ${props => props.$theme.colors.status.warning.background};
-  border: 1px solid ${props => props.$theme.colors.status.warning.border};
+  background-color: ${props => 
+    props.$theme?.colors?.status?.warning?.background || 
+    props.$theme?.status?.warning?.background || 
+    'transparent'
+  };
+  border: 1px solid ${props => 
+    props.$theme?.colors?.status?.warning?.border || 
+    props.$theme?.status?.warning?.border || 
+    'transparent'
+  };
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 20px;
 `;
 
 const AlertTitle = styled.h3<{ $theme?: any }>`
-  color: ${props => props.$theme.colors.status.warning.text};
+  color: ${props => 
+    props.$theme?.colors?.status?.warning?.text || 
+    props.$theme?.status?.warning?.text || 
+    'inherit'
+  };
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0 0 8px 0;
 `;
 
 const AlertText = styled.p<{ $theme?: any }>`
-  color: ${props => props.$theme.colors.status.warning.text};
+  color: ${props => 
+    props.$theme?.colors?.status?.warning?.text || 
+    props.$theme?.status?.warning?.text || 
+    'inherit'
+  };
   margin: 0;
   font-size: 0.95rem;
 `;
@@ -105,22 +140,38 @@ const InfoGrid = styled.div<{ $theme?: any }>`
 `;
 
 const InfoItem = styled.div<{ $theme?: any }>`
-  background-color: ${props => props.$theme.colors.background.secondary};
+  background-color: ${props => 
+    props.$theme?.colors?.background?.secondary || 
+    props.$theme?.background?.secondary || 
+    'transparent'
+  };
   padding: 12px;
   border-radius: 6px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light || 
+    'transparent'
+  };
 `;
 
 const InfoLabel = styled.div<{ $theme?: any }>`
   font-size: 0.875rem;
-  color: #6b7280;
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary || 
+    'inherit'
+  };
   font-weight: 500;
   margin-bottom: 4px;
 `;
 
 const InfoValue = styled.div<{ $theme?: any }>`
   font-size: 1rem;
-  color: #1f2937;
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark || 
+    'inherit'
+  };
   font-weight: 600;
 `;
 
@@ -132,7 +183,11 @@ const JustificativaLabel = styled.label<{ $theme?: any }>`
   display: block;
   font-size: 1rem;
   font-weight: 600;
-  color: #1f2937;
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark || 
+    'inherit'
+  };
   margin-bottom: 8px;
 `;
 
@@ -140,15 +195,42 @@ const JustificativaTextarea = styled.textarea<{ $theme?: any }>`
   width: 100%;
   min-height: 100px;
   padding: 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${props => 
+    props.$theme?.colors?.border?.light || 
+    props.$theme?.border?.light || 
+    'transparent'
+  };
   border-radius: 6px;
   font-size: 0.95rem;
   resize: vertical;
+  background: ${props => 
+    props.$theme?.colors?.background?.primary || 
+    props.$theme?.background?.primary || 
+    'transparent'
+  };
+  color: ${props => 
+    props.$theme?.colors?.text?.dark || 
+    props.$theme?.text?.dark || 
+    'inherit'
+  };
 
   &:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: ${props => 
+      props.$theme?.colors?.primary || 
+      props.$theme?.accent || 
+      'transparent'
+    };
+    box-shadow: 0 0 0 3px ${props => {
+      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   }
 `;
 
@@ -158,7 +240,7 @@ const ButtonGroup = styled.div<{ $theme?: any }>`
   justify-content: flex-end;
 `;
 
-const Button = styled.button<{ variant: 'primary' | 'secondary' }>`
+const Button = styled.button<{ variant: 'primary' | 'secondary'; $theme?: any }>`
   padding: 12px 24px;
   border-radius: 6px;
   font-size: 1rem;
@@ -167,30 +249,33 @@ const Button = styled.button<{ variant: 'primary' | 'secondary' }>`
   border: none;
   transition: all 0.2s;
 
-  ${props =>
-    props.variant === 'primary'
-      ? `
-    background-color: #3b82f6;
-    color: white;
-    
-    &:hover {
-      background-color: #2563eb;
+  ${props => {
+    if (props.variant === 'primary') {
+      return `
+        background-color: ${props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'};
+        color: ${props.$theme?.colors?.text?.primary || props.$theme?.text?.primary || 'inherit'};
+        
+        &:hover {
+          opacity: 0.9;
+        }
+        
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      `;
+    } else {
+      return `
+        background-color: ${props.$theme?.colors?.background?.secondary || props.$theme?.background?.secondary || 'transparent'};
+        color: ${props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
+        border: 1px solid ${props.$theme?.colors?.border?.light || props.$theme?.border?.light || 'transparent'};
+        
+        &:hover {
+          opacity: 0.9;
+        }
+      `;
     }
-    
-    &:disabled {
-      background-color: #9ca3af;
-      cursor: not-allowed;
-    }
-  `
-      : `
-    background-color: #f3f4f6;
-    color: #374151;
-    border: 1px solid #d1d5db;
-    
-    &:hover {
-      background-color: #e5e7eb;
-    }
-  `}
+  }}
 `;
 
 const GeofencingModal: React.FC<GeofencingModalProps> = ({
@@ -202,8 +287,8 @@ const GeofencingModal: React.FC<GeofencingModalProps> = ({
   distanciaMinima,
   endereco,
 }) => {
-  const { currentProfile } = useUserProfile();
-  const { colors: theme } = useTheme(currentProfile?.role.toLowerCase());
+  // ✅ Usar hook seguro que garante estrutura completa sem cores hardcoded
+  const { theme } = useSafeTheme();
   const [justificativa, setJustificativa] = useState('');
 
   useEffect(() => {
@@ -225,76 +310,76 @@ const GeofencingModal: React.FC<GeofencingModalProps> = ({
 
   return (
     <ModalOverlay isOpen={isOpen}>
-      <ModalContent>
-        <ModalHeader $theme={{}}>
-          <ModalTitle $theme={{}}>
+      <ModalContent $theme={theme}>
+        <ModalHeader $theme={theme}>
+          <ModalTitle $theme={theme}>
             <span role='img' aria-label='Proibido'>
               🚫
             </span>{' '}
             Localização Fora do Raio Autorizado
           </ModalTitle>
-          <CloseButton $theme={{}} onClick={handleCancel}>
+          <CloseButton $theme={theme} onClick={handleCancel}>
             ×
           </CloseButton>
         </ModalHeader>
 
-        <AlertBox $theme={{}}>
-          <AlertTitle $theme={{}}>
+        <AlertBox $theme={theme}>
+          <AlertTitle $theme={theme}>
             <span role='img' aria-label='Atenção'>
               ⚠️
             </span>{' '}
             Atenção
           </AlertTitle>
-          <AlertText $theme={{}}>
+          <AlertText $theme={theme}>
             Sua localização atual está fora do raio autorizado para registro de
             ponto. Para prosseguir, é necessário fornecer uma justificativa.
           </AlertText>
         </AlertBox>
 
         <InfoGrid>
-          <InfoItem $theme={{}}>
-            <InfoLabel>
+          <InfoItem $theme={theme}>
+            <InfoLabel $theme={theme}>
               <span role='img' aria-label='Localização'>
                 📍
               </span>{' '}
               Coordenadas
             </InfoLabel>
-            <InfoValue>
+            <InfoValue $theme={theme}>
               {coordenadas.latitude.toFixed(6)},{' '}
               {coordenadas.longitude.toFixed(6)}
             </InfoValue>
           </InfoItem>
 
-          <InfoItem $theme={{}}>
-            <InfoLabel>
+          <InfoItem $theme={theme}>
+            <InfoLabel $theme={theme}>
               <span role='img' aria-label='Régua'>
                 📏
               </span>{' '}
               Precisão
             </InfoLabel>
-            <InfoValue>{Math.round(coordenadas.precisao)}m</InfoValue>
+            <InfoValue $theme={theme}>{Math.round(coordenadas.precisao)}m</InfoValue>
           </InfoItem>
 
-          <InfoItem $theme={{}}>
-            <InfoLabel>
+          <InfoItem $theme={theme}>
+            <InfoLabel $theme={theme}>
               <span role='img' aria-label='Prédio'>
                 🏢
               </span>{' '}
               Local Mais Próximo
             </InfoLabel>
-            <InfoValue>
+            <InfoValue $theme={theme}>
               {localMaisProximo ? localMaisProximo.nome : 'N/A'}
             </InfoValue>
           </InfoItem>
 
-          <InfoItem $theme={{}}>
-            <InfoLabel>
+          <InfoItem $theme={theme}>
+            <InfoLabel $theme={theme}>
               <span role='img' aria-label='Régua'>
                 📐
               </span>{' '}
               Distância
             </InfoLabel>
-            <InfoValue>
+            <InfoValue $theme={theme}>
               {localMaisProximo
                 ? `${localMaisProximo.distancia}m`
                 : `${Math.round(distanciaMinima)}m`}
@@ -303,10 +388,11 @@ const GeofencingModal: React.FC<GeofencingModalProps> = ({
         </InfoGrid>
 
         <JustificativaSection>
-          <JustificativaLabel>
+          <JustificativaLabel $theme={theme}>
             Justificativa para registro fora do local autorizado:
           </JustificativaLabel>
           <JustificativaTextarea
+            $theme={theme}
             value={justificativa}
             onChange={(e: any) => setJustificativa(e.target.value)}
             placeholder='Descreva o motivo para o registro de ponto neste local...'
@@ -318,11 +404,12 @@ const GeofencingModal: React.FC<GeofencingModalProps> = ({
         </JustificativaSection>
 
         <ButtonGroup>
-          <Button variant='secondary' onClick={handleCancel}>
+          <Button variant='secondary' $theme={theme} onClick={handleCancel}>
             Cancelar
           </Button>
           <Button
             variant='primary'
+            $theme={theme}
             onClick={handleApprove}
             disabled={!justificativa.trim()}
           >

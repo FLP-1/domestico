@@ -2,8 +2,7 @@ import AccessibleEmoji from '../components/AccessibleEmoji';
 // src/pages/communication.tsx
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useAlertManager } from '../hooks/useAlertManager';
 import styled, { keyframes } from 'styled-components';
 import { UnifiedButton, UnifiedModal } from '../components/unified';
 import { FormGroup, Input, Label } from '../components/FormComponents';
@@ -585,6 +584,7 @@ const EmptyStateDescription = styled.p`
 `;
 
 export default function Communication() {
+  const alertManager = useAlertManager();
   const router = useRouter();
   const { currentProfile } = useUserProfile();
   const profileThemeKey = currentProfile?.role
@@ -779,7 +779,7 @@ export default function Communication() {
     }));
 
     setNewMessage('');
-    toast.success('Mensagem enviada!');
+    alertManager.showSuccess('Mensagem enviada!');
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -791,7 +791,7 @@ export default function Communication() {
 
   const handleCreateGroup = () => {
     if (!groupName.trim() || selectedContacts.length < 2 || !currentProfile) {
-      toast.error('Nome do grupo e pelo menos 2 membros são obrigatórios!');
+      alertManager.showError('Nome do grupo e pelo menos 2 membros são obrigatórios!');
       return;
     }
 
@@ -816,7 +816,7 @@ export default function Communication() {
     setGroupName('');
     setSelectedContacts([]);
     setShowGroupUnifiedModal(false);
-    toast.success('Grupo criado com sucesso!');
+    alertManager.showSuccess('Grupo criado com sucesso!');
   };
 
   const handleContactToggle = (contactId: string) => {
@@ -858,7 +858,7 @@ export default function Communication() {
             conversations.filter(c => c.unreadCount > 0).length
           }
           onNotificationClick={() =>
-            toast.info('Notificações em desenvolvimento')
+            alertManager.showInfo('Notificações em desenvolvimento')
           }
         />
       </TopBar>
@@ -1096,18 +1096,6 @@ export default function Communication() {
         </GroupUnifiedModalContent>
       </UnifiedModal>
 
-      <ToastContainer
-        position='top-center'
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
     </PageContainer>
   );
 }

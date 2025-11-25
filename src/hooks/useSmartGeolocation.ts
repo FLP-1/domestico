@@ -112,22 +112,99 @@ export const useSmartGeolocation = (options: SmartGeolocationOptions = {}) => {
           try {
             const position = await new Promise<GeolocationPosition>(
               (resolve: any, reject: any) => {
-                const timeout = setTimeout(() => {
-                  reject(new Error('Timeout na captura de geolocalização'));
-                }, 15000); // 15 segundos por tentativa para melhor precisão
+                // ✅ FORÇAR GPS REAL: Usar watchPosition temporariamente
+                // watchPosition força uso de GPS em vez de cache/IP
+                let watchId: number | null = null;
+                let bestPos: GeolocationPosition | null = null;
+                let bestAccuracy = Infinity;
+                let positionsReceived = 0;
+                
+                const watchTimeout = setTimeout(() => {
+                  if (watchId !== null) {
+                    navigator.geolocation.clearWatch(watchId);
+                    watchId = null; // ✅ Marcar como limpo
+                  }
+                  // Se recebeu pelo menos uma posição, usar a melhor
+                  if (bestPos) {
+                    resolve(bestPos);
+                  } else {
+                    reject(new Error('Timeout na captura de geolocalização'));
+                  }
+                }, 30000); // 30 segundos para GPS estabilizar
 
-                navigator.geolocation.getCurrentPosition(
+                watchId = navigator.geolocation.watchPosition(
                   (pos: any) => {
-                    clearTimeout(timeout);
-                    resolve(pos);
+                    positionsReceived++;
+                    
+                    // ✅ Verificar se é GPS real (tem altitude ou movimento)
+                    // ✅ GPS real: altitude/heading/speed OU alta precisão (< 50m)
+                    // Alta precisão indica GPS real mesmo sem altitude/heading/speed
+                    const isRealGPS = !!(
+                      pos.coords.altitude || 
+                      pos.coords.heading !== null || 
+                      pos.coords.speed !== null ||
+                      pos.coords.accuracy < 50  // ✅ Alta precisão também indica GPS real
+                    );
+                    
+                    if (enableLogging && positionsReceived <= 3) {
+                      logger.log(`🔄 Captura GPS (tentativa ${attempt}, posição ${positionsReceived}):`, {
+                        accuracy: Math.round(pos.coords.accuracy),
+                        isRealGPS,
+                        altitude: pos.coords.altitude,
+                        heading: pos.coords.heading,
+                        speed: pos.coords.speed,
+                        lat: pos.coords.latitude,
+                        lon: pos.coords.longitude,
+                      });
+                    }
+                    
+                    // ✅ Aceitar GPS real OU se accuracy for boa (< 100m para permitir WiFi triangulation)
+                    // ✅ Rejeitar apenas localizações muito ruins (IP) que têm accuracy > 1000m
+                    if (isRealGPS || pos.coords.accuracy < 100) {
+                      // Atualizar melhor posição apenas se for melhor
+                      if (pos.coords.accuracy < bestAccuracy) {
+                        bestPos = pos;
+                        bestAccuracy = pos.coords.accuracy;
+                        
+                        // ✅ Se accuracy muito boa (< 30m), aceitar imediatamente
+                        if (pos.coords.accuracy < 30) {
+                          clearTimeout(watchTimeout);
+                          if (watchId !== null) {
+                            navigator.geolocation.clearWatch(watchId);
+                            watchId = null; // ✅ Marcar como limpo
+                          }
+                          resolve(pos);
+                          return;
+                        }
+                      }
+                    } else {
+                      if (enableLogging && positionsReceived <= 3) {
+                        logger.log(`⚠️ Localização muito ruim detectada (accuracy: ${Math.round(pos.coords.accuracy)}m), rejeitando...`);
+                      }
+                    }
+                    
+                    // ✅ Após 3 posições recebidas (reduzido de 5), usar a melhor se accuracy < 100m
+                    // Isso permite atualização mais rápida ao clicar no card ou mudar de página
+                    if (positionsReceived >= 3 && bestPos && bestAccuracy < 100) {
+                      clearTimeout(watchTimeout);
+                      if (watchId !== null) {
+                        navigator.geolocation.clearWatch(watchId);
+                        watchId = null; // ✅ Marcar como limpo
+                      }
+                      resolve(bestPos);
+                    }
                   },
                   (error: any) => {
-                    clearTimeout(timeout);
+                    clearTimeout(watchTimeout);
+                    if (watchId !== null) {
+                      navigator.geolocation.clearWatch(watchId);
+                      watchId = null; // ✅ Marcar como limpo
+                    }
                     reject(error);
                   },
                   {
                     enableHighAccuracy: true,
-                    timeout: 15000, // Mais tempo para GPS de alta precisão
+                    timeout: 30000,
                     maximumAge: 0, // Forçar nova captura sempre
                   }
                 );
@@ -350,6 +427,42 @@ export const useSmartGeolocation = (options: SmartGeolocationOptions = {}) => {
           wifiName: realSSID || wifiName,
           timestamp: new Date(),
         };
+
+        // ✅ Log para debug: verificar coordenadas capturadas e fonte GPS
+        if (enableLogging) {
+          const gpsInfo = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            accuracy: Math.round(position.coords.accuracy),
+            latPrecision: position.coords.latitude.toString().split('.')[1]?.length || 0,
+            lonPrecision: position.coords.longitude.toString().split('.')[1]?.length || 0,
+            // ✅ Indicadores de GPS real vs localização aproximada
+            altitude: position.coords.altitude,
+            altitudeAccuracy: position.coords.altitudeAccuracy,
+            heading: position.coords.heading,
+            speed: position.coords.speed,
+            timestamp: new Date(position.timestamp).toISOString(),
+            // ✅ Diagnóstico: GPS real tem altitude/heading/speed OU alta precisão (< 50m)
+            isRealGPS: !!(
+              position.coords.altitude || 
+              position.coords.heading !== null || 
+              position.coords.speed !== null ||
+              position.coords.accuracy < 50  // ✅ Alta precisão também indica GPS real
+            ),
+            address: address.substring(0, 50),
+          };
+          
+          logger.log('📍 Coordenadas capturadas:', gpsInfo);
+          
+          // ⚠️ Alerta se precisão muito baixa
+          if (position.coords.accuracy > 100) {
+            logger.log('⚠️ ATENÇÃO: Precisão muito baixa (>100m). Possíveis causas:');
+            logger.log('  - GPS não está conseguindo precisão suficiente');
+            logger.log('  - Navegador usando localização aproximada (IP/WiFi)');
+            logger.log('  - Ambiente fechado ou com interferência');
+            logger.log('  - Permissões do navegador não permitem precisão alta');
+          }
+        }
 
         updateLastLocationIfBetter(locationData);
         lastCaptureRef.current = new Date();

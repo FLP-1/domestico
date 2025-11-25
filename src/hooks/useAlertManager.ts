@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
 import { toast } from 'react-toastify';
+import { MessageHistoryService } from '@/services/messageHistoryService';
+import { useUserProfile } from '@/contexts/UserProfileContext';
 
 export interface AlertConfig {
   type: 'success' | 'error' | 'warning' | 'info';
@@ -18,7 +20,10 @@ export interface AlertManager {
 }
 
 export const useAlertManager = (): AlertManager => {
-  const showAlert = useCallback((config: AlertConfig) => {
+  const { currentProfile } = useUserProfile();
+
+  const showAlert = useCallback(
+    async (config: AlertConfig) => {
     const { type, title, message, duration = 5000, showIcon = true } = config;
 
     const icon = showIcon ? getIconForType(type) : '';
@@ -68,7 +73,23 @@ export const useAlertManager = (): AlertManager => {
         });
         break;
     }
-  }, []);
+
+      // Registrar no histórico (não bloquear o fluxo se falhar)
+      if (currentProfile?.id) {
+        MessageHistoryService.recordMessage({
+          usuarioId: currentProfile.id,
+          tipo: config.type,
+          titulo: config.title,
+          mensagem: config.message,
+          origem: 'toast',
+          duracao: config.duration,
+        }).catch(error => {
+          console.error('Erro ao registrar mensagem no histórico:', error);
+        });
+      }
+    },
+    [currentProfile?.id]
+  );
 
   const showSuccess = useCallback(
     (message: string, title?: string) => {

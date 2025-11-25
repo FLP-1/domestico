@@ -271,20 +271,35 @@ export default async function handler(
         hoje.getDate() + 1
       );
 
-      // Prevenir duplicidade do mesmo tipo no dia
+      // ✅ Prevenir duplicidade do mesmo tipo no dia (considerando grupo e perfil)
+      // ✅ IMPORTANTE: Usar usuarioGrupoId e usuarioPerfilIdFinal (valores do banco), não grupoId/usuarioPerfilId do request
       const existenteMesmoTipo = await prisma.registroPonto.findFirst({
         where: {
           usuarioId,
           tipo,
           dataHora: { gte: inicioDia, lt: fimDia },
+          // ✅ Usar os valores corretos obtidos do banco (não os do request que podem ser null)
+          ...(usuarioGrupoId ? { grupoId: usuarioGrupoId } : {}),
+          ...(usuarioPerfilIdFinal ? { usuarioPerfilId: usuarioPerfilIdFinal } : {}),
         },
       });
       if (existenteMesmoTipo) {
+        logger.log(`⚠️ Tentativa de registro duplicado: ${tipo} para hoje`, {
+          usuarioId,
+          tipo,
+          grupoIdRequest: grupoId,
+          usuarioPerfilIdRequest: usuarioPerfilId,
+          grupoIdBanco: usuarioGrupoId,
+          usuarioPerfilIdBanco: usuarioPerfilIdFinal,
+          existenteId: existenteMesmoTipo.id,
+          existenteGrupoId: existenteMesmoTipo.grupoId,
+          existenteUsuarioPerfilId: existenteMesmoTipo.usuarioPerfilId,
+        });
         return res
           .status(409)
           .json({
             success: false,
-            error: `Já existe um registro de ${tipo} para hoje`,
+            error: `Já existe um registro de ${tipo} para hoje neste grupo/perfil`,
           });
       }
 

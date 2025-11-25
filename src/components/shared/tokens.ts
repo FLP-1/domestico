@@ -93,6 +93,24 @@ export const tokens = {
     bounce: '0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   },
 
+  // Durações de animação
+  animationDurations: {
+    fast: '0.2s',
+    normal: '0.3s',
+    slow: '0.6s',
+    slower: '1s',
+  },
+
+  // Timing functions de animação
+  animationTimings: {
+    ease: 'ease',
+    easeIn: 'ease-in',
+    easeOut: 'ease-out',
+    easeInOut: 'ease-in-out',
+    bounce: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    smooth: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+
   // Breakpoints
   breakpoints: {
     mobile: '768px',
@@ -148,6 +166,14 @@ export const getTransition = (type: keyof typeof tokens.transitions) => {
 
 export const getBorderRadius = (size: keyof typeof tokens.borderRadius) => {
   return tokens.borderRadius[size];
+};
+
+export const getAnimationDuration = (duration: keyof typeof tokens.animationDurations) => {
+  return tokens.animationDurations[duration];
+};
+
+export const getAnimationTiming = (timing: keyof typeof tokens.animationTimings) => {
+  return tokens.animationTimings[timing];
 };
 
 // 🎨 Função para aplicar tema

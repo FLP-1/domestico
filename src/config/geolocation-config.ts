@@ -47,15 +47,15 @@ export interface GeolocationConfig {
 export const GEOLOCATION_CONFIG: GeolocationConfig = {
   // Configurações gerais
   defaultUpdateIntervalMinutes: 5,
-  defaultMinAccuracy: 100,
-  defaultMaxAge: 5 * 60 * 1000, // 5 minutos
-  defaultTimeout: 15000, // 15 segundos
+  defaultMinAccuracy: 50, // Reduzido de 100m para 50m para melhor precisão
+  defaultMaxAge: 0, // Sem cache - sempre capturar nova posição para melhor precisão
+  defaultTimeout: 30000, // 30 segundos para dar mais tempo ao GPS de alta precisão
 
   // WelcomeSection - Atualização frequente para UX
   welcomeSection: {
     updateIntervalMinutes: 2, // Atualização mais frequente
     minAccuracy: 20, // Precisão muito mais alta (20 metros)
-    maxAge: 1 * 60 * 1000, // 1 minuto - dados mais frescos
+    maxAge: 0, // Sem cache - sempre capturar nova posição para melhor precisão
     enablePageLoadUpdate: true,
     enablePeriodicUpdate: true,
   },
@@ -63,8 +63,8 @@ export const GEOLOCATION_CONFIG: GeolocationConfig = {
   // TimeRecordCard - Precisão alta para auditoria
   timeRecordCard: {
     updateIntervalMinutes: 0, // Não atualizar automaticamente
-    minAccuracy: 50, // Precisão mais alta
-    maxAge: 2 * 60 * 1000, // 2 minutos - dados mais frescos
+    minAccuracy: 30, // Precisão muito alta (30 metros) para registro de ponto
+    maxAge: 0, // Sem cache - sempre capturar nova posição para melhor precisão
     enablePageLoadUpdate: false,
     enablePeriodicUpdate: false,
   },

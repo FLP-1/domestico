@@ -96,18 +96,20 @@ const ButtonContainer = styled.button<{
 
   /* Variant styles */
   ${props => {
-    const themedStyles = createThemedStyles(props.$theme);
-    const baseStyles = themedStyles;
+    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent || 'transparent';
+    const secondaryColor = props.$theme?.colors?.secondary || 'transparent';
+    const textColor = props.$theme?.colors?.text?.primary || props.$theme?.text?.primary || props.$theme?.colors?.text || 'inherit';
+    const textDarkColor = props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit';
 
     switch (props.$variant) {
       case 'primary':
         return `
-          background: ${baseStyles.primary || '#29abe2'};
-          color: white;
+          background: ${primaryColor};
+          color: ${textColor};
           box-shadow: ${componentShadows.button};
 
           &:hover:not(:disabled) {
-            background: ${baseStyles.primary || '#1e8bc3'};
+            opacity: 0.9;
             box-shadow: ${componentShadows.buttonHover};
             transform: translateY(-1px);
           }
@@ -120,12 +122,12 @@ const ButtonContainer = styled.button<{
 
       case 'secondary':
         return `
-          background: ${baseStyles.secondary || '#6c757d'};
-          color: white;
+          background: ${secondaryColor || props.$theme?.colors?.background?.secondary || props.$theme?.background?.secondary || 'transparent'};
+          color: ${textColor};
           box-shadow: ${componentShadows.button};
 
           &:hover:not(:disabled) {
-            background: ${baseStyles.secondary || '#5a6268'};
+            opacity: 0.9;
             box-shadow: ${componentShadows.buttonHover};
             transform: translateY(-1px);
           }
@@ -133,12 +135,12 @@ const ButtonContainer = styled.button<{
 
       case 'success':
         return `
-          background: ${baseStyles.success || '#28a745'};
-          color: white;
+          background: ${props.$theme?.colors?.status?.success?.background || props.$theme?.status?.success?.background || 'transparent'};
+          color: ${props.$theme?.colors?.status?.success?.text || props.$theme?.status?.success?.text || textColor};
           box-shadow: ${componentShadows.button};
 
           &:hover:not(:disabled) {
-            background: ${baseStyles.success || '#218838'};
+            opacity: 0.9;
             box-shadow: ${componentShadows.buttonHover};
             transform: translateY(-1px);
           }
@@ -146,12 +148,12 @@ const ButtonContainer = styled.button<{
 
       case 'warning':
         return `
-          background: ${baseStyles.warning || '#ffc107'};
-          color: ${baseStyles.text || '#212529'};
+          background: ${props.$theme?.colors?.status?.warning?.background || props.$theme?.status?.warning?.background || 'transparent'};
+          color: ${props.$theme?.colors?.status?.warning?.text || props.$theme?.status?.warning?.text || textDarkColor};
           box-shadow: ${componentShadows.button};
 
           &:hover:not(:disabled) {
-            background: ${baseStyles.warning || '#e0a800'};
+            opacity: 0.9;
             box-shadow: ${componentShadows.buttonHover};
             transform: translateY(-1px);
           }
@@ -159,12 +161,12 @@ const ButtonContainer = styled.button<{
 
       case 'danger':
         return `
-          background: ${baseStyles.error || '#dc3545'};
-          color: white;
+          background: ${props.$theme?.colors?.status?.error?.background || props.$theme?.status?.error?.background || 'transparent'};
+          color: ${props.$theme?.colors?.status?.error?.text || props.$theme?.status?.error?.text || textColor};
           box-shadow: ${componentShadows.button};
 
           &:hover:not(:disabled) {
-            background: ${baseStyles.error || '#c82333'};
+            opacity: 0.9;
             box-shadow: ${componentShadows.buttonHover};
             transform: translateY(-1px);
           }
@@ -173,12 +175,12 @@ const ButtonContainer = styled.button<{
       case 'ghost':
         return `
           background: transparent;
-          color: ${baseStyles.primary || '#29abe2'};
-          border: 1px solid ${baseStyles.primary || '#29abe2'};
+          color: ${primaryColor};
+          border: 1px solid ${primaryColor};
 
           &:hover:not(:disabled) {
-            background: ${baseStyles.primary || '#29abe2'};
-            color: white;
+            background: ${primaryColor};
+            color: ${textColor};
             transform: translateY(-1px);
           }
         `;
@@ -186,13 +188,14 @@ const ButtonContainer = styled.button<{
       case 'link':
         return `
           background: transparent;
-          color: ${baseStyles.primary || '#29abe2'};
+          color: ${primaryColor};
           padding: 0;
           min-height: auto;
           text-decoration: underline;
 
           &:hover:not(:disabled) {
             text-decoration: underline;
+            opacity: 0.8;
           }
         `;
 

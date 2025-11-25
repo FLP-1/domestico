@@ -1,10 +1,9 @@
 import AccessibleEmoji from '../components/AccessibleEmoji';
 // src/pages/payroll-management.tsx
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useAlertManager } from '../hooks/useAlertManager';
 import styled from 'styled-components';
 import FilterSection from '../components/FilterSection';
 import {
@@ -736,33 +735,59 @@ export default function PayrollManagement() {
   const { currentProfile } = useUserProfile();
   const themeObject = useTheme(currentProfile?.role.toLowerCase());
   const theme = { colors: themeObject.colors };
+  const alertManager = useAlertManager();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [modalOpen, setUnifiedModalOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] =
     useState<PayrollDocument | null>(null);
   const [selectedEmployee, setSelectedEmployee] = useState<string>('');
   const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loadingEmployees, setLoadingEmployees] = useState(true);
 
-  const employees: Employee[] = [
-    {
-      id: '1',
-      name: 'Maria Santos',
-      position: 'Empregada Doméstica',
-      avatar: 'MS',
-      baseSalary: 1500,
-      hireDate: '2023-01-15',
-      status: 'active',
-    },
-    {
-      id: '2',
-      name: 'Ana Costa',
-      position: 'Cozinheira',
-      avatar: 'AC',
-      baseSalary: 1800,
-      hireDate: '2023-03-20',
-      status: 'active',
-    },
-  ];
+  // Carregar funcionários da API
+  useEffect(() => {
+    const loadEmployees = async () => {
+      try {
+        setLoadingEmployees(true);
+        const response = await fetch('/api/users');
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          // Filtrar apenas usuários com perfil EMPREGADO
+          const employeesData = result.data
+            .filter((user: any) => 
+              user.perfis?.some((p: any) => 
+                p.perfil?.codigo === 'EMPREGADO' || p.perfil?.codigo === 'EMPREGADO'
+              )
+            )
+            .map((user: any) => ({
+              id: user.id,
+              name: user.nomeCompleto || user.apelido || 'Sem nome',
+              position: user.perfis?.[0]?.perfil?.nome || 'Empregado',
+              avatar: (user.nomeCompleto || user.apelido || 'U')
+                .split(' ')
+                .map((n: string) => n[0])
+                .join('')
+                .substring(0, 2)
+                .toUpperCase(),
+              baseSalary: 0, // Será carregado da folha de pagamento se necessário
+              hireDate: new Date().toISOString().split('T')[0], // Será carregado se houver campo
+              status: 'active',
+            }));
+          
+          setEmployees(employeesData);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar funcionários:', error);
+        alertManager.showError('Erro ao carregar funcionários');
+      } finally {
+        setLoadingEmployees(false);
+      }
+    };
+
+    loadEmployees();
+  }, []);
 
   const [payrollSummary] = useState<PayrollSummary>({
     id: '1',
@@ -843,18 +868,18 @@ export default function PayrollManagement() {
   };
 
   const handleDownloadDocument = (document: PayrollDocument) => {
-    toast.success(`Baixando ${getDocumentTypeName(document.type)}...`);
+    alertManager.showSuccess(`Baixando ${getDocumentTypeName(document.type)}...`);
     // Aqui seria implementada a lógica de download
   };
 
   const handlePrintDocument = (document: PayrollDocument) => {
-    toast.success(`Imprimindo ${getDocumentTypeName(document.type)}...`);
+    alertManager.showSuccess(`Imprimindo ${getDocumentTypeName(document.type)}...`);
     // Aqui seria implementada a lógica de impressão
   };
 
   const handleProcessPayment = () => {
     if (selectedEmployee) {
-      toast.success('Processando pagamento...');
+      alertManager.showSuccess('Processando pagamento...');
       setShowPaymentForm(false);
     }
   };
@@ -922,7 +947,7 @@ export default function PayrollManagement() {
           userRole={currentProfile?.role || 'Usuário'}
           notificationCount={0}
           onNotificationClick={() =>
-            toast.info('Notificações em desenvolvimento')
+            alertManager.showInfo('Notificações em desenvolvimento')
           }
         />
       </TopBar>
@@ -1048,7 +1073,20 @@ export default function PayrollManagement() {
 
           <EmployeeSelector>
             <OptimizedLabel>Selecionar Funcionário</OptimizedLabel>
-            {employees.map(employee => (
+            {loadingEmployees ? (
+              <EmptyState
+                icon="⏳"
+                title="Carregando funcionários..."
+                description="Aguarde enquanto carregamos os dados"
+              />
+            ) : employees.length === 0 ? (
+              <EmptyState
+                icon="👥"
+                title="Nenhum funcionário encontrado"
+                description="Adicione funcionários para começar a gerenciar a folha de pagamento"
+              />
+            ) : (
+              employees.map(employee => (
               <EmployeeCard
                 key={employee.id}
                 $theme={theme}
@@ -1068,7 +1106,8 @@ export default function PayrollManagement() {
                   </EmployeeDetails>
                 </EmployeeInfo>
               </EmployeeCard>
-            ))}
+            ))
+            )}
           </EmployeeSelector>
 
           {selectedEmployee && (
@@ -1352,18 +1391,6 @@ export default function PayrollManagement() {
         </div>
       </UnifiedModal>
 
-      <ToastContainer
-        position='top-center'
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
     </PageContainer>
   );
 }

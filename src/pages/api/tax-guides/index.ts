@@ -25,126 +25,157 @@ export default async function handler(
     return res
       .status(500)
       .json({ success: false, error: 'Erro interno do servidor' });
-  } finally {
-    await prisma.$disconnect();
   }
+  // Removido prisma.$disconnect() - não deve desconectar em cada request
 }
 
 async function getTaxGuides(req: NextApiRequest, res: NextApiResponse) {
-  const { usuarioId, tipo, mes, ano, status } = req.query;
+  try {
+    const { usuarioId, tipo, mes, ano, status } = req.query;
 
-  const where: any = {};
-  if (usuarioId) where.usuarioId = usuarioId as string;
-  if (tipo) where.tipo = tipo as string;
-  if (mes) where.mes = parseInt(mes as string);
-  if (ano) where.ano = parseInt(ano as string);
-  if (status) where.status = status as string;
+    const where: any = {};
+    if (usuarioId) where.usuarioId = usuarioId as string;
+    if (tipo) where.tipo = tipo as string;
+    if (mes) where.mes = parseInt(mes as string);
+    if (ano) where.ano = parseInt(ano as string);
+    if (status) where.status = status as string;
 
-  const taxGuides = await prisma.guiaImposto.findMany({
-    where,
-    include: {
-      usuario: {
-        select: {
-          id: true,
-          nomeCompleto: true,
-          cpf: true,
-          email: true,
+    const taxGuides = await prisma.guiaImposto.findMany({
+      where,
+      include: {
+        usuario: {
+          select: {
+            id: true,
+            nomeCompleto: true,
+            cpf: true,
+            email: true,
+          },
         },
       },
-    },
-    orderBy: [{ ano: 'desc' }, { mes: 'desc' }, { vencimento: 'asc' }],
-  });
+      orderBy: [{ ano: 'desc' }, { mes: 'desc' }, { vencimento: 'asc' }],
+    });
 
-  return res.status(200).json({ success: true, data: taxGuides });
+    return res.status(200).json({ success: true, data: taxGuides });
+  } catch (error: any) {
+    console.error('Erro ao buscar guias de impostos:', error);
+    return res.status(500).json({
+      success: false,
+      error: error?.message || 'Erro ao buscar guias de impostos',
+    });
+  }
 }
 
 async function createTaxGuide(req: NextApiRequest, res: NextApiResponse) {
-  const {
-    usuarioId,
-    tipo,
-    mes,
-    ano,
-    valor,
-    vencimento,
-    status = 'PENDENTE',
-    observacoes,
-  } = req.body;
-
-  if (!usuarioId || !tipo || !mes || !ano || !valor || !vencimento) {
-    return res.status(400).json({
-      success: false,
-      error:
-        'Campos obrigatórios: usuarioId, tipo, mes, ano, valor, vencimento',
-    });
-  }
-
-  const taxGuide = await prisma.guiaImposto.create({
-    data: {
+  try {
+    const {
       usuarioId,
       tipo,
-      mes: parseInt(mes),
-      ano: parseInt(ano),
-      valor: parseFloat(valor),
-      vencimento: new Date(vencimento),
-      status,
+      mes,
+      ano,
+      valor,
+      vencimento,
+      status = 'PENDENTE',
       observacoes,
-    },
-    include: {
-      usuario: {
-        select: {
-          id: true,
-          nomeCompleto: true,
-          cpf: true,
-          email: true,
+    } = req.body;
+
+    if (!usuarioId || !tipo || !mes || !ano || !valor || !vencimento) {
+      return res.status(400).json({
+        success: false,
+        error:
+          'Campos obrigatórios: usuarioId, tipo, mes, ano, valor, vencimento',
+      });
+    }
+
+    const taxGuide = await prisma.guiaImposto.create({
+      data: {
+        usuarioId,
+        tipo,
+        mes: parseInt(mes),
+        ano: parseInt(ano),
+        valor: parseFloat(valor),
+        vencimento: new Date(vencimento),
+        status,
+        observacoes,
+      },
+      include: {
+        usuario: {
+          select: {
+            id: true,
+            nomeCompleto: true,
+            cpf: true,
+            email: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  return res.status(201).json({ success: true, data: taxGuide });
+    return res.status(201).json({ success: true, data: taxGuide });
+  } catch (error: any) {
+    console.error('Erro ao criar guia de imposto:', error);
+    return res.status(500).json({
+      success: false,
+      error: error?.message || 'Erro ao criar guia de imposto',
+    });
+  }
 }
 
 async function updateTaxGuide(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
-  const updateData = req.body;
+  try {
+    const { id } = req.query;
+    const updateData = req.body;
 
-  if (!id) {
-    return res.status(400).json({ success: false, error: 'ID é obrigatório' });
-  }
+    if (!id) {
+      return res.status(400).json({ success: false, error: 'ID é obrigatório' });
+    }
 
-  const taxGuide = await prisma.guiaImposto.update({
-    where: { id: id as string },
-    data: {
-      ...updateData,
-      atualizadoEm: new Date(),
-    },
-    include: {
-      usuario: {
-        select: {
-          id: true,
-          nomeCompleto: true,
-          cpf: true,
-          email: true,
+    const taxGuide = await prisma.guiaImposto.update({
+      where: { id: id as string },
+      data: {
+        ...updateData,
+        atualizadoEm: new Date(),
+      },
+      include: {
+        usuario: {
+          select: {
+            id: true,
+            nomeCompleto: true,
+            cpf: true,
+            email: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  return res.status(200).json({ success: true, data: taxGuide });
+    return res.status(200).json({ success: true, data: taxGuide });
+  } catch (error: any) {
+    console.error('Erro ao atualizar guia de imposto:', error);
+    return res.status(500).json({
+      success: false,
+      error: error?.message || 'Erro ao atualizar guia de imposto',
+    });
+  }
 }
 
 async function deleteTaxGuide(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
+  try {
+    const { id } = req.query;
 
-  if (!id) {
-    return res.status(400).json({ success: false, error: 'ID é obrigatório' });
+    if (!id) {
+      return res.status(400).json({ success: false, error: 'ID é obrigatório' });
+    }
+
+    await prisma.guiaImposto.delete({
+      where: { id: id as string },
+    });
+
+    return res
+      .status(200)
+      .json({ success: true, message: 'Guia de imposto excluído com sucesso' });
+  } catch (error: any) {
+    console.error('Erro ao excluir guia de imposto:', error);
+    return res.status(500).json({
+      success: false,
+      error: error?.message || 'Erro ao excluir guia de imposto',
+    });
   }
-
-  await prisma.guiaImposto.delete({
-    where: { id: id as string },
-  });
-
-  return res
-    .status(200)
-    .json({ success: true, message: 'Guia de imposto excluído com sucesso' });
 }

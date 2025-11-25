@@ -1,70 +1,159 @@
 /**
- * Helpers para valores padrão do tema
- * Evita valores hardcoded usando referências do sistema de tema centralizado
+ * Funções utilitárias para acesso seguro ao tema
+ * Garantem fallbacks hierárquicos sem usar cores hardcoded
  */
 
-import { profileThemes } from '../hooks/useTheme';
-
-// Tema padrão do sistema (empregado) - usado em páginas autenticadas
-const defaultTheme = profileThemes['empregado'];
+type ThemeObject = any;
+type FallbackType = 'transparent' | 'inherit' | 'currentColor';
 
 /**
- * Cores públicas padrão - usadas em páginas públicas (login, landing, etc.)
- * NÃO dependem de perfil do usuário
+ * Obtém uma cor do tema seguindo um caminho hierárquico
+ * 
+ * @param theme - Objeto do tema
+ * @param path - Array com o caminho da propriedade (ex: ['colors', 'border', 'light'])
+ * @param fallback - Tipo de fallback absoluto (apenas transparent/inherit/currentColor)
+ * @returns Valor da cor ou fallback absoluto
  */
-export const publicColors = {
-  primary: '#1e3a8a', // Azul escuro profissional
-  secondary: '#1e40af', // Azul médio
-  tertiary: '#1d4ed8', // Azul claro
-  background: '#FFFFFF',
-  surface: '#FFFFFF',
-  text: {
-    primary: '#2c3e50',
-    secondary: '#7f8c8d',
-  },
-  border: '#e0e0e0',
-  shadow: 'rgba(0, 0, 0, 0.1)',
-  error: '#EF4444',
-  success: '#10B981',
-  warning: '#F59E0B',
-  info: '#3B82F6',
+export const getThemeColor = (
+  theme: ThemeObject | undefined,
+  path: string[],
+  fallback: FallbackType = 'transparent'
+): string => {
+  if (!theme) return fallback;
+  
+  // Tentar caminho completo primeiro (ex: theme.colors.border.light)
+  let value = theme;
+  for (const key of path) {
+    if (value && typeof value === 'object' && key in value) {
+      value = value[key];
+    } else {
+      value = undefined;
+      break;
+    }
+  }
+  
+  if (value && typeof value === 'string') {
+    return value;
+  }
+  
+  // Tentar caminho alternativo sem 'colors' (ex: theme.border.light)
+  if (path[0] === 'colors' && path.length > 1) {
+    const altPath = path.slice(1);
+    value = theme;
+    for (const key of altPath) {
+      if (value && typeof value === 'object' && key in value) {
+        value = value[key];
+      } else {
+        value = undefined;
+        break;
+      }
+    }
+    
+    if (value && typeof value === 'string') {
+      return value;
+    }
+  }
+  
+  // Retornar fallback absoluto (nunca cores hardcoded)
+  return fallback;
 };
 
 /**
- * Retorna valores padrão de cores do tema (baseado em perfil)
- * Usado em páginas autenticadas que dependem do perfil do usuário
+ * Obtém cor de status do tema
+ * 
+ * @param theme - Objeto do tema
+ * @param status - Tipo de status (success, warning, error, info)
+ * @param property - Propriedade desejada (background, border, text)
+ * @returns Valor da cor ou fallback absoluto
  */
-export const defaultColors = {
-  primary: defaultTheme.colors.primary,
-  secondary: defaultTheme.colors.secondary,
-  background: defaultTheme.colors.background,
-  surface: defaultTheme.colors.surface,
-  text: {
-    primary: defaultTheme.colors.text,
-    secondary: defaultTheme.colors.textSecondary,
-  },
-  border: defaultTheme.colors.border,
-  shadow: defaultTheme.colors.shadow,
-  error: '#EF4444', // Valor do sistema de cores padrão
-  success: '#10B981',
-  warning: '#F59E0B',
-  info: '#3B82F6',
+export const getStatusColor = (
+  theme: ThemeObject | undefined,
+  status: 'success' | 'warning' | 'error' | 'info',
+  property: 'background' | 'border' | 'text' = 'background'
+): string => {
+  const fallback = property === 'text' ? 'inherit' : 'transparent';
+  
+  // Tentar caminho completo primeiro
+  const fullPath = ['colors', 'status', status, property];
+  const color = getThemeColor(theme, fullPath, fallback);
+  
+  if (color !== fallback) {
+    return color;
+  }
+  
+  // Tentar caminho alternativo
+  const altPath = ['status', status, property];
+  return getThemeColor(theme, altPath, fallback);
 };
 
 /**
- * Cria uma cor com transparência a partir de uma cor base
+ * Obtém cor de texto do tema
+ * 
+ * @param theme - Objeto do tema
+ * @param variant - Variante do texto (dark, secondary, primary, medium, light)
+ * @returns Valor da cor ou 'inherit'
  */
-export const addOpacity = (color: string, opacity: number): string => {
-  const rgbaMatch = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-  if (rgbaMatch) {
-    return `rgba(${rgbaMatch[1]}, ${rgbaMatch[2]}, ${rgbaMatch[3]}, ${opacity})`;
+export const getTextColor = (
+  theme: ThemeObject | undefined,
+  variant: 'dark' | 'secondary' | 'primary' | 'medium' | 'light' = 'dark'
+): string => {
+  // Tentar caminho completo primeiro
+  const fullPath = ['colors', 'text', variant];
+  const color = getThemeColor(theme, fullPath, 'inherit');
+  
+  if (color !== 'inherit') {
+    return color;
   }
-  const hexMatch = color.match(/^#([A-Fa-f\d]{6})$/);
-  if (hexMatch) {
-    const r = parseInt(hexMatch[1].substring(0, 2), 16);
-    const g = parseInt(hexMatch[1].substring(2, 4), 16);
-    const b = parseInt(hexMatch[1].substring(4, 6), 16);
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  
+  // Tentar caminho alternativo
+  const altPath = ['text', variant];
+  return getThemeColor(theme, altPath, 'inherit');
+};
+
+/**
+ * Obtém cor de background do tema
+ * 
+ * @param theme - Objeto do tema
+ * @param variant - Variante do background (primary, secondary)
+ * @returns Valor da cor ou 'transparent'
+ */
+export const getBackgroundColor = (
+  theme: ThemeObject | undefined,
+  variant: 'primary' | 'secondary' = 'primary'
+): string => {
+  // Tentar caminho completo primeiro
+  const fullPath = ['colors', 'background', variant];
+  const color = getThemeColor(theme, fullPath, 'transparent');
+  
+  if (color !== 'transparent') {
+    return color;
   }
-  return color;
+  
+  // Tentar caminho alternativo
+  const altPath = ['background', variant];
+  return getThemeColor(theme, altPath, 'transparent');
+};
+
+/**
+ * Obtém cor de borda do tema
+ * 
+ * @param theme - Objeto do tema
+ * @param variant - Variante da borda (light, primary)
+ * @returns Valor da cor ou 'transparent'
+ */
+export const getBorderColor = (
+  theme: ThemeObject | undefined,
+  variant: 'light' | 'primary' = 'light'
+): string => {
+  // Tentar caminho completo primeiro
+  const fullPath = ['colors', 'border', variant];
+  const color = getThemeColor(theme, fullPath, 'transparent');
+  
+  if (color !== 'transparent') {
+    return color;
+  }
+  
+  // Tentar caminho alternativo
+  const altPath = ['border', variant];
+  return getThemeColor(theme, altPath, 'transparent');
 };

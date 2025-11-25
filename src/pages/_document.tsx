@@ -4,6 +4,15 @@ export default function Document() {
   return (
     <Html lang='pt-BR'>
       <Head>
+        {/* PWA Manifest */}
+        <link rel='manifest' href='/manifest.json' />
+        <meta name='theme-color' content='#29abe2' />
+        <meta name='apple-mobile-web-app-capable' content='yes' />
+        <meta name='apple-mobile-web-app-status-bar-style' content='default' />
+        <meta name='apple-mobile-web-app-title' content='DOM' />
+        <link rel='apple-touch-icon' href='/logo-optimized.webp' />
+        
+        {/* Fonts */}
         <link rel='preconnect' href='https://fonts.googleapis.com' />
         <link
           rel='preconnect'
