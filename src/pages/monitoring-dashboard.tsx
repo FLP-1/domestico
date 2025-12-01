@@ -13,7 +13,7 @@ import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
 import type { Theme } from '../types/theme';
 import { getTextSecondary, getTextDark } from '../utils/themeTypeGuards';
-import { defaultColors } from '../utils/themeHelpers';
+import { getThemeColor, getStatusColor } from '../utils/themeHelpers';
 import { getAuditService } from '../services/auditService';
 import { getBackupService } from '../services/backupService';
 import { getWebhookService } from '../services/webhookService';
@@ -82,23 +82,23 @@ const StatusIndicator = styled.div<{ $status: string; $theme?: Theme }>`
   background: ${props => {
     switch (props.$status) {
       case 'online':
-        return props.$theme?.colors?.status?.success?.background ||
-               props.$theme?.status?.success?.background ||
+        return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'background' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).background) : null) ||
+               (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'background' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).background) : null) ||
                props.$theme?.colors?.success ||
                'transparent';
       case 'warning':
-        return props.$theme?.colors?.status?.warning?.background ||
-               props.$theme?.status?.warning?.background ||
+        return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'background' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).background) : null) ||
+               (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'background' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).background) : null) ||
                props.$theme?.colors?.warning ||
                'transparent';
       case 'error':
-        return props.$theme?.colors?.status?.error?.background ||
-               props.$theme?.status?.error?.background ||
+        return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'background' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).background) : null) ||
+               (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'background' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).background) : null) ||
                props.$theme?.colors?.error ||
                'transparent';
       default:
-        return props.$theme?.colors?.status?.info?.background ||
-               props.$theme?.status?.info?.background ||
+        return (typeof props.$theme?.colors?.status?.info === 'object' && props.$theme?.colors?.status?.info && 'background' in props.$theme.colors.status.info ? String((props.$theme.colors.status.info as any).background) : null) ||
+               (typeof (props.$theme as any)?.status?.info === 'object' && (props.$theme as any)?.status?.info && 'background' in (props.$theme as any).status.info ? String(((props.$theme as any).status.info as any).background) : null) ||
                props.$theme?.colors?.info ||
                'transparent';
     }
@@ -106,20 +106,20 @@ const StatusIndicator = styled.div<{ $status: string; $theme?: Theme }>`
   color: ${props => {
     switch (props.$status) {
       case 'online':
-        return props.$theme?.colors?.status?.success?.text ||
-               props.$theme?.status?.success?.text ||
+        return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'text' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).text) : null) ||
+               (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'text' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).text) : null) ||
                'inherit';
       case 'warning':
-        return props.$theme?.colors?.status?.warning?.text ||
-               props.$theme?.status?.warning?.text ||
+        return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'text' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).text) : null) ||
+               (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'text' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).text) : null) ||
                'inherit';
       case 'error':
-        return props.$theme?.colors?.status?.error?.text ||
-               props.$theme?.status?.error?.text ||
+        return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'text' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).text) : null) ||
+               (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'text' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).text) : null) ||
                'inherit';
       default:
-        return props.$theme?.colors?.status?.info?.text ||
-               props.$theme?.status?.info?.text ||
+        return (typeof props.$theme?.colors?.status?.info === 'object' && props.$theme?.colors?.status?.info && 'text' in props.$theme.colors.status.info ? String((props.$theme.colors.status.info as any).text) : null) ||
+               (typeof (props.$theme as any)?.status?.info === 'object' && (props.$theme as any)?.status?.info && 'text' in (props.$theme as any).status.info ? String(((props.$theme as any).status.info as any).text) : null) ||
                'inherit';
     }
   }};
@@ -151,7 +151,7 @@ const MetricValue = styled.div<{ $theme?: Theme }>`
   font-weight: 700;
   color: ${props => 
     props.$theme?.colors?.primary || 
-    props.$theme?.accent ||
+    (props.$theme as any)?.accent ||
     'inherit'};
   margin-bottom: 0.5rem;
 `;
@@ -194,24 +194,24 @@ const ActivityItem = styled.div<{ $type: string; $theme?: Theme }>`
   padding: 1rem;
   border-radius: 8px;
   background: ${props => 
-    props.$theme?.colors?.background?.primary || 
-    props.$theme?.background?.primary ||
+    (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) || 
+    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
     'transparent'};
   border-left: 4px solid
     ${props => {
       switch (props.$type) {
         case 'success':
-          return props.$theme?.colors?.status?.success?.border ||
-                 props.$theme?.status?.success?.border ||
+          return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'border' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).border) : null) ||
+                 (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'border' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).border) : null) ||
                  props.$theme?.colors?.success ||
                  'transparent';
         case 'error':
-          return props.$theme?.colors?.status?.error?.border ||
-                 props.$theme?.status?.error?.border ||
+          return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'border' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).border) : null) ||
+                 (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'border' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).border) : null) ||
                  'transparent';
         case 'warning':
-          return props.$theme?.colors?.status?.warning?.border ||
-                 props.$theme?.status?.warning?.border ||
+          return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'border' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).border) : null) ||
+                 (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'border' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).border) : null) ||
                  'transparent';
         default:
           return 'transparent';
@@ -222,7 +222,7 @@ const ActivityItem = styled.div<{ $type: string; $theme?: Theme }>`
   &:hover {
     transform: translateX(5px);
     box-shadow: ${props => {
-      const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+      const shadowColor = props.$theme?.colors?.shadow || (typeof (props.$theme as any)?.shadow === 'string' ? (props.$theme as any).shadow : (typeof (props.$theme as any)?.shadow === 'object' && (props.$theme as any)?.shadow && 'color' in (props.$theme as any).shadow ? String(((props.$theme as any).shadow as any).color) : null));
       if (shadowColor && shadowColor.startsWith('rgba')) {
         const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
         if (match) {
@@ -243,7 +243,7 @@ const ActivityIcon = styled.div<{ $theme?: any }>`
   justify-content: center;
   border-radius: 50%;
   background: ${props => {
-    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    const bgColor = (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) || (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null);
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
@@ -251,7 +251,7 @@ const ActivityIcon = styled.div<{ $theme?: any }>`
       return `rgba(${r}, ${g}, ${b}, 0.9)`;
     }
     return props.$theme?.colors?.background?.primary || 
-           props.$theme?.background?.primary ||
+           (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
            'transparent';
   }};
 `;
@@ -296,20 +296,20 @@ const AlertBanner = styled.div<{ $type: string; $theme?: Theme }>`
   background: ${props => {
     switch (props.$type) {
       case 'warning':
-        return props.$theme?.colors?.status?.warning?.background ||
-               props.$theme?.status?.warning?.background ||
+        return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'background' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).background) : null) ||
+               (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'background' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).background) : null) ||
                'transparent';
       case 'error':
-        return props.$theme?.colors?.status?.error?.background ||
-               props.$theme?.status?.error?.background ||
+        return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'background' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).background) : null) ||
+               (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'background' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).background) : null) ||
                'transparent';
       case 'success':
-        return props.$theme?.colors?.status?.success?.background ||
-               props.$theme?.status?.success?.background ||
+        return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'background' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).background) : null) ||
+               (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'background' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).background) : null) ||
                'transparent';
       case 'info':
-        return props.$theme?.colors?.status?.info?.background ||
-               props.$theme?.status?.info?.background ||
+        return (typeof props.$theme?.colors?.status?.info === 'object' && props.$theme?.colors?.status?.info && 'background' in props.$theme.colors.status.info ? String((props.$theme.colors.status.info as any).background) : null) ||
+               (typeof (props.$theme as any)?.status?.info === 'object' && (props.$theme as any)?.status?.info && 'background' in (props.$theme as any).status.info ? String(((props.$theme as any).status.info as any).background) : null) ||
                'transparent';
       default:
         return 'transparent';
@@ -319,20 +319,20 @@ const AlertBanner = styled.div<{ $type: string; $theme?: Theme }>`
     ${props => {
       switch (props.$type) {
         case 'warning':
-          return props.$theme?.colors?.status?.warning?.border ||
-                 props.$theme?.status?.warning?.border ||
+          return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'border' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).border) : null) ||
+                 (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'border' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).border) : null) ||
                  'transparent';
         case 'error':
-          return props.$theme?.colors?.status?.error?.border ||
-                 props.$theme?.status?.error?.border ||
+          return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'border' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).border) : null) ||
+                 (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'border' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).border) : null) ||
                  'transparent';
         case 'success':
-          return props.$theme?.colors?.status?.success?.border ||
-                 props.$theme?.status?.success?.border ||
+          return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'border' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).border) : null) ||
+                 (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'border' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).border) : null) ||
                  'transparent';
         case 'info':
-          return props.$theme?.colors?.status?.info?.border ||
-                 props.$theme?.status?.info?.border ||
+          return (typeof props.$theme?.colors?.status?.info === 'object' && props.$theme?.colors?.status?.info && 'border' in props.$theme.colors.status.info ? String((props.$theme.colors.status.info as any).border) : null) ||
+                 (typeof (props.$theme as any)?.status?.info === 'object' && (props.$theme as any)?.status?.info && 'border' in (props.$theme as any).status.info ? String(((props.$theme as any).status.info as any).border) : null) ||
                  'transparent';
         default:
           return 'transparent';
@@ -344,9 +344,9 @@ const AlertIcon = styled.span`
   font-size: 1.5rem;
 `;
 
-const AlertText = styled.div`
+const AlertText = styled.div<{ $theme?: Theme }>`
   flex: 1;
-  color: ${props => getTextDark(props.theme)};
+  color: ${props => getTextDark(props.$theme)};
   font-weight: 500;
 `;
 
@@ -356,7 +356,7 @@ const MonitoringDashboard: React.FC = () => {
   const router = useRouter();
   const { currentProfile } = useUserProfile();
   const themeObject = useTheme(currentProfile?.role.toLowerCase());
-  const theme = { colors: themeObject.colors };
+  const theme: Theme = themeObject as Theme;
   const [collapsed, setCollapsed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [systemStatus, setSystemStatus] = useState<
@@ -533,9 +533,9 @@ const MonitoringDashboard: React.FC = () => {
         }
         animation={true}
       />
-
-        {/* Alertas */}
-        {alerts.map((alert: any, index: any) => (
+      
+      {/* Alertas */}
+      {alerts.map((alert: any, index: any) => (
           <AlertBanner key={index} $type={alert.type} $theme={theme}>
             <AlertIcon>{alert.icon}</AlertIcon>
             <AlertText $theme={theme}>{alert.text}</AlertText>
@@ -656,8 +656,7 @@ const MonitoringDashboard: React.FC = () => {
             ))}
           </ActivityList>
         </UnifiedCard>
-      </MainContent>
-    </Container>
+    </PageContainer>
   );
 };
 

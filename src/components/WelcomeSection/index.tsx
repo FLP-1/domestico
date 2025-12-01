@@ -43,7 +43,12 @@ const UserAvatar = styled.div<{ $theme?: any }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    props.$theme?.colors?.surface ||
+    'inherit'};
   font-weight: 600;
   font-size: 1.25rem;
   box-shadow: 0 4px 12px
@@ -203,7 +208,12 @@ const NotificationButton = styled.button<{ $theme?: any }>`
     top: -5px;
     right: -5px;
     background: ${props => props.$theme?.colors?.error || defaultColors.error};
-    color: white;
+    color: ${props =>
+      props.$theme?.colors?.text?.primary ||
+      props.$theme?.text?.primary ||
+      props.$theme?.colors?.text ||
+      props.$theme?.colors?.surface ||
+      'inherit'};
     border-radius: 50%;
     width: 20px;
     height: 20px;

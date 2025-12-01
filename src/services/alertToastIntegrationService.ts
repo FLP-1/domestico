@@ -1,4 +1,4 @@
-import { MessageHistoryService } from './messageHistoryService';
+import communicationService from './communicationService';
 import prisma from '@/lib/prisma';
 
 export interface AlertTriggerData {
@@ -34,15 +34,23 @@ export class AlertToastIntegrationService {
       const mensagem = alerta.textoNotificacao || alerta.descricao;
       const titulo = alerta.titulo;
 
-      // Registrar no histórico
-      await MessageHistoryService.recordMessage({
-        usuarioId: data.usuarioId || alerta.usuarioId || undefined,
-        tipo: tipoToast,
-        titulo,
-        mensagem,
-        origem: 'alerta',
-        alertaId: data.alertaId,
-      });
+      // ✅ NOVO: Usar CommunicationService para criar mensagem contextual
+      const usuarioId = data.usuarioId || alerta.usuarioId;
+      if (usuarioId) {
+        await communicationService.criarMensagemContextual({
+          usuarioId,
+          contextoTipo: 'DOCUMENTO', // Usar DOCUMENTO como padrão, já que não há tipo específico para alertas
+          contextoId: data.alertaId, // ID do alerta como contexto
+          remetenteId: 'SISTEMA',
+          destinatarioId: usuarioId,
+          conteudo: mensagem,
+          origem: 'ALERTA',
+          alertaId: data.alertaId,
+          tipo: tipoToast === 'error' ? 'ALERTA' : 'NOTIFICACAO',
+          exibirToast: true, // ✅ Exibir toast automaticamente
+          tipoToast,
+        });
+      }
 
       // Registrar no histórico de alertas
       await prisma.alertaHistorico.create({

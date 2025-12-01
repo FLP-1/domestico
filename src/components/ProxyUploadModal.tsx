@@ -9,6 +9,7 @@ import {
   OptimizedErrorMessage,
   OptimizedHelpText,
 } from '../components/shared/optimized-styles';
+import { ALLOWED_FILE_TYPES, isAllowedDocumentType } from '../constants/allowedFileTypes';
 
 const StyledComponent1 = styled.div<{ $theme?: any }>`
   marginbottom: 0.5rem;
@@ -29,43 +30,97 @@ const pulse = keyframes`
 // Styled Components
 const UploadArea = styled.div<{ $isDragOver: boolean; $theme?: any }>`
   border: 2px dashed
-    ${props =>
-      props.$isDragOver
-        ? props.$theme?.colors?.primary || '#29ABE2'
-        : '#e9ecef'};
+    ${props => {
+      const primaryColor = props.$theme?.colors?.primary ||
+                          props.$theme?.accent;
+      if (props.$isDragOver) {
+        return primaryColor || 'transparent';
+      }
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border?.light) ||
+             props.$theme?.border?.light ||
+             'transparent';
+    }};
   border-radius: 12px;
   padding: 3rem 2rem;
   text-align: center;
-  background: ${props =>
-    props.$isDragOver
-      ? 'rgba(41, 171, 226, 0.05)'
-      : 'rgba(255, 255, 255, 0.9)'};
+  background: ${props => {
+    const primaryColor = props.$theme?.colors?.primary ||
+                        props.$theme?.accent;
+    if (props.$isDragOver && primaryColor) {
+      if (primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.05)`;
+      }
+      if (primaryColor.startsWith('rgb')) {
+        return primaryColor.replace(')', ', 0.05)').replace('rgb', 'rgba');
+      }
+    }
+    return props.$theme?.colors?.background?.primary ||
+           props.$theme?.background?.primary ||
+           props.$theme?.colors?.surface ||
+           'transparent';
+  }};
   transition: all 0.3s ease;
   cursor: pointer;
   animation: ${fadeIn} 0.6s ease-out;
 
   &:hover {
-    border-color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
-    background: rgba(41, 171, 226, 0.05);
+    border-color: ${props =>
+      props.$theme?.colors?.primary ||
+      props.$theme?.accent ||
+      'transparent'};
+    background: ${props => {
+      const primaryColor = props.$theme?.colors?.primary ||
+                          props.$theme?.accent;
+      if (primaryColor) {
+        if (primaryColor.startsWith('#')) {
+          const r = parseInt(primaryColor.slice(1, 3), 16);
+          const g = parseInt(primaryColor.slice(3, 5), 16);
+          const b = parseInt(primaryColor.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, 0.05)`;
+        }
+        if (primaryColor.startsWith('rgb')) {
+          return primaryColor.replace(')', ', 0.05)').replace('rgb', 'rgba');
+        }
+      }
+      return props.$theme?.colors?.background?.primary ||
+             props.$theme?.background?.primary ||
+             'transparent';
+    }};
   }
 `;
 
 const UploadIcon = styled.div<{ $theme?: any }>`
   font-size: 3rem;
   margin-bottom: 1rem;
-  color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
+  color: ${props =>
+    props.$theme?.colors?.primary ||
+    props.$theme?.accent ||
+    'inherit'};
 `;
 
 const UploadText = styled.div<{ $theme?: any }>`
   font-size: 1.1rem;
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin-bottom: 0.5rem;
 `;
 
 const UploadSubtext = styled.div<{ $theme?: any }>`
   font-size: 0.9rem;
-  color: #7f8c8d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin-bottom: 1rem;
 `;
 
@@ -74,8 +129,17 @@ const FileInput = styled.input<{ $theme?: any }>`
 `;
 
 const FileInfo = styled.div<{ $theme?: any }>`
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #e9ecef;
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
+    props.$theme?.background?.primary ||
+    props.$theme?.colors?.surface ||
+    'transparent'};
+  border: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   border-radius: 8px;
   padding: 1rem;
   margin-top: 1rem;
@@ -84,22 +148,44 @@ const FileInfo = styled.div<{ $theme?: any }>`
 
 const FileName = styled.div<{ $theme?: any }>`
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin-bottom: 0.5rem;
 `;
 
 const FileSize = styled.div<{ $theme?: any }>`
   font-size: 0.9rem;
-  color: #7f8c8d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
 const ProxyInfo = styled.div<{ $theme?: any }>`
-  background: linear-gradient(
-    135deg,
-    ${props => props.$theme?.colors?.success || '#90EE90'}20,
-    ${props => props.$theme?.colors?.primary || '#29ABE2'}20
-  );
-  border: 1px solid ${props => props.$theme?.colors?.success || '#90EE90'};
+  background: ${props => {
+    const successColor = props.$theme?.colors?.success;
+    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+    if (successColor && primaryColor) {
+      if (successColor.startsWith('#') && primaryColor.startsWith('#')) {
+        const sr = parseInt(successColor.slice(1, 3), 16);
+        const sg = parseInt(successColor.slice(3, 5), 16);
+        const sb = parseInt(successColor.slice(5, 7), 16);
+        const pr = parseInt(primaryColor.slice(1, 3), 16);
+        const pg = parseInt(primaryColor.slice(3, 5), 16);
+        const pb = parseInt(primaryColor.slice(5, 7), 16);
+        return `linear-gradient(135deg, rgba(${sr}, ${sg}, ${sb}, 0.125), rgba(${pr}, ${pg}, ${pb}, 0.125))`;
+      }
+    }
+    return 'transparent';
+  }};
+  border: 1px solid ${props =>
+    props.$theme?.colors?.success ||
+    'transparent'};
   border-radius: 8px;
   padding: 1.5rem;
   margin-top: 1rem;
@@ -107,7 +193,10 @@ const ProxyInfo = styled.div<{ $theme?: any }>`
 
 const InfoTitle = styled.div<{ $theme?: any }>`
   font-weight: 700;
-  color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
+  color: ${props =>
+    props.$theme?.colors?.primary ||
+    props.$theme?.accent ||
+    'inherit'};
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
@@ -123,11 +212,20 @@ const InfoRow = styled.div<{ $theme?: any }>`
 
 const InfoLabel = styled.span<{ $theme?: any }>`
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
 const InfoValue = styled.span<{ $theme?: any }>`
-  color: #7f8c8d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   text-align: right;
   max-width: 60%;
   word-break: break-all;
@@ -139,8 +237,19 @@ const StatusBadge = styled.span<{ $isValid: boolean; $theme?: any }>`
   font-size: 0.8rem;
   font-weight: 600;
   background: ${props =>
-    props.$isValid ? props.$theme?.colors?.success || '#90EE90' : '#e74c3c'};
-  color: white;
+    props.$isValid
+      ? props.$theme?.colors?.success ||
+        props.$theme?.colors?.status?.success?.background ||
+        'transparent'
+      : props.$theme?.colors?.error ||
+        props.$theme?.colors?.status?.error?.background ||
+        'transparent'};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    props.$theme?.colors?.surface ||
+    'inherit'};
   animation: ${props => (props.$isValid ? pulse : 'none')} 2s infinite;
 `;
 
@@ -153,18 +262,35 @@ const PermissionItem = styled.div<{ $theme?: any }>`
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem;
-  background: rgba(255, 255, 255, 0.5);
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
+    props.$theme?.background?.primary ||
+    props.$theme?.colors?.surface ||
+    'transparent'};
   border-radius: 4px;
   margin-bottom: 0.25rem;
   font-size: 0.9rem;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
 const LoadingSpinner = styled.div<{ $theme?: any }>`
   width: 20px;
   height: 20px;
-  border: 2px solid #f3f3f3;
-  border-top: 2px solid ${props => props.$theme?.colors?.primary || '#29ABE2'};
+  border: 2px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
+  border-top: 2px solid ${props =>
+    props.$theme?.colors?.primary ||
+    props.$theme?.accent ||
+    'transparent'};
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-right: 0.5rem;
@@ -180,18 +306,43 @@ const LoadingSpinner = styled.div<{ $theme?: any }>`
 `;
 
 const ErrorMessage = styled.div<{ $theme?: any }>`
-  color: #e74c3c;
+  color: ${props =>
+    props.$theme?.colors?.error ||
+    props.$theme?.colors?.status?.error?.background ||
+    'inherit'};
   font-size: 0.9rem;
   margin-top: 0.5rem;
   padding: 0.5rem;
-  background: rgba(231, 76, 60, 0.1);
+  background: ${props => {
+    const errorColor = props.$theme?.colors?.error ||
+                       props.$theme?.colors?.status?.error?.background;
+    if (errorColor && errorColor.startsWith('#')) {
+      const r = parseInt(errorColor.slice(1, 3), 16);
+      const g = parseInt(errorColor.slice(3, 5), 16);
+      const b = parseInt(errorColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return 'transparent';
+  }};
   border-radius: 4px;
-  border-left: 3px solid #e74c3c;
+  border-left: 3px solid ${props =>
+    props.$theme?.colors?.error ||
+    props.$theme?.colors?.status?.error?.background ||
+    'transparent'};
 `;
 
 const HelpSection = styled.div<{ $theme?: any }>`
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #e9ecef;
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
+    props.$theme?.background?.primary ||
+    props.$theme?.colors?.surface ||
+    'transparent'};
+  border: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   border-radius: 8px;
   padding: 1rem;
   margin-top: 1rem;
@@ -199,7 +350,10 @@ const HelpSection = styled.div<{ $theme?: any }>`
 
 const HelpTitle = styled.div<{ $theme?: any }>`
   font-weight: 600;
-  color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
+  color: ${props =>
+    props.$theme?.colors?.primary ||
+    props.$theme?.accent ||
+    'inherit'};
   margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
@@ -208,7 +362,11 @@ const HelpTitle = styled.div<{ $theme?: any }>`
 
 const HelpText = styled.div<{ $theme?: any }>`
   font-size: 0.9rem;
-  color: #7f8c8d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   line-height: 1.4;
 `;
 
@@ -258,13 +416,8 @@ const ProxyUploadModal: React.FC<ProxyUploadModalProps> = ({
 
   const handleFileSelect = (file: File) => {
     // Validar tipo de arquivo
-    const allowedTypes = ['.pdf', '.xml', '.json'];
-    const fileExtension = file.name
-      .toLowerCase()
-      .substring(file.name.lastIndexOf('.'));
-
-    if (!allowedTypes.includes(fileExtension)) {
-      setError('Tipo de arquivo não suportado. Use .pdf, .xml ou .json');
+    if (!isAllowedDocumentType(file.name)) {
+      setError(`Tipo de arquivo não suportado. Use ${ALLOWED_FILE_TYPES.DOCUMENTS.join(', ')}`);
       return;
     }
 

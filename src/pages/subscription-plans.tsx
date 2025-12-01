@@ -15,6 +15,7 @@ import { useAlertManager } from '../hooks/useAlertManager';
 import { publicColors, addOpacity } from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
 import { OptimizedSectionTitle } from '../components/shared/optimized-styles';
+import { formatCurrency } from '../utils/formatters';
 
 // Interfaces
 interface Plan {
@@ -84,6 +85,11 @@ const FlexRow = styled.div`
 
 const FlexColumn = styled.div`
   flex: 1;
+`;
+
+// Styled Components para substituir estilos inline
+const SectionWithMargin = styled.div`
+  margin-bottom: 1.5rem;
 `;
 
 // Styled Components
@@ -266,14 +272,14 @@ const ComparisonTitle = styled.h2`
 const ComparisonTable = styled.div`
   overflow-x: auto;
   border-radius: 12px;
-  border: 1px solid ${publicColors.border};
+  border: 1px solid ${typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border};
 `;
 
 const TableHeader = styled.div`
   display: grid;
   grid-template-columns: 2fr repeat(5, 1fr);
   background: ${publicColors.background};
-  border-bottom: 2px solid ${publicColors.border};
+  border-bottom: 2px solid ${typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border};
 `;
 
 const TableHeaderCell = styled.div`
@@ -281,7 +287,7 @@ const TableHeaderCell = styled.div`
   font-weight: 600;
   color: ${publicColors.text.primary};
   text-align: center;
-  border-right: 1px solid ${publicColors.border};
+  border-right: 1px solid ${typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border};
   font-size: 0.9rem;
 
   &:last-child {
@@ -292,7 +298,7 @@ const TableHeaderCell = styled.div`
 const TableRow = styled.div`
   display: grid;
   grid-template-columns: 2fr repeat(5, 1fr);
-  border-bottom: 1px solid ${publicColors.border};
+  border-bottom: 1px solid ${typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border};
 
   &:last-child {
     border-bottom: none;
@@ -302,7 +308,7 @@ const TableRow = styled.div`
 const TableCell = styled.div`
   padding: 1rem;
   text-align: center;
-  border-right: 1px solid ${publicColors.border};
+  border-right: 1px solid ${typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border};
   font-size: 0.9rem;
   color: ${publicColors.text.primary};
 
@@ -452,7 +458,7 @@ const Rating = styled.div`
 
 const Star = styled.span<{ $filled: boolean }>`
   color: ${props =>
-    props.$filled ? publicColors.warning : publicColors.border};
+    props.$filled ? publicColors.warning : (typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border)};
   font-size: 1rem;
 `;
 
@@ -718,7 +724,7 @@ export default function SubscriptionPlans() {
 
   const formatPrice = (price: number) => {
     if (price === 0) return 'Grátis';
-    return `R$ ${price.toFixed(2).replace('.', ',')}`;
+    return formatCurrency(price);
   };
 
   return (
@@ -1180,7 +1186,7 @@ export default function SubscriptionPlans() {
       >
         {selectedPlan && (
           <div>
-            <div style={{ marginBottom: '1.5rem' }}>
+            <SectionWithMargin>
               <OptimizedSectionTitle $theme={theme}>
                 {selectedPlan.name}
               </OptimizedSectionTitle>
@@ -1189,16 +1195,16 @@ export default function SubscriptionPlans() {
                 {formatPrice(selectedPlan.monthlyPrice)}
                 {selectedPlan.monthlyPrice > 0 && <PriceUnit>/mês</PriceUnit>}
               </PriceText>
-            </div>
+            </SectionWithMargin>
 
-            <div style={{ marginBottom: '1.5rem' }}>
+            <SectionWithMargin>
               <SectionSubtitle>Recursos inclusos:</SectionSubtitle>
               <FeaturesList>
                 {selectedPlan.features.map((feature: any, index: any) => (
                   <FeatureItem key={index}>{feature}</FeatureItem>
                 ))}
               </FeaturesList>
-            </div>
+            </SectionWithMargin>
           </div>
         )}
       </UnifiedModal>

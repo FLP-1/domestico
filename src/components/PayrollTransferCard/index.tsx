@@ -10,15 +10,40 @@ const TransferContainer = styled.div<{ $theme?: any }>`
 
 const TransferInfo = styled.div<{ $theme?: any }>`
   padding: 1rem;
-  background: ${props => props.$theme.colors.primary}10;
+  background: ${props => {
+    const primaryColor = props.$theme?.colors?.primary ||
+                         props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return 'transparent';
+  }};
   border-radius: 8px;
-  border: 1px solid ${props => props.$theme.colors.primary}20;
+  border: 1px solid ${props => {
+    const primaryColor = props.$theme?.colors?.primary ||
+                         props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.2)`;
+    }
+    return 'transparent';
+  }};
   margin-bottom: 1rem;
 `;
 
 const TransferInfoTitle = styled.h4<{ $theme?: any }>`
   margin: 0 0 0.5rem 0;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 1rem;
   font-weight: 600;
   display: flex;
@@ -28,22 +53,40 @@ const TransferInfoTitle = styled.h4<{ $theme?: any }>`
 
 const TransferInfoText = styled.p<{ $theme?: any }>`
   margin: 0;
-  color: #7f8c8d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
   line-height: 1.4;
 `;
 
 const TransferSummary = styled.div<{ $theme?: any }>`
   padding: 1rem;
-  background: #f8f9fa;
+  background: ${props =>
+    props.$theme?.colors?.background?.secondary ||
+    props.$theme?.background?.secondary ||
+    props.$theme?.colors?.background?.primary ||
+    'transparent'};
   border-radius: 8px;
-  border: 1px solid #e9ecef;
+  border: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   margin-bottom: 1rem;
 `;
 
 const TransferSummaryTitle = styled.h4<{ $theme?: any }>`
   margin: 0 0 0.75rem 0;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
   font-weight: 600;
   display: flex;
@@ -56,7 +99,12 @@ const TransferRow = styled.div<{ $theme?: any }>`
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
 
   &:last-child {
     border-bottom: none;
@@ -65,7 +113,11 @@ const TransferRow = styled.div<{ $theme?: any }>`
 
 const TransferLabel = styled.span<{ $theme?: any }>`
   font-size: 0.9rem;
-  color: #7f8c8d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-weight: 500;
 `;
 
@@ -73,7 +125,15 @@ const TransferValue = styled.span<{ $theme?: any; $highlight?: boolean }>`
   font-size: 1rem;
   font-weight: ${props => (props.$highlight ? '700' : '600')};
   color: ${props =>
-    props.$highlight ? props.$theme.colors.primary : '#2c3e50'};
+    props.$highlight
+      ? props.$theme?.colors?.primary ||
+        props.$theme?.accent ||
+        'inherit'
+      : props.$theme?.colors?.text?.dark ||
+        props.$theme?.text?.dark ||
+        props.$theme?.colors?.text?.primary ||
+        props.$theme?.colors?.text ||
+        'inherit'};
 `;
 
 const TransferActions = styled.div<{ $theme?: any }>`
@@ -85,15 +145,54 @@ const TransferActions = styled.div<{ $theme?: any }>`
 
 const WarningSection = styled.div<{ $theme?: any }>`
   padding: 1rem;
-  background: #fff3cd;
-  border: 1px solid #ffeaa7;
+  background: ${props => {
+    const warningColor = props.$theme?.colors?.status?.warning?.background ||
+                        props.$theme?.status?.warning?.background ||
+                        props.$theme?.colors?.warning;
+    if (warningColor) {
+      // Adiciona opacidade à cor
+      if (warningColor.startsWith('#')) {
+        const r = parseInt(warningColor.slice(1, 3), 16);
+        const g = parseInt(warningColor.slice(3, 5), 16);
+        const b = parseInt(warningColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.15)`;
+      }
+      if (warningColor.startsWith('rgb')) {
+        return warningColor.replace(')', ', 0.15)').replace('rgb', 'rgba');
+      }
+    }
+    return 'transparent';
+  }};
+  border: 1px solid ${props => {
+    const warningColor = props.$theme?.colors?.status?.warning?.background ||
+                        props.$theme?.status?.warning?.background ||
+                        props.$theme?.colors?.warning;
+    if (warningColor) {
+      // Adiciona opacidade à cor
+      if (warningColor.startsWith('#')) {
+        const r = parseInt(warningColor.slice(1, 3), 16);
+        const g = parseInt(warningColor.slice(3, 5), 16);
+        const b = parseInt(warningColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.4)`;
+      }
+      if (warningColor.startsWith('rgb')) {
+        return warningColor.replace(')', ', 0.4)').replace('rgb', 'rgba');
+      }
+    }
+    return 'transparent';
+  }};
   border-radius: 8px;
   margin-bottom: 1rem;
 `;
 
 const WarningTitle = styled.h4<{ $theme?: any }>`
   margin: 0 0 0.5rem 0;
-  color: #856404;
+  color: ${props =>
+    props.$theme?.colors?.status?.warning?.text ||
+    props.$theme?.status?.warning?.text ||
+    props.$theme?.colors?.warning ||
+    props.$theme?.colors?.text?.dark ||
+    'inherit'};
   font-size: 0.9rem;
   font-weight: 600;
   display: flex;
@@ -103,7 +202,12 @@ const WarningTitle = styled.h4<{ $theme?: any }>`
 
 const WarningText = styled.p<{ $theme?: any }>`
   margin: 0;
-  color: #856404;
+  color: ${props =>
+    props.$theme?.colors?.status?.warning?.text ||
+    props.$theme?.status?.warning?.text ||
+    props.$theme?.colors?.warning ||
+    props.$theme?.colors?.text?.secondary ||
+    'inherit'};
   font-size: 0.8rem;
   line-height: 1.4;
 `;
@@ -177,24 +281,24 @@ export const PayrollTransferCard: React.FC<PayrollTransferCardProps> = ({
         title='Transferir para Folha de Pagamento'
       >
         <TransferInfo $theme={theme}>
-          <TransferInfoTitle>
+          <TransferInfoTitle $theme={theme}>
             <AccessibleEmoji emoji='ℹ️' label='Informação' />
             Informações Importantes
           </TransferInfoTitle>
-          <TransferInfoText>
+          <TransferInfoText $theme={theme}>
             Os dados de horas trabalhadas serão transferidos para o sistema de
             cálculo da folha de pagamento. Esta ação não pode ser desfeita.
           </TransferInfoText>
         </TransferInfo>
 
         <TransferSummary $theme={theme}>
-          <TransferSummaryTitle>
+          <TransferSummaryTitle $theme={theme}>
             <AccessibleEmoji emoji='📊' label='Resumo' />
             Resumo das Transferências
           </TransferSummaryTitle>
 
-          <TransferRow>
-            <TransferLabel>Última Transferência:</TransferLabel>
+          <TransferRow $theme={theme}>
+            <TransferLabel $theme={theme}>Última Transferência:</TransferLabel>
             <TransferValue $theme={theme}>
               {lastTransfer && lastTransfer.mesReferencia != null && lastTransfer.anoReferencia != null
                 ? `${lastTransfer.mesReferencia.toString().padStart(2, '0')}/${lastTransfer.anoReferencia}`
@@ -202,8 +306,8 @@ export const PayrollTransferCard: React.FC<PayrollTransferCardProps> = ({
             </TransferValue>
           </TransferRow>
 
-          <TransferRow>
-            <TransferLabel>Valor da Última Transferência:</TransferLabel>
+          <TransferRow $theme={theme}>
+            <TransferLabel $theme={theme}>Valor da Última Transferência:</TransferLabel>
             <TransferValue $theme={theme}>
               {lastTransfer?.valorTotal
                 ? `R$ ${lastTransfer.valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
@@ -211,8 +315,8 @@ export const PayrollTransferCard: React.FC<PayrollTransferCardProps> = ({
             </TransferValue>
           </TransferRow>
 
-          <TransferRow>
-            <TransferLabel>Próxima Transferência:</TransferLabel>
+          <TransferRow $theme={theme}>
+            <TransferLabel $theme={theme}>Próxima Transferência:</TransferLabel>
             <TransferValue $theme={theme}>
               {upcomingTransfer && upcomingTransfer.mesReferencia != null && upcomingTransfer.anoReferencia != null
                 ? `${upcomingTransfer.mesReferencia.toString().padStart(2, '0')}/${upcomingTransfer.anoReferencia}`
@@ -220,8 +324,8 @@ export const PayrollTransferCard: React.FC<PayrollTransferCardProps> = ({
             </TransferValue>
           </TransferRow>
 
-          <TransferRow>
-            <TransferLabel>Total de Transferências:</TransferLabel>
+          <TransferRow $theme={theme}>
+            <TransferLabel $theme={theme}>Total de Transferências:</TransferLabel>
             <TransferValue $theme={theme} $highlight>
               {totalTransfers}
             </TransferValue>
@@ -230,11 +334,11 @@ export const PayrollTransferCard: React.FC<PayrollTransferCardProps> = ({
 
         {lastTransfer && lastTransfer.mesReferencia != null && lastTransfer.anoReferencia != null && (
           <TransferInfo $theme={theme}>
-            <TransferInfoTitle>
+            <TransferInfoTitle $theme={theme}>
               <AccessibleEmoji emoji='🕒' label='Última Transferência' />
               Última Transferência
             </TransferInfoTitle>
-            <TransferInfoText>
+            <TransferInfoText $theme={theme}>
               {`${lastTransfer.mesReferencia.toString().padStart(2, '0')}/${lastTransfer.anoReferencia}`}{' '}
               - Status: {lastTransfer.status || 'N/A'} - Valor: R${' '}
               {lastTransfer.valorTotal?.toLocaleString('pt-BR', {
@@ -246,11 +350,11 @@ export const PayrollTransferCard: React.FC<PayrollTransferCardProps> = ({
 
         {!canTransfer && (
           <WarningSection $theme={theme}>
-            <WarningTitle>
+            <WarningTitle $theme={theme}>
               <AccessibleEmoji emoji='⚠️' label='Aviso' />
               Nenhuma Hora para Transferir
             </WarningTitle>
-            <WarningText>
+            <WarningText $theme={theme}>
               Não há horas trabalhadas registradas neste período para
               transferir.
             </WarningText>

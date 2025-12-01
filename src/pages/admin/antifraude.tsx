@@ -11,28 +11,29 @@ import { useTheme } from '../../hooks/useTheme';
 import type { Theme } from '../../types/theme';
 import { getTextSecondary, getTextDark } from '../../utils/themeTypeGuards';
 import { getBackgroundSecondary } from '../../utils/themeTypeGuards';
+import { getThemeColor } from '../../utils/themeHelpers';
 import { useUserProfile } from '../../contexts/UserProfileContext';
 
-const PageContainer = styled.div`
+const PageContainer = styled.div<{ $theme?: any }>`
   min-height: 100vh;
-  background: ${props => getBackgroundSecondary(props.theme)};
+  background: ${props => getBackgroundSecondary(props.$theme || props.theme)};
   padding: 2rem;
 `;
 
-const Header = styled.div`
+const Header = styled.div<{ $theme?: any }>`
   margin-bottom: 2rem;
 `;
 
-const Title = styled.h1`
+const Title = styled.h1<{ $theme?: any }>`
   font-size: 2rem;
   font-weight: 700;
-  color: ${props => getTextDark(props.theme)};
+  color: ${props => getTextDark(props.$theme || props.theme)};
   margin-bottom: 0.5rem;
 `;
 
-const Subtitle = styled.p`
+const Subtitle = styled.p<{ $theme?: any }>`
   font-size: 1rem;
-  color: ${props => getTextSecondary(props.theme)};
+  color: ${props => getTextSecondary(props.$theme || props.theme)};
 `;
 
 const StatsGrid = styled.div`
@@ -53,7 +54,7 @@ const StatCard = styled.div<{
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    const shadowColor = getThemeColor(props.$theme, 'shadow', 'transparent');
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -127,7 +128,7 @@ const Section = styled.div<{ $theme?: any }>`
   padding: 1.5rem;
   margin-bottom: 1.5rem;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    const shadowColor = getThemeColor(props.$theme, 'shadow', 'transparent');
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -138,14 +139,14 @@ const Section = styled.div<{ $theme?: any }>`
   }};
 `;
 
-const SectionTitle = styled.h2`
+const SectionTitle = styled.h2<{ $theme?: any }>`
   font-size: 1.25rem;
   font-weight: 600;
-  color: ${props => getTextDark(props.theme)};
+  color: ${props => getTextDark(props.$theme || props.theme)};
   margin-bottom: 1rem;
 `;
 
-const Table = styled.table`
+const Table = styled.table<{ $theme?: any }>`
   width: 100%;
   border-collapse: collapse;
 `;

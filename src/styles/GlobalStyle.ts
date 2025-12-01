@@ -14,8 +14,8 @@ export const GlobalStyle = createGlobalStyle`
 
   body {
     font-family: 'Roboto', sans-serif;
-    background: white;
-    color: #30475E;
+    background: var(--background-primary, transparent);
+    color: var(--text-primary, inherit);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -33,7 +33,7 @@ export const GlobalStyle = createGlobalStyle`
   /* Estilo inicial para evitar flash de tela branca */
   .initial-load {
     opacity: 1;
-    background: white;
+    background: var(--background-primary, transparent);
     min-height: 100vh;
   }
 

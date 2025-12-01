@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-import { useAlertManager } from '../hooks/useAlertManager';
+import { useMessages } from '../hooks/useMessages';
 import 'react-toastify/dist/ReactToastify.css';
 import styled, { keyframes } from 'styled-components';
 import AccessibleEmoji from '../components/AccessibleEmoji';
@@ -154,7 +154,7 @@ const Label = styled.label`
 // SelectStyled removido - usar OptimizedSelectStyled diretamente
 
 const ErrorMessage = styled.div`
-  color: ${publicColors.error};
+  color: transparent;
   font-size: 0.8rem;
   margin-top: 0.25rem;
   font-weight: 500;
@@ -194,15 +194,14 @@ const ButtonContainer = styled.div`
   animation: ${fadeInUp} 1s ease-out 1s both;
 `;
 
-const RegisterButton = styled(UnifiedButton)<{
+const RegisterButton = styled(UnifiedButton)<{ $theme?: Theme;
   $canSubmit?: boolean;
-  $theme?: Theme;
 }>`
   flex: 1;
   background: ${props =>
     props.$canSubmit
       ? `linear-gradient(135deg, ${publicColors.secondary} 0%, ${publicColors.tertiary} 100%)`
-      : publicColors.border};
+      : (typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border)};
   color: ${publicColors.surface};
   font-weight: 600;
   padding: 1.2rem 2rem;
@@ -232,7 +231,17 @@ const RegisterButton = styled(UnifiedButton)<{
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(255, 255, 255, 0.2),
+      ${props => {
+        const bgColor = props.$theme?.colors?.background?.primary ||
+                        props.$theme?.background?.primary;
+        if (bgColor && bgColor.startsWith('#')) {
+          const r = parseInt(bgColor.slice(1, 3), 16);
+          const g = parseInt(bgColor.slice(3, 5), 16);
+          const b = parseInt(bgColor.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, 0.2)`;
+        }
+        return 'transparent';
+      }},
       transparent
     );
     transition: left 0.5s;
@@ -256,7 +265,7 @@ const LoginLink = styled.a`
   font-weight: 600;
   font-size: 1.1rem;
   transition: all 0.3s ease;
-  border: 2px solid ${publicColors.border};
+  border: 2px solid ${typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border};
 
   &:hover {
     background: ${addOpacity(publicColors.surface, 0.2)};
@@ -265,13 +274,33 @@ const LoginLink = styled.a`
   }
 `;
 
-const LoadingSpinner = styled.div`
+const LoadingSpinner = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any }>`
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
+  border: 3px solid ${props => {
+    const textColor = props.$theme?.colors?.text?.primary ||
+                      props.$theme?.text?.primary ||
+                      props.$theme?.colors?.text;
+    if (textColor && textColor.startsWith('#')) {
+      const r = parseInt(textColor.slice(1, 3), 16);
+      const g = parseInt(textColor.slice(3, 5), 16);
+      const b = parseInt(textColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.3)`;
+    }
+    return 'transparent';
+  }};
   border-radius: 50%;
-  border-top-color: white;
+  border-top-color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   animation: spin 1s ease-in-out infinite;
   margin-right: 0.5rem;
 
@@ -306,7 +335,7 @@ interface FormErrors {
 // Componente principal
 const Register: React.FC = () => {
   const router = useRouter();
-  const alertManager = useAlertManager();
+  const { showSuccess, showError, keys } = useMessages();
   const [formData, setFormData] = useState<FormData>({
     name: '',
     nickname: '',
@@ -321,10 +350,10 @@ const Register: React.FC = () => {
 
   const theme = {
     colors: {
-      primary: '#29ABE2',
-      success: '#90EE90',
-      text: '#2C3E50',
-      border: publicColors.border,
+      primary: publicColors.primary || 'transparent',
+      success: 'transparent',
+      text: publicColors.text?.primary || 'inherit',
+      border: typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border,
     },
   };
 
@@ -408,7 +437,7 @@ const Register: React.FC = () => {
     e.preventDefault();
 
     if (!validateForm()) {
-      alertManager.showError('Por favor, corrija os erros no formulário');
+      showError(keys.WARNING.CORRIGIR_ERROS_FORMULARIO);
       return;
     }
 
@@ -418,14 +447,14 @@ const Register: React.FC = () => {
       // Simular envio para API
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      alertManager.showSuccess('Cadastro realizado com sucesso!');
+      showSuccess('success.cadastro_sucesso');
 
       // Redirecionar para login
       setTimeout(() => {
         router.push('/login');
       }, 1500);
     } catch (error) {
-      alertManager.showError('Erro ao realizar cadastro. Tente novamente.');
+      showError(keys.ERROR.ERRO_CADASTRO);
     } finally {
       setIsLoading(false);
     }

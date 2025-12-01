@@ -48,8 +48,8 @@ const CenterText = styled.div`
 
 const ErrorText = styled.div<{ $theme?: any }>`
   color: ${props => 
-    props.$theme?.colors?.status?.error?.text ||
-    props.$theme?.status?.error?.text ||
+    (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'text' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).text) : null) ||
+    (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'text' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).text) : null) ||
     'inherit'};
   font-weight: 600;
   margin-bottom: 0.5rem;
@@ -61,11 +61,33 @@ const SmallText = styled.div`
 `;
 
 const ApiStatusIndicator = styled.span<{ $isReal: boolean; $theme?: any }>`
-  color: ${props =>
-    props.$isReal
-      ? props.$theme?.colors?.status?.[props.$isReal ? 'success' : 'warning']?.text ||
-    props.$theme?.status?.[props.$isReal ? 'success' : 'warning']?.text ||
-    'inherit'};
+  color: ${props => {
+    if (props.$isReal) {
+      const successText = typeof props.$theme?.colors?.status?.success === 'object' && 
+        props.$theme?.colors?.status?.success && 
+        'text' in props.$theme.colors.status.success 
+        ? String((props.$theme.colors.status.success as any).text) 
+        : null;
+      const altSuccessText = typeof (props.$theme as any)?.status?.success === 'object' && 
+        (props.$theme as any)?.status?.success && 
+        'text' in (props.$theme as any).status.success 
+        ? String(((props.$theme as any).status.success as any).text) 
+        : null;
+      return successText || altSuccessText || 'inherit';
+    } else {
+      const warningText = typeof props.$theme?.colors?.status?.warning === 'object' && 
+        props.$theme?.colors?.status?.warning && 
+        'text' in props.$theme.colors.status.warning 
+        ? String((props.$theme.colors.status.warning as any).text) 
+        : null;
+      const altWarningText = typeof (props.$theme as any)?.status?.warning === 'object' && 
+        (props.$theme as any)?.status?.warning && 
+        'text' in (props.$theme as any).status.warning 
+        ? String(((props.$theme as any).status.warning as any).text) 
+        : null;
+      return warningText || altWarningText || 'inherit';
+    }
+  }};
   font-weight: bold;
 `;
 
@@ -77,8 +99,8 @@ const FlexContainer = styled.div`
 
 const SSLWarningText = styled.div<{ $theme?: any }>`
   color: ${props => 
-    props.$theme?.colors?.status?.warning?.text ||
-    props.$theme?.status?.warning?.text ||
+    (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'text' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).text) : null) ||
+    (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'text' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).text) : null) ||
     'inherit'};
   font-weight: bold;
 `;
@@ -92,11 +114,11 @@ const DataSourceIndicator = styled.span<{ $isReal: boolean; $theme?: any }>`
   font-size: 0.8rem;
   color: ${props =>
     props.$isReal
-      ? props.$theme?.colors?.status?.success?.text ||
-        props.$theme?.status?.success?.text ||
+      ? (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'text' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).text) : null) ||
+        (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'text' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).text) : null) ||
         'inherit'
-      : props.$theme?.colors?.status?.warning?.text ||
-        props.$theme?.status?.warning?.text ||
+      : (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'text' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).text) : null) ||
+        (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'text' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).text) : null) ||
         'inherit'};
   margin-left: 10px;
   font-weight: bold;
@@ -104,16 +126,16 @@ const DataSourceIndicator = styled.span<{ $isReal: boolean; $theme?: any }>`
 
 const SuccessText = styled.span<{ $theme?: any }>`
   color: ${props => 
-    props.$theme?.colors?.status?.success?.text ||
-    props.$theme?.status?.success?.text ||
+    (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'text' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).text) : null) ||
+    (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'text' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).text) : null) ||
     'inherit'};
   font-weight: 600;
 `;
 
 const ErrorSpan = styled.span<{ $theme?: any }>`
   color: ${props => 
-    props.$theme?.colors?.status?.error?.text ||
-    props.$theme?.status?.error?.text ||
+    (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'text' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).text) : null) ||
+    (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'text' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).text) : null) ||
     'inherit'};
 `;
 
@@ -138,21 +160,21 @@ const ContentGrid = styled.div`
 
 const Section = styled.div<{ $theme?: any }>`
   background: ${props => {
-    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    const bgColor = (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) || (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null);
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
       const b = parseInt(bgColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.95)`;
     }
-    return props.$theme?.colors?.background?.primary || 
-           props.$theme?.background?.primary ||
+    return     (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
+    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
            'transparent';
   }};
   border-radius: 16px;
   padding: 2rem;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    const shadowColor = props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -170,7 +192,7 @@ const SectionTitle = styled.h2<{ $theme?: any }>`
   font-weight: 700;
   color: ${props => 
     props.$theme?.colors?.primary || 
-    props.$theme?.accent ||
+    (props.$theme as any)?.accent ||
     'inherit'};
   margin: 0 0 1.5rem 0;
   display: flex;
@@ -219,18 +241,18 @@ const InputStyled = styled(Input)<{ $theme?: Theme; $hasError?: boolean }>`
   font-size: 1rem;
   transition: all 0.3s ease;
   background: ${props => 
-    props.$theme?.colors?.background?.primary || 
-    props.$theme?.background?.primary ||
+    (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
+    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
     'transparent'};
 
   &:focus {
     outline: none;
     border-color: ${props => 
       props.$theme?.colors?.primary || 
-      props.$theme?.accent ||
+      (props.$theme as any)?.accent ||
       'transparent'};
     box-shadow: 0 0 0 3px ${props => {
-      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      const primaryColor = props.$theme?.colors?.primary || (props.$theme as any)?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -257,8 +279,8 @@ const SelectStyled = styled(Select)<{ $theme?: Theme; $hasError?: boolean }>`
   font-size: 1rem;
   transition: all 0.3s ease;
   background: ${props => 
-    props.$theme?.colors?.background?.primary || 
-    props.$theme?.background?.primary ||
+    (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
+    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
     'transparent'};
   cursor: pointer;
 
@@ -266,10 +288,10 @@ const SelectStyled = styled(Select)<{ $theme?: Theme; $hasError?: boolean }>`
     outline: none;
     border-color: ${props => 
       props.$theme?.colors?.primary || 
-      props.$theme?.accent ||
+      (props.$theme as any)?.accent ||
       'transparent'};
     box-shadow: 0 0 0 3px ${props => {
-      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      const primaryColor = props.$theme?.colors?.primary || (props.$theme as any)?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -283,8 +305,8 @@ const SelectStyled = styled(Select)<{ $theme?: Theme; $hasError?: boolean }>`
 
 const ErrorMessage = styled.div<{ $theme?: any }>`
   color: ${props => 
-    props.$theme?.colors?.status?.error?.text ||
-    props.$theme?.status?.error?.text ||
+    (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'text' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).text) : null) ||
+    (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'text' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).text) : null) ||
     'inherit'};
   font-size: 0.8rem;
   margin-top: 0.25rem;
@@ -311,31 +333,31 @@ const EventCard = styled.div<{ $status: string; $theme?: Theme }>`
     ${props => {
       switch (props.$status) {
         case 'pending':
-          return props.$theme?.colors?.status?.warning?.border ||
-                 props.$theme?.status?.warning?.border ||
+          return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'border' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).border) : null) ||
+                 (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'border' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).border) : null) ||
                  'transparent';
         case 'sent':
           return props.$theme?.colors?.primary || 
-                 props.$theme?.accent ||
+                 (props.$theme as any)?.accent ||
                  'transparent';
         case 'processed':
-          return props.$theme?.colors?.status?.success?.border ||
-                 props.$theme?.status?.success?.border ||
+          return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'border' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).border) : null) ||
+                 (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'border' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).border) : null) ||
                  'transparent';
         case 'error':
-          return props.$theme?.colors?.status?.error?.border ||
-                 props.$theme?.status?.error?.border ||
+          return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'border' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).border) : null) ||
+                 (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'border' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).border) : null) ||
                  'transparent';
         default:
           return 'transparent';
       }
     }};
   background: ${props => 
-    props.$theme?.colors?.background?.primary || 
-    props.$theme?.background?.primary ||
+    (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
+    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
     'transparent'};
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    const shadowColor = props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -349,7 +371,7 @@ const EventCard = styled.div<{ $status: string; $theme?: Theme }>`
   &:hover {
     transform: translateY(-2px);
     box-shadow: ${props => {
-      const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+      const shadowColor = props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
       if (shadowColor && shadowColor.startsWith('rgba')) {
         const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
         if (match) {
@@ -386,20 +408,20 @@ const EventStatus = styled.span<{ $status: string; $theme?: Theme }>`
   background: ${props => {
     switch (props.$status) {
       case 'pending':
-        return props.$theme?.colors?.status?.warning?.background ||
-               props.$theme?.status?.warning?.background ||
+        return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'background' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).background) : null) ||
+               (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'background' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).background) : null) ||
                'transparent';
       case 'sent':
         return props.$theme?.colors?.primary || 
-               props.$theme?.accent ||
+               (props.$theme as any)?.accent ||
                'transparent';
       case 'processed':
-        return props.$theme?.colors?.status?.success?.background ||
-               props.$theme?.status?.success?.background ||
+        return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'background' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).background) : null) ||
+               (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'background' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).background) : null) ||
                'transparent';
       case 'error':
-        return props.$theme?.colors?.status?.error?.background ||
-               props.$theme?.status?.error?.background ||
+        return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'background' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).background) : null) ||
+               (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'background' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).background) : null) ||
                'transparent';
       default:
         return 'transparent';
@@ -408,20 +430,20 @@ const EventStatus = styled.span<{ $status: string; $theme?: Theme }>`
   color: ${props => {
     switch (props.$status) {
       case 'pending':
-        return props.$theme?.colors?.status?.warning?.text ||
-               props.$theme?.status?.warning?.text ||
+        return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'text' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).text) : null) ||
+               (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'text' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).text) : null) ||
                'inherit';
       case 'sent':
-        return props.$theme?.colors?.text?.primary || 
-               props.$theme?.text?.primary ||
+        return (typeof props.$theme?.colors?.text === 'object' && props.$theme?.colors?.text && 'primary' in props.$theme.colors.text ? String((props.$theme.colors.text as any).primary) : null) || 
+               (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'primary' in (props.$theme as any).text ? String(((props.$theme as any).text as any).primary) : null) ||
                'inherit';
       case 'processed':
-        return props.$theme?.colors?.status?.success?.text ||
-               props.$theme?.status?.success?.text ||
+        return     (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'text' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).text) : null) ||
+               (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'text' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).text) : null) ||
                'inherit';
       case 'error':
-        return props.$theme?.colors?.status?.error?.text ||
-               props.$theme?.status?.error?.text ||
+        return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'text' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).text) : null) ||
+               (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'text' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).text) : null) ||
                'inherit';
       default:
         return 'inherit';
@@ -454,20 +476,20 @@ const AlertBanner = styled.div<{ $type: string; $theme?: Theme }>`
   background: ${props => {
     switch (props.$type) {
       case 'warning':
-        return props.$theme?.colors?.status?.warning?.background ||
-               props.$theme?.status?.warning?.background ||
+        return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'background' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).background) : null) ||
+               (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'background' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).background) : null) ||
                'transparent';
       case 'error':
-        return props.$theme?.colors?.status?.error?.background ||
-               props.$theme?.status?.error?.background ||
+        return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'background' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).background) : null) ||
+               (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'background' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).background) : null) ||
                'transparent';
       case 'success':
-        return props.$theme?.colors?.status?.success?.background ||
-               props.$theme?.status?.success?.background ||
+        return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'background' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).background) : null) ||
+               (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'background' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).background) : null) ||
                'transparent';
       case 'info':
-        return props.$theme?.colors?.status?.info?.background ||
-               props.$theme?.status?.info?.background ||
+        return (typeof props.$theme?.colors?.status?.info === 'object' && props.$theme?.colors?.status?.info && 'background' in props.$theme.colors.status.info ? String((props.$theme.colors.status.info as any).background) : null) ||
+               (typeof (props.$theme as any)?.status?.info === 'object' && (props.$theme as any)?.status?.info && 'background' in (props.$theme as any).status.info ? String(((props.$theme as any).status.info as any).background) : null) ||
                'transparent';
       default:
         return 'transparent';
@@ -477,20 +499,20 @@ const AlertBanner = styled.div<{ $type: string; $theme?: Theme }>`
     ${props => {
       switch (props.$type) {
         case 'warning':
-          return props.$theme?.colors?.status?.warning?.border ||
-                 props.$theme?.status?.warning?.border ||
+          return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'border' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).border) : null) ||
+                 (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'border' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).border) : null) ||
                  'transparent';
         case 'error':
-          return props.$theme?.colors?.status?.error?.border ||
-                 props.$theme?.status?.error?.border ||
+          return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'border' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).border) : null) ||
+                 (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'border' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).border) : null) ||
                  'transparent';
         case 'success':
-          return props.$theme?.colors?.status?.success?.border ||
-                 props.$theme?.status?.success?.border ||
+          return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'border' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).border) : null) ||
+                 (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'border' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).border) : null) ||
                  'transparent';
         case 'info':
-          return props.$theme?.colors?.status?.info?.border ||
-                 props.$theme?.status?.info?.border ||
+          return (typeof props.$theme?.colors?.status?.info === 'object' && props.$theme?.colors?.status?.info && 'border' in props.$theme.colors.status.info ? String((props.$theme.colors.status.info as any).border) : null) ||
+                 (typeof (props.$theme as any)?.status?.info === 'object' && (props.$theme as any)?.status?.info && 'border' in (props.$theme as any).status.info ? String(((props.$theme as any).status.info as any).border) : null) ||
                  'transparent';
         default:
           return 'transparent';
@@ -520,22 +542,22 @@ const StatsGrid = styled.div`
 
 const StatCard = styled.div<{ $theme?: Theme }>`
   background: ${props => {
-    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    const bgColor = (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) || (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null);
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
       const b = parseInt(bgColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.95)`;
     }
-    return props.$theme?.colors?.background?.primary || 
-           props.$theme?.background?.primary ||
+    return     (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
+    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
            'transparent';
   }};
   border-radius: 12px;
   padding: 1.5rem;
   text-align: center;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    const shadowColor = props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -547,7 +569,7 @@ const StatCard = styled.div<{ $theme?: Theme }>`
   backdrop-filter: blur(10px);
   border-left: 4px solid ${props => 
     props.$theme?.colors?.primary || 
-    props.$theme?.accent ||
+    (props.$theme as any)?.accent ||
     'transparent'};
 `;
 
@@ -556,7 +578,7 @@ const StatNumber = styled.div<{ $theme?: Theme }>`
   font-weight: 700;
   color: ${props => 
     props.$theme?.colors?.primary || 
-    props.$theme?.accent ||
+    (props.$theme as any)?.accent ||
     'inherit'};
   margin-bottom: 0.5rem;
 `;
@@ -573,21 +595,21 @@ const StatLabel = styled.div<{ $theme?: any }>`
 
 const ConfigSection = styled.div<{ $theme?: any }>`
   background: ${props => {
-    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    const bgColor = (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) || (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null);
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
       const b = parseInt(bgColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.95)`;
     }
-    return props.$theme?.colors?.background?.primary || 
-           props.$theme?.background?.primary ||
+    return     (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
+    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
            'transparent';
   }};
   border-radius: 16px;
   padding: 2rem;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    const shadowColor = props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -647,7 +669,12 @@ const ToggleSwitch = styled.label<{ $theme?: Theme }>`
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: ${props => {
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border?.light) ||
+             (typeof (props.$theme as any)?.border === 'object' && (props.$theme as any)?.border && 'light' in (props.$theme as any).border ? String(((props.$theme as any).border as any).light) : null) ||
+             'transparent';
+    }};
     transition: 0.4s;
     border-radius: 34px;
 
@@ -658,14 +685,21 @@ const ToggleSwitch = styled.label<{ $theme?: Theme }>`
       width: 26px;
       left: 4px;
       bottom: 4px;
-      background-color: white;
+      background-color: ${props =>
+    (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
+    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
+        props.$theme?.colors?.surface ||
+        'transparent'};
       transition: 0.4s;
       border-radius: 50%;
     }
   }
 
   input:checked + .slider {
-    background-color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
+    background-color: ${props =>
+      props.$theme?.colors?.primary ||
+      (props.$theme as any)?.accent ||
+      'transparent'};
   }
 
   input:checked + .slider:before {
@@ -1275,10 +1309,9 @@ const ESocialIntegration: React.FC = () => {
         variant="default"
         animation={true}
       />
-          <UnifiedBadge variant="success" size="md" theme={theme} icon={<AccessibleEmoji emoji='🟢' label='Conectado' />}>
-            Conectado
-          </UnifiedBadge>
-        </Header>
+      <UnifiedBadge variant="success" size="md" theme={theme} icon={<AccessibleEmoji emoji='🟢' label='Conectado' />}>
+        Conectado
+      </UnifiedBadge>
 
         {/* Alertas */}
         {errorEvents > 0 && (
@@ -1953,7 +1986,7 @@ const ESocialIntegration: React.FC = () => {
               do Empregador
               {loadedEmployerData.fonte && loadedEmployerData.fonte === 'SOAP_REAL' && (
                 <DataSourceIndicator $isReal={true} $theme={theme}>
-                  (✅ Dados Reais)
+                  (<span role="img" aria-label="Dados Reais">✅</span> Dados Reais)
                 </DataSourceIndicator>
               )}
             </OptimizedSectionTitle>
@@ -2005,7 +2038,7 @@ const ESocialIntegration: React.FC = () => {
               Empregados Carregados
               {loadedEmployeesData[0]?.fonte === 'SOAP_REAL' && (
                 <DataSourceIndicator $isReal={true} $theme={theme}>
-                  (✅ Dados Reais)
+                  (<span role="img" aria-label="Dados Reais">✅</span> Dados Reais)
                 </DataSourceIndicator>
               )}
             </OptimizedSectionTitle>
@@ -2038,7 +2071,7 @@ const ESocialIntegration: React.FC = () => {
               Eventos Carregados
               {loadedEventsData[0]?.fonte === 'SOAP_REAL' && (
                 <DataSourceIndicator $isReal={true} $theme={theme}>
-                  (✅ Dados Reais)
+                  (<span role="img" aria-label="Dados Reais">✅</span> Dados Reais)
                 </DataSourceIndicator>
               )}
             </OptimizedSectionTitle>
@@ -2140,6 +2173,17 @@ const ESocialIntegration: React.FC = () => {
         {/* Toast Container */}
       </PageContainer>
   );
+};
+
+// Desabilitar prerendering - página requer autenticação e dados dinâmicos
+export const dynamic = 'force-dynamic';
+
+import { GetServerSideProps } from 'next';
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: {},
+  };
 };
 
 export default ESocialIntegration;

@@ -41,7 +41,17 @@ const ModalOverlay = styled.div<{
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.6)`;
+    }
+    return 'transparent';
+  }};
   display: ${props => (props.$isOpen ? 'flex' : 'none')};
   align-items: center;
   justify-content: center;
@@ -156,9 +166,21 @@ const ModalTitle = styled.h2<{ $variant: ModalVariant }>`
 `;
 
 const CloseButton = styled.button<{ $theme?: any; $variant: ModalVariant }>`
-  background: rgba(255, 255, 255, 0.15);
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.surface ||
+                    props.$theme?.surface;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.15)`;
+    }
+    return 'transparent';
+  }};
   border: none;
-  color: white;
+  color: ${props => props.$theme?.colors?.text?.onPrimary ||
+                    props.$theme?.colors?.text?.primary ||
+                    'inherit'};
   cursor: pointer;
   font-size: 1.5rem;
   padding: 0.5rem;
@@ -171,7 +193,17 @@ const CloseButton = styled.button<{ $theme?: any; $variant: ModalVariant }>`
   height: 40px;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: ${props => {
+      const bgColor = props.$theme?.colors?.surface ||
+                      props.$theme?.surface;
+      if (bgColor && bgColor.startsWith('#')) {
+        const r = parseInt(bgColor.slice(1, 3), 16);
+        const g = parseInt(bgColor.slice(3, 5), 16);
+        const b = parseInt(bgColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.25)`;
+      }
+      return 'transparent';
+    }};
     transform: scale(1.05);
   }
 
@@ -193,7 +225,7 @@ const CloseButton = styled.button<{ $theme?: any; $variant: ModalVariant }>`
   }
 `;
 
-export const ModalBody = styled.div<{ $variant: ModalVariant }>`
+export const ModalBody = styled.div<{ $variant: ModalVariant; $theme?: any }>`
   padding: 1.5rem 2rem;
   flex: 1;
   overflow-y: auto;
@@ -209,16 +241,22 @@ export const ModalBody = styled.div<{ $variant: ModalVariant }>`
   }
 
   &::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: ${props => props.$theme?.colors?.background?.secondary ||
+                           props.$theme?.background?.secondary ||
+                           'transparent'};
     border-radius: 3px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
+    background: ${props => props.$theme?.colors?.border?.light ||
+                           props.$theme?.border?.light ||
+                           'transparent'};
     border-radius: 3px;
 
     &:hover {
-      background: #a8a8a8;
+      background: ${props => props.$theme?.colors?.border?.main ||
+                             props.$theme?.border?.main ||
+                             'transparent'};
     }
   }
 
@@ -227,13 +265,17 @@ export const ModalBody = styled.div<{ $variant: ModalVariant }>`
   }
 `;
 
-export const ModalFooter = styled.div<{ $variant: ModalVariant }>`
+export const ModalFooter = styled.div<{ $variant: ModalVariant; $theme?: any }>`
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
   padding: 1rem 2rem 1.5rem 2rem;
-  background: ${props => props.theme?.colors?.surface || '#F8F9FA'};
-  border-top: 1px solid ${props => props.theme?.colors?.border || '#E9ECEF'};
+  background: ${props => props.$theme?.colors?.surface ||
+                         props.$theme?.background?.secondary ||
+                         'transparent'};
+  border-top: 1px solid ${props => props.$theme?.colors?.border?.main ||
+                                   props.$theme?.border?.main ||
+                                   'transparent'};
   flex-shrink: 0;
 
   /* Variante drawer para mobile */
@@ -398,7 +440,7 @@ export const UnifiedModal: React.FC<UnifiedModalProps> = ({
         <ModalBody $variant={variant}>{children}</ModalBody>
 
         {footer && (
-          <ModalFooter $variant={variant} theme={theme}>
+          <ModalFooter $variant={variant} $theme={theme}>
             {footer}
           </ModalFooter>
         )}

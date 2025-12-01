@@ -99,7 +99,7 @@ export default async function handler(
           titulo,
           descricao,
           prioridade: prioridade.toUpperCase(),
-          status: 'PENDENTE',
+          status: 'pending', // Status da API usa formato diferente (pending vs todo)
           atribuidoPara,
           criadoPor: atribuidoPara, // TODO: pegar do contexto de autenticação
           dataVencimento: new Date(dataVencimento),

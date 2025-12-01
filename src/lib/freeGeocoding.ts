@@ -109,8 +109,9 @@ export async function reverseGeocodeOpenCage(
       source: 'opencage',
     };
   } catch (error: any) {
-    logger.error('❌ Erro OpenCage:', error);
-    return { success: false, error: error.message };
+    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    logger.error('❌ Erro OpenCage:', errorMessage, error);
+    return { success: false, error: errorMessage };
   }
 }
 
@@ -178,8 +179,9 @@ export async function reverseGeocodeBigDataCloud(
       source: 'bigdatacloud',
     };
   } catch (error: any) {
-    logger.error('❌ Erro BigDataCloud:', error);
-    return { success: false, error: error.message };
+    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    logger.error('❌ Erro BigDataCloud:', errorMessage, error);
+    return { success: false, error: errorMessage };
   }
 }
 
@@ -248,8 +250,9 @@ export async function reverseGeocodePositionstack(
       source: 'positionstack',
     };
   } catch (error: any) {
-    logger.error('❌ Erro Positionstack:', error);
-    return { success: false, error: error.message };
+    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    logger.error('❌ Erro Positionstack:', errorMessage, error);
+    return { success: false, error: errorMessage };
   }
 }
 
@@ -310,8 +313,9 @@ export async function reverseGeocodeNominatim(
       source: 'nominatim',
     };
   } catch (error: any) {
-    logger.error('❌ Erro Nominatim:', error);
-    return { success: false, error: error.message };
+    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    logger.error('❌ Erro Nominatim:', errorMessage, error);
+    return { success: false, error: errorMessage };
   }
 }
 

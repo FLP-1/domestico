@@ -12,7 +12,7 @@ import WelcomeSection from '../components/WelcomeSection';
 import { WidgetGrid } from '../components/WidgetGrid';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
-import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import { getThemeColor, getStatusColor } from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
 import {
   UnifiedButton,
@@ -53,8 +53,7 @@ const GlobalStyle = styled.div<{ $theme?: any }>`
     height: 400px;
     padding: 1rem;
     border: 2px solid ${props => 
-      props.$theme?.colors?.border?.light || 
-      props.$theme?.border?.light ||
+      getThemeColor(props.$theme, 'border.light', 'transparent') ||
       'transparent'};
     border-radius: 8px;
     font-size: 1rem;
@@ -65,9 +64,7 @@ const GlobalStyle = styled.div<{ $theme?: any }>`
     &:focus {
       outline: none;
       border-color: ${props => 
-        props.$theme?.colors?.primary || 
-        props.$theme?.accent ||
-        'transparent'};
+        getThemeColor(props.$theme, 'primary', 'transparent')};
     }
   }
 `;
@@ -77,8 +74,7 @@ const DocumentTextarea = styled.textarea<{ $theme?: any }>`
   height: 400px;
   padding: 1rem;
   border: 2px solid ${props => 
-    props.$theme?.colors?.border?.light || 
-    props.$theme?.border?.light ||
+    getThemeColor(props.$theme, 'border.light', 'transparent') ||
     'transparent'};
   border-radius: 8px;
   font-size: 1rem;
@@ -89,8 +85,7 @@ const DocumentTextarea = styled.textarea<{ $theme?: any }>`
   &:focus {
     outline: none;
     border-color: ${props => 
-      props.$theme?.colors?.primary || 
-      props.$theme?.accent ||
+      getThemeColor(props.$theme, 'primary', 'transparent') ||
       'transparent'};
   }
 `;
@@ -106,21 +101,21 @@ const ContentGrid = styled.div`
 
 const DocumentSection = styled.div<{ $theme?: any }>`
   background: ${props => {
-    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
       const b = parseInt(bgColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.95)`;
     }
-    return props.$theme?.colors?.background?.primary || 
-           props.$theme?.background?.primary ||
+    return getThemeColor(props.$theme, 'background.primary', 'transparent') || 
+           getThemeColor(props.$theme, 'background.primary', 'transparent') ||
            'transparent';
   }};
   border-radius: 16px;
   padding: 2rem;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    const shadowColor = getThemeColor(props.$theme, 'shadow', 'transparent');
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -141,10 +136,7 @@ const DocumentHeader = styled.div<{ $theme?: any }>`
   margin-bottom: 2rem;
   padding-bottom: 1rem;
   border-bottom: 2px solid ${props => 
-    props.$theme?.colors?.border?.light || 
-    props.$theme?.border?.light ||
-    props.$theme?.colors?.border ||
-    'transparent'};
+    getThemeColor(props.$theme, 'border.light', 'transparent')};
 `;
 
 const DocumentTitle = styled.h2<{ $theme?: any }>`
@@ -152,8 +144,7 @@ const DocumentTitle = styled.h2<{ $theme?: any }>`
   font-size: 1.8rem;
   font-weight: 700;
   color: ${props => 
-    props.$theme?.colors?.primary || 
-    props.$theme?.accent ||
+    getThemeColor(props.$theme, 'primary', 'transparent') ||
     'inherit'};
   margin: 0;
 `;
@@ -168,9 +159,7 @@ const VersionInfo = styled.div`
 
 const EffectiveDate = styled.span<{ $theme?: any }>`
   color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
-    props.$theme?.text?.secondary ||
-    props.$theme?.colors?.text ||
+    getThemeColor(props.$theme, 'text.secondary', 'inherit') ||
     'inherit'};
   font-size: 0.9rem;
 `;
@@ -180,22 +169,18 @@ const DocumentContent = styled.div<{ $theme?: any }>`
   overflow-y: auto;
   padding: 1rem;
   background: ${props => 
-    props.$theme?.colors?.background?.secondary || 
-    props.$theme?.background?.secondary ||
+    getThemeColor(props.$theme, 'background.secondary', 'transparent') || 
+    getThemeColor(props.$theme, 'background.secondary', 'transparent') ||
     'transparent'};
   border-radius: 8px;
   border: 1px solid ${props => 
-    props.$theme?.colors?.border?.light || 
-    props.$theme?.border?.light ||
-    props.$theme?.colors?.border ||
-    'transparent'};
+    getThemeColor(props.$theme, 'border.light', 'transparent')};
   line-height: 1.6;
   font-size: 0.95rem;
 
   h3 {
     color: ${props => 
-      props.$theme?.colors?.primary || 
-      props.$theme?.accent ||
+      getThemeColor(props.$theme, 'primary', 'transparent') ||
       'inherit'};
     margin-top: 2rem;
     margin-bottom: 1rem;
@@ -204,9 +189,7 @@ const DocumentContent = styled.div<{ $theme?: any }>`
 
   h4 {
     color: ${props => 
-      props.$theme?.colors?.text?.dark || 
-      props.$theme?.text?.dark ||
-      props.$theme?.colors?.text ||
+      getThemeColor(props.$theme, 'text.dark', 'inherit') ||
       'inherit'};
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
@@ -229,8 +212,7 @@ const DocumentContent = styled.div<{ $theme?: any }>`
 
   strong {
     color: ${props => 
-      props.$theme?.colors?.primary || 
-      props.$theme?.accent ||
+      getThemeColor(props.$theme, 'primary', 'transparent') ||
       'inherit'};
   }
 `;
@@ -241,29 +223,26 @@ const DocumentActions = styled.div<{ $theme?: any }>`
   margin-top: 2rem;
   padding-top: 2rem;
   border-top: 2px solid ${props => 
-    props.$theme?.colors?.border?.light || 
-    props.$theme?.border?.light ||
-    props.$theme?.colors?.border ||
-    'transparent'};
+    getThemeColor(props.$theme, 'border.light', 'transparent')};
 `;
 
 const SidebarSection = styled.div<{ $theme?: any }>`
   background: ${props => {
-    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
       const b = parseInt(bgColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.95)`;
     }
-    return props.$theme?.colors?.background?.primary || 
-           props.$theme?.background?.primary ||
+    return getThemeColor(props.$theme, 'background.primary', 'transparent') || 
+           getThemeColor(props.$theme, 'background.primary', 'transparent') ||
            'transparent';
   }};
   border-radius: 16px;
   padding: 2rem;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    const shadowColor = getThemeColor(props.$theme, 'shadow', 'transparent');
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -281,8 +260,7 @@ const SidebarTitle = styled.h3<{ $theme?: any }>`
   font-size: 1.3rem;
   font-weight: 700;
   color: ${props => 
-    props.$theme?.colors?.primary || 
-    props.$theme?.accent ||
+    getThemeColor(props.$theme, 'primary', 'transparent') ||
     'inherit'};
   margin: 0 0 1.5rem 0;
 `;
@@ -291,9 +269,7 @@ const LoadingContainer = styled.div<{ $theme?: any }>`
   text-align: center;
   padding: 2rem;
   color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
-    props.$theme?.colors?.text ||
+    getThemeColor(props.$theme, 'text.dark', 'inherit') ||
     'inherit'};
   font-size: 1.1rem;
 `;
@@ -310,16 +286,11 @@ const VersionItem = styled.div<{ $active?: boolean; $theme?: Theme }>`
   border: 2px solid
     ${props =>
       props.$active
-        ? props.$theme?.colors?.primary || 
-          props.$theme?.accent ||
-          'transparent'
-        : props.$theme?.colors?.border?.light || 
-          props.$theme?.border?.light ||
-          props.$theme?.colors?.border ||
-          'transparent'};
+        ? getThemeColor(props.$theme, 'primary', 'transparent')
+        : getThemeColor(props.$theme, 'border.light', 'transparent')};
   background: ${props => {
     if (props.$active) {
-      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      const primaryColor = getThemeColor(props.$theme, 'primary', 'transparent');
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -328,8 +299,8 @@ const VersionItem = styled.div<{ $active?: boolean; $theme?: Theme }>`
       }
       return 'transparent';
     }
-    return props.$theme?.colors?.background?.primary || 
-           props.$theme?.background?.primary ||
+    return getThemeColor(props.$theme, 'background.primary', 'transparent') || 
+           getThemeColor(props.$theme, 'background.primary', 'transparent') ||
            'transparent';
   }};
   cursor: pointer;
@@ -337,11 +308,10 @@ const VersionItem = styled.div<{ $active?: boolean; $theme?: Theme }>`
 
   &:hover {
     border-color: ${props => 
-      props.$theme?.colors?.primary || 
-      props.$theme?.accent ||
+      getThemeColor(props.$theme, 'primary', 'transparent') ||
       'transparent'};
     background: ${props => {
-      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      const primaryColor = getThemeColor(props.$theme, 'primary', 'transparent');
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -356,8 +326,7 @@ const VersionItem = styled.div<{ $active?: boolean; $theme?: Theme }>`
 const VersionNumber = styled.div<{ $theme?: any }>`
   font-weight: 600;
   color: ${props => 
-    props.$theme?.colors?.primary || 
-    props.$theme?.accent ||
+    getThemeColor(props.$theme, 'primary', 'transparent') ||
     'inherit'};
   margin-bottom: 0.5rem;
 `;
@@ -365,9 +334,7 @@ const VersionNumber = styled.div<{ $theme?: any }>`
 const VersionDate = styled.div<{ $theme?: any }>`
   font-size: 0.9rem;
   color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
-    props.$theme?.text?.secondary ||
-    props.$theme?.colors?.text ||
+    getThemeColor(props.$theme, 'text.secondary', 'inherit') ||
     'inherit'};
 `;
 
@@ -379,23 +346,17 @@ const VersionStatus = styled.span<{ $theme?: Theme }>`
   font-weight: 600;
   margin-top: 0.5rem;
   background: ${props => 
-    props.$theme?.colors?.status?.success?.background ||
-    props.$theme?.status?.success?.background ||
-    props.$theme?.colors?.success ||
-    'transparent'};
+    getStatusColor(props.$theme, 'success', 'background') || 'transparent'};
   color: ${props => 
-    props.$theme?.colors?.status?.success?.text ||
-    props.$theme?.status?.success?.text ||
+    getStatusColor(props.$theme, 'success', 'text') ||
+    getStatusColor(props.$theme, 'success', 'text') ||
     'inherit'};
 `;
 
 const AdminSection = styled.div<{ $theme?: any }>`
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 2px solid ${props.$theme?.colors?.border?.light || 
-    props.$theme?.border?.light ||
-    props.$theme?.colors?.border ||
-    'transparent'};
+  border-top: 2px solid ${props => getThemeColor(props.$theme, 'border.light', 'transparent')};
 `;
 
 const AdminTitle = styled.h4<{ $theme?: any }>`
@@ -403,8 +364,7 @@ const AdminTitle = styled.h4<{ $theme?: any }>`
   font-size: 1.1rem;
   font-weight: 600;
   color: ${props => 
-    props.$theme?.colors?.primary || 
-    props.$theme?.accent ||
+    getThemeColor(props.$theme, 'primary', 'transparent') ||
     'inherit'};
   margin: 0 0 1rem 0;
 `;

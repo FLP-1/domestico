@@ -17,7 +17,13 @@ interface PageContainerProps {
   animation?: boolean;
 }
 
-const Container = styled.div<{
+const Container = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    if (prop === 'className' || prop === 'children') return true;
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{
   $theme?: Theme;
   $variant?: PageContainerProps['variant'];
   $background?: PageContainerProps['background'];
@@ -36,29 +42,73 @@ const Container = styled.div<{
       case 'transparent':
         return 'transparent';
       case 'solid':
-        return (
-          theme?.colors?.background?.secondary ||
-          theme?.background?.secondary ||
-          '#f9fafb'
-        );
+        return (() => {
+          const bg = theme?.colors?.background;
+          if (typeof bg === 'object' && bg && 'secondary' in bg) {
+            return String((bg as any).secondary);
+          }
+          if (typeof bg === 'string') {
+            return bg;
+          }
+          const bgObj = theme?.colors?.background;
+          if (typeof bgObj === 'object' && bgObj && 'primary' in bgObj) {
+            return String((bgObj as any).primary);
+          }
+          if (typeof bgObj === 'string') {
+            return bgObj;
+          }
+          return 'transparent';
+        })();
       case 'gradient':
         return `linear-gradient(
           135deg,
-          ${theme?.colors?.surface || theme?.colors?.background?.primary || '#f9fafb'} 0%,
-          ${theme?.colors?.border || theme?.colors?.background?.secondary || '#e5e7eb'} 100%
+          ${(() => {
+            const surface = theme?.colors?.surface;
+            if (typeof surface === 'string') return surface;
+            const bg = theme?.colors?.background;
+            if (typeof bg === 'object' && bg && 'primary' in bg) return String((bg as any).primary);
+            if (typeof bg === 'string') return bg;
+            return 'transparent';
+          })()} 0%,
+          ${(() => {
+            const border = theme?.colors?.border;
+            return (typeof border === 'object' && border && 'light' in border ? String((border as any).light) : null) ||
+                   (typeof (theme as any)?.border === 'object' && (theme as any)?.border && 'light' in (theme as any).border ? String((theme as any).border.light) : null) ||
+                   (typeof theme?.colors?.background === 'object' && theme?.colors?.background && 'secondary' in theme.colors.background ? String((theme.colors.background as any).secondary) : null) ||
+                   'transparent';
+          })()} 100%
         )`;
       default:
         // default mantém comportamento original
         return `linear-gradient(
           135deg,
-          ${theme?.colors?.surface || theme?.colors?.background?.primary || '#f9fafb'} 0%,
-          ${theme?.colors?.border || theme?.colors?.background?.secondary || '#e5e7eb'} 100%
+          ${(() => {
+            const surface = theme?.colors?.surface;
+            if (typeof surface === 'string') return surface;
+            const bg = theme?.colors?.background;
+            if (typeof bg === 'object' && bg && 'primary' in bg) return String((bg as any).primary);
+            if (typeof bg === 'string') return bg;
+            return 'transparent';
+          })()} 0%,
+          ${(() => {
+            const border = theme?.colors?.border;
+            return (typeof border === 'object' && border && 'light' in border ? String((border as any).light) : null) ||
+                   (typeof (theme as any)?.border === 'object' && (theme as any)?.border && 'light' in (theme as any).border ? String((theme as any).border.light) : null) ||
+                   (typeof theme?.colors?.background === 'object' && theme?.colors?.background && 'secondary' in theme.colors.background ? String((theme.colors.background as any).secondary) : null) ||
+                   'transparent';
+          })()} 100%
         )`;
     }
   }};
 `;
 
-const MainContent = styled.main<{
+const MainContent = styled.main.withConfig({
+  shouldForwardProp: (prop) => {
+    if (prop === 'className' || prop === 'children') return true;
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{
   $sidebarCollapsed: boolean;
   $variant?: PageContainerProps['variant'];
   $maxWidth?: string;
@@ -90,7 +140,13 @@ const MainContent = styled.main<{
   }}
 `;
 
-const ContentWrapper = styled.div<{
+const ContentWrapper = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    if (prop === 'className' || prop === 'children') return true;
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{
   $theme?: Theme;
   $padding?: PageContainerProps['padding'];
   $variant?: PageContainerProps['variant'];

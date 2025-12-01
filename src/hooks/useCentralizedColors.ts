@@ -1,5 +1,6 @@
 import { useSystemConfig } from './useSystemConfig';
 import { geofencingColors } from '../design-system/tokens/geofencing-colors';
+import { DEFAULT_COLORS } from '../config/default-colors';
 
 export const useCentralizedColors = () => {
   const { config, loading, error } = useSystemConfig();
@@ -12,12 +13,12 @@ export const useCentralizedColors = () => {
         // Garantir que sempre tenha as propriedades esperadas pelo PageContainer
         surface: geofencingColors.background.primary,
         border: geofencingColors.border.light,
-        primary: '#29ABE2',
-        secondary: '#90EE90',
-        success: '#10B981',
-        warning: '#F59E0B',
-        error: '#EF4444',
-        info: '#3B82F6',
+        primary: DEFAULT_COLORS.primary,
+        secondary: DEFAULT_COLORS.secondary,
+        success: DEFAULT_COLORS.success,
+        warning: DEFAULT_COLORS.warning,
+        error: DEFAULT_COLORS.error,
+        info: DEFAULT_COLORS.info,
       },
       loading,
       error,

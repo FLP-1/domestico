@@ -16,77 +16,191 @@ const DocumentUploadContainer = styled.div<{
   }
 `;
 
-const UploadSection = styled.div<{ $theme?: any; $isDragOver: boolean }>`
+const UploadSection = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any; $isDragOver: boolean }>`
   border: 2px dashed
-    ${props => (props.$isDragOver ? props.$theme.colors.primary : '#e0e0e0')};
+    ${props => {
+      if (props.$isDragOver) {
+        return props.$theme?.colors?.primary ||
+               props.$theme?.accent ||
+               'transparent';
+      }
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border?.light) ||
+             props.$theme?.border?.light ||
+             'transparent';
+    }};
   border-radius: 12px;
   padding: 1.5rem;
   text-align: center;
-  background: ${props =>
-    props.$isDragOver ? props.$theme.colors.primary + '10' : 'transparent'};
+  background: ${props => {
+    if (props.$isDragOver) {
+      const primaryColor = props.$theme?.colors?.primary ||
+                           props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+    }
+    return 'transparent';
+  }};
   transition: all 0.3s ease;
   margin-bottom: 1rem;
 `;
 
-const UploadButton = styled.div<{ $theme?: any }>`
+const UploadButton = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any }>`
   margin-top: 1rem;
 `;
 
-const UploadIcon = styled.div<{ $theme?: any }>`
+const UploadIcon = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any }>`
   font-size: 2.5rem;
-  color: ${props => props.$theme.colors.primary};
+  color: ${props =>
+    props.$theme?.colors?.primary ||
+    props.$theme?.accent ||
+    'inherit'};
   margin-bottom: 1rem;
 `;
 
-const UploadText = styled.div<{ $theme?: any }>`
+const UploadText = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any }>`
   h3 {
     margin: 0 0 0.5rem 0;
-    color: #2c3e50;
+    color: ${props =>
+      props.$theme?.colors?.text?.primary ||
+      props.$theme?.text?.primary ||
+      props.$theme?.colors?.text ||
+      'inherit'};
     font-size: 1.1rem;
     font-weight: 600;
   }
 
   p {
     margin: 0;
-    color: #7f8c8d;
+    color: ${props =>
+      props.$theme?.colors?.text?.secondary ||
+      props.$theme?.text?.secondary ||
+      props.$theme?.colors?.text ||
+      'inherit'};
     font-size: 0.9rem;
   }
 `;
 
-const HiddenFileInput = styled.input<{ $theme?: any }>`
+const HiddenFileInput = styled.input.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any }>`
   display: none;
 `;
 
-const DocumentTypes = styled.div<{ $theme?: any }>`
+const DocumentTypes = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any }>`
   margin-top: 1rem;
   padding: 1rem;
-  background: ${props => props.$theme.colors.primary}10;
+  background: ${props => {
+    const primaryColor = props.$theme?.colors?.primary ||
+                         props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return 'transparent';
+  }};
   border-radius: 8px;
-  border: 1px solid ${props => props.$theme.colors.primary}20;
+  border: 1px solid ${props => {
+    const primaryColor = props.$theme?.colors?.primary ||
+                         props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.2)`;
+    }
+    return 'transparent';
+  }};
 `;
 
-const DocumentTypesTitle = styled.h4<{ $theme?: any }>`
+const DocumentTypesTitle = styled.h4.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any }>`
   margin: 0 0 0.5rem 0;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
   font-weight: 600;
 `;
 
-const DocumentTypesList = styled.ul<{ $theme?: any }>`
+const DocumentTypesList = styled.ul.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any }>`
   margin: 0;
   padding-left: 1rem;
-  color: #7f8c8d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.8rem;
   line-height: 1.4;
 `;
 
-const RecentDocuments = styled.div<{ $theme?: any }>`
+const RecentDocuments = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any }>`
   margin-top: 1rem;
 `;
 
-const RecentDocumentsTitle = styled.h4<{ $theme?: any }>`
+const RecentDocumentsTitle = styled.h4.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any }>`
   margin: 0 0 0.5rem 0;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
   font-weight: 600;
   display: flex;
@@ -94,23 +208,52 @@ const RecentDocumentsTitle = styled.h4<{ $theme?: any }>`
   gap: 0.5rem;
 `;
 
-const DocumentItem = styled.div<{ $theme?: any }>`
+const DocumentItem = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any }>`
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem;
-  background: #f8f9fa;
+  background: ${props => {
+    const bg = props.$theme?.colors?.background?.secondary ||
+                props.$theme?.background?.secondary ||
+                props.$theme?.colors?.surface ||
+                props.$theme?.colors?.background;
+    if (bg && bg.startsWith('#')) {
+      const r = parseInt(bg.slice(1, 3), 16);
+      const g = parseInt(bg.slice(3, 5), 16);
+      const b = parseInt(bg.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.5)`;
+    }
+    return 'transparent';
+  }};
   border-radius: 6px;
   margin-bottom: 0.5rem;
   font-size: 0.8rem;
-  color: #7f8c8d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 
   .document-icon {
-    color: ${props => props.$theme.colors.primary};
+    color: ${props =>
+      props.$theme?.colors?.primary ||
+      props.$theme?.accent ||
+      'inherit'};
   }
 `;
 
-const DocumentDate = styled.span<{ $theme?: any }>`
+const DocumentDate = styled.span.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any }>`
   margin-left: auto;
   font-size: 0.7rem;
 `;

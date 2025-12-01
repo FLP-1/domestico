@@ -149,19 +149,24 @@ const BadgeContainer = styled.span<{
     };
 
     const colors = variantColors[props.$variant || 'neutral'];
+    
+    // Garantir que bg e border sejam sempre strings
+    const bgColor = typeof colors.bg === 'string' ? colors.bg : (typeof colors.bg === 'object' && colors.bg && 'primary' in colors.bg ? String((colors.bg as any).primary) : String(defaultColors.primary));
+    const borderColor = typeof colors.border === 'string' ? colors.border : (typeof colors.border === 'object' && colors.border && 'primary' in colors.border ? String((colors.border as any).primary) : String(defaultColors.border?.primary || defaultColors.border || '#E5E7EB'));
+    const textColor = typeof colors.text === 'string' ? colors.text : (typeof colors.text === 'object' && colors.text && 'primary' in colors.text ? String((colors.text as any).primary) : String(defaultColors.surface?.primary || defaultColors.surface || '#FFFFFF'));
 
     if (props.$outline) {
       return `
         background: transparent;
-        border: 1px solid ${colors.border};
-        color: ${colors.border};
+        border: 1px solid ${borderColor};
+        color: ${borderColor};
       `;
     }
 
     return `
-      background: ${addOpacity(colors.bg, 0.15)};
-      color: ${colors.bg};
-      border: 1px solid ${addOpacity(colors.border, 0.3)};
+      background: ${addOpacity(bgColor, 0.15)};
+      color: ${bgColor};
+      border: 1px solid ${addOpacity(borderColor, 0.3)};
     `;
   }}
 
@@ -171,7 +176,18 @@ const BadgeContainer = styled.span<{
     
     &:hover {
       transform: translateY(-1px);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: ${(innerProps: { $theme?: Theme }) => {
+        const shadowColor = innerProps.$theme?.colors?.shadow ||
+                           (innerProps.$theme as any)?.shadow?.color ||
+                           (innerProps.$theme as any)?.shadow;
+        if (shadowColor && typeof shadowColor === 'string' && shadowColor.startsWith('#')) {
+          const r = parseInt(shadowColor.slice(1, 3), 16);
+          const g = parseInt(shadowColor.slice(3, 5), 16);
+          const b = parseInt(shadowColor.slice(5, 7), 16);
+          return `0 2px 4px rgba(${r}, ${g}, ${b}, 0.1)`;
+        }
+        return (innerProps.$theme as any)?.shadows?.sm || 'none';
+      }};
     }
     
     &:active {

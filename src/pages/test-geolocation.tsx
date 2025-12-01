@@ -7,6 +7,7 @@ import { useTheme } from '../hooks/useTheme';
 import type { Theme } from '../types/theme';
 import { getTextPrimary, getTextSecondary, getBackgroundSecondary, getBorderPrimary } from '../utils/themeTypeGuards';
 import { useUserProfile } from '../contexts/UserProfileContext';
+import { getThemeColor } from '../utils/themeHelpers';
 
 const Container = styled.div`
   padding: 20px;
@@ -22,8 +23,8 @@ const Title = styled.h1`
 `;
 
 const Button = styled.button`
-  background: ${props => props.theme?.navigation?.primary || '#007bff'};
-  color: white;
+  background: ${props => getThemeColor(props.theme, 'primary', 'transparent')};
+  color: ${props => props.theme?.colors?.text?.onPrimary || props.theme?.colors?.surface || 'inherit'};
   border: none;
   padding: 12px 24px;
   border-radius: 6px;
@@ -32,7 +33,16 @@ const Button = styled.button`
   margin: 10px 5px;
 
   &:hover {
-    background: ${props => props.theme?.navigation?.primary || '#0056b3'};
+    background: ${props => {
+      const primary = getThemeColor(props.theme, 'primary', 'transparent');
+      if (primary && primary.startsWith('#')) {
+        const r = parseInt(primary.slice(1, 3), 16);
+        const g = parseInt(primary.slice(3, 5), 16);
+        const b = parseInt(primary.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.8)`;
+      }
+      return primary || 'transparent';
+    }};
   }
 
   &:disabled {
@@ -54,34 +64,34 @@ const ResultBox = styled.div`
 `;
 
 const ErrorBox = styled.div`
-  background: ${props => props.theme?.status?.error?.background || '#f8d7da'};
-  border: 1px solid ${props => props.theme?.status?.error?.border || '#f5c6cb'};
+  background: ${props => props.theme?.status?.error?.background || props.theme?.colors?.status?.error?.background || 'transparent'};
+  border: 1px solid ${props => props.theme?.status?.error?.border || props.theme?.colors?.status?.error?.border || 'transparent'};
   border-radius: 6px;
   padding: 15px;
   margin: 10px 0;
-  color: ${props => props.theme?.status?.error?.text || '#721c24'};
+  color: ${props => props.theme?.status?.error?.text || props.theme?.colors?.status?.error?.text || 'inherit'};
 `;
 
 const SuccessBox = styled.div`
-  background: #d4edda;
-  border: 1px solid #c3e6cb;
+  background: ${props => props.theme?.status?.success?.background || props.theme?.colors?.status?.success?.background || 'transparent'};
+  border: 1px solid ${props => props.theme?.status?.success?.border || props.theme?.colors?.status?.success?.border || 'transparent'};
   border-radius: 6px;
   padding: 15px;
   margin: 10px 0;
-  color: #155724;
+  color: ${props => props.theme?.status?.success?.text || props.theme?.colors?.status?.success?.text || 'inherit'};
 `;
 
 const InfoBox = styled.div`
   margin-top: 30px;
   padding: 15px;
-  background-color: #e9ecef;
+  background-color: ${props => props.theme?.colors?.background?.secondary || props.theme?.background?.secondary || 'transparent'};
   border-radius: 6px;
 `;
 
 const YellowBox = styled.div`
   margin-top: 15px;
   padding: 10px;
-  background: #fff3cd;
+  background: ${props => props.theme?.status?.warning?.background || props.theme?.colors?.status?.warning?.background || 'transparent'};
   border-radius: 4px;
 `;
 
@@ -96,32 +106,32 @@ const SmallNote = styled.p`
 `;
 
 const SuccessAltBox = styled.div`
-  background: #d4edda;
-  border: 1px solid #c3e6cb;
+  background: ${props => props.theme?.status?.success?.background || props.theme?.colors?.status?.success?.background || 'transparent'};
+  border: 1px solid ${props => props.theme?.status?.success?.border || props.theme?.colors?.status?.success?.border || 'transparent'};
   border-radius: 6px;
   padding: 15px;
   margin: 10px 0;
-  color: #155724;
+  color: ${props => props.theme?.status?.success?.text || props.theme?.colors?.status?.success?.text || 'inherit'};
 `;
 
 const WarnAltBox = styled.div`
-  background: #fff3cd;
-  border: 1px solid #ffeaa7;
+  background: ${props => props.theme?.status?.warning?.background || props.theme?.colors?.status?.warning?.background || 'transparent'};
+  border: 1px solid ${props => props.theme?.status?.warning?.border || props.theme?.colors?.status?.warning?.border || 'transparent'};
   border-radius: 6px;
   padding: 15px;
   margin: 10px 0;
-  color: #856404;
+  color: ${props => props.theme?.status?.warning?.text || props.theme?.colors?.status?.warning?.text || 'inherit'};
 `;
 
 const BlueBox = styled.div`
   margin-top: 15px;
   padding: 10px;
-  background: #e3f2fd;
+  background: ${props => props.theme?.status?.info?.background || props.theme?.colors?.status?.info?.background || 'transparent'};
   border-radius: 4px;
 `;
 
 const LinkStyled = styled.a`
-  color: #1976d2;
+  color: ${props => getThemeColor(props.theme, 'primary', 'inherit')};
   text-decoration: underline;
   word-break: break-all;
 `;

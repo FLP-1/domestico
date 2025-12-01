@@ -1,5 +1,6 @@
 import prisma from '@/lib/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { PAYMENT_STATUSES } from '@/constants/paymentStatuses';
 
 export default async function handler(
   req: NextApiRequest,
@@ -74,7 +75,7 @@ async function createTaxGuide(req: NextApiRequest, res: NextApiResponse) {
       ano,
       valor,
       vencimento,
-      status = 'PENDENTE',
+      status = PAYMENT_STATUSES.PENDING,
       observacoes,
     } = req.body;
 

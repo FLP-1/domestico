@@ -40,9 +40,13 @@ const FormRow = styled.div`
   }
 `;
 
-const Label = styled.label`
+const Label = styled.label<{ $theme?: any }>`
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
   display: block;
@@ -62,18 +66,26 @@ const ValidationContainer = styled.div`
   align-items: center;
 `;
 
-const SuccessMessage = styled.span`
-  color: #27ae60;
+const SuccessMessage = styled.span<{ $theme?: any }>`
+  color: ${props =>
+    props.$theme?.colors?.success ||
+    props.$theme?.colors?.status?.success?.background ||
+    'inherit'};
   font-weight: bold;
 `;
 
-const ButtonContainer = styled.div`
+const ButtonContainer = styled.div<{ $theme?: any }>`
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
   margin-top: 2rem;
   padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
 
   @media (max-width: 768px) {
     flex-direction: column;

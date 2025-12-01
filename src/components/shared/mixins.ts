@@ -38,13 +38,32 @@ export const sizeMixin = (size: 'sm' | 'md' | 'lg') => css`
 export const validationMixin = (hasError: boolean, theme: any) => css`
   border: 1px solid
     ${hasError
-      ? theme?.colors?.error || '#dc3545'
-      : theme?.colors?.border || '#d1d5db'};
+      ? theme?.colors?.error ||
+        theme?.colors?.status?.error?.background ||
+        'transparent'
+      : (() => {
+          const border = theme?.colors?.border;
+          return (typeof border === 'object' && border?.light) ||
+                 theme?.border?.light ||
+                 'transparent';
+        })()};
 
   &:focus {
-    border-color: ${theme?.colors?.primary || '#29abe2'};
-    box-shadow: 0 0 0 3px
-      ${theme?.colors?.primaryLight || 'rgba(41, 171, 226, 0.1)'};
+    border-color: ${theme?.colors?.primary ||
+                   theme?.accent ||
+                   'transparent'};
+    box-shadow: ${(() => {
+      const primaryColor = theme?.colors?.primary ||
+                           theme?.accent ||
+                           theme?.colors?.primaryLight;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `0 0 0 3px rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'none';
+    })()};
   }
 `;
 
@@ -60,7 +79,18 @@ export const transitionMixin = css`
  */
 export const hoverMixin = (theme: any) => css`
   &:hover {
-    background: ${theme?.colors?.hover || 'rgba(41, 171, 226, 0.1)'};
+    background: ${(() => {
+      const hoverColor = theme?.colors?.hover ||
+                         theme?.colors?.primary ||
+                         theme?.accent;
+      if (hoverColor && hoverColor.startsWith('#')) {
+        const r = parseInt(hoverColor.slice(1, 3), 16);
+        const g = parseInt(hoverColor.slice(3, 5), 16);
+        const b = parseInt(hoverColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    })()};
     transform: translateY(-1px);
   }
 `;
@@ -71,9 +101,21 @@ export const hoverMixin = (theme: any) => css`
 export const focusMixin = (theme: any) => css`
   &:focus {
     outline: none;
-    border-color: ${theme?.colors?.primary || '#29abe2'};
-    box-shadow: 0 0 0 3px
-      ${theme?.colors?.primaryLight || 'rgba(41, 171, 226, 0.1)'};
+    border-color: ${theme?.colors?.primary ||
+                   theme?.accent ||
+                   'transparent'};
+    box-shadow: ${(() => {
+      const primaryColor = theme?.colors?.primary ||
+                           theme?.accent ||
+                           theme?.colors?.primaryLight;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `0 0 0 3px rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'none';
+    })()};
   }
 `;
 
@@ -82,8 +124,15 @@ export const focusMixin = (theme: any) => css`
  */
 export const disabledMixin = (theme: any) => css`
   &:disabled {
-    background: ${theme?.colors?.disabled || '#f8f9fa'};
-    color: ${theme?.colors?.textDisabled || '#6c757d'};
+    background: ${theme?.colors?.disabled ||
+                 theme?.colors?.background?.secondary ||
+                 theme?.background?.secondary ||
+                 'transparent'};
+    color: ${theme?.colors?.textDisabled ||
+             theme?.colors?.text?.disabled ||
+             theme?.colors?.text?.secondary ||
+             theme?.text?.secondary ||
+             'inherit'};
     cursor: not-allowed;
     opacity: 0.6;
   }
@@ -135,30 +184,63 @@ export const statusColorMixin = (
   status: 'success' | 'warning' | 'error' | 'info',
   theme: any
 ) => css`
-  background: ${status === 'success'
-    ? theme?.colors?.successLight || '#d4edda'
-    : status === 'warning'
-      ? theme?.colors?.warningLight || '#fff3cd'
-      : status === 'error'
-        ? theme?.colors?.errorLight || '#f8d7da'
-        : theme?.colors?.infoLight || '#d1ecf1'};
+  background: ${(() => {
+    const statusColor = status === 'success'
+      ? theme?.colors?.status?.success?.background ||
+        theme?.colors?.successLight ||
+        theme?.colors?.success
+      : status === 'warning'
+        ? theme?.colors?.status?.warning?.background ||
+          theme?.colors?.warningLight ||
+          theme?.colors?.warning
+        : status === 'error'
+          ? theme?.colors?.status?.error?.background ||
+            theme?.colors?.errorLight ||
+            theme?.colors?.error
+          : theme?.colors?.status?.info?.background ||
+            theme?.colors?.infoLight ||
+            theme?.colors?.info;
+    
+    if (statusColor && statusColor.startsWith('#')) {
+      const r = parseInt(statusColor.slice(1, 3), 16);
+      const g = parseInt(statusColor.slice(3, 5), 16);
+      const b = parseInt(statusColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.15)`;
+    }
+    return 'transparent';
+  })()};
 
   color: ${status === 'success'
-    ? theme?.colors?.success || '#155724'
+    ? theme?.colors?.status?.success?.text ||
+      theme?.colors?.success ||
+      'inherit'
     : status === 'warning'
-      ? theme?.colors?.warning || '#856404'
+      ? theme?.colors?.status?.warning?.text ||
+        theme?.colors?.warning ||
+        'inherit'
       : status === 'error'
-        ? theme?.colors?.error || '#721c24'
-        : theme?.colors?.info || '#0c5460'};
+        ? theme?.colors?.status?.error?.text ||
+          theme?.colors?.error ||
+          'inherit'
+        : theme?.colors?.status?.info?.text ||
+          theme?.colors?.info ||
+          'inherit'};
 
-  border: 1px solid
-    ${status === 'success'
-      ? theme?.colors?.success || '#c3e6cb'
-      : status === 'warning'
-        ? theme?.colors?.warning || '#ffeaa7'
-        : status === 'error'
-          ? theme?.colors?.error || '#f5c6cb'
-          : theme?.colors?.info || '#bee5eb'};
+  border: 1px solid ${status === 'success'
+    ? theme?.colors?.status?.success?.background ||
+      theme?.colors?.success ||
+      'transparent'
+    : status === 'warning'
+      ? theme?.colors?.status?.warning?.background ||
+        theme?.colors?.warning ||
+        'transparent'
+      : status === 'error'
+        ? theme?.colors?.status?.error?.background ||
+          theme?.colors?.error ||
+          'transparent'
+        : theme?.colors?.status?.info?.background ||
+          theme?.colors?.info ||
+          'transparent'};
 `;
 
 /**
@@ -176,9 +258,11 @@ export const touchTargetMixin = css`
 /**
  * Mixin para acessibilidade
  */
-export const accessibilityMixin = css`
+export const accessibilityMixin = (theme?: any) => css`
   &:focus-visible {
-    outline: 2px solid #29abe2;
+    outline: 2px solid ${theme?.colors?.primary ||
+                        theme?.accent ||
+                        'currentColor'};
     outline-offset: 2px;
   }
 
@@ -206,12 +290,26 @@ export const animationMixin = css`
 /**
  * Mixin para sombras
  */
-export const shadowMixin = (level: 'sm' | 'md' | 'lg' = 'md') => css`
-  box-shadow: ${level === 'sm'
-    ? '0 1px 3px rgba(0, 0, 0, 0.1)'
-    : level === 'lg'
-      ? '0 10px 25px rgba(0, 0, 0, 0.15)'
-      : '0 4px 6px rgba(0, 0, 0, 0.1)'};
+export const shadowMixin = (level: 'sm' | 'md' | 'lg' = 'md', theme?: any) => css`
+  box-shadow: ${(() => {
+    const shadowColor = theme?.colors?.shadow ||
+                       theme?.shadow?.color;
+    const opacity = level === 'sm' ? 0.1 : level === 'lg' ? 0.15 : 0.1;
+    
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      const shadows = {
+        sm: `0 1px 3px rgba(${r}, ${g}, ${b}, ${opacity})`,
+        md: `0 4px 6px rgba(${r}, ${g}, ${b}, ${opacity})`,
+        lg: `0 10px 25px rgba(${r}, ${g}, ${b}, ${opacity})`,
+      };
+      return shadows[level];
+    }
+    // Fallback seguro sem cores hardcoded
+    return 'none';
+  })()};
 `;
 
 /**
@@ -250,16 +348,33 @@ export const customScrollbarMixin = (theme: any) => css`
   }
 
   &::-webkit-scrollbar-track {
-    background: ${theme?.colors?.surface || '#f1f1f1'};
+    background: ${theme?.colors?.surface ||
+                 theme?.colors?.background?.secondary ||
+                 theme?.background?.secondary ||
+                 'transparent'};
     border-radius: 4px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: ${theme?.colors?.primary || '#29abe2'};
+    background: ${theme?.colors?.primary ||
+                 theme?.accent ||
+                 'transparent'};
     border-radius: 4px;
   }
 
   &::-webkit-scrollbar-thumb:hover {
-    background: ${theme?.colors?.primaryDark || '#1e8bc3'};
+    background: ${(() => {
+      const primaryColor = theme?.colors?.primaryDark ||
+                           theme?.colors?.primary ||
+                           theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        // Escurecer 10%
+        return `rgb(${Math.max(0, r - 25)}, ${Math.max(0, g - 25)}, ${Math.max(0, b - 25)})`;
+      }
+      return 'transparent';
+    })()};
   }
 `;

@@ -1,16 +1,10 @@
 import { useState, useEffect } from 'react';
-import { loadSystemConfig, SystemConfig } from '../config/centralized-config';
+import { loadSystemConfig, SystemConfig, DEFAULT_CONFIG } from '../config/centralized-config';
 
 // Configurações padrão que sempre estarão disponíveis
-const DEFAULT_CONFIG: SystemConfig = {
-  colors: {
-    primary: '#29ABE2',
-    secondary: '#90EE90',
-    success: '#10B981',
-    warning: '#F59E0B',
-    error: '#EF4444',
-    info: '#3B82F6',
-  },
+// Usar DEFAULT_CONFIG do centralized-config em vez de duplicar valores
+const DEFAULT_CONFIG_LOCAL: SystemConfig = {
+  colors: DEFAULT_CONFIG.colors,
   typography: {
     fontFamily: 'Inter, system-ui, sans-serif',
     fontSize: {
@@ -65,7 +59,7 @@ const DEFAULT_CONFIG: SystemConfig = {
 };
 
 export const useSystemConfig = () => {
-  const [config, setConfig] = useState<SystemConfig>(DEFAULT_CONFIG);
+  const [config, setConfig] = useState<SystemConfig>(DEFAULT_CONFIG_LOCAL);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

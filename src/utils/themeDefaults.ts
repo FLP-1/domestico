@@ -4,6 +4,7 @@
  */
 
 import { profileThemes } from '../hooks/useTheme';
+import { DEFAULT_COLORS } from '../config/default-colors';
 
 // Tema padrão do sistema (empregado)
 const defaultTheme = profileThemes['empregado'];
@@ -27,10 +28,10 @@ export const getDefaultThemeColors = () => {
     },
     border: defaultTheme.colors.border,
     shadow: defaultTheme.colors.shadow,
-    error: '#EF4444', // Valor padrão do sistema de cores
-    success: '#10B981',
-    warning: '#F59E0B',
-    info: '#3B82F6',
+    error: DEFAULT_COLORS.error,
+    success: DEFAULT_COLORS.success,
+    warning: DEFAULT_COLORS.warning,
+    info: DEFAULT_COLORS.info,
   };
 };
 

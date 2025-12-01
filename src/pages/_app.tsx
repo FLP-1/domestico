@@ -20,6 +20,7 @@ import {
 import { useGeolocation } from '../hooks/useGeolocation';
 import { useGroupLoader } from '../hooks/useGroupLoader';
 import { useTheme } from '../hooks/useTheme';
+import { logger } from '../utils/logger';
 import { GlobalStyle } from '../styles/GlobalStyle';
 import { UnifiedButton, UnifiedCard } from '../components/unified';
 import { UnifiedModal } from '../design-system/components/UnifiedModal';
@@ -46,10 +47,16 @@ function AppContent({ Component, pageProps }: AppProps) {
       navigator.serviceWorker
         .register('/sw.js')
         .then((registration) => {
-          console.log('Service Worker registrado:', registration);
+          if (process.env.NODE_ENV === 'development') {
+            // eslint-disable-next-line no-console
+            console.log('Service Worker registrado:', registration);
+          }
         })
         .catch((error) => {
-          console.warn('Falha ao registrar Service Worker:', error);
+          if (process.env.NODE_ENV === 'development') {
+            // eslint-disable-next-line no-console
+            console.warn('Falha ao registrar Service Worker:', error);
+          }
         });
     }
   }, []);
@@ -59,7 +66,10 @@ function AppContent({ Component, pageProps }: AppProps) {
     if (typeof window === 'undefined') {
       import('../lib/featureFlags').then(({ initializeDefaultFeatureFlags }) => {
         initializeDefaultFeatureFlags().catch((error) => {
-          console.warn('Erro ao inicializar feature flags:', error);
+          if (process.env.NODE_ENV === 'development') {
+            // eslint-disable-next-line no-console
+            console.warn('Erro ao inicializar feature flags:', error);
+          }
         });
       });
     }
@@ -221,12 +231,12 @@ function AppContent({ Component, pageProps }: AppProps) {
         !errorMessage.includes('user gesture') &&
         !errorMessage.includes('Timeout')
       ) {
-        console.warn('⚠️ Erro ao capturar localização antes da página:', error);
+        logger.warn('⚠️ Erro ao capturar localização antes da página:', error);
       }
     } finally {
       isCapturingRef.current = false;
     }
-  }, [updateLastLocationIfBetter, hasUserInteracted]);
+  }, [updateLastLocationIfBetter, hasUserInteracted, router.pathname]);
   const {
     handleProfileSelection,
     currentProfile,

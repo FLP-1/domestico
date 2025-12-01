@@ -8,6 +8,7 @@ import {
   OptimizedLabel,
   OptimizedHelpText,
 } from '../shared/optimized-styles';
+import { OVERTIME_REQUEST_STATUSES, type OvertimeRequestStatus } from '../../constants/overtimeRequestStatuses';
 
 // Styled Components
 const ApprovalForm = styled.form<{ $theme?: any }>`
@@ -18,22 +19,50 @@ const ApprovalForm = styled.form<{ $theme?: any }>`
 
 const ApprovalInfo = styled.div<{ $theme?: any }>`
   padding: 1rem;
-  background: ${props => props.$theme.colors.primary}10;
+  background: ${props => {
+    const primaryColor = props.$theme?.colors?.primary ||
+                         props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return 'transparent';
+  }};
   border-radius: 8px;
-  border: 1px solid ${props => props.$theme.colors.primary}20;
+  border: 1px solid ${props => {
+    const primaryColor = props.$theme?.colors?.primary ||
+                         props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.2)`;
+    }
+    return 'transparent';
+  }};
   margin-bottom: 1rem;
 `;
 
 const ApprovalInfoTitle = styled.h4<{ $theme?: any }>`
   margin: 0 0 0.5rem 0;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 1rem;
   font-weight: 600;
 `;
 
 const ApprovalInfoText = styled.p<{ $theme?: any }>`
   margin: 0;
-  color: #7f8c8d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
   line-height: 1.4;
 `;
@@ -47,8 +76,54 @@ const ApprovalStatus = styled.div<{ $theme?: any; $approved: boolean }>`
   align-items: center;
   gap: 0.5rem;
   padding: 1rem;
-  background: ${props => (props.$approved ? '#d4edda' : '#fff3cd')};
-  border: 1px solid ${props => (props.$approved ? '#c3e6cb' : '#ffeaa7')};
+  background: ${props => {
+    if (props.$approved) {
+      const successColor = props.$theme?.colors?.success ||
+                           props.$theme?.colors?.status?.success?.background ||
+                           props.$theme?.status?.success?.background;
+      if (successColor && successColor.startsWith('#')) {
+        const r = parseInt(successColor.slice(1, 3), 16);
+        const g = parseInt(successColor.slice(3, 5), 16);
+        const b = parseInt(successColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.15)`;
+      }
+    } else {
+      const warningColor = props.$theme?.colors?.warning ||
+                           props.$theme?.colors?.status?.warning?.background ||
+                           props.$theme?.status?.warning?.background;
+      if (warningColor && warningColor.startsWith('#')) {
+        const r = parseInt(warningColor.slice(1, 3), 16);
+        const g = parseInt(warningColor.slice(3, 5), 16);
+        const b = parseInt(warningColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.15)`;
+      }
+    }
+    return 'transparent';
+  }};
+  border: 1px solid ${props => {
+    if (props.$approved) {
+      const successColor = props.$theme?.colors?.success ||
+                           props.$theme?.colors?.status?.success?.background ||
+                           props.$theme?.status?.success?.background;
+      if (successColor && successColor.startsWith('#')) {
+        const r = parseInt(successColor.slice(1, 3), 16);
+        const g = parseInt(successColor.slice(3, 5), 16);
+        const b = parseInt(successColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.3)`;
+      }
+    } else {
+      const warningColor = props.$theme?.colors?.warning ||
+                           props.$theme?.colors?.status?.warning?.background ||
+                           props.$theme?.status?.warning?.background;
+      if (warningColor && warningColor.startsWith('#')) {
+        const r = parseInt(warningColor.slice(1, 3), 16);
+        const g = parseInt(warningColor.slice(3, 5), 16);
+        const b = parseInt(warningColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.3)`;
+      }
+    }
+    return 'transparent';
+  }};
   border-radius: 8px;
   margin-bottom: 1rem;
 
@@ -58,27 +133,66 @@ const ApprovalStatus = styled.div<{ $theme?: any; $approved: boolean }>`
 
   .status-text {
     font-weight: 600;
-    color: ${props => (props.$approved ? '#155724' : '#856404')};
+    color: ${props => {
+      if (props.$approved) {
+        return props.$theme?.colors?.status?.success?.text ||
+               props.$theme?.status?.success?.text ||
+               props.$theme?.colors?.success ||
+               'inherit';
+      }
+      return props.$theme?.colors?.status?.warning?.text ||
+             props.$theme?.status?.warning?.text ||
+             props.$theme?.colors?.warning ||
+             'inherit';
+    }};
   }
 `;
 
 const NotificationPreview = styled.div<{ $theme?: any }>`
   margin-top: 1rem;
   padding: 1rem;
-  background: ${props => props.$theme.colors.primary}10;
+  background: ${props => {
+    const primaryColor = props.$theme?.colors?.primary ||
+                         props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return 'transparent';
+  }};
   border-radius: 8px;
-  border: 1px solid ${props => props.$theme.colors.primary}30;
+  border: 1px solid ${props => {
+    const primaryColor = props.$theme?.colors?.primary ||
+                         props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.3)`;
+    }
+    return 'transparent';
+  }};
 `;
 
 const PreviewTitle = styled.h4<{ $theme?: any }>`
   margin: 0 0 0.5rem 0;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
 `;
 
 const PreviewText = styled.p<{ $theme?: any }>`
   margin: 0;
-  color: #5a6c7d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.85rem;
   font-style: italic;
 `;
@@ -99,7 +213,7 @@ export interface OvertimeRequest {
   startTime: string;
   endTime: string;
   justification: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: OvertimeRequestStatus;
   requestedAt: Date;
   reviewedAt?: Date;
   reviewedBy?: string;
@@ -125,7 +239,7 @@ export const OvertimeApprovalModal: React.FC<OvertimeApprovalModalProps> = ({
     startTime: '',
     endTime: '',
     justification: '',
-    status: 'pending',
+    status: OVERTIME_REQUEST_STATUSES.PENDING as OvertimeRequestStatus,
     requestedAt: new Date(),
   });
 
@@ -148,7 +262,7 @@ export const OvertimeApprovalModal: React.FC<OvertimeApprovalModalProps> = ({
       startTime: newRequest.startTime,
       endTime: newRequest.endTime,
       justification: newRequest.justification,
-      status: newRequest.status as 'pending' | 'approved' | 'rejected',
+      status: (newRequest.status || OVERTIME_REQUEST_STATUSES.PENDING) as OvertimeRequestStatus,
       requestedAt: newRequest.requestedAt || new Date(),
     };
 
@@ -189,19 +303,19 @@ export const OvertimeApprovalModal: React.FC<OvertimeApprovalModalProps> = ({
           </ApprovalInfo>
         )}
 
-        {isEditing && request.status !== 'pending' && (
+        {isEditing && request.status !== OVERTIME_REQUEST_STATUSES.PENDING && (
           <ApprovalStatus
             $theme={theme}
-            $approved={request.status === 'approved'}
+            $approved={request.status === OVERTIME_REQUEST_STATUSES.APPROVED}
           >
             <span className='status-icon'>
               <AccessibleEmoji
-                emoji={request.status === 'approved' ? '✅' : '❌'}
-                label={request.status === 'approved' ? 'Aprovado' : 'Rejeitado'}
+                emoji={request.status === OVERTIME_REQUEST_STATUSES.APPROVED ? '✅' : '❌'}
+                label={request.status === OVERTIME_REQUEST_STATUSES.APPROVED ? 'Aprovado' : 'Rejeitado'}
               />
             </span>
             <span className='status-text'>
-              {request.status === 'approved'
+              {request.status === OVERTIME_REQUEST_STATUSES.APPROVED
                 ? 'Hora extra aprovada'
                 : 'Hora extra rejeitada'}
             </span>
@@ -222,7 +336,7 @@ export const OvertimeApprovalModal: React.FC<OvertimeApprovalModalProps> = ({
                 setNewRequest(prev => ({ ...prev, startTime: e.target.value }))
               }
               required
-              disabled={isEditing && request.status !== 'pending'}
+              disabled={isEditing && request.status !== OVERTIME_REQUEST_STATUSES.PENDING}
             />
           </FormGroup>
 
@@ -239,7 +353,7 @@ export const OvertimeApprovalModal: React.FC<OvertimeApprovalModalProps> = ({
                 setNewRequest(prev => ({ ...prev, endTime: e.target.value }))
               }
               required
-              disabled={isEditing && request.status !== 'pending'}
+              disabled={isEditing && request.status !== OVERTIME_REQUEST_STATUSES.PENDING}
             />
           </FormGroup>
         </OptimizedFormRow>
@@ -261,7 +375,7 @@ export const OvertimeApprovalModal: React.FC<OvertimeApprovalModalProps> = ({
             }
             placeholder='Descreva o motivo da hora extra...'
             required
-            disabled={isEditing && request.status !== 'pending'}
+            disabled={isEditing && request.status !== OVERTIME_REQUEST_STATUSES.PENDING}
           />
           <OptimizedHelpText>
             Explique detalhadamente o motivo da necessidade de horas extras
@@ -270,12 +384,12 @@ export const OvertimeApprovalModal: React.FC<OvertimeApprovalModalProps> = ({
 
         {newRequest.justification && (
           <NotificationPreview $theme={theme}>
-            <PreviewTitle>Preview da Notificação:</PreviewTitle>
-            <PreviewText>{generateNotificationPreview()}</PreviewText>
+            <PreviewTitle $theme={theme}>Preview da Notificação:</PreviewTitle>
+            <PreviewText $theme={theme}>{generateNotificationPreview()}</PreviewText>
           </NotificationPreview>
         )}
 
-        {isEditing && request.status === 'pending' && (
+        {isEditing && request.status === OVERTIME_REQUEST_STATUSES.PENDING && (
           <JustificationSection>
             <FormGroup>
               <OptimizedLabel htmlFor='review-comment'>

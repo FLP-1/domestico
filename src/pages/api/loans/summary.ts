@@ -37,6 +37,8 @@ export default async function handler(
     });
 
     // Calcular resumo
+    // Nota: Status de empréstimos têm valores específicos ('PENDENTE', 'APROVADO', 'PAGO')
+    // que diferem dos status de pagamentos padrão, mantendo hardcoded por enquanto
     const totalPending = loans
       .filter(l => l.status === 'PENDENTE')
       .reduce((sum, l) => sum + parseFloat(l.valor.toString()), 0);

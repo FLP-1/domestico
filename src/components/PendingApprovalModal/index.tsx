@@ -38,12 +38,23 @@ const ModalContent = styled.div`
   overflow-y: auto;
 `;
 
-const RecordItem = styled.div`
-  border: 1px solid ${props => props.theme?.border?.muted || '#e0e0e0'};
+const RecordItem = styled.div<{ $theme?: any }>`
+  border: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.muted) ||
+           props.$theme?.border?.muted ||
+           (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
-  background: ${props => props.theme?.background?.secondary || '#f9f9f9'};
+  background: ${props =>
+    props.$theme?.colors?.background?.secondary ||
+    props.$theme?.background?.secondary ||
+    props.$theme?.colors?.background?.primary ||
+    'transparent'};
 `;
 
 const RecordHeader = styled.div`
@@ -53,21 +64,34 @@ const RecordHeader = styled.div`
   margin-bottom: 0.5rem;
 `;
 
-const RecordType = styled.span`
+const RecordType = styled.span<{ $theme?: any }>`
   font-weight: 600;
-  color: ${props => props.theme?.text?.dark || '#2c3e50'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   text-transform: capitalize;
 `;
 
-const RecordTime = styled.span`
-  color: ${props => props.theme?.text?.secondary || '#666'};
+const RecordTime = styled.span<{ $theme?: any }>`
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
 `;
 
-const RecordDetails = styled.div`
+const RecordDetails = styled.div<{ $theme?: any }>`
   margin: 0.5rem 0;
   font-size: 0.9rem;
-  color: ${props => props.theme?.text?.secondary || '#555'};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
 const ActionButtons = styled.div`
@@ -78,48 +102,71 @@ const ActionButtons = styled.div`
 
 // ActionIcon agora é importado do componente centralizado
 
-const JustificationInput = styled.textarea`
+const JustificationInput = styled.textarea<{ $theme?: any }>`
   width: 100%;
   min-height: 60px;
   padding: 0.5rem;
-  border: 1px solid ${props => props.theme?.border?.primary || '#ddd'};
+  border: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.primary) ||
+           props.$theme?.border?.primary ||
+           (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   border-radius: 4px;
   font-size: 0.9rem;
   margin-top: 0.5rem;
   resize: vertical;
 `;
 
-const LoadingSpinner = styled.div`
+const LoadingSpinner = styled.div<{ $theme?: any }>`
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2rem;
-  color: ${props => props.theme?.text?.secondary || '#666'};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
-const EmptyState = styled.div`
+const EmptyState = styled.div<{ $theme?: any }>`
   text-align: center;
   padding: 2rem;
-  color: ${props => props.theme?.text?.secondary || '#666'};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
-const UserInfo = styled.div`
+const UserInfo = styled.div<{ $theme?: any }>`
   .user-name {
     font-weight: 500;
   }
   .user-email {
     font-size: 0.8rem;
-    color: ${props => props.theme?.text?.secondary || '#666'};
+    color: ${props =>
+      props.$theme?.colors?.text?.secondary ||
+      props.$theme?.text?.secondary ||
+      props.$theme?.colors?.text ||
+      'inherit'};
   }
 `;
 
-const LocationInfo = styled.div`
+const LocationInfo = styled.div<{ $theme?: any }>`
   .address {
     font-size: 0.9rem;
   }
   .precision {
     font-size: 0.8rem;
-    color: ${props => props.theme?.text?.secondary || '#666'};
+    color: ${props =>
+      props.$theme?.colors?.text?.secondary ||
+      props.$theme?.text?.secondary ||
+      props.$theme?.colors?.text ||
+      'inherit'};
   }
 `;
 
@@ -127,9 +174,13 @@ const WifiInfo = styled.span`
   font-size: 0.9rem;
 `;
 
-const DescriptionText = styled.p`
+const DescriptionText = styled.p<{ $theme?: any }>`
   margin-bottom: 1rem;
-  color: ${props => props.theme?.text?.secondary || '#666'};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
 const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
@@ -254,7 +305,7 @@ const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
       label: 'Tipo',
       width: '120px',
       render: (item: any) => (
-        <RecordType>{getTypeLabel((item as PendingRecord).tipo)}</RecordType>
+        <RecordType $theme={theme || themeColors}>{getTypeLabel((item as PendingRecord).tipo)}</RecordType>
       ),
     },
     {
@@ -268,7 +319,7 @@ const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
       label: 'Usuário',
       width: '200px',
       render: (item: any) => (
-        <UserInfo>
+        <UserInfo $theme={theme || themeColors}>
           <div className='user-name'>
             {(item as PendingRecord).usuario.nomeCompleto}
           </div>
@@ -283,7 +334,7 @@ const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
       label: 'Localização',
       width: '200px',
       render: (item: any) => (
-        <LocationInfo>
+        <LocationInfo $theme={theme || themeColors}>
           <div className='address'>
             {(item as PendingRecord).endereco || 'Não informado'}
           </div>
@@ -333,31 +384,23 @@ const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
     >
       <ModalContent>
         {loading ? (
-          <LoadingSpinner>
+          <LoadingSpinner $theme={theme || themeColors}>
             <AccessibleEmoji emoji='⏳' label='Carregando' />
             Carregando registros pendentes...
           </LoadingSpinner>
         ) : pendingRecords.length === 0 ? (
-          <EmptyState>
+          <EmptyState $theme={theme || themeColors}>
             <AccessibleEmoji emoji='✅' label='Concluído' />
             <p>Não há registros pendentes para aprovação.</p>
           </EmptyState>
         ) : (
           <>
-            <DescriptionText>
+            <DescriptionText $theme={theme || themeColors}>
               Registros que precisam de aprovação ou rejeição:
             </DescriptionText>
 
             <DataList
-              theme={
-                theme || {
-                  colors: {
-                    primary: '#29abe2',
-                    text: '#2c3e50',
-                    shadow: 'rgba(0, 0, 0, 0.1)',
-                  },
-                }
-              }
+              theme={theme || themeColors}
               items={pendingRecords}
               columns={columns}
               actions={actions}

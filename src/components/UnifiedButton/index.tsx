@@ -5,7 +5,13 @@ import { useGeolocationCapture } from '../../hooks/useGeolocationCapture';
 import { logger } from '../../utils/logger';
 
 // Styled Components
-const ButtonContainer = styled.button<{
+const ButtonContainer = styled.button.withConfig({
+  shouldForwardProp: (prop) => {
+    if (prop === 'className' || prop === 'children') return true;
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{
   $variant:
     | 'primary'
     | 'secondary'

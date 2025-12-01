@@ -1,0 +1,17 @@
+﻿
+  239:6  Warning: React Hook useCallback has a missing dependency: 'router.pathname'. Either include it or remove the 
+dependency array.  react-hooks/exhaustive-deps
+  
+  info  - Need to disable some ESLint rules? Learn more here: 
+https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+> Failed to compile.
+  System.Management.Automation.RemoteException
+  ./src/pages/diagnostico-geolocalizacao.tsx:361:7
+> Type error: Type '{ text: { primary: string; secondary: string; dark: string; medium: string; light: string; }; 
+background: { primary: string; secondary: string; }; border: { light: string; primary: string; }; navigation: { ...; 
+}; ... 10 more ...; info?: string | undefined; }' has no properties in common with type 'Theme'.
+  System.Management.Automation.RemoteException
+  [0m [90m 359 |[39m   [36mreturn[39m (
+   [90m 360 |[39m     [33m<[39m[33mPageContainer[39m
+
+

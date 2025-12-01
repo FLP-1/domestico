@@ -4,6 +4,7 @@ import { ReactNode, useState } from 'react';
 import styled from 'styled-components';
 import { ProfileProps } from '../types';
 import { UnifiedModal } from './unified';
+import { useTheme } from '../hooks/useTheme';
 
 type MenuItem = {
   label: string;
@@ -31,18 +32,32 @@ const Container = styled.div`
   overflow: hidden;
 `;
 
-const Sidebar = styled.nav<{ $collapsed: boolean }>`
+const Sidebar = styled.nav<{ $collapsed: boolean; $theme?: any }>`
   width: ${p => (p.$collapsed ? '60px' : '240px')};
-  background: #fff;
-  border-right: 1px solid #eee;
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
+    props.$theme?.background?.primary ||
+    props.$theme?.colors?.surface ||
+    props.$theme?.colors?.background ||
+    'transparent'};
+  border-right: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   display: flex;
   flex-direction: column;
   transition: width 0.3s ease;
 `;
 
-const SidebarHeader = styled.div<{ bg: string; $collapsed: boolean }>`
+const SidebarHeader = styled.div<{ bg: string; $collapsed: boolean; $theme?: any }>`
   background: ${p => p.bg};
-  color: #fff;
+  color: ${props =>
+    props.$theme?.colors?.text?.onPrimary ||
+    props.$theme?.text?.onPrimary ||
+    props.$theme?.colors?.text?.primary ||
+    'inherit'};
   padding: 1rem;
   display: flex;
   align-items: center;
@@ -61,17 +76,31 @@ const SidebarContent = styled.div`
   padding: 1rem 0;
 `;
 
-const MenuItem = styled.a<{ $active: boolean; $collapsed: boolean }>`
+const MenuItem = styled.a<{ $active: boolean; $collapsed: boolean; $theme?: any }>`
   display: flex;
   align-items: center;
   padding: 0.6rem 1rem;
-  color: ${p => (p.$active ? p.theme.colors.primary : '#333')};
+  color: ${p => {
+    if (p.$active) {
+      return p.$theme?.colors?.primary ||
+             p.$theme?.accent ||
+             'inherit';
+    }
+    return p.$theme?.colors?.text?.primary ||
+           p.$theme?.text?.primary ||
+           p.$theme?.colors?.text ||
+           'inherit';
+  }};
   text-decoration: none;
   font-size: 0.9rem;
   transition: all 0.2s ease;
 
   &:hover {
-    background: #f5f5f5;
+    background: ${props =>
+      props.$theme?.colors?.background?.secondary ||
+      props.$theme?.background?.secondary ||
+      props.$theme?.colors?.surface ||
+      'transparent'};
   }
 
   span.icon {
@@ -84,21 +113,34 @@ const MenuItem = styled.a<{ $active: boolean; $collapsed: boolean }>`
   }
 `;
 
-const ProfileSection = styled.div`
+const ProfileSection = styled.div<{ $theme?: any }>`
   padding: 0.75rem 1.5rem;
-  border-top: 1px solid #eee;
+  border-top: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
 
   .info {
     h1 {
       margin: 0;
       font-size: 1.25rem;
-      color: #333;
+      color: ${props =>
+        props.$theme?.colors?.text?.primary ||
+        props.$theme?.text?.primary ||
+        props.$theme?.colors?.text ||
+        'inherit'};
     }
 
     p {
       margin: 0;
       font-size: 0.9rem;
-      color: #666;
+      color: ${props =>
+        props.$theme?.colors?.text?.secondary ||
+        props.$theme?.text?.secondary ||
+        props.$theme?.colors?.text ||
+        'inherit'};
     }
   }
 
@@ -144,9 +186,19 @@ const MainContent = styled.main`
   overflow: hidden;
 `;
 
-const Header = styled.header`
-  background: #fff;
-  border-bottom: 1px solid #eee;
+const Header = styled.header<{ $theme?: any }>`
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
+    props.$theme?.background?.primary ||
+    props.$theme?.colors?.surface ||
+    props.$theme?.colors?.background ||
+    'transparent'};
+  border-bottom: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   padding: 1rem 2rem;
   display: flex;
   align-items: center;
@@ -155,7 +207,11 @@ const Header = styled.header`
   h1 {
     margin: 0;
     font-size: 1.5rem;
-    color: #333;
+    color: ${props =>
+      props.$theme?.colors?.text?.primary ||
+      props.$theme?.text?.primary ||
+      props.$theme?.colors?.text ||
+      'inherit'};
   }
 `;
 
@@ -165,27 +221,45 @@ const Content = styled.div`
   overflow-y: auto;
 `;
 
-const GroupTitle = styled.h3`
+const GroupTitle = styled.h3<{ $theme?: any }>`
   padding: 0.5rem 1rem;
   font-size: 0.8rem;
-  color: #666;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin: 0;
 `;
 
-const ProfileButton = styled.button<{ $backgroundColor: string }>`
+const ProfileButton = styled.button<{ $backgroundColor: string; $theme?: any }>`
   margin: 0.5rem;
   background-color: ${props => props.$backgroundColor};
   border: none;
   border-radius: 8px;
   padding: 0.75rem;
-  color: white;
+  color: ${props =>
+    props.$theme?.colors?.text?.onPrimary ||
+    props.$theme?.text?.onPrimary ||
+    props.$theme?.colors?.text?.primary ||
+    'inherit'};
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 500;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: ${props => {
+      const shadowColor = props.$theme?.colors?.shadow ||
+                         props.$theme?.shadow?.color;
+      if (shadowColor && shadowColor.startsWith('#')) {
+        const r = parseInt(shadowColor.slice(1, 3), 16);
+        const g = parseInt(shadowColor.slice(3, 5), 16);
+        const b = parseInt(shadowColor.slice(5, 7), 16);
+        return `0 4px 12px rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      return props.$theme?.shadows?.lg || 'none';
+    }};
   }
 `;
 
@@ -200,6 +274,8 @@ export default function Layout({
   const [collapsed, setCollapsed] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const router = useRouter();
+  const { colors } = useTheme();
+  const theme = { colors };
 
   const menuGroups: MenuGroup[] = [
     {
@@ -231,8 +307,8 @@ export default function Layout({
 
   return (
     <Container>
-      <Sidebar $collapsed={collapsed}>
-        <SidebarHeader bg={selectedProfile.color} $collapsed={collapsed}>
+      <Sidebar $collapsed={collapsed} $theme={theme}>
+        <SidebarHeader bg={selectedProfile.color} $collapsed={collapsed} $theme={theme}>
           <InfoDiv $collapsed={collapsed}>
             <h1>DOM</h1>
           </InfoDiv>
@@ -245,7 +321,7 @@ export default function Layout({
           {menuGroups.map((group: any, groupIndex: any) => (
             <div key={groupIndex}>
               <InfoDiv $collapsed={collapsed}>
-                <GroupTitle>{group.title}</GroupTitle>
+                <GroupTitle $theme={theme}>{group.title}</GroupTitle>
               </InfoDiv>
               {group.items.map((item: any, itemIndex: any) => (
                 <MenuItem
@@ -253,6 +329,7 @@ export default function Layout({
                   href={item.href}
                   $active={router.pathname === item.href}
                   $collapsed={collapsed}
+                  $theme={theme}
                 >
                   <MaterialIcon>{item.icon}</MaterialIcon>
                   <LabelSpan $collapsed={collapsed}>{item.label}</LabelSpan>
@@ -262,7 +339,7 @@ export default function Layout({
           ))}
         </SidebarContent>
 
-        <ProfileSection>
+        <ProfileSection $theme={theme}>
           <InfoDiv $collapsed={collapsed}>
             <div className='info'>
               <h1>{selectedProfile.nickname}</h1>
@@ -276,7 +353,7 @@ export default function Layout({
       </Sidebar>
 
       <MainContent>
-        <Header>
+        <Header $theme={theme}>
           <h1>{pageTitle}</h1>
           <p>{pageDescription}</p>
         </Header>
@@ -295,6 +372,7 @@ export default function Layout({
               key={profile.id}
               onClick={() => handleProfileSelect(profile.id)}
               $backgroundColor={profile.color}
+              $theme={theme}
             >
               {profile.nickname} - {profile.role}
             </ProfileButton>

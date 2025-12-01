@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { getThemeColor } from '../utils/themeHelpers';
 
 const Container = styled.div`
   padding: 20px;
@@ -10,18 +11,18 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  color: #333;
+  color: ${props => getThemeColor(props.theme, 'text.primary', 'inherit')};
   margin-bottom: 16px;
 `;
 
 const Description = styled.p`
-  color: #666;
+  color: ${props => getThemeColor(props.theme, 'text.secondary', 'inherit')};
   margin-bottom: 20px;
 `;
 
 const Button = styled.button`
-  background: #007bff;
-  color: white;
+  background: ${props => getThemeColor(props.theme, 'primary', 'transparent')};
+  color: ${props => getThemeColor(props.theme, 'text.onPrimary', 'inherit') || getThemeColor(props.theme, 'surface', 'inherit')};
   border: none;
   padding: 10px 20px;
   border-radius: 4px;
@@ -29,7 +30,16 @@ const Button = styled.button`
   font-size: 14px;
 
   &:hover {
-    background: #0056b3;
+    background: ${props => {
+      const primary = getThemeColor(props.theme, 'primary', 'transparent');
+      if (primary && primary.startsWith('#')) {
+        const r = parseInt(primary.slice(1, 3), 16);
+        const g = parseInt(primary.slice(3, 5), 16);
+        const b = parseInt(primary.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.8)`;
+      }
+      return primary || 'transparent';
+    }};
   }
 `;
 

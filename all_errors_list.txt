@@ -1,0 +1,1 @@
+﻿Type error: Type '{}' is missing the following properties from type 'WelcomeSectionProps': userAvatar, userName, userRole

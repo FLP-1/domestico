@@ -40,7 +40,7 @@ const dots = keyframes`
 `;
 
 // Spinner básico
-const SpinnerContainer = styled.div<{ $size: string; $color: string }>`
+const SpinnerContainer = styled.div<{ $size: string; $color: string; $theme?: any }>`
   ${props => {
     const getSizeStyles = () => {
       switch (props.$size) {
@@ -61,10 +61,22 @@ const SpinnerContainer = styled.div<{ $size: string; $color: string }>`
 
     const sizeStyles = getSizeStyles();
 
+    const bgColor = props.$theme?.colors?.background?.primary ||
+                    props.$theme?.background?.primary ||
+                    props.$theme?.colors?.surface ||
+                    props.$theme?.colors?.background;
+    let borderColor = 'transparent';
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      borderColor = `rgba(${r}, ${g}, ${b}, 0.3)`;
+    }
+
     return `
       width: ${sizeStyles.size};
       height: ${sizeStyles.size};
-      border: ${sizeStyles.border} solid rgba(255, 255, 255, 0.3);
+      border: ${sizeStyles.border} solid ${borderColor};
       border-top: ${sizeStyles.border} solid ${props.$color};
       border-radius: 50%;
       animation: ${spin} 1s linear infinite;
@@ -95,13 +107,25 @@ const LoadingOverlayStyled = styled.div<{ $isVisible: boolean; $theme?: any }>`
   ${props => {
     const themedStyles = createThemedStyles(props.$theme);
 
+    const bgColor = props.$theme?.colors?.background?.primary ||
+                    props.$theme?.background?.primary ||
+                    props.$theme?.colors?.surface ||
+                    props.$theme?.colors?.background;
+    let overlayBg = 'transparent';
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      overlayBg = `rgba(${r}, ${g}, ${b}, 0.9)`;
+    }
+
     return `
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(255, 255, 255, 0.9);
+      background: ${overlayBg};
       backdrop-filter: blur(4px);
       display: ${props.$isVisible ? 'flex' : 'none'};
       flex-direction: column;

@@ -27,59 +27,134 @@ const FormRow = styled.div`
   }
 `;
 
-const Label = styled.label`
+const Label = styled.label<{ $theme?: any }>`
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
   display: block;
 `;
 
-const InputStyled = styled(Input)<{ $hasError?: boolean }>`
+const InputStyled = styled(Input)<{ $hasError?: boolean; $theme?: any }>`
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid ${props => (props.$hasError ? '#e74c3c' : '#e9ecef')};
+  border: 2px solid ${props => {
+    if (props.$hasError) {
+      return props.$theme?.colors?.status?.error?.background ||
+             props.$theme?.status?.error?.background ||
+             props.$theme?.colors?.error ||
+             'transparent';
+    }
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
+    props.$theme?.background?.primary ||
+    props.$theme?.colors?.surface ||
+    'transparent'};
 
   &:focus {
     outline: none;
-    border-color: #29abe2;
-    box-shadow: 0 0 0 3px rgba(41, 171, 226, 0.1);
+    border-color: ${props =>
+      props.$theme?.colors?.primary ||
+      props.$theme?.accent ||
+      'transparent'};
+    box-shadow: 0 0 0 3px ${props => {
+      const primaryColor = props.$theme?.colors?.primary ||
+                           props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   }
 `;
 
-const SelectStyled = styled(Select).attrs<{ $hasError?: boolean }>(() => ({
+const SelectStyled = styled(Select).attrs<{ $hasError?: boolean; $theme?: any }>(() => ({
   'aria-label': 'Selecionar opção',
   title: 'Selecionar opção',
-}))<{ $hasError?: boolean }>`
+}))<{ $hasError?: boolean; $theme?: any }>`
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid ${props => (props.$hasError ? '#e74c3c' : '#e9ecef')};
+  border: 2px solid ${props => {
+    if (props.$hasError) {
+      return props.$theme?.colors?.status?.error?.background ||
+             props.$theme?.status?.error?.background ||
+             props.$theme?.colors?.error ||
+             'transparent';
+    }
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary ||
+                    props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.9)`;
+    }
+    return 'transparent';
+  }};
   cursor: pointer;
 
   &:focus {
     outline: none;
-    border-color: #29abe2;
-    box-shadow: 0 0 0 3px rgba(41, 171, 226, 0.1);
+    border-color: ${props =>
+      props.$theme?.colors?.primary ||
+      props.$theme?.accent ||
+      'transparent'};
+    box-shadow: 0 0 0 3px ${props => {
+      const primaryColor = props.$theme?.colors?.primary ||
+                           props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   }
 `;
 
-const ErrorMessage = styled.div`
-  color: #e74c3c;
+const ErrorMessage = styled.div<{ $theme?: any }>`
+  color: ${props =>
+    props.$theme?.colors?.status?.error?.text ||
+    props.$theme?.status?.error?.text ||
+    props.$theme?.colors?.error ||
+    'inherit'};
   font-size: 0.8rem;
   margin-top: 0.25rem;
   font-weight: 500;
 `;
 
-const HelpText = styled.div`
-  color: #7f8c8d;
+const HelpText = styled.div<{ $theme?: any }>`
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.8rem;
   margin-top: 0.25rem;
   font-style: italic;
@@ -92,19 +167,31 @@ const CheckboxContainer = styled.div`
   margin: 1rem 0;
 `;
 
-const CheckboxItem = styled.label`
+const CheckboxItem = styled.label<{ $theme?: any }>`
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
   padding: 1rem;
-  border: 1px solid #e9ecef;
+  border: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
 
   &:hover {
-    background: #f8f9fa;
-    border-color: #29abe2;
+    background: ${props =>
+      props.$theme?.colors?.background?.secondary ||
+      props.$theme?.background?.secondary ||
+      props.$theme?.colors?.background?.primary ||
+      'transparent'};
+    border-color: ${props =>
+      props.$theme?.colors?.primary ||
+      props.$theme?.accent ||
+      'transparent'};
   }
 
   input[type='checkbox'] {
@@ -117,15 +204,23 @@ const CheckboxContent = styled.div`
   flex: 1;
 `;
 
-const CheckboxLabel = styled.div`
+const CheckboxLabel = styled.div<{ $theme?: any }>`
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin-bottom: 0.25rem;
 `;
 
-const CheckboxDescription = styled.div`
+const CheckboxDescription = styled.div<{ $theme?: any }>`
   font-size: 0.8rem;
-  color: #7f8c8d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   line-height: 1.4;
 `;
 

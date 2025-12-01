@@ -72,7 +72,12 @@ const TimeRecordContainer = styled.div<{
   `}
 `;
 
-const TimeDisplay = styled.div<{ $theme?: any; $status: string }>`
+const TimeDisplay = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any; $status: string }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -201,7 +206,12 @@ const StatusIndicator = styled.div<{
   letter-spacing: 0.5px;
 `;
 
-const LocationInfo = styled.div<{ $theme?: any }>`
+const LocationInfo = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any }>`
   margin-top: 1rem;
   padding: 0.75rem;
   background: ${props => {
@@ -259,7 +269,12 @@ const LocationInfo = styled.div<{ $theme?: any }>`
   }
 `;
 
-const ObservationSection = styled.div<{ $theme?: any }>`
+const ObservationSection = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any }>`
   margin-top: 1rem;
   padding: 0.75rem;
   background: ${props => 
@@ -297,7 +312,12 @@ const ObservationSection = styled.div<{ $theme?: any }>`
   }
 `;
 
-const ApprovalBadge = styled.div<{ $theme?: any; $approved: boolean }>`
+const ApprovalBadge = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any; $approved: boolean }>`
   position: absolute;
   top: 1rem;
   left: 1rem;
@@ -349,6 +369,7 @@ export interface TimeRecordCardProps {
   record: TimeRecord;
   theme: any;
   onClick?: (locationData?: any) => Promise<void> | void;
+  onSelect?: () => void; // NOVO: Para selecionar registro e abrir comunicação contextual
   isDisabled?: boolean;
   // Propriedades para captura automática de geolocalização
   $criticalAction?: boolean;
@@ -395,6 +416,7 @@ export const TimeRecordCard: React.FC<TimeRecordCardProps> = memo(
     record,
     theme,
     onClick,
+    onSelect,
     isDisabled = false,
     $criticalAction = true, // Por padrão, registros de ponto são críticos
     $actionName,
@@ -472,7 +494,8 @@ export const TimeRecordCard: React.FC<TimeRecordCardProps> = memo(
           onClick();
         }
       } catch (error) {
-        logger.error(`❌ Erro em handleClick:`, error);
+        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+        logger.error(`❌ Erro em handleClick:`, errorMessage, error);
         throw error;
       } finally {
         isProcessingRef.current = false;
@@ -484,8 +507,6 @@ export const TimeRecordCard: React.FC<TimeRecordCardProps> = memo(
       actionName,
       createCriticalButtonHandler,
       captureLocation,
-      isDataRecent,
-      isDataAccurate,
     ]);
 
     return (

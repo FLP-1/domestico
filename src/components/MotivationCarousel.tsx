@@ -18,9 +18,13 @@ const StyledSwiper = styled(Swiper)`
   height: 100%;
 `;
 
-const MotivationText = styled.p`
+const MotivationText = styled.p<{ $theme?: any }>`
   font-size: 0.9rem;
-  color: #555;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   text-align: center;
   margin: 0;
   line-height: 1.4;

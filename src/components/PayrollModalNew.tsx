@@ -20,6 +20,7 @@ import {
   OptimizedRadioGroup,
   OptimizedPeriodGroup,
 } from '../components/shared/optimized-styles';
+import { ESOCIAL_STATUSES, type ESocialStatus } from '../constants/esocialStatuses';
 
 const FormRow = styled.div`
   display: grid;
@@ -360,7 +361,7 @@ interface PayrollData {
   descontos: number;
   adicionais: number;
   salarioLiquido: number;
-  status: 'PENDENTE' | 'PROCESSADO' | 'ENVIADO';
+  status: ESocialStatus;
 }
 
 interface PayrollModalProps {

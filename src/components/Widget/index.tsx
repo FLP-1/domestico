@@ -17,22 +17,66 @@ const WidgetContainer = styled.div<{
   $theme?: any;
   $clickable?: boolean;
 }>`
-  background: rgba(255, 255, 255, 0.95);
+  background: ${props => {
+    const surfaceColor = props.$theme?.colors?.surface ||
+                        props.$theme?.colors?.background?.primary ||
+                        props.$theme?.background?.primary ||
+                        'transparent';
+    // Adiciona opacidade à cor
+    if (surfaceColor && surfaceColor.startsWith('#')) {
+      const r = parseInt(surfaceColor.slice(1, 3), 16);
+      const g = parseInt(surfaceColor.slice(3, 5), 16);
+      const b = parseInt(surfaceColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.95)`;
+    }
+    if (surfaceColor && surfaceColor.startsWith('rgb')) {
+      return surfaceColor.replace(')', ', 0.95)').replace('rgb', 'rgba');
+    }
+    return 'transparent';
+  }};
   backdrop-filter: blur(20px);
   border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 4px 16px ${props => props.$theme.colors.shadow};
-  border: 1px solid ${props => props.$theme.colors.primary}20;
+  box-shadow: 0 4px 16px ${props => 
+    props.$theme?.colors?.shadow || 
+    props.$theme?.shadow ||
+    'transparent'};
+  border: 1px solid ${props => {
+    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+    if (!primaryColor) return 'transparent';
+    // Adiciona opacidade ao hex color (20 em hex = 0.125 em decimal)
+    if (primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.125)`;
+    }
+    if (primaryColor.startsWith('rgb')) {
+      return primaryColor.replace(')', ', 0.125)').replace('rgb', 'rgba');
+    }
+    return 'transparent';
+  }};
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   animation: ${fadeIn} 0.6s ease-out;
   cursor: ${props => (props.$clickable ? 'pointer' : 'default')};
 
   &:hover {
     transform: ${props => (props.$clickable ? 'translateY(-4px)' : 'none')};
-    box-shadow: ${props =>
-      props.$clickable
-        ? '0 8px 24px rgba(0, 0, 0, 0.15)'
-        : '0 4px 16px ' + props.$theme.colors.shadow};
+    box-shadow: ${props => {
+      if (props.$clickable) {
+        const shadowColor = props.$theme?.colors?.shadow ||
+                            props.$theme?.shadow?.color;
+        if (shadowColor && shadowColor.startsWith('#')) {
+          const r = parseInt(shadowColor.slice(1, 3), 16);
+          const g = parseInt(shadowColor.slice(3, 5), 16);
+          const b = parseInt(shadowColor.slice(5, 7), 16);
+          return `0 8px 24px rgba(${r}, ${g}, ${b}, 0.15)`;
+        }
+        return props.$theme?.shadows?.xl || 'none';
+      }
+      const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow || 'transparent';
+      return `0 4px 16px ${shadowColor}`;
+    }};
   }
 
   .header {
@@ -46,7 +90,12 @@ const WidgetContainer = styled.div<{
     font-family: 'Montserrat', sans-serif;
     font-size: 1.1rem;
     font-weight: 600;
-    color: #2c3e50;
+    color: ${props => 
+      props.$theme?.colors?.text?.dark || 
+      props.$theme?.text?.dark ||
+      props.$theme?.colors?.text?.primary ||
+      props.$theme?.colors?.text ||
+      'inherit'};
     margin: 0;
   }
 
@@ -69,7 +118,11 @@ const WidgetContainer = styled.div<{
   }
 
   .content {
-    color: #5a6c7d;
+    color: ${props => 
+      props.$theme?.colors?.text?.secondary || 
+      props.$theme?.text?.secondary ||
+      props.$theme?.colors?.text ||
+      'inherit'};
     line-height: 1.6;
   }
 
@@ -95,7 +148,11 @@ const WidgetContainer = styled.div<{
 
   .description {
     font-size: 0.9rem;
-    color: #7f8c8d;
+    color: ${props => 
+      props.$theme?.colors?.text?.secondary || 
+      props.$theme?.text?.secondary ||
+      props.$theme?.colors?.text ||
+      'inherit'};
     margin: 0;
   }
 `;

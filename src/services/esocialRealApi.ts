@@ -1,6 +1,5 @@
 // Serviço real de integração com a API do eSocial Doméstico
-import fs from 'fs';
-import path from 'path';
+// fs e path são importados dinamicamente apenas no servidor
 import axios, {
   AxiosInstance,
   InternalAxiosRequestConfig,
@@ -236,6 +235,11 @@ export class ESocialRealApiService {
       throw new Error('Senha do certificado eSocial não configurada.');
     }
 
+    if (typeof window !== 'undefined') {
+      throw new Error('Verificação de arquivo de certificado só é permitida no servidor.');
+    }
+
+    const fs = require('fs') as typeof import('fs');
     if (!fs.existsSync(resolvedPath)) {
       throw new Error(`Arquivo de certificado eSocial não encontrado em ${resolvedPath}`);
     }
@@ -277,6 +281,11 @@ export class ESocialRealApiService {
    * Resolve caminho do certificado considerando caminhos relativos
    */
   private resolveCertificatePath(configuredPath?: string): string {
+    if (typeof window !== 'undefined') {
+      throw new Error('Resolução de caminho de certificado só é permitida no servidor.');
+    }
+
+    const path = require('path') as typeof import('path');
     const pathFromConfig = configuredPath || ESOCIAL_CONFIG.certificate.path;
 
     if (!pathFromConfig || pathFromConfig.trim().length === 0) {

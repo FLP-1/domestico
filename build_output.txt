@@ -1,0 +1,76 @@
+﻿
+> dom-frontend@2.5.0 build
+> next build
+
+   Ôû▓ Next.js 15.5.4
+   - Environments: .env.local, .env
+   - Experiments (use with caution):
+     Ô£ô scrollRestoration
+
+   Linting and checking validity of types ...
+
+./src/components/ContextualChat/index.tsx
+216:6  Warning: React Hook useEffect has a missing dependency: 'carregarMensagens'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/components/TimeRecordCard/index.tsx
+482:8  Warning: React Hook useCallback has unnecessary dependencies: 'isDataAccurate' and 'isDataRecent'. Either exclude them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/hooks/useAsyncOperation.ts
+115:5  Warning: React Hook useCallback has a missing dependency: 'options'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/hooks/useFeatureFlag.ts
+93:6  Warning: React Hook useEffect has a missing dependency: 'keys'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+93:7  Warning: React Hook useEffect has a complex expression in the dependency array. Extract it to a separate variable so it can be statically checked.  react-hooks/exhaustive-deps
+
+./src/hooks/useI18n.ts
+17:6  Warning: React Hook useMemo has an unnecessary dependency: 'currentProfile'. Either exclude it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/pages/communication.tsx
+239:6  Warning: React Hook useCallback has a missing dependency: 'errorHandler'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/pages/diagnostico-geolocalizacao.tsx
+341:6  Warning: React Hook useCallback has a missing dependency: 'REAL_COORDINATES'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/pages/loan-management.tsx
+622:6  Warning: React Hook useEffect has a missing dependency: 'alertManager'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/pages/payroll-management.tsx
+816:6  Warning: React Hook useEffect has missing dependencies: 'errorHandler' and 'keys.ERROR.ERRO_CARREGAR_FUNCIONARIOS'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/pages/shopping-management.tsx
+407:6  Warning: React Hook useCallback has a missing dependency: 'errorHandler'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+486:6  Warning: React Hook useCallback has a missing dependency: 'errorHandler'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+530:6  Warning: React Hook useCallback has a missing dependency: 'errorHandler'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+557:6  Warning: React Hook useCallback has a missing dependency: 'errorHandler'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/pages/task-management.tsx
+645:6  Warning: React Hook React.useEffect has a missing dependency: 'loadTasks'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/pages/time-clock.tsx
+966:5  Warning: React Hook useCallback has missing dependencies: 'keys.ERROR.ERRO_REGISTRAR_PONTO', 'keys.ERROR.SESSAO_EXPIRADA', 'keys.SUCCESS.PONTO_REGISTRADO', 'showError', 'showSuccess', and 'showWarning'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/pages/_app.tsx
+239:6  Warning: React Hook useCallback has a missing dependency: 'router.pathname'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+node.exe : Failed to compile.
+No C:\Program Files\nodejs\npm.ps1:29 caractere:3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Failed to compile.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+./src/pages/communication.tsx:133:76
+Type error: Argument of type '"#FFFFFF"' is not assignable to parameter of type 'FallbackType | undefined'.
+
+[0m [90m 131 |[39m [36mconst[39m [33mChatModalContainer[39m [33m=[39m styled[33m.[39mdiv[33m<[39m{ 
+$theme[33m?[39m[33m:[39m [33mTheme[39m }[33m>[39m[32m`[39m
+ [90m 132 |[39m [32m  padding: ${getSpacing('md')};[39m
+[31m[1m>[22m[39m[90m 133 |[39m [32m  background: ${props => getThemeColor(props.$theme, 'background.primary', 
+tokens.colors.surface.primary)};[39m
+ [90m     |[39m                                                                            [31m[1m^[22m[39m
+ [90m 134 |[39m [32m`[39m[33m;[39m
+ [90m 135 |[39m
+ [90m 136 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mCommunication[39m() {[0m
+Next.js build worker exited with code: 1 and signal: null

@@ -19,17 +19,32 @@ const ModalContent = styled.div`
   padding: 1rem 0;
 `;
 
-const InfoBox = styled.div`
-  background: ${props => props.theme?.background?.secondary || '#f8f9fa'};
-  border: 1px solid ${props => props.theme?.border?.secondary || '#e9ecef'};
+const InfoBox = styled.div<{ $theme?: any }>`
+  background: ${props =>
+    props.$theme?.colors?.background?.secondary ||
+    props.$theme?.background?.secondary ||
+    props.$theme?.colors?.background?.primary ||
+    'transparent'};
+  border: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.secondary) ||
+           props.$theme?.border?.secondary ||
+           (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
 `;
 
-const InfoText = styled.p`
+const InfoText = styled.p<{ $theme?: any }>`
   margin: 0;
-  color: ${props => props.theme?.text?.secondary || '#6c757d'};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
   line-height: 1.4;
 `;
@@ -72,8 +87,8 @@ const WiFiConfigurationModal: React.FC<WiFiConfigurationModalProps> = ({
       title='Configurar Nome da Rede WiFi'
     >
       <ModalContent>
-        <InfoBox>
-          <InfoText>
+        <InfoBox $theme={themeColors}>
+          <InfoText $theme={themeColors}>
             <AccessibleEmoji emoji='ℹ️' label='Informação' />
             <strong> Nota:</strong> Navegadores web têm limitações de segurança
             para detectar automaticamente o nome da rede WiFi. Você pode
@@ -83,8 +98,8 @@ const WiFiConfigurationModal: React.FC<WiFiConfigurationModalProps> = ({
         </InfoBox>
 
         {wifiConfig.isConfigured && (
-          <InfoBox>
-            <InfoText>
+          <InfoBox $theme={themeColors}>
+            <InfoText $theme={themeColors}>
               <AccessibleEmoji emoji='✅' label='Configurado' />
               <strong> Rede configurada:</strong> {wifiConfig.networkName}
             </InfoText>

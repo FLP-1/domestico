@@ -7,8 +7,8 @@ import { useUserGroup } from '../contexts/UserGroupContext';
  * Hook para usar feature flags em componentes React
  */
 export function useFeatureFlag(key: string): boolean {
-  const { currentProfile, currentUser } = useUserProfile();
-  const { selectedGroup } = useUserGroup();
+  const { currentProfile } = useUserProfile();
+  const { currentGroup } = useUserGroup();
   const [enabled, setEnabled] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -18,9 +18,9 @@ export function useFeatureFlag(key: string): boolean {
     async function checkFeature() {
       try {
         const isEnabled = await isFeatureEnabled(key, {
-          userId: currentUser?.id,
+          userId: currentProfile?.id,
           profileId: currentProfile?.id,
-          groupId: selectedGroup?.id,
+          groupId: currentGroup?.id,
         });
 
         if (mounted) {
@@ -41,7 +41,7 @@ export function useFeatureFlag(key: string): boolean {
     return () => {
       mounted = false;
     };
-  }, [key, currentUser?.id, currentProfile?.id, selectedGroup?.id]);
+  }, [key, currentProfile?.id, currentGroup?.id]);
 
   return enabled;
 }
@@ -50,8 +50,8 @@ export function useFeatureFlag(key: string): boolean {
  * Hook para obter múltiplas feature flags
  */
 export function useFeatureFlags(keys: string[]): Record<string, boolean> {
-  const { currentProfile, currentUser } = useUserProfile();
-  const { selectedGroup } = useUserGroup();
+  const { currentProfile } = useUserProfile();
+  const { currentGroup } = useUserGroup();
   const [flags, setFlags] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -61,9 +61,9 @@ export function useFeatureFlags(keys: string[]): Record<string, boolean> {
     async function loadFlags() {
       try {
         const allFlags = await getAllFeatureFlags({
-          userId: currentUser?.id,
+          userId: currentProfile?.id,
           profileId: currentProfile?.id,
-          groupId: selectedGroup?.id,
+          groupId: currentGroup?.id,
         });
 
         // Filtrar apenas as keys solicitadas
@@ -90,7 +90,7 @@ export function useFeatureFlags(keys: string[]): Record<string, boolean> {
     return () => {
       mounted = false;
     };
-  }, [keys.join(','), currentUser?.id, currentProfile?.id, selectedGroup?.id]);
+  }, [keys, currentProfile?.id, currentGroup?.id]);
 
   return flags;
 }

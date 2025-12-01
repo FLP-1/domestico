@@ -63,7 +63,7 @@ const DEFAULT_FEATURE_FLAGS: FeatureFlagConfig[] = [
 ];
 
 // Cache em memória para performance
-let featureFlagsCache: Map<string, FeatureFlag> = new Map();
+const featureFlagsCache: Map<string, FeatureFlag> = new Map();
 let cacheExpiry: number = 0;
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
 
@@ -79,22 +79,11 @@ async function getFeatureFlagFromDB(
   try {
     const prisma = (await import('./prisma')).default;
 
-    // Buscar flag específica (user > profile > group > global)
+    // Buscar flag pela chave (simplificado - sem filtros por usuário/perfil/grupo)
     const flag = await prisma.configuracaoSistema.findFirst({
       where: {
         chave: `feature_flag_${key}`,
-        OR: [
-          { usuarioId: userId || null },
-          { perfilId: profileId || null },
-          { grupoId: groupId || null },
-          { usuarioId: null, perfilId: null, grupoId: null }, // Global
-        ],
       },
-      orderBy: [
-        { usuarioId: 'desc' }, // Prioridade: user > profile > group > global
-        { perfilId: 'desc' },
-        { grupoId: 'desc' },
-      ],
     });
 
     if (!flag) {
@@ -105,12 +94,12 @@ async function getFeatureFlagFromDB(
       key,
       enabled: flag.valor === 'true' || flag.valor === '1',
       description: flag.descricao || undefined,
-      scope: (flag.usuarioId ? 'user' : flag.perfilId ? 'profile' : flag.grupoId ? 'group' : 'global') as FeatureFlagScope,
-      targetId: flag.usuarioId || flag.perfilId || flag.grupoId || undefined,
-      metadata: flag.metadata ? JSON.parse(flag.metadata as string) : undefined,
+      scope: 'global' as FeatureFlagScope,
+      targetId: undefined,
+      metadata: undefined,
     };
   } catch (error) {
-    console.error('Erro ao buscar feature flag do banco:', error);
+    // console.error('Erro ao buscar feature flag do banco:', error);
     return null;
   }
 }
@@ -182,9 +171,6 @@ export async function setFeatureFlag(
     const existing = await prisma.configuracaoSistema.findFirst({
       where: {
         chave,
-        usuarioId: userId || null,
-        perfilId: profileId || null,
-        grupoId: groupId || null,
       },
     });
 
@@ -195,7 +181,8 @@ export async function setFeatureFlag(
         data: {
           valor,
           descricao: description,
-          metadata: metadata ? JSON.stringify(metadata) : null,
+          tipo: 'feature_flag',
+          categoria: 'feature_flags',
           atualizadoEm: new Date(),
         },
       });
@@ -206,10 +193,8 @@ export async function setFeatureFlag(
           chave,
           valor,
           descricao: description,
-          metadata: metadata ? JSON.stringify(metadata) : null,
-          usuarioId: userId || null,
-          perfilId: profileId || null,
-          grupoId: groupId || null,
+          tipo: 'feature_flag',
+          categoria: 'feature_flags',
         },
       });
     }
@@ -217,7 +202,7 @@ export async function setFeatureFlag(
     // Limpar cache
     featureFlagsCache.clear();
   } catch (error) {
-    console.error('Erro ao definir feature flag:', error);
+    // console.error('Erro ao definir feature flag:', error);
     throw error;
   }
 }
@@ -266,9 +251,6 @@ export async function initializeDefaultFeatureFlags(): Promise<void> {
       const existing = await prisma.configuracaoSistema.findFirst({
         where: {
           chave,
-          usuarioId: null,
-          perfilId: null,
-          grupoId: null, // Apenas globais
         },
       });
 
@@ -278,15 +260,14 @@ export async function initializeDefaultFeatureFlags(): Promise<void> {
             chave,
             valor: (config.defaultValue ?? false) ? 'true' : 'false',
             descricao: config.description,
-            usuarioId: null,
-            perfilId: null,
-            grupoId: null,
+            tipo: 'feature_flag',
+            categoria: 'feature_flags',
           },
         });
       }
     }
   } catch (error) {
-    console.error('Erro ao inicializar feature flags padrão:', error);
+    // console.error('Erro ao inicializar feature flags padrão:', error);
   }
 }
 

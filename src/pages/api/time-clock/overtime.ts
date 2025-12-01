@@ -171,7 +171,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         dataHora: dataHora ? new Date(dataHora) : new Date(),
         observacao: observacao || '',
         justificativa: justificativa || '',
-        status: 'PENDENTE',
+        status: 'PENDENTE', // Usar OVERTIME_REQUEST_STATUSES quando modelo existir
       };
 
       res.status(201).json({

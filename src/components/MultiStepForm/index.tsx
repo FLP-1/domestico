@@ -95,13 +95,19 @@ const StepCircle = styled.div<{
       if (props.$completed) {
         return {
           background: themedStyles.success,
-          color: '#FFFFFF',
+          color: props.$theme?.colors?.text?.onPrimary ||
+                 props.$theme?.text?.onPrimary ||
+                 props.$theme?.colors?.surface ||
+                 'inherit',
           border: `2px solid ${themedStyles.success}`,
         };
       } else if (props.$active) {
         return {
           background: themedStyles.primary,
-          color: '#FFFFFF',
+          color: props.$theme?.colors?.text?.onPrimary ||
+                 props.$theme?.text?.onPrimary ||
+                 props.$theme?.colors?.surface ||
+                 'inherit',
           border: `2px solid ${themedStyles.primary}`,
         };
       } else {

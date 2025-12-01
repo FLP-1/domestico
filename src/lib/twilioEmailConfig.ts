@@ -35,10 +35,27 @@ export const configureTwilioEmail = () => {
 };
 
 // Template de email para Twilio SendGrid
+// ⚠️ EXCEÇÃO: Templates HTML de email requerem cores hardcoded porque são renderizados
+// em clientes de email que não suportam CSS moderno, temas dinâmicos ou JavaScript.
+// Usamos variáveis de ambiente quando disponíveis, com fallback para cores padrão.
 export const createTwilioEmailTemplate = (
   codigo: string,
   tipo: 'email' | 'telefone'
 ) => {
+  // Usar variáveis de ambiente quando disponíveis, fallback para cores padrão
+  const primaryColor = process.env.NEXT_PUBLIC_EMAIL_PRIMARY_COLOR || '#29abe2';
+  const primaryDarkColor = process.env.NEXT_PUBLIC_EMAIL_PRIMARY_DARK_COLOR || '#1e8bc3';
+  const backgroundColor = process.env.NEXT_PUBLIC_EMAIL_BACKGROUND_COLOR || '#f4f4f4';
+  const textColor = process.env.NEXT_PUBLIC_EMAIL_TEXT_COLOR || '#333';
+  const textSecondaryColor = process.env.NEXT_PUBLIC_EMAIL_TEXT_SECONDARY_COLOR || '#666';
+  const footerBgColor = process.env.NEXT_PUBLIC_EMAIL_FOOTER_BG_COLOR || '#2c3e50';
+  const warningBgColor = process.env.NEXT_PUBLIC_EMAIL_WARNING_BG_COLOR || '#fff3cd';
+  const warningBorderColor = process.env.NEXT_PUBLIC_EMAIL_WARNING_BORDER_COLOR || '#ffeaa7';
+  const warningTextColor = process.env.NEXT_PUBLIC_EMAIL_WARNING_TEXT_COLOR || '#856404';
+  const successBgColor = process.env.NEXT_PUBLIC_EMAIL_SUCCESS_BG_COLOR || '#d4edda';
+  const successBorderColor = process.env.NEXT_PUBLIC_EMAIL_SUCCESS_BORDER_COLOR || '#c3e6cb';
+  const successTextColor = process.env.NEXT_PUBLIC_EMAIL_SUCCESS_TEXT_COLOR || '#155724';
+
   return {
     to: '', // Será definido na chamada
     from: {
@@ -54,23 +71,23 @@ export const createTwilioEmailTemplate = (
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Validação de ${tipo === 'email' ? 'Email' : 'Telefone'}</title>
         <style>
-          body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+          body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: ${backgroundColor}; }
           .container { max-width: 600px; margin: 0 auto; background-color: white; }
-          .header { background: linear-gradient(135deg, #29abe2, #1e8bc3); color: white; padding: 30px; text-align: center; }
+          .header { background: linear-gradient(135deg, ${primaryColor}, ${primaryDarkColor}); color: white; padding: 30px; text-align: center; }
           .header-title { margin: 0; font-size: 28px; }
           .header-subtitle { margin: 10px 0 0 0; font-size: 16px; opacity: 0.9; }
           .content { padding: 40px 30px; }
-          .content-message { font-size: 18px; color: #333; margin-bottom: 20px; }
-          .code-box { background: #f8f9fa; border: 3px solid #29abe2; border-radius: 12px; padding: 30px; text-align: center; margin: 30px 0; }
-          .code-label { margin: 0 0 15px 0; color: #666; font-size: 16px; }
-          .code { font-size: 36px; font-weight: bold; color: #29abe2; letter-spacing: 8px; font-family: 'Courier New', monospace; margin: 20px 0; }
-          .code-instruction { margin: 15px 0 0 0; color: #666; font-size: 14px; }
-          .footer { background: #2c3e50; color: white; padding: 20px; text-align: center; font-size: 12px; }
+          .content-message { font-size: 18px; color: ${textColor}; margin-bottom: 20px; }
+          .code-box { background: #f8f9fa; border: 3px solid ${primaryColor}; border-radius: 12px; padding: 30px; text-align: center; margin: 30px 0; }
+          .code-label { margin: 0 0 15px 0; color: ${textSecondaryColor}; font-size: 16px; }
+          .code { font-size: 36px; font-weight: bold; color: ${primaryColor}; letter-spacing: 8px; font-family: 'Courier New', monospace; margin: 20px 0; }
+          .code-instruction { margin: 15px 0 0 0; color: ${textSecondaryColor}; font-size: 14px; }
+          .footer { background: ${footerBgColor}; color: white; padding: 20px; text-align: center; font-size: 12px; }
           .footer-text { margin: 0; }
           .footer-disclaimer { margin: 5px 0 0 0; opacity: 0.7; }
-          .support-text { font-size: 14px; color: #666; margin-top: 30px; }
-          .warning { background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 15px; border-radius: 8px; margin: 20px 0; }
-          .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 8px; margin: 20px 0; }
+          .support-text { font-size: 14px; color: ${textSecondaryColor}; margin-top: 30px; }
+          .warning { background: ${warningBgColor}; border: 1px solid ${warningBorderColor}; color: ${warningTextColor}; padding: 15px; border-radius: 8px; margin: 20px 0; }
+          .success { background: ${successBgColor}; border: 1px solid ${successBorderColor}; color: ${successTextColor}; padding: 15px; border-radius: 8px; margin: 20px 0; }
         </style>
       </head>
       <body>

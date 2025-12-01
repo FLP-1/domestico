@@ -371,7 +371,7 @@ export const OptimizedButtonGroup = styled(BaseFlexContainer)`
 `;
 
 // LoadingOverlay otimizado
-export const OptimizedLoadingOverlay = styled.div<{ $isLoading: boolean }>`
+export const OptimizedLoadingOverlay = styled.div<{ $isLoading: boolean; $theme?: any }>`
   position: relative;
 
   &::after {
@@ -381,7 +381,17 @@ export const OptimizedLoadingOverlay = styled.div<{ $isLoading: boolean }>`
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.8);
+    background: ${props => {
+      const bgColor = props.$theme?.colors?.background?.primary ||
+                      props.$theme?.background?.primary;
+      if (bgColor && bgColor.startsWith('#')) {
+        const r = parseInt(bgColor.slice(1, 3), 16);
+        const g = parseInt(bgColor.slice(3, 5), 16);
+        const b = parseInt(bgColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.8)`;
+      }
+      return 'transparent';
+    }};
     display: ${props => (props.$isLoading ? 'flex' : 'none')};
     align-items: center;
     justify-content: center;

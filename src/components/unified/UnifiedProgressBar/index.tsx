@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import type { Theme } from '../../../types/theme';
-import { defaultColors, addOpacity } from '../../../utils/themeHelpers';
+// Removido import de defaultColors e addOpacity - usando apenas tema
 
 export interface UnifiedProgressBarProps {
   /**
@@ -75,7 +75,24 @@ const ProgressBarContainer = styled.div<{
     if (surface && typeof surface === 'object' && 'secondary' in surface) {
       return (surface as any).secondary;
     }
-    return props.$theme?.colors?.border || addOpacity(defaultColors.border, 0.2);
+    const border = props.$theme?.colors?.border;
+    if (border && typeof border === 'object' && 'light' in border) {
+      const borderColor = (border as any).light;
+      if (borderColor && borderColor.startsWith('#')) {
+        const r = parseInt(borderColor.slice(1, 3), 16);
+        const g = parseInt(borderColor.slice(3, 5), 16);
+        const b = parseInt(borderColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      return borderColor;
+    }
+    if (border && typeof border === 'string' && border.startsWith('#')) {
+      const r = parseInt(border.slice(1, 3), 16);
+      const g = parseInt(border.slice(3, 5), 16);
+      const b = parseInt(border.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.2)`;
+    }
+    return 'transparent';
   }};
   border-radius: 9999px;
   overflow: hidden;
@@ -109,11 +126,21 @@ const ProgressFill = styled.div<{
 
     // Variantes baseadas em status
     const variantColors = {
-      primary: props.$theme?.colors?.primary || defaultColors.primary,
-      success: props.$theme?.colors?.success || defaultColors.success,
-      warning: props.$theme?.colors?.warning || defaultColors.warning,
-      error: props.$theme?.colors?.error || defaultColors.error,
-      info: props.$theme?.colors?.info || defaultColors.info,
+      primary: props.$theme?.colors?.primary ||
+               (props.$theme as any)?.accent ||
+               'transparent',
+      success: props.$theme?.colors?.success ||
+               (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'background' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).background) : null) ||
+               'transparent',
+      warning: props.$theme?.colors?.warning ||
+               (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'background' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).background) : null) ||
+               'transparent',
+      error: props.$theme?.colors?.error ||
+             (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'background' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).background) : null) ||
+             'transparent',
+      info: props.$theme?.colors?.info ||
+            (typeof props.$theme?.colors?.status?.info === 'object' && props.$theme?.colors?.status?.info && 'background' in props.$theme.colors.status.info ? String((props.$theme.colors.status.info as any).background) : null) ||
+            'transparent',
     };
 
     const color = variantColors[props.$variant || 'primary'];
@@ -145,7 +172,12 @@ const ProgressLabel = styled.div<{
   }};
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+    if (text && typeof text === 'object' && 'secondary' in text) {
+      return (text as any).secondary;
+    }
+    return (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'secondary' in (props.$theme as any).text ? String((props.$theme as any).text.secondary) : null) ||
+           props.$theme?.colors?.text ||
+           'inherit';
   }};
   text-align: right;
   font-weight: 500;

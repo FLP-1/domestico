@@ -25,13 +25,45 @@ interface PendingRecordsListProps {
 }
 
 const ListContainer = styled.div<{ $theme?: any }>`
-  background: rgba(255, 255, 255, 0.95);
+  background: ${props => {
+    const bg = props.$theme?.colors?.background?.primary ||
+                props.$theme?.background?.primary ||
+                props.$theme?.colors?.surface ||
+                props.$theme?.colors?.background;
+    if (bg && bg.startsWith('#')) {
+      const r = parseInt(bg.slice(1, 3), 16);
+      const g = parseInt(bg.slice(3, 5), 16);
+      const b = parseInt(bg.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.95)`;
+    }
+    return 'transparent';
+  }};
   backdrop-filter: blur(20px);
   border-radius: 16px;
   padding: 1.5rem;
   margin-bottom: 2rem;
-  box-shadow: 0 4px 16px ${props => props.$theme.colors.shadow};
-  border: 1px solid ${props => props.$theme.colors.primary}20;
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 4px 16px rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return props.$theme?.shadows?.md || 'none';
+  }};
+  border: 1px solid ${props => {
+    const primaryColor = props.$theme?.colors?.primary ||
+                         props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.2)`;
+    }
+    return 'transparent';
+  }};
 `;
 
 const ListHeader = styled.div<{ $theme?: any }>`
@@ -40,12 +72,24 @@ const ListHeader = styled.div<{ $theme?: any }>`
   justify-content: space-between;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid ${props => props.theme?.border?.muted || '#e0e0e0'};
+  border-bottom: 2px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.muted) ||
+           props.$theme?.border?.muted ||
+           (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
 `;
 
 const ListTitle = styled.h3<{ $theme?: any }>`
   margin: 0;
-  color: ${props => props.theme?.text?.dark || '#2c3e50'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 1.3rem;
   font-weight: 600;
   display: flex;
@@ -54,8 +98,18 @@ const ListTitle = styled.h3<{ $theme?: any }>`
 `;
 
 const RefreshButton = styled.button<{ $theme?: any }>`
-  background: ${props => props.theme?.navigation?.primary || '#29ABE2'};
-  color: white;
+  background: ${props =>
+    props.$theme?.colors?.navigation?.primary ||
+    props.$theme?.navigation?.primary ||
+    props.$theme?.colors?.primary ||
+    props.$theme?.accent ||
+    'transparent'};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    props.$theme?.colors?.surface ||
+    'inherit'};
   border: none;
   border-radius: 8px;
   padding: 0.5rem 1rem;
@@ -64,23 +118,46 @@ const RefreshButton = styled.button<{ $theme?: any }>`
   transition: all 0.3s ease;
 
   &:hover {
-    background: ${props => props.theme?.navigation?.primary || '#1e8bb8'};
+    background: ${props =>
+      props.$theme?.colors?.navigation?.primary ||
+      props.$theme?.navigation?.primary ||
+      props.$theme?.colors?.primary ||
+      props.$theme?.accent ||
+      'transparent'};
     transform: translateY(-1px);
   }
 `;
 
 const RecordItem = styled.div<{ $theme?: any }>`
-  background: ${props => props.theme?.background?.secondary || '#f8f9fa'};
+  background: ${props =>
+    props.$theme?.colors?.background?.secondary ||
+    props.$theme?.background?.secondary ||
+    props.$theme?.colors?.background?.primary ||
+    'transparent'};
   border-radius: 12px;
   padding: 1rem;
   margin-bottom: 1rem;
   border-left: 4px solid
-    ${props => props.theme?.status?.warning?.color || '#ffc107'};
+    ${props =>
+      props.$theme?.colors?.status?.warning?.background ||
+      props.$theme?.status?.warning?.background ||
+      props.$theme?.colors?.warning ||
+      'transparent'};
   transition: all 0.3s ease;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: ${props => {
+      const shadowColor = props.$theme?.colors?.shadow ||
+                          props.$theme?.shadow?.color;
+      if (shadowColor && shadowColor.startsWith('#')) {
+        const r = parseInt(shadowColor.slice(1, 3), 16);
+        const g = parseInt(shadowColor.slice(3, 5), 16);
+        const b = parseInt(shadowColor.slice(5, 7), 16);
+        return `0 4px 12px rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return props.$theme?.shadows?.sm || 'none';
+    }};
   }
 `;
 
@@ -93,14 +170,23 @@ const RecordHeader = styled.div<{ $theme?: any }>`
 
 const RecordType = styled.div<{ $theme?: any }>`
   font-weight: 600;
-  color: ${props => props.theme?.text?.dark || '#2c3e50'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   display: flex;
   align-items: center;
   gap: 0.5rem;
 `;
 
 const RecordTime = styled.div<{ $theme?: any }>`
-  color: ${props => props.theme?.text?.secondary || '#666'};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
 `;
 
@@ -124,19 +210,31 @@ const RecordActions = styled.div<{ $theme?: any }>`
 
 const RecordDescription = styled.p<{ $theme?: any }>`
   margin-bottom: 1rem;
-  color: ${props => props.theme?.text?.secondary || '#666'};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
 const EmptyState = styled.div<{ $theme?: any }>`
   text-align: center;
   padding: 2rem;
-  color: ${props => props.theme?.text?.secondary || '#666'};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
 const LoadingState = styled.div<{ $theme?: any }>`
   text-align: center;
   padding: 2rem;
-  color: ${props => props.theme?.text?.secondary || '#666'};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -146,10 +244,36 @@ const LoadingState = styled.div<{ $theme?: any }>`
 const ErrorState = styled.div<{ $theme?: any }>`
   text-align: center;
   padding: 2rem;
-  color: #e74c3c;
-  background: #fdf2f2;
+  color: ${props =>
+    props.$theme?.colors?.status?.error?.text ||
+    props.$theme?.status?.error?.text ||
+    props.$theme?.colors?.error ||
+    'inherit'};
+  background: ${props => {
+    const errorColor = props.$theme?.colors?.status?.error?.background ||
+                        props.$theme?.status?.error?.background ||
+                        props.$theme?.colors?.error;
+    if (errorColor && errorColor.startsWith('#')) {
+      const r = parseInt(errorColor.slice(1, 3), 16);
+      const g = parseInt(errorColor.slice(3, 5), 16);
+      const b = parseInt(errorColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return 'transparent';
+  }};
   border-radius: 8px;
-  border: 1px solid #fecaca;
+  border: 1px solid ${props => {
+    const errorColor = props.$theme?.colors?.status?.error?.background ||
+                        props.$theme?.status?.error?.background ||
+                        props.$theme?.colors?.error;
+    if (errorColor && errorColor.startsWith('#')) {
+      const r = parseInt(errorColor.slice(1, 3), 16);
+      const g = parseInt(errorColor.slice(3, 5), 16);
+      const b = parseInt(errorColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.3)`;
+    }
+    return 'transparent';
+  }};
 `;
 
 const PendingRecordsList: React.FC<PendingRecordsListProps> = ({ theme }) => {
@@ -244,7 +368,7 @@ const PendingRecordsList: React.FC<PendingRecordsListProps> = ({ theme }) => {
   if (loading) {
     return (
       <ListContainer $theme={theme}>
-        <LoadingState>
+        <LoadingState $theme={theme}>
           <AccessibleEmoji emoji='⏳' label='Carregando' />
           Carregando registros pendentes...
         </LoadingState>
@@ -255,11 +379,11 @@ const PendingRecordsList: React.FC<PendingRecordsListProps> = ({ theme }) => {
   if (error) {
     return (
       <ListContainer $theme={theme}>
-        <ErrorState>
+        <ErrorState $theme={theme}>
           <AccessibleEmoji emoji='❌' label='Erro' />
           {error}
           <br />
-          <RefreshButton onClick={loadPendingRecords}>
+          <RefreshButton $theme={theme} onClick={loadPendingRecords}>
             Tentar Novamente
           </RefreshButton>
         </ErrorState>
@@ -269,36 +393,36 @@ const PendingRecordsList: React.FC<PendingRecordsListProps> = ({ theme }) => {
 
   return (
     <ListContainer $theme={theme}>
-      <ListHeader>
-        <ListTitle>
+      <ListHeader $theme={theme}>
+        <ListTitle $theme={theme}>
           <AccessibleEmoji emoji='🕒' label='Pendências' />
           Registros Pendentes ({pendingRecords.length})
         </ListTitle>
-        <RefreshButton onClick={loadPendingRecords}>
+        <RefreshButton $theme={theme} onClick={loadPendingRecords}>
           <AccessibleEmoji emoji='🔄' label='Atualizar' />
           Atualizar
         </RefreshButton>
       </ListHeader>
 
       {pendingRecords.length === 0 ? (
-        <EmptyState>
+        <EmptyState $theme={theme}>
           <AccessibleEmoji emoji='✅' label='Concluído' />
           <p>Não há registros pendentes para aprovação.</p>
         </EmptyState>
       ) : (
         <>
-          <RecordDescription>
+          <RecordDescription $theme={theme}>
             Registros que precisam de aprovação ou rejeição:
           </RecordDescription>
 
           {pendingRecords.map((record: any) => (
-            <RecordItem key={record.id}>
+            <RecordItem key={record.id} $theme={theme}>
               <RecordHeader>
-                <RecordType>
+                <RecordType $theme={theme}>
                   <AccessibleEmoji emoji='📍' label='Registro' />
                   {getTypeLabel(record.tipo)}
                 </RecordType>
-                <RecordTime>{formatTime(record.dataHora)}</RecordTime>
+                <RecordTime $theme={theme}>{formatTime(record.dataHora)}</RecordTime>
               </RecordHeader>
 
               <RecordDetails>

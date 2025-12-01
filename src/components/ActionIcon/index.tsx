@@ -19,53 +19,98 @@ interface ActionIconProps {
   title?: string;
   children?: React.ReactNode;
   className?: string;
+  $theme?: any;
 }
 
-const getVariantStyles = (variant: ActionIconProps['variant']) => {
+const getVariantStyles = (variant: ActionIconProps['variant'], theme?: any) => {
+  const getThemeColor = (colorPath: string[], fallback: string) => {
+    let value = theme;
+    for (const key of colorPath) {
+      value = value?.[key];
+    }
+    return value || fallback;
+  };
+
   const variants = {
     approve: {
-      backgroundColor: '#28a745',
-      hoverColor: '#218838',
+      backgroundColor: getThemeColor(['colors', 'status', 'success', 'background'], 'transparent') ||
+                      getThemeColor(['colors', 'success'], 'transparent') ||
+                      'transparent',
+      hoverColor: getThemeColor(['colors', 'status', 'success', 'background'], 'transparent') ||
+                  getThemeColor(['colors', 'success'], 'transparent') ||
+                  'transparent',
       icon: '✅',
     },
     reject: {
-      backgroundColor: '#dc3545',
-      hoverColor: '#c82333',
+      backgroundColor: getThemeColor(['colors', 'status', 'error', 'background'], 'transparent') ||
+                      getThemeColor(['colors', 'error'], 'transparent') ||
+                      'transparent',
+      hoverColor: getThemeColor(['colors', 'status', 'error', 'background'], 'transparent') ||
+                  getThemeColor(['colors', 'error'], 'transparent') ||
+                  'transparent',
       icon: '❌',
     },
     edit: {
-      backgroundColor: '#17a2b8',
-      hoverColor: '#138496',
+      backgroundColor: getThemeColor(['colors', 'status', 'info', 'background'], 'transparent') ||
+                      getThemeColor(['colors', 'info'], 'transparent') ||
+                      'transparent',
+      hoverColor: getThemeColor(['colors', 'status', 'info', 'background'], 'transparent') ||
+                  getThemeColor(['colors', 'info'], 'transparent') ||
+                  'transparent',
       icon: '✏️',
     },
     delete: {
-      backgroundColor: '#dc3545',
-      hoverColor: '#c82333',
+      backgroundColor: getThemeColor(['colors', 'status', 'error', 'background'], 'transparent') ||
+                      getThemeColor(['colors', 'error'], 'transparent') ||
+                      'transparent',
+      hoverColor: getThemeColor(['colors', 'status', 'error', 'background'], 'transparent') ||
+                  getThemeColor(['colors', 'error'], 'transparent') ||
+                  'transparent',
       icon: '🗑️',
     },
     view: {
-      backgroundColor: '#6c757d',
-      hoverColor: '#545b62',
+      backgroundColor: getThemeColor(['colors', 'text', 'secondary'], 'transparent') ||
+                      getThemeColor(['colors', 'text'], 'transparent') ||
+                      'transparent',
+      hoverColor: getThemeColor(['colors', 'text', 'secondary'], 'transparent') ||
+                  getThemeColor(['colors', 'text'], 'transparent') ||
+                  'transparent',
       icon: '👁️',
     },
     warning: {
-      backgroundColor: '#ffc107',
-      hoverColor: '#e0a800',
+      backgroundColor: getThemeColor(['colors', 'status', 'warning', 'background'], 'transparent') ||
+                      getThemeColor(['colors', 'warning'], 'transparent') ||
+                      'transparent',
+      hoverColor: getThemeColor(['colors', 'status', 'warning', 'background'], 'transparent') ||
+                  getThemeColor(['colors', 'warning'], 'transparent') ||
+                  'transparent',
       icon: '⚠️',
     },
     info: {
-      backgroundColor: '#17a2b8',
-      hoverColor: '#138496',
+      backgroundColor: getThemeColor(['colors', 'status', 'info', 'background'], 'transparent') ||
+                      getThemeColor(['colors', 'info'], 'transparent') ||
+                      'transparent',
+      hoverColor: getThemeColor(['colors', 'status', 'info', 'background'], 'transparent') ||
+                  getThemeColor(['colors', 'info'], 'transparent') ||
+                  'transparent',
       icon: 'ℹ️',
     },
     success: {
-      backgroundColor: '#28a745',
-      hoverColor: '#218838',
+      backgroundColor: getThemeColor(['colors', 'status', 'success', 'background'], 'transparent') ||
+                      getThemeColor(['colors', 'success'], 'transparent') ||
+                      'transparent',
+      hoverColor: getThemeColor(['colors', 'status', 'success', 'background'], 'transparent') ||
+                  getThemeColor(['colors', 'success'], 'transparent') ||
+                  'transparent',
       icon: '✅',
     },
     primary: {
-      backgroundColor: '#007bff',
-      hoverColor: '#0056b3',
+      backgroundColor: getThemeColor(['colors', 'primary'], 'transparent') ||
+                      getThemeColor(['accent'], 'transparent') ||
+                      'transparent',
+      hoverColor: getThemeColor(['colors', 'primary'], 'transparent') ||
+                  getThemeColor(['accent'], 'transparent') ||
+                  'transparent',
       icon: '🔧',
     },
   };
@@ -107,21 +152,53 @@ const StyledActionIcon = styled.button<ActionIconProps>`
   transition: all 0.2s ease;
   font-size: ${props => getSizeStyles(props.size || 'medium').fontSize};
   position: relative;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 2px 4px rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return props.$theme?.shadows?.sm || 'none';
+  }};
 
-  background-color: ${props => getVariantStyles(props.variant).backgroundColor};
-  color: white;
+  background-color: ${props => getVariantStyles(props.variant, props.$theme).backgroundColor};
+  color: ${props =>
+    props.$theme?.colors?.text?.onPrimary ||
+    props.$theme?.text?.onPrimary ||
+    props.$theme?.colors?.surface ||
+    'inherit'};
 
   &:hover {
     background-color: ${props =>
       props.disabled
-        ? getVariantStyles(props.variant).backgroundColor
-        : getVariantStyles(props.variant).hoverColor};
+        ? getVariantStyles(props.variant, props.$theme).backgroundColor
+        : getVariantStyles(props.variant, props.$theme).hoverColor};
     transform: ${props => (props.disabled ? 'none' : 'scale(1.1)')};
-    box-shadow: ${props =>
-      props.disabled
-        ? '0 2px 4px rgba(0, 0, 0, 0.1)'
-        : '0 4px 8px rgba(0, 0, 0, 0.2)'};
+    box-shadow: ${props => {
+      if (props.disabled) {
+        const shadowColor = props.$theme?.colors?.shadow ||
+                            props.$theme?.shadow?.color;
+        if (shadowColor && shadowColor.startsWith('#')) {
+          const r = parseInt(shadowColor.slice(1, 3), 16);
+          const g = parseInt(shadowColor.slice(3, 5), 16);
+          const b = parseInt(shadowColor.slice(5, 7), 16);
+          return `0 2px 4px rgba(${r}, ${g}, ${b}, 0.1)`;
+        }
+        return props.$theme?.shadows?.sm || 'none';
+      }
+      const shadowColor = props.$theme?.colors?.shadow ||
+                          props.$theme?.shadow?.color;
+      if (shadowColor && shadowColor.startsWith('#')) {
+        const r = parseInt(shadowColor.slice(1, 3), 16);
+        const g = parseInt(shadowColor.slice(3, 5), 16);
+        const b = parseInt(shadowColor.slice(5, 7), 16);
+        return `0 4px 8px rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      return props.$theme?.shadows?.md || 'none';
+    }};
   }
 
   &:active {
@@ -143,7 +220,10 @@ const StyledActionIcon = styled.button<ActionIconProps>`
       width: 16px;
       height: 16px;
       border: 2px solid transparent;
-      border-top: 2px solid white;
+      border-top: 2px solid ${props.$theme?.colors?.text?.onPrimary ||
+                            props.$theme?.text?.onPrimary ||
+                            props.$theme?.colors?.surface ||
+                            'inherit'};
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }

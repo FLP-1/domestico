@@ -37,14 +37,17 @@ export default async function handler(
   }
 
   // ✅ Log para debug: verificar coordenadas recebidas
-  console.log('🌐 Geocoding reverso solicitado:', {
-    lat: lat as string,
-    lon: lon as string,
-    latitude,
-    longitude,
-    latPrecision: (lat as string).split('.')[1]?.length || 0,
-    lonPrecision: (lon as string).split('.')[1]?.length || 0,
-  });
+  if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
+    console.log('🌐 Geocoding reverso solicitado:', {
+      lat: lat as string,
+      lon: lon as string,
+      latitude,
+      longitude,
+      latPrecision: (lat as string).split('.')[1]?.length || 0,
+      lonPrecision: (lon as string).split('.')[1]?.length || 0,
+    });
+  }
 
   try {
     // 🎯 SISTEMA SIMPLIFICADO: Nominatim + OpenCage

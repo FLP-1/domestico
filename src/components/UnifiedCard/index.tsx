@@ -35,7 +35,13 @@ const slideIn = keyframes`
 `;
 
 // Styled Components
-const CardContainer = styled.div<{
+const CardContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    if (prop === 'className' || prop === 'children') return true;
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{
   $variant?: 'default' | 'elevated' | 'outlined' | 'filled' | 'glass';
   $size?: 'sm' | 'md' | 'lg';
   $status?: 'default' | 'success' | 'warning' | 'error' | 'info';
@@ -104,7 +110,15 @@ const CardContainer = styled.div<{
       case 'elevated':
         return componentShadows.card;
       case 'glass':
-        return '0 8px 32px rgba(0, 0, 0, 0.1)';
+        const shadowColor = props.$theme?.colors?.shadow ||
+                            props.$theme?.shadow?.color;
+        if (shadowColor && shadowColor.startsWith('#')) {
+          const r = parseInt(shadowColor.slice(1, 3), 16);
+          const g = parseInt(shadowColor.slice(3, 5), 16);
+          const b = parseInt(shadowColor.slice(5, 7), 16);
+          return `0 8px 32px rgba(${r}, ${g}, ${b}, 0.1)`;
+        }
+        return props.$theme?.shadows?.xl || 'none';
       default:
         return componentShadows.card;
     }

@@ -50,6 +50,7 @@ export function recordPerformanceMetric(metric: PerformanceMetric): void {
 
   // Log em desenvolvimento
   if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
     console.log(`[Performance] ${metric.name}: ${metric.value}${metric.unit}`, metric.tags);
   }
 }
@@ -113,6 +114,7 @@ export function trackUserAction(action: UserAction): void {
 
   // Log em desenvolvimento
   if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
     console.log(`[User Action] ${action.category}.${action.action}`, action);
   }
 }

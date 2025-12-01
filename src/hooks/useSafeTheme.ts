@@ -44,24 +44,48 @@ export const useSafeTheme = () => {
       // Status
       status: {
         success: {
-          background: colors?.status?.success?.background || colors?.status?.success || 'transparent',
-          border: colors?.status?.success?.border || colors?.status?.success || 'transparent',
-          text: colors?.status?.success?.text || 'inherit',
+          background: (typeof colors?.status?.success === 'object' && colors?.status?.success && 'background' in colors.status.success)
+            ? String((colors.status.success as any).background)
+            : (typeof colors?.status?.success === 'string' ? colors.status.success : 'transparent'),
+          border: (typeof colors?.status?.success === 'object' && colors?.status?.success && 'border' in colors.status.success)
+            ? String((colors.status.success as any).border)
+            : (typeof colors?.status?.success === 'string' ? colors.status.success : 'transparent'),
+          text: (typeof colors?.status?.success === 'object' && colors?.status?.success && 'text' in colors.status.success)
+            ? String((colors.status.success as any).text)
+            : 'inherit',
         },
         warning: {
-          background: colors?.status?.warning?.background || colors?.status?.warning || 'transparent',
-          border: colors?.status?.warning?.border || colors?.status?.warning || 'transparent',
-          text: colors?.status?.warning?.text || 'inherit',
+          background: (typeof colors?.status?.warning === 'object' && colors?.status?.warning && 'background' in colors.status.warning)
+            ? String((colors.status.warning as any).background)
+            : (typeof colors?.status?.warning === 'string' ? colors.status.warning : 'transparent'),
+          border: (typeof colors?.status?.warning === 'object' && colors?.status?.warning && 'border' in colors.status.warning)
+            ? String((colors.status.warning as any).border)
+            : (typeof colors?.status?.warning === 'string' ? colors.status.warning : 'transparent'),
+          text: (typeof colors?.status?.warning === 'object' && colors?.status?.warning && 'text' in colors.status.warning)
+            ? String((colors.status.warning as any).text)
+            : 'inherit',
         },
         error: {
-          background: colors?.status?.error?.background || colors?.status?.error || 'transparent',
-          border: colors?.status?.error?.border || colors?.status?.error || 'transparent',
-          text: colors?.status?.error?.text || 'inherit',
+          background: (typeof colors?.status?.error === 'object' && colors?.status?.error && 'background' in colors.status.error)
+            ? String((colors.status.error as any).background)
+            : (typeof colors?.status?.error === 'string' ? colors.status.error : 'transparent'),
+          border: (typeof colors?.status?.error === 'object' && colors?.status?.error && 'border' in colors.status.error)
+            ? String((colors.status.error as any).border)
+            : (typeof colors?.status?.error === 'string' ? colors.status.error : 'transparent'),
+          text: (typeof colors?.status?.error === 'object' && colors?.status?.error && 'text' in colors.status.error)
+            ? String((colors.status.error as any).text)
+            : 'inherit',
         },
         info: {
-          background: colors?.status?.info?.background || colors?.status?.info || 'transparent',
-          border: colors?.status?.info?.border || colors?.status?.info || 'transparent',
-          text: colors?.status?.info?.text || 'inherit',
+          background: (typeof colors?.status?.info === 'object' && colors?.status?.info && 'background' in colors.status.info)
+            ? String((colors.status.info as any).background)
+            : (typeof colors?.status?.info === 'string' ? colors.status.info : 'transparent'),
+          border: (typeof colors?.status?.info === 'object' && colors?.status?.info && 'border' in colors.status.info)
+            ? String((colors.status.info as any).border)
+            : (typeof colors?.status?.info === 'string' ? colors.status.info : 'transparent'),
+          text: (typeof colors?.status?.info === 'object' && colors?.status?.info && 'text' in colors.status.info)
+            ? String((colors.status.info as any).text)
+            : 'inherit',
         },
       },
       

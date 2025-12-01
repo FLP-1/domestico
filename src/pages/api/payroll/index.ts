@@ -1,5 +1,6 @@
 import prisma from '@/lib/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { ESOCIAL_STATUSES } from '@/constants/esocialStatuses';
 
 export default async function handler(
   req: NextApiRequest,
@@ -79,7 +80,7 @@ async function createPayroll(req: NextApiRequest, res: NextApiResponse) {
       descontos = 0,
       adicionais = 0,
       salarioLiquido,
-      status = 'PENDENTE',
+      status = ESOCIAL_STATUSES.PENDING,
       observacoes,
     } = req.body;
 

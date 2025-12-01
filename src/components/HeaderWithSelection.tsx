@@ -7,14 +7,32 @@ import { UnifiedModal } from '../design-system/components/UnifiedModal';
 import SelectionModal, { SelectableItem } from './SelectionModal';
 
 const HeaderContainer = styled.header<{ $theme?: any }>`
-  background: ${props => props.$theme.colors.background.primary};
-  border-bottom: 1px solid ${props => props.$theme.colors.border.light};
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
+    props.$theme?.background?.primary ||
+    'transparent'};
+  border-bottom: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   padding: 0 24px;
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 1px 3px 0 rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return props.$theme?.shadows?.sm || 'none';
+  }};
 `;
 
 const Logo = styled.div<{ $theme?: any }>`
@@ -90,11 +108,28 @@ const UserAvatar = styled.div<{ $theme?: any }>`
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
+  background: ${props => {
+    const primaryColor = props.$theme?.colors?.primary ||
+                         props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      const darkerR = Math.max(0, r - 30);
+      const darkerG = Math.max(0, g - 30);
+      const darkerB = Math.max(0, b - 30);
+      return `linear-gradient(135deg, rgb(${darkerR}, ${darkerG}, ${darkerB}), ${primaryColor})`;
+    }
+    return 'transparent';
+  }};
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: ${props =>
+    props.$theme?.colors?.text?.onPrimary ||
+    props.$theme?.text?.onPrimary ||
+    props.$theme?.colors?.surface ||
+    'inherit'};
   font-weight: 600;
   font-size: 0.9rem;
 `;
@@ -102,7 +137,11 @@ const UserAvatar = styled.div<{ $theme?: any }>`
 const UserName = styled.span<{ $theme?: any }>`
   font-size: 0.9rem;
   font-weight: 600;
-  color: ${props => props.$theme?.colors?.text?.primary || '#1f2937'};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
 interface HeaderWithSelectionProps {

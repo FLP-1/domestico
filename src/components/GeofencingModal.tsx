@@ -20,13 +20,23 @@ interface GeofencingModalProps {
   endereco: string;
 }
 
-const ModalOverlay = styled.div<{ isOpen: boolean }>`
+const ModalOverlay = styled.div<{ isOpen: boolean; $theme?: any }>`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.5)`;
+    }
+    return 'transparent';
+  }};
   display: ${props => (props.isOpen ? 'flex' : 'none')};
   justify-content: center;
   align-items: center;
@@ -45,9 +55,17 @@ const ModalContent = styled.div<{ $theme?: any }>`
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
-  box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 20px 25px -5px rgba(${r}, ${g}, ${b}, 0.1), 0 10px 10px -5px rgba(${r}, ${g}, ${b}, 0.04)`;
+    }
+    return props.$theme?.shadows?.xl || 'none';
+  }};
 `;
 
 const ModalHeader = styled.div<{ $theme?: any }>`
@@ -309,7 +327,7 @@ const GeofencingModal: React.FC<GeofencingModalProps> = ({
   };
 
   return (
-    <ModalOverlay isOpen={isOpen}>
+    <ModalOverlay isOpen={isOpen} $theme={theme}>
       <ModalContent $theme={theme}>
         <ModalHeader $theme={theme}>
           <ModalTitle $theme={theme}>

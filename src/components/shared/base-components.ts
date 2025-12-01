@@ -166,9 +166,17 @@ export const BaseButton = styled.button<{
 
   color: ${props => {
     const variant = props.$variant || 'primary';
-    return variant === 'ghost' || variant === 'link'
-      ? getColor('primary', props.$theme?.colors?.primary)
-      : getColor('surface.primary', props.$theme?.colors?.white);
+    if (variant === 'ghost' || variant === 'link') {
+      return getColor('primary', props.$theme?.colors?.primary);
+    }
+    return getColor(
+      'surface.primary',
+      props.$theme?.colors?.text?.primary ||
+      props.$theme?.text?.primary ||
+      props.$theme?.colors?.text ||
+      props.$theme?.colors?.surface ||
+      'inherit'
+    );
   }};
 
   &:hover {
@@ -359,7 +367,18 @@ export const BaseOverlay = styled.div<{
   left: 0;
   right: 0;
   bottom: 0;
-  background: ${props => props.$background || 'rgba(0, 0, 0, 0.5)'};
+  background: ${props => {
+    if (props.$background) return props.$background;
+    const overlayColor = props.$theme?.colors?.overlay ||
+                        props.$theme?.overlay?.background;
+    if (overlayColor && overlayColor.startsWith('#')) {
+      const r = parseInt(overlayColor.slice(1, 3), 16);
+      const g = parseInt(overlayColor.slice(3, 5), 16);
+      const b = parseInt(overlayColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.5)`;
+    }
+    return 'transparent';
+  }};
   z-index: ${props => props.$zIndex || tokens.zIndex.modal};
   display: flex;
   align-items: center;

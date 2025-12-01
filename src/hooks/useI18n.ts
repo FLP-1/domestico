@@ -14,7 +14,7 @@ export function useI18n() {
     // Por enquanto, sempre usar pt-BR
     // No futuro, pode ser configurável por usuário
     return 'pt-BR';
-  }, [currentProfile]);
+  }, []);
 
   return useTranslation(locale);
 }

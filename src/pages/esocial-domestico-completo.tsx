@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { GetServerSideProps } from 'next';
 import React, { useEffect, useState, useCallback } from 'react';
 import styled, { keyframes } from 'styled-components';
 import AccessibleEmoji from '../components/AccessibleEmoji';
@@ -16,28 +17,64 @@ import { UnifiedButton, UnifiedBadge } from '../components/unified';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useAlertManager } from '../hooks/useAlertManager';
 import { useTheme } from '../hooks/useTheme';
-import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import { getThemeColor, getStatusColor, addOpacity } from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
 import { OptimizedSectionTitle } from '../components/shared/optimized-styles';
 import { fadeIn, pulse } from '../components/shared/animations';
+import { ESOCIAL_STATUSES, type ESocialStatus } from '../constants/esocialStatuses';
+import { PAYMENT_STATUSES, type PaymentStatus } from '../constants/paymentStatuses';
+import { formatCurrency, formatDate } from '../utils/formatters';
 
 // StatusBadge removido - usar UnifiedBadge
 
 // ContentGrid removido - não utilizado
 
-const Section = styled.div`
-  background: rgba(255, 255, 255, 0.95);
+const Section = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: Theme }>`
+  background: ${props => {
+    const bgColor = (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
+                    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null);
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.95)`;
+    }
+    return 'transparent';
+  }};
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        (typeof (props.$theme as any)?.shadow === 'object' && (props.$theme as any)?.shadow && 'color' in (props.$theme as any).shadow ? String(((props.$theme as any).shadow as any).color) : null);
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 8px 32px rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return (typeof (props.$theme as any)?.shadows === 'object' && (props.$theme as any)?.shadows && 'xl' in (props.$theme as any).shadows ? String(((props.$theme as any).shadows as any).xl) : null) || 'none';
+  }};
   backdrop-filter: blur(10px);
 `;
 
-const SectionTitle = styled.h2`
+const SectionTitle = styled.h2.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: Theme }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 1.5rem;
   font-weight: 700;
-  color: ${props => props.theme?.colors?.primary || '#29ABE2'};
+  color: ${props =>
+    props.$theme?.colors?.primary ||
+    (props.$theme as any)?.accent || props.$theme?.colors?.primary ||
+    'inherit'};
   margin: 0 0 1.5rem 0;
   display: flex;
   align-items: center;
@@ -51,25 +88,64 @@ const StatsGrid = styled.div`
   margin-bottom: 2rem;
 `;
 
-const StatCard = styled.div<{ $theme?: Theme }>`
-  background: rgba(255, 255, 255, 0.95);
+const StatCard = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: Theme }>`
+  background: ${props =>
+    (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
+    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
+    (typeof props.$theme?.colors?.surface === 'string' ? props.$theme.colors.surface : null) ||
+    'transparent'};
   border-radius: 12px;
   padding: 1.5rem;
   text-align: center;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        (typeof (props.$theme as any)?.shadow === 'object' && (props.$theme as any)?.shadow && 'color' in (props.$theme as any).shadow ? String(((props.$theme as any).shadow as any).color) : null);
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 4px 16px rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return (typeof (props.$theme as any)?.shadows === 'object' && (props.$theme as any)?.shadows && 'md' in (props.$theme as any).shadows ? String(((props.$theme as any).shadows as any).md) : null) || 'none';
+  }};
   backdrop-filter: blur(10px);
-  border-left: 4px solid ${props => props.$theme?.colors?.primary || '#29ABE2'};
+  border-left: 4px solid ${props =>
+    props.$theme?.colors?.primary ||
+    (props.$theme as any)?.accent || props.$theme?.colors?.primary ||
+    'transparent'};
 `;
 
-const StatNumber = styled.div<{ $theme?: Theme }>`
+const StatNumber = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: Theme }>`
   font-size: 2rem;
   font-weight: 700;
-  color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
+  color: ${props =>
+    props.$theme?.colors?.primary ||
+    (props.$theme as any)?.accent || props.$theme?.colors?.primary ||
+    'inherit'};
   margin-bottom: 0.5rem;
 `;
 
-const StatLabel = styled.div`
-  color: ${props => props.theme?.colors?.text || '#666'};
+const StatLabel = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: Theme }>`
+  color: ${props =>
+    (typeof props.$theme?.colors?.text === 'object' && props.$theme?.colors?.text && 'secondary' in props.$theme.colors.text ? String((props.$theme.colors.text as any).secondary) : null) ||
+    (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'secondary' in (props.$theme as any).text ? String(((props.$theme as any).text as any).secondary) : null) ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
   font-weight: 500;
 `;
@@ -81,40 +157,93 @@ const TabGrid = styled.div`
   margin-bottom: 2rem;
 `;
 
-const TabCard = styled.div<{ $active: boolean; $theme?: Theme }>`
-  background: rgba(255, 255, 255, 0.95);
+const TabCard = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $active: boolean; $theme?: Theme }>`
+  background: ${props =>
+    (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
+    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
+    (typeof props.$theme?.colors?.surface === 'string' ? props.$theme.colors.surface : null) ||
+    'transparent'};
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        (typeof (props.$theme as any)?.shadow === 'object' && (props.$theme as any)?.shadow && 'color' in (props.$theme as any).shadow ? String(((props.$theme as any).shadow as any).color) : null);
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 8px 32px rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return (typeof (props.$theme as any)?.shadows === 'object' && (props.$theme as any)?.shadows && 'xl' in (props.$theme as any).shadows ? String(((props.$theme as any).shadows as any).xl) : null) || 'none';
+  }};
   backdrop-filter: blur(10px);
   cursor: pointer;
   transition: all 0.3s ease;
   border: 2px solid
-    ${props =>
-      props.$active
-        ? props.$theme?.colors?.primary || '#29ABE2'
-        : 'transparent'};
+    ${props => {
+      if (props.$active) {
+        return props.$theme?.colors?.primary ||
+               (props.$theme as any)?.accent || props.$theme?.colors?.primary ||
+               'transparent';
+      }
+      return 'transparent';
+    }};
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-    border-color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
+    box-shadow: ${props => {
+      const shadowColor = props.$theme?.colors?.shadow ||
+                          (typeof (props.$theme as any)?.shadow === 'object' && (props.$theme as any)?.shadow && 'color' in (props.$theme as any).shadow ? String(((props.$theme as any).shadow as any).color) : null);
+      if (shadowColor && shadowColor.startsWith('#')) {
+        const r = parseInt(shadowColor.slice(1, 3), 16);
+        const g = parseInt(shadowColor.slice(3, 5), 16);
+        const b = parseInt(shadowColor.slice(5, 7), 16);
+        return `0 12px 40px rgba(${r}, ${g}, ${b}, 0.15)`;
+      }
+      return (typeof (props.$theme as any)?.shadows === 'object' && (props.$theme as any)?.shadows && 'xl' in (props.$theme as any).shadows ? String(((props.$theme as any).shadows as any).xl) : null) || 'none';
+    }};
+    border-color: ${props =>
+      props.$theme?.colors?.primary ||
+      (props.$theme as any)?.accent || props.$theme?.colors?.primary ||
+      'transparent'};
   }
 `;
 
-const TabTitle = styled.h3<{ $theme?: Theme }>`
+const TabTitle = styled.h3.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: Theme }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 1.2rem;
   font-weight: 700;
-  color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
+  color: ${props =>
+    props.$theme?.colors?.primary ||
+    (props.$theme as any)?.accent || props.$theme?.colors?.primary ||
+    'inherit'};
   margin: 0 0 0.5rem 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 `;
 
-const TabDescription = styled.p`
-  color: #7f8c8d;
+const TabDescription = styled.p.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: Theme }>`
+  color: ${props =>
+    (typeof props.$theme?.colors?.text === 'object' && props.$theme?.colors?.text && 'secondary' in props.$theme.colors.text ? String((props.$theme.colors.text as any).secondary) : null) ||
+    (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'secondary' in (props.$theme as any).text ? String(((props.$theme as any).text as any).secondary) : null) ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
   margin: 0;
   line-height: 1.4;
@@ -163,7 +292,7 @@ interface PayrollData {
   descontos: number;
   adicionais: number;
   salarioLiquido: number;
-  status: 'PENDENTE' | 'PROCESSADO' | 'ENVIADO';
+  status: ESocialStatus;
 }
 
 interface TaxGuide {
@@ -173,7 +302,7 @@ interface TaxGuide {
   ano: string;
   valor: number;
   vencimento: string;
-  status: 'PENDENTE' | 'PAGO' | 'VENCIDO';
+  status: PaymentStatus;
 }
 
 const ESocialDomesticoCompleto: React.FC = () => {
@@ -388,7 +517,7 @@ const ESocialDomesticoCompleto: React.FC = () => {
           employeeId: empId,
           id: `payroll_${Date.now()}_${empId}`,
           salarioLiquido,
-          status: 'PROCESSADO' as const,
+          status: ESOCIAL_STATUSES.PROCESSED,
         }));
 
         setPayrollData(prev => [...prev, ...newPayrolls]);
@@ -411,7 +540,7 @@ const ESocialDomesticoCompleto: React.FC = () => {
           ...payrollData,
           id: Date.now().toString(),
           salarioLiquido,
-          status: 'PROCESSADO',
+          status: ESOCIAL_STATUSES.PROCESSED,
         };
 
         setPayrollData(prev => [...prev, newPayroll]);
@@ -438,7 +567,7 @@ const ESocialDomesticoCompleto: React.FC = () => {
         vencimento: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000)
           .toISOString()
           .split('T')[0], // 15 dias
-        status: 'PENDENTE' as const,
+        status: PAYMENT_STATUSES.PENDING,
       }));
 
       setTaxGuides(prev => [...prev, ...newGuides]);
@@ -537,30 +666,34 @@ const ESocialDomesticoCompleto: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'ATIVO':
-      case 'PROCESSADO':
-      case 'PAGO':
-        return '#27ae60';
+      case ESOCIAL_STATUSES.PROCESSED:
+      case PAYMENT_STATUSES.PAID:
+        return (typeof theme?.colors?.status?.success === 'object' && theme?.colors?.status?.success && 'background' in theme.colors.status.success ? String((theme.colors.status.success as any).background) : null) ||
+               (typeof (theme as any)?.status?.success === 'object' && (theme as any)?.status?.success && 'background' in (theme as any).status.success ? String(((theme as any).status.success as any).background) : null) ||
+               theme?.colors?.success ||
+               'inherit';
       case 'INATIVO':
-      case 'PENDENTE':
-        return '#f39c12';
+      case ESOCIAL_STATUSES.PENDING:
+      case PAYMENT_STATUSES.PENDING:
+        return (typeof theme?.colors?.status?.warning === 'object' && theme?.colors?.status?.warning && 'background' in theme.colors.status.warning ? String((theme.colors.status.warning as any).background) : null) ||
+               (typeof (theme as any)?.status?.warning === 'object' && (theme as any)?.status?.warning && 'background' in (theme as any).status.warning ? String(((theme as any).status.warning as any).background) : null) ||
+               theme?.colors?.warning ||
+               'inherit';
       case 'AFASTADO':
-      case 'VENCIDO':
-        return '#e74c3c';
+      case PAYMENT_STATUSES.OVERDUE:
+        return (typeof theme?.colors?.status?.error === 'object' && theme?.colors?.status?.error && 'background' in theme.colors.status.error ? String((theme.colors.status.error as any).background) : null) ||
+               (typeof (theme as any)?.status?.error === 'object' && (theme as any)?.status?.error && 'background' in (theme as any).status.error ? String(((theme as any).status.error as any).background) : null) ||
+               theme?.colors?.error ||
+               'inherit';
       default:
-        return '#95a5a6';
+        return (typeof theme?.colors?.text === 'object' && theme?.colors?.text && 'secondary' in theme.colors.text ? String((theme.colors.text as any).secondary) : null) ||
+               (typeof (theme as any)?.text === 'object' && (theme as any)?.text && 'secondary' in (theme as any).text ? String(((theme as any).text as any).secondary) : null) ||
+               (typeof theme?.colors?.text === 'string' ? theme.colors.text : null) ||
+               'inherit';
     }
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
-  };
-
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('pt-BR');
-  };
+  // Formatação agora usa utilitários centralizados de src/utils/formatters.ts
 
   // Estatísticas
   const totalPayroll = payrollData.reduce(
@@ -568,7 +701,7 @@ const ESocialDomesticoCompleto: React.FC = () => {
     0
   );
   const pendingTaxes = taxGuides.filter(
-    tax => tax.status === 'PENDENTE'
+    tax => tax.status === PAYMENT_STATUSES.PENDING
   ).length;
 
   return (
@@ -638,7 +771,7 @@ const ESocialDomesticoCompleto: React.FC = () => {
               <AccessibleEmoji emoji='🏢' label='Empregador' /> Cadastro do
               Empregador
             </TabTitle>
-            <TabDescription>
+            <TabDescription $theme={theme}>
               Cadastre e gerencie os dados do empregador doméstico
             </TabDescription>
           </TabCard>
@@ -698,7 +831,7 @@ const ESocialDomesticoCompleto: React.FC = () => {
 
         {/* Conteúdo das Abas */}
         <TabContent hidden={activeTab !== 'employer'}>
-          <Section>
+          <Section $theme={theme}>
             <OptimizedSectionTitle>
               <AccessibleEmoji emoji='🏢' label='Empregador' /> Cadastro do
               Empregador
@@ -721,7 +854,7 @@ const ESocialDomesticoCompleto: React.FC = () => {
         </TabContent>
 
         <TabContent hidden={activeTab !== 'employees'}>
-          <Section>
+          <Section $theme={theme}>
             <OptimizedSectionTitle>
               <AccessibleEmoji emoji='👥' label='Funcionários' /> Gestão de
               Funcionários
@@ -785,7 +918,7 @@ const ESocialDomesticoCompleto: React.FC = () => {
         </TabContent>
 
         <TabContent hidden={activeTab !== 'payroll'}>
-          <Section>
+          <Section $theme={theme}>
             <OptimizedSectionTitle>
               <AccessibleEmoji emoji='💰' label='Folha' /> Folha de Pagamento
             </OptimizedSectionTitle>
@@ -827,7 +960,7 @@ const ESocialDomesticoCompleto: React.FC = () => {
         </TabContent>
 
         <TabContent hidden={activeTab !== 'taxes'}>
-          <Section>
+          <Section $theme={theme}>
             <OptimizedSectionTitle>
               <AccessibleEmoji emoji='📋' label='Impostos' /> Guias de Impostos
             </OptimizedSectionTitle>
@@ -863,7 +996,7 @@ const ESocialDomesticoCompleto: React.FC = () => {
         </TabContent>
 
         <TabContent hidden={activeTab !== 'reports'}>
-          <Section>
+          <Section $theme={theme}>
             <OptimizedSectionTitle>
               <AccessibleEmoji emoji='📈' label='Relatórios' /> Relatórios e
               Indicadores
@@ -946,6 +1079,15 @@ const ESocialDomesticoCompleto: React.FC = () => {
 
     </PageContainer>
   );
+};
+
+// Desabilitar prerendering - página requer autenticação e dados dinâmicos
+export const dynamic = 'force-dynamic';
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: {},
+  };
 };
 
 export default ESocialDomesticoCompleto;

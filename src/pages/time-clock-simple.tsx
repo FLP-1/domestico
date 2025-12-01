@@ -24,16 +24,25 @@ const Center = styled.div`
   margin-bottom: 3rem;
 `;
 
-const Clock = styled.h2`
+const Clock = styled.h2<{ $theme?: any }>`
   font-size: 3rem;
   margin: 0 0 0.5rem 0;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-family: monospace;
 `;
 
-const DateText = styled.p`
+const DateText = styled.p<{ $theme?: any }>`
   font-size: 1.25rem;
-  color: #7f8c8d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin: 0;
 `;
 
@@ -44,51 +53,95 @@ const GridButtons = styled.div`
   margin-bottom: 2rem;
 `;
 
-const Btn = styled.button<{ $bg: string }>`
+const Btn = styled.button<{ $bg: string; $theme?: any }>`
   padding: 1rem;
   font-size: 1rem;
-  background-color: ${p => p.$bg};
-  color: white;
+  background-color: ${p => p.$bg || 'transparent'};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    props.$theme?.colors?.surface ||
+    'inherit'};
   border: none;
   border-radius: 8px;
   cursor: pointer;
 `;
 
-const RecordsBox = styled.div`
-  background-color: #f8f9fa;
+const RecordsBox = styled.div<{ $theme?: any }>`
+  background-color: ${props =>
+    props.$theme?.colors?.background?.secondary ||
+    props.$theme?.background?.secondary ||
+    props.$theme?.colors?.background?.primary ||
+    'transparent'};
   padding: 1.5rem;
   border-radius: 8px;
   margin-bottom: 2rem;
 `;
 
-const RecordsTitle = styled.h3`
+const RecordsTitle = styled.h3<{ $theme?: any }>`
   margin-top: 0;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
-const EmptyText = styled.p`
-  color: #7f8c8d;
+const EmptyText = styled.p<{ $theme?: any }>`
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-style: italic;
 `;
 
-const Row = styled.div`
+const Row = styled.div<{ $theme?: any }>`
   display: flex;
   justify-content: space-between;
   padding: 0.5rem 0;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
 `;
 
 const Bold = styled.span`
   font-weight: bold;
 `;
 
-const InfoBox = styled.div`
-  background-color: #e9ecef;
+const InfoBox = styled.div<{ $theme?: any }>`
+  background-color: ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           props.$theme?.colors?.background?.secondary ||
+           'transparent';
+  }};
   padding: 1rem;
   border-radius: 8px;
   font-size: 0.9rem;
-  color: #6c757d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
+
+// Desabilitar prerendering - página requer autenticação e APIs do navegador
+export const dynamic = 'force-dynamic';
+
+import { GetServerSideProps } from 'next';
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: {},
+  };
+};
 
 export default function TimeClock() {
   const { currentProfile } = useUserProfile();
@@ -203,14 +256,14 @@ export default function TimeClock() {
 
       {/* Relógio Atual */}
       <Center>
-        <Clock>
+        <Clock $theme={theme}>
           {currentTime.toLocaleTimeString('pt-BR', {
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
           })}
         </Clock>
-        <DateText>
+        <DateText $theme={theme}>
           {currentTime.toLocaleDateString('pt-BR', {
             weekday: 'long',
             year: 'numeric',
@@ -222,28 +275,28 @@ export default function TimeClock() {
 
       {/* Botões de Registro */}
       <GridButtons>
-        <Btn $bg='#2E8B57' onClick={() => handleTimeRecord('entrada')}>
+        <Btn $bg={theme?.colors?.success || 'transparent'} $theme={theme} onClick={() => handleTimeRecord('entrada')}>
           <span role='img' aria-label='Entrada'>
             🕐
           </span>{' '}
           Entrada
         </Btn>
 
-        <Btn $bg='#4682B4' onClick={() => handleTimeRecord('saida_almoco')}>
+        <Btn $bg={theme?.colors?.info || theme?.colors?.primary || 'transparent'} $theme={theme} onClick={() => handleTimeRecord('saida_almoco')}>
           <span role='img' aria-label='Saída Almoço'>
             🍽️
           </span>{' '}
           Saída Almoço
         </Btn>
 
-        <Btn $bg='#4682B4' onClick={() => handleTimeRecord('retorno_almoco')}>
+        <Btn $bg={theme?.colors?.info || theme?.colors?.primary || 'transparent'} $theme={theme} onClick={() => handleTimeRecord('retorno_almoco')}>
           <span role='img' aria-label='Retorno Almoço'>
             🔄
           </span>{' '}
           Retorno Almoço
         </Btn>
 
-        <Btn $bg='#FF6347' onClick={() => handleTimeRecord('saida')}>
+        <Btn $bg={theme?.colors?.error || 'transparent'} $theme={theme} onClick={() => handleTimeRecord('saida')}>
           <span role='img' aria-label='Saída'>
             🏠
           </span>{' '}
@@ -252,16 +305,16 @@ export default function TimeClock() {
       </GridButtons>
 
       {/* Lista de Registros */}
-      <RecordsBox>
-        <RecordsTitle>Registros de Hoje</RecordsTitle>
+      <RecordsBox $theme={theme}>
+        <RecordsTitle $theme={theme}>Registros de Hoje</RecordsTitle>
         {timeRecords.length === 0 ? (
-          <EmptyText>
+          <EmptyText $theme={theme}>
             Nenhum registro ainda. Use os botões acima para registrar seu ponto.
           </EmptyText>
         ) : (
           <div>
             {timeRecords.map((record: any) => (
-              <Row key={record.id}>
+              <Row key={record.id} $theme={theme}>
                 <Bold>{record.type.replace('_', ' ').toUpperCase()}</Bold>
                 <span>{record.time}</span>
               </Row>
@@ -271,7 +324,7 @@ export default function TimeClock() {
       </RecordsBox>
 
       {/* Informações do Sistema */}
-      <InfoBox>
+      <InfoBox $theme={theme}>
         <p>
           <strong>Localização:</strong> Escritório - Sala 101
         </p>

@@ -6,22 +6,45 @@ import { useTheme } from '../hooks/useTheme';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import styled from 'styled-components';
 
-const DocsContainer = styled.div<{ $theme?: any }>`
+const DocsContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any }>`
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
 `;
 
-const SwaggerFrame = styled.iframe<{ $theme?: any }>`
+const SwaggerFrame = styled.iframe.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: any }>`
   width: 100%;
   height: 800px;
   border: 1px solid
-    ${props =>
-      props.$theme?.colors?.border?.light ||
-      props.$theme?.colors?.border ||
-      '#e5e7eb'};
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border?.light) ||
+             props.$theme?.border?.light ||
+             'transparent';
+    }};
   border-radius: 8px;
 `;
+
+// Desabilitar prerendering - página requer window.location
+export const dynamic = 'force-dynamic';
+
+import { GetServerSideProps } from 'next';
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: {},
+  };
+};
 
 export default function ApiDocs() {
   const { currentProfile } = useUserProfile();
@@ -29,12 +52,14 @@ export default function ApiDocs() {
   const [swaggerUrl, setSwaggerUrl] = useState('');
 
   useEffect(() => {
-    // Usar Swagger UI via CDN
-    setSwaggerUrl(
-      `https://petstore.swagger.io/?url=${encodeURIComponent(
-        `${window.location.origin}/api/docs/swagger`
-      )}`
-    );
+    // Usar Swagger UI via CDN - apenas no cliente
+    if (typeof window !== 'undefined') {
+      setSwaggerUrl(
+        `https://petstore.swagger.io/?url=${encodeURIComponent(
+          `${window.location.origin}/api/docs/swagger`
+        )}`
+      );
+    }
   }, []);
 
   return (

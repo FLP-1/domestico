@@ -10,6 +10,7 @@ import PageContainer from '../../components/PageContainer';
 import PageHeader from '../../components/PageHeader';
 import type { Theme } from '../../types/theme';
 import { getTextSecondary } from '../../utils/themeTypeGuards';
+import { formatDateTime } from '../../utils/formatters';
 
 interface LogEntry {
   id: string;
@@ -221,6 +222,32 @@ const JsonSection = styled.div<{ $theme?: Theme }>`
   margin-bottom: 15px;
 `;
 
+// Styled Components para substituir estilos inline
+const HiddenLabel = styled.label`
+  display: none;
+`;
+
+const TimestampContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+`;
+
+const TimestampContainerBetween = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+`;
+
+const JsonSectionTitle = styled.h4<{ $theme?: Theme }>`
+  color: ${props => getTextSecondary(props.$theme)};
+  font-weight: bold;
+  margin-bottom: 10px;
+  margin-top: 0;
+  font-size: 14px;
+`;
+
 export default function AuditoriaGeofencing() {
   // TODO: Implementar autenticação adequada
   // const { data: session } = useSession();
@@ -279,9 +306,7 @@ export default function AuditoriaGeofencing() {
     loadData();
   }, [loadData]); // loadData já inclui activeTab nas dependências
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('pt-BR');
-  };
+  // formatDate agora usa formatDateTime de src/utils/formatters.ts
 
   const formatAction = (acao: string) => {
     const actions = {
@@ -374,13 +399,18 @@ export default function AuditoriaGeofencing() {
       </Tabs>
 
       <FilterBar>
+        <HiddenLabel htmlFor='filtro-acao'>
+          Filtrar por ação
+        </HiddenLabel>
         <Select
+          id='filtro-acao'
           $theme={theme}
           value={filters.acao}
           onChange={(e: any) =>
             setFilters({ ...filters, acao: e.target.value })
           }
           aria-label='Filtrar por ação'
+          title='Filtrar por ação'
         >
           <option value=''>Todas as ações</option>
           <option value='CREATE'>Criado</option>
@@ -439,11 +469,11 @@ export default function AuditoriaGeofencing() {
               size='md'
               title={`${formatAction(log.acao)} - ${log.localTrabalho.nome}`}
             >
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '15px' }}>
+              <TimestampContainer>
                 <Timestamp $theme={theme}>
-                  {formatDate(log.timestamp)}
+                  {formatDateTime(log.timestamp)}
                 </Timestamp>
-              </div>
+              </TimestampContainer>
 
               <UnifiedMetaInfo
                 items={[
@@ -459,15 +489,9 @@ export default function AuditoriaGeofencing() {
 
               {log.dadosAnteriores && (
                 <JsonSection>
-                  <h4 style={{ 
-                    color: getTextSecondary(theme),
-                    fontWeight: 'bold',
-                    marginBottom: '10px',
-                    marginTop: 0,
-                    fontSize: '14px'
-                  }}>
+                  <JsonSectionTitle $theme={theme}>
                     Dados Anteriores:
-                  </h4>
+                  </JsonSectionTitle>
                   <JsonData $theme={theme}>
                     {JSON.stringify(log.dadosAnteriores, null, 2)}
                   </JsonData>
@@ -476,15 +500,9 @@ export default function AuditoriaGeofencing() {
 
               {log.dadosNovos && (
                 <JsonSection>
-                  <h4 style={{ 
-                    color: getTextSecondary(theme),
-                    fontWeight: 'bold',
-                    marginBottom: '10px',
-                    marginTop: 0,
-                    fontSize: '14px'
-                  }}>
+                  <JsonSectionTitle $theme={theme}>
                     Dados Novos:
-                  </h4>
+                  </JsonSectionTitle>
                   <JsonData $theme={theme}>
                     {JSON.stringify(log.dadosNovos, null, 2)}
                   </JsonData>
@@ -514,11 +532,11 @@ export default function AuditoriaGeofencing() {
             size='md'
             title={`Validação - ${validacao.localTrabalho.nome}`}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+            <TimestampContainerBetween>
               <Timestamp $theme={theme}>
-                {formatDate(validacao.timestamp)}
+                {formatDateTime(validacao.timestamp)}
               </Timestamp>
-            </div>
+            </TimestampContainerBetween>
 
             <UnifiedMetaInfo
               items={[

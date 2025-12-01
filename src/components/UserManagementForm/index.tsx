@@ -26,11 +26,25 @@ interface FormData {
   grupoId: string;
 }
 
-const FormContainer = styled.div`
-  background: white;
+const FormContainer = styled.div<{ $theme?: any }>`
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
+    props.$theme?.background?.primary ||
+    props.$theme?.colors?.surface ||
+    'transparent'};
   border-radius: 8px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 2px 8px rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return props.$theme?.shadows?.sm || 'none';
+  }};
   max-width: 600px;
   margin: 0 auto;
 `;
@@ -39,63 +53,113 @@ const FormGroup = styled.div`
   margin-bottom: 20px;
 `;
 
-const Label = styled.label`
+const Label = styled.label<{ $theme?: any }>`
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: ${props => props.theme?.text?.primary || '#333'};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
-const Input = styled.input<{ hasError?: boolean }>`
+const Input = styled.input<{ hasError?: boolean; $theme?: any }>`
   width: 100%;
   padding: 12px;
   border: 2px solid
-    ${props =>
-      props.hasError
-        ? props.theme?.status?.error?.color || '#e74c3c'
-        : props.theme?.border?.primary || '#ddd'};
+    ${props => {
+      if (props.hasError) {
+        return props.$theme?.colors?.status?.error?.background ||
+               props.$theme?.status?.error?.background ||
+               props.$theme?.colors?.error ||
+               'transparent';
+      }
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border?.primary) ||
+             props.$theme?.border?.primary ||
+             (typeof border === 'object' && border?.light) ||
+             props.$theme?.border?.light ||
+             'transparent';
+    }};
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.3s;
 
   &:focus {
     outline: none;
-    border-color: ${props =>
-      props.hasError
-        ? props.theme?.status?.error?.color || '#e74c3c'
-        : props.theme?.navigation?.primary || '#3498db'};
+    border-color: ${props => {
+      if (props.hasError) {
+        return props.$theme?.colors?.status?.error?.background ||
+               props.$theme?.status?.error?.background ||
+               props.$theme?.colors?.error ||
+               'transparent';
+      }
+      return props.$theme?.colors?.navigation?.primary ||
+             props.$theme?.navigation?.primary ||
+             props.$theme?.colors?.primary ||
+             props.$theme?.accent ||
+             'transparent';
+    }};
   }
 `;
 
-const Select = styled.select<{ hasError?: boolean }>`
+const Select = styled.select<{ hasError?: boolean; $theme?: any }>`
   width: 100%;
   padding: 12px;
   border: 2px solid
-    ${props =>
-      props.hasError
-        ? props.theme?.status?.error?.color || '#e74c3c'
-        : props.theme?.border?.primary || '#ddd'};
+    ${props => {
+      if (props.hasError) {
+        return props.$theme?.colors?.status?.error?.background ||
+               props.$theme?.status?.error?.background ||
+               props.$theme?.colors?.error ||
+               'transparent';
+      }
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border?.primary) ||
+             props.$theme?.border?.primary ||
+             (typeof border === 'object' && border?.light) ||
+             props.$theme?.border?.light ||
+             'transparent';
+    }};
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.3s;
 
   &:focus {
     outline: none;
-    border-color: ${props =>
-      props.hasError
-        ? props.theme?.status?.error?.color || '#e74c3c'
-        : props.theme?.navigation?.primary || '#3498db'};
+    border-color: ${props => {
+      if (props.hasError) {
+        return props.$theme?.colors?.status?.error?.background ||
+               props.$theme?.status?.error?.background ||
+               props.$theme?.colors?.error ||
+               'transparent';
+      }
+      return props.$theme?.colors?.navigation?.primary ||
+             props.$theme?.navigation?.primary ||
+             props.$theme?.colors?.primary ||
+             props.$theme?.accent ||
+             'transparent';
+    }};
   }
 `;
 
-const ErrorMessage = styled.div`
-  color: ${props => props.theme?.status?.error?.color || '#e74c3c'};
+const ErrorMessage = styled.div<{ $theme?: any }>`
+  color: ${props =>
+    props.$theme?.colors?.status?.error?.background ||
+    props.$theme?.status?.error?.background ||
+    props.$theme?.colors?.error ||
+    'inherit'};
   font-size: 12px;
   margin-top: 4px;
 `;
 
-const SuccessMessage = styled.div`
-  color: ${props => props.theme?.status?.success?.color || '#27ae60'};
+const SuccessMessage = styled.div<{ $theme?: any }>`
+  color: ${props =>
+    props.$theme?.colors?.status?.success?.background ||
+    props.$theme?.status?.success?.background ||
+    props.$theme?.colors?.success ||
+    'inherit'};
   font-size: 12px;
   margin-top: 4px;
 `;
@@ -116,32 +180,54 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
   cursor: pointer;
   transition: background-color 0.3s;
 
-  ${props =>
+  ${(props: any) =>
     props.variant === 'primary'
       ? `
-    background: ${(props: any) => props.theme?.navigation?.primary || '#3498db'};
-    color: white;
+    background: ${props.$theme?.colors?.navigation?.primary ||
+                  props.$theme?.navigation?.primary ||
+                  props.$theme?.colors?.primary ||
+                  props.$theme?.accent ||
+                  'transparent'};
+    color: ${props.$theme?.colors?.text?.primary ||
+             props.$theme?.text?.primary ||
+             props.$theme?.colors?.text ||
+             props.$theme?.colors?.surface ||
+             'inherit'};
     
     &:hover:not(:disabled) {
-      background: ${(props: any) => props.theme?.navigation?.primary || '#2980b9'};
+      background: ${props.$theme?.colors?.navigation?.primary ||
+                    props.$theme?.navigation?.primary ||
+                    props.$theme?.colors?.primary ||
+                    props.$theme?.accent ||
+                    'transparent'};
     }
     
     &:disabled {
-      background: #bdc3c7;
+      background: ${props.$theme?.colors?.text?.disabled ||
+                   props.$theme?.colors?.text?.secondary ||
+                   'transparent'};
       cursor: not-allowed;
     }
   `
       : `
-    background: #ecf0f1;
-    color: #2c3e50;
+    background: ${props.$theme?.colors?.background?.secondary ||
+                 props.$theme?.background?.secondary ||
+                 'transparent'};
+    color: ${props.$theme?.colors?.text?.dark ||
+             props.$theme?.text?.dark ||
+             props.$theme?.colors?.text?.primary ||
+             props.$theme?.colors?.text ||
+             'inherit'};
     
     &:hover {
-      background: #d5dbdb;
+      background: ${props.$theme?.colors?.background?.secondary ||
+                   props.$theme?.background?.secondary ||
+                   'transparent'};
     }
   `}
 `;
 
-const ValidationStatus = styled.div<{ isValid?: boolean }>`
+const ValidationStatus = styled.div<{ isValid?: boolean; $theme?: any }>`
   padding: 8px 12px;
   border-radius: 4px;
   margin-top: 8px;
@@ -151,14 +237,48 @@ const ValidationStatus = styled.div<{ isValid?: boolean }>`
   ${props =>
     props.isValid
       ? `
-    background: #d5f4e6;
-    color: ${(props: any) => props.theme?.status?.success?.color || '#27ae60'};
-    border: 1px solid #27ae60;
+    background: ${props.$theme?.colors?.status?.success?.background
+      ? (() => {
+          const color = props.$theme.colors.status.success.background;
+          if (color.startsWith('#')) {
+            const r = parseInt(color.slice(1, 3), 16);
+            const g = parseInt(color.slice(3, 5), 16);
+            const b = parseInt(color.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, 0.15)`;
+          }
+          return 'transparent';
+        })()
+      : 'transparent'};
+    color: ${props.$theme?.colors?.status?.success?.text ||
+             props.$theme?.status?.success?.text ||
+             props.$theme?.colors?.success ||
+             'inherit'};
+    border: 1px solid ${props.$theme?.colors?.status?.success?.background ||
+                       props.$theme?.status?.success?.background ||
+                       props.$theme?.colors?.success ||
+                       'transparent'};
   `
       : `
-    background: #fadbd8;
-    color: ${(props: any) => props.theme?.status?.error?.color || '#e74c3c'};
-    border: 1px solid #e74c3c;
+    background: ${props.$theme?.colors?.status?.error?.background
+      ? (() => {
+          const color = props.$theme.colors.status.error.background;
+          if (color.startsWith('#')) {
+            const r = parseInt(color.slice(1, 3), 16);
+            const g = parseInt(color.slice(3, 5), 16);
+            const b = parseInt(color.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, 0.15)`;
+          }
+          return 'transparent';
+        })()
+      : 'transparent'};
+    color: ${props.$theme?.colors?.status?.error?.text ||
+             props.$theme?.status?.error?.text ||
+             props.$theme?.colors?.error ||
+             'inherit'};
+    border: 1px solid ${props.$theme?.colors?.status?.error?.background ||
+                       props.$theme?.status?.error?.background ||
+                       props.$theme?.colors?.error ||
+                       'transparent'};
   `}
 `;
 
@@ -365,7 +485,7 @@ export default function UserManagementForm({
   );
 
   return (
-    <FormContainer>
+    <FormContainer $theme={theme}>
       <h2>{mode === 'create' ? 'Criar Usuário' : 'Editar Usuário'}</h2>
 
       <form onSubmit={handleSubmit}>

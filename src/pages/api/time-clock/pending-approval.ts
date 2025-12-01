@@ -91,7 +91,8 @@ export default async function handler(
         data: registrosPendentes,
       });
     } catch (error) {
-      logger.error('Erro ao buscar registros pendentes:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      logger.error('Erro ao buscar registros pendentes:', errorMessage, error);
       res.status(500).json({
         success: false,
         error: 'Erro interno do servidor',
@@ -172,7 +173,8 @@ export default async function handler(
         message: `Registro ${acao === 'aprovar' ? 'aprovado' : 'rejeitado'} com sucesso`,
       });
     } catch (error) {
-      logger.error('Erro ao processar aprovação:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      logger.error('Erro ao processar aprovação:', errorMessage, error);
       res.status(500).json({
         success: false,
         error: 'Erro interno do servidor',

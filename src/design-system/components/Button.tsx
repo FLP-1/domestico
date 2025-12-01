@@ -41,7 +41,7 @@ const StyledButton = styled.button<{
         case 'primary':
           return {
             background: `linear-gradient(135deg, ${themedStyles.primary}, ${themedStyles.secondary})`,
-            color: '#FFFFFF',
+            color: themedStyles.textOnPrimary || themedStyles.text || 'inherit',
             border: 'none',
             hoverTransform: 'translateY(-2px)',
           };
@@ -54,22 +54,22 @@ const StyledButton = styled.button<{
           };
         case 'success':
           return {
-            background: `linear-gradient(135deg, ${themedStyles.success}, #2ECC71)`,
-            color: '#FFFFFF',
+            background: `linear-gradient(135deg, ${themedStyles.success}, ${themedStyles.success})`,
+            color: `${themedStyles.textOnPrimary || themedStyles.text || 'inherit'}`,
             border: 'none',
             hoverTransform: 'translateY(-2px)',
           };
         case 'warning':
           return {
-            background: `linear-gradient(135deg, ${themedStyles.warning}, #E67E22)`,
-            color: '#FFFFFF',
+            background: `linear-gradient(135deg, ${themedStyles.warning}, ${themedStyles.warning})`,
+            color: `${themedStyles.textOnPrimary || themedStyles.text || 'inherit'}`,
             border: 'none',
             hoverTransform: 'translateY(-2px)',
           };
         case 'danger':
           return {
-            background: `linear-gradient(135deg, ${themedStyles.error}, #C0392B)`,
-            color: '#FFFFFF',
+            background: `linear-gradient(135deg, ${themedStyles.error}, ${themedStyles.error})`,
+            color: `${themedStyles.textOnPrimary || themedStyles.text || 'inherit'}`,
             border: 'none',
             hoverTransform: 'translateY(-2px)',
           };
@@ -83,7 +83,7 @@ const StyledButton = styled.button<{
         default:
           return {
             background: `linear-gradient(135deg, ${themedStyles.primary}, ${themedStyles.secondary})`,
-            color: '#FFFFFF',
+            color: `${themedStyles.textOnPrimary || themedStyles.text || 'inherit'}`,
             border: 'none',
             hoverTransform: 'translateY(-2px)',
           };
@@ -217,7 +217,16 @@ const StyledButton = styled.button<{
           position: absolute;
           width: 16px;
           height: 16px;
-          border: 2px solid rgba(255, 255, 255, 0.3);
+          border: 2px solid ${(() => {
+            const textColor = themedStyles.textOnPrimary || themedStyles.text;
+            if (textColor && typeof textColor === 'string' && textColor.startsWith('#')) {
+              const r = parseInt(textColor.slice(1, 3), 16);
+              const g = parseInt(textColor.slice(3, 5), 16);
+              const b = parseInt(textColor.slice(5, 7), 16);
+              return `rgba(${r}, ${g}, ${b}, 0.3)`;
+            }
+            return 'transparent';
+          })()};
           border-top: 2px solid currentColor;
           border-radius: 50%;
           animation: spin 1s linear infinite;

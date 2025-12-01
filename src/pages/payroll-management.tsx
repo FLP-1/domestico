@@ -3,7 +3,9 @@ import AccessibleEmoji from '../components/AccessibleEmoji';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
-import { useAlertManager } from '../hooks/useAlertManager';
+import { useMessages } from '../hooks/useMessages';
+import { apiClient } from '../lib/apiClient';
+import { useDataFetch } from '../hooks/useDataFetch';
 import styled from 'styled-components';
 import FilterSection from '../components/FilterSection';
 import {
@@ -20,7 +22,7 @@ import TopBar from '../components/TopBar';
 import WelcomeSection from '../components/WelcomeSection';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
-import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import { getThemeColor, getStatusColor, addOpacity } from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
 import {
   UnifiedButton,
@@ -33,6 +35,9 @@ import {
   OptimizedSectionTitle,
 } from '../components/shared/optimized-styles';
 import EmptyState from '../components/EmptyState';
+import ContextualChat from '../components/ContextualChat';
+import { formatCurrency, formatDate } from '../utils/formatters';
+import { useErrorHandler } from '../hooks/useErrorHandler';
 
 // EmptyIcon, EmptyTitle, EmptyDescription removidos - usar componente EmptyState centralizado
 
@@ -44,19 +49,29 @@ const SectionText = styled.p<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'secondary' in text) {
       return text.secondary;
     }
-    return defaultColors.text.secondary;
+    return getThemeColor(props.$theme, 'text.secondary', 'inherit');
   }};
   font-size: 0.9rem;
   margin: 0.25rem 0;
 `;
 
-const StatItem = styled.div`
+const StatItem = styled.div<{ $theme?: Theme }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: ${props => {
+    const bgColor = (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
+                    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null);
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return 'transparent';
+  }};
   border-radius: 8px;
   margin: 0.5rem 0;
 `;
@@ -68,6 +83,14 @@ const UnifiedModalSection = styled.div`
 
 const LargeIcon = styled.div`
   font-size: 3rem;
+  margin-bottom: 1rem;
+`;
+
+// Styled Components para substituir estilos inline
+const FlexRowBetween = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 1rem;
 `;
 
@@ -144,14 +167,14 @@ const SummarySection = styled.section<{ $theme: Theme }>`
       : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
     return surfaceColor 
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(defaultColors.surface, 0.95);
+      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
   }};
   backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
   box-shadow: 0 8px 32px
-    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+    ${props => props.$theme?.colors?.shadow || 'transparent'};
 `;
 
 const SummaryTitle = styled.h2<{ $theme?: Theme }>`
@@ -162,7 +185,7 @@ const SummaryTitle = styled.h2<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   margin: 0 0 1.5rem 0;
   font-family: 'Montserrat', sans-serif;
@@ -188,15 +211,15 @@ const SummaryCard = styled.div<{
       case 'success':
         return props.$theme?.colors?.success
           ? addOpacity(props.$theme.colors.success, 0.1)
-          : addOpacity(defaultColors.success, 0.1);
+          : addOpacity(getStatusColor(props.$theme, 'success', 'background') || 'transparent', 0.1);
       case 'warning':
         return props.$theme?.colors?.warning
           ? addOpacity(props.$theme.colors.warning, 0.1)
-          : addOpacity(defaultColors.warning, 0.1);
+          : addOpacity(getStatusColor(props.$theme, 'warning', 'background') || 'transparent', 0.1);
       case 'info':
         return props.$theme?.colors?.info
           ? addOpacity(props.$theme.colors.info, 0.1)
-          : addOpacity(defaultColors.info, 0.1);
+          : addOpacity(getStatusColor(props.$theme, 'info', 'background') || 'transparent', 0.1);
       default: {
         const surface = props.$theme?.colors?.surface;
         const surfaceColor = typeof surface === 'string' 
@@ -204,7 +227,7 @@ const SummaryCard = styled.div<{
           : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
         return surfaceColor 
           ? addOpacity(surfaceColor, 0.8)
-          : addOpacity(defaultColors.surface, 0.8);
+          : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.8);
       }
     }
   }};
@@ -216,17 +239,17 @@ const SummaryCard = styled.div<{
         case 'success':
           return props.$theme?.colors?.success
             ? addOpacity(props.$theme.colors.success, 0.3)
-            : addOpacity(defaultColors.success, 0.3);
+            : addOpacity(getStatusColor(props.$theme, 'success', 'background') || 'transparent', 0.3);
         case 'warning':
           return props.$theme?.colors?.warning
             ? addOpacity(props.$theme.colors.warning, 0.3)
-            : addOpacity(defaultColors.warning, 0.3);
+            : addOpacity(getStatusColor(props.$theme, 'warning', 'background') || 'transparent', 0.3);
         case 'info':
           return props.$theme?.colors?.info
             ? addOpacity(props.$theme.colors.info, 0.3)
-            : addOpacity(defaultColors.info, 0.3);
+            : addOpacity(getStatusColor(props.$theme, 'info', 'background') || 'transparent', 0.3);
         default:
-          return props.$theme?.colors?.border || defaultColors.border;
+          return getThemeColor(props.$theme, 'border.primary', 'transparent');
       }
     }};
   transition: all 0.3s ease;
@@ -234,7 +257,7 @@ const SummaryCard = styled.div<{
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 16px
-      ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+      ${props => props.$theme?.colors?.shadow || 'transparent'};
   }
 `;
 
@@ -246,7 +269,7 @@ const SummaryCardTitle = styled.h3<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   margin: 0 0 0.75rem 0;
   display: flex;
@@ -262,7 +285,7 @@ const SummaryValue = styled.div<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   font-family: 'Montserrat', sans-serif;
 `;
@@ -275,7 +298,7 @@ const SummaryDetails = styled.div<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'secondary' in text) {
       return text.secondary;
     }
-    return defaultColors.text.secondary;
+    return getThemeColor(props.$theme, 'text.secondary', 'inherit');
   }};
 `;
 
@@ -287,14 +310,14 @@ const ChartSection = styled.div<{ $theme: Theme }>`
       : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
     return surfaceColor 
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(defaultColors.surface, 0.95);
+      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
   }};
   backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
   box-shadow: 0 8px 32px
-    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+    ${props => props.$theme?.colors?.shadow || 'transparent'};
 `;
 
 const ChartTitle = styled.h2<{ $theme?: Theme }>`
@@ -305,7 +328,7 @@ const ChartTitle = styled.h2<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   margin: 0 0 1.5rem 0;
   font-family: 'Montserrat', sans-serif;
@@ -321,15 +344,15 @@ const ChartContainer = styled.div`
   }
 `;
 
-const PieChart = styled.div`
+const PieChart = styled.div<{ $theme?: Theme }>`
   width: 200px;
   height: 200px;
   border-radius: 50%;
   background: conic-gradient(
-    #3498db 0deg 120deg,
-    #2ecc71 120deg 180deg,
-    #e74c3c 180deg 240deg,
-    #f39c12 240deg 360deg
+    ${props => props.$theme?.colors?.info || props.$theme?.colors?.primary || 'transparent'} 0deg 120deg,
+    ${props => props.$theme?.colors?.success || 'transparent'} 120deg 180deg,
+    ${props => props.$theme?.colors?.error || 'transparent'} 180deg 240deg,
+    ${props => props.$theme?.colors?.warning || 'transparent'} 240deg 360deg
   );
   position: relative;
   flex-shrink: 0;
@@ -341,7 +364,11 @@ const PieChart = styled.div`
     left: 50%;
     width: 80px;
     height: 80px;
-    background: white;
+    background: ${props =>
+      (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
+      (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
+      props.$theme?.colors?.surface ||
+      'transparent'};
     border-radius: 50%;
     transform: translate(-50%, -50%);
   }
@@ -362,11 +389,11 @@ const LegendItem = styled.div<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
 `;
 
-const LegendColor = styled.div<{ $color: string }>`
+const LegendColor = styled.div<{ $color: string; $theme?: Theme }>`
   width: 16px;
   height: 16px;
   border-radius: 50%;
@@ -382,25 +409,25 @@ const DocumentsSection = styled.section<{ $theme: Theme }>`
       : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
     return surfaceColor 
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(defaultColors.surface, 0.95);
+      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
   }};
   backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
   box-shadow: 0 8px 32px
-    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+    ${props => props.$theme?.colors?.shadow || 'transparent'};
 `;
 
-const DocumentsTitle = styled.h2`
+const DocumentsTitle = styled.h2<{ $theme?: Theme }>`
   font-size: 1.5rem;
   font-weight: 700;
   color: ${props => {
-    const text = props.theme?.colors?.text;
+    const text = props.$theme?.colors?.text;
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   margin: 0 0 1.5rem 0;
   font-family: 'Montserrat', sans-serif;
@@ -425,22 +452,22 @@ const DocumentType = styled.div<{ $type: string; $theme?: Theme }>`
   background: ${props => {
     const color =
       props.$type === 'holerite'
-        ? props.$theme?.colors?.info || defaultColors.info
+        ? getStatusColor(props.$theme, 'info', 'background') || 'transparent'
         : props.$type === 'recibo'
-          ? props.$theme?.colors?.success || defaultColors.success
+          ? getStatusColor(props.$theme, 'success', 'background') || 'transparent'
           : props.$type === 'vale_transporte'
-            ? props.$theme?.colors?.warning || defaultColors.warning
-            : props.$theme?.colors?.secondary || defaultColors.secondary;
+            ? getStatusColor(props.$theme, 'warning', 'background') || 'transparent'
+            : getThemeColor(props.$theme, 'secondary', 'transparent');
     return addOpacity(color, 0.2);
   }};
   color: ${props => {
     return props.$type === 'holerite'
-      ? props.$theme?.colors?.info || defaultColors.info
+      ? getStatusColor(props.$theme, 'info', 'background') || 'transparent'
       : props.$type === 'recibo'
-        ? props.$theme?.colors?.success || defaultColors.success
+        ? getStatusColor(props.$theme, 'success', 'background') || 'transparent'
         : props.$type === 'vale_transporte'
-          ? props.$theme?.colors?.warning || defaultColors.warning
-          : props.$theme?.colors?.secondary || defaultColors.secondary;
+          ? getStatusColor(props.$theme, 'warning', 'background') || 'transparent'
+          : getThemeColor(props.$theme, 'secondary', 'transparent');
   }};
   font-size: 0.8rem;
   font-weight: 600;
@@ -457,21 +484,21 @@ const DocumentStatus = styled.span<{
   background: ${props => {
     switch (props.$status) {
       case 'available':
-        return props.$theme?.colors?.success || defaultColors.success;
+        return getStatusColor(props.$theme, 'success', 'background') || 'transparent';
       case 'processing':
-        return props.$theme?.colors?.warning || defaultColors.warning;
+        return getStatusColor(props.$theme, 'warning', 'background') || 'transparent';
       case 'error':
-        return props.$theme?.colors?.error || defaultColors.error;
+        return getStatusColor(props.$theme, 'error', 'background') || 'transparent';
       default: {
         const text = props.$theme?.colors?.text;
         if (typeof text === 'object' && text !== null && 'secondary' in text) {
           return text.secondary;
         }
-        return defaultColors.text.secondary;
+        return getThemeColor(props.$theme, 'text.secondary', 'inherit');
       }
     }
   }};
-  color: ${props => props.$theme?.colors?.surface || defaultColors.surface};
+  color: ${props => getThemeColor(props.$theme, 'surface.primary', 'inherit')};
 `;
 
 const DocumentInfo = styled.div`
@@ -486,7 +513,7 @@ const DocumentTitle = styled.h3<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   margin: 0 0 0.5rem 0;
 `;
@@ -498,7 +525,7 @@ const DocumentPeriod = styled.div<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'secondary' in text) {
       return text.secondary;
     }
-    return defaultColors.text.secondary;
+    return getThemeColor(props.$theme, 'text.secondary', 'inherit');
   }};
   margin-bottom: 0.25rem;
 `;
@@ -511,7 +538,7 @@ const DocumentAmount = styled.div<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   font-family: 'Montserrat', sans-serif;
 `;
@@ -540,15 +567,15 @@ const DocumentUnifiedButton = styled.button<{
         if (typeof text === 'object' && text !== null && 'secondary' in text) {
           return text.secondary;
         }
-        return defaultColors.text.secondary;
+        return getThemeColor(props.$theme, 'text.secondary', 'inherit');
       }
       case 'success':
-        return props.$theme?.colors?.success || defaultColors.success;
-      default:
-        return props.$theme?.colors?.primary || defaultColors.primary;
+        return getStatusColor(props.$theme, 'success', 'background') || 'transparent';
+        default:
+        return getThemeColor(props.$theme, 'primary', 'transparent');
     }
   }};
-  color: ${props => props.$theme?.colors?.surface || defaultColors.surface};
+  color: ${props => getThemeColor(props.$theme, 'surface.primary', 'inherit')};
 
   &:hover {
     background: ${props => {
@@ -558,12 +585,12 @@ const DocumentUnifiedButton = styled.button<{
           if (typeof text === 'object' && text !== null && 'secondary' in text) {
             return text.secondary;
           }
-          return defaultColors.text.secondary;
+          return getThemeColor(props.$theme, 'text.secondary', 'inherit');
         }
         case 'success':
-          return props.$theme?.colors?.success || defaultColors.success;
+          return getStatusColor(props.$theme, 'success', 'background') || 'transparent';
         default:
-          return props.$theme?.colors?.primary || defaultColors.primary;
+          return getThemeColor(props.$theme, 'primary', 'transparent');
       }
     }};
     transform: translateY(-2px);
@@ -584,14 +611,14 @@ const PaymentSection = styled.section<{ $theme: Theme }>`
       : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
     return surfaceColor 
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(defaultColors.surface, 0.95);
+      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
   }};
   backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
   box-shadow: 0 8px 32px
-    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+    ${props => props.$theme?.colors?.shadow || 'transparent'};
 `;
 
 const PaymentTitle = styled.h2<{ $theme?: Theme }>`
@@ -602,7 +629,7 @@ const PaymentTitle = styled.h2<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   margin: 0 0 1.5rem 0;
   font-family: 'Montserrat', sans-serif;
@@ -621,34 +648,34 @@ const EmployeeCard = styled.div<{ $theme?: Theme; $selected: boolean }>`
   border: 2px solid
     ${props =>
       props.$selected
-        ? props.$theme?.colors?.primary || defaultColors.primary
-        : props.$theme?.colors?.border || defaultColors.border};
+        ? getThemeColor(props.$theme, 'primary', 'transparent')
+        : getThemeColor(props.$theme, 'border.primary', 'transparent')};
   background: ${props => {
     if (props.$selected) {
       return props.$theme?.colors?.primary
         ? addOpacity(props.$theme.colors.primary, 0.1)
-        : addOpacity(defaultColors.primary, 0.1);
+        : addOpacity(getThemeColor(props.$theme, 'primary', 'transparent'), 0.1);
     }
     const surface = props.$theme?.colors?.surface;
     const surfaceColor = typeof surface === 'string' 
       ? surface 
       : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
-    return surfaceColor || defaultColors.surface;
+    return surfaceColor || getThemeColor(props.$theme, 'surface.primary', 'transparent');
   }};
   cursor: pointer;
   transition: all 0.3s ease;
 
   &:hover {
     border-color: ${props =>
-      props.$theme?.colors?.primary || defaultColors.primary};
+      getThemeColor(props.$theme, 'primary', 'transparent')};
     background: ${props =>
       props.$theme?.colors?.primary
         ? addOpacity(props.$theme.colors.primary, 0.05)
-        : addOpacity(defaultColors.primary, 0.05)};
+        : addOpacity(getThemeColor(props.$theme, 'primary', 'transparent'), 0.05)};
   }
 `;
 
-const EmployeeAvatar = styled.div<{ $color: string }>`
+const EmployeeAvatar = styled.div<{ $color: string; $theme?: Theme }>`
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -656,7 +683,12 @@ const EmployeeAvatar = styled.div<{ $color: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: ${props =>
+    (typeof props.$theme?.colors?.text === 'object' && props.$theme?.colors?.text && 'primary' in props.$theme.colors.text ? String((props.$theme.colors.text as any).primary) : null) ||
+    (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'primary' in (props.$theme as any).text ? String(((props.$theme as any).text as any).primary) : null) ||
+    (typeof props.$theme?.colors?.text === 'string' ? props.$theme.colors.text : null) ||
+    (typeof props.$theme?.colors?.surface === 'string' ? props.$theme.colors.surface : (typeof props.$theme?.colors?.surface === 'object' && props.$theme?.colors?.surface && 'primary' in props.$theme.colors.surface ? String((props.$theme.colors.surface as any).primary) : null)) ||
+    'inherit'};
   font-weight: 700;
   font-size: 1.2rem;
 `;
@@ -673,7 +705,7 @@ const EmployeeName = styled.div<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   margin-bottom: 0.25rem;
 `;
@@ -685,7 +717,7 @@ const EmployeeDetails = styled.div<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'secondary' in text) {
       return text.secondary;
     }
-    return defaultColors.text.secondary;
+    return getThemeColor(props.$theme, 'text.secondary', 'inherit');
   }};
 `;
 
@@ -701,7 +733,7 @@ const PDFViewer = styled.div<{ $theme?: Theme }>`
       : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
     return surfaceColor 
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(defaultColors.surface, 0.95);
+      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
   }};
   backdrop-filter: blur(20px);
   border-radius: 12px;
@@ -714,7 +746,7 @@ const PDFViewer = styled.div<{ $theme?: Theme }>`
     } else if (typeof border === 'object' && border !== null && 'primary' in border) {
       return border.primary;
     }
-    return defaultColors.border;
+    return getThemeColor(props.$theme, 'border.primary', 'transparent');
   }};
   min-height: 400px;
   display: flex;
@@ -725,7 +757,7 @@ const PDFViewer = styled.div<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'secondary' in text) {
       return text.secondary;
     }
-    return defaultColors.text.secondary;
+    return getThemeColor(props.$theme, 'text.secondary', 'inherit');
   }};
   font-size: 0.9rem;
 `;
@@ -735,11 +767,13 @@ export default function PayrollManagement() {
   const { currentProfile } = useUserProfile();
   const themeObject = useTheme(currentProfile?.role.toLowerCase());
   const theme = { colors: themeObject.colors };
-  const alertManager = useAlertManager();
+  const { showSuccess, showError, showInfo, keys } = useMessages();
+  const errorHandler = useErrorHandler();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [modalOpen, setUnifiedModalOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] =
     useState<PayrollDocument | null>(null);
+  const [selectedPayrollIdForChat, setSelectedPayrollIdForChat] = useState<string | null>(null); // ✅ NOVO: Para comunicação contextual
   const [selectedEmployee, setSelectedEmployee] = useState<string>('');
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -750,12 +784,11 @@ export default function PayrollManagement() {
     const loadEmployees = async () => {
       try {
         setLoadingEmployees(true);
-        const response = await fetch('/api/users');
-        const result = await response.json();
+        const response = await apiClient.users.getAll();
 
-        if (result.success && result.data) {
+        if (response.success && response.data) {
           // Filtrar apenas usuários com perfil EMPREGADO
-          const employeesData = result.data
+          const employeesData = response.data
             .filter((user: any) => 
               user.perfis?.some((p: any) => 
                 p.perfil?.codigo === 'EMPREGADO' || p.perfil?.codigo === 'EMPREGADO'
@@ -779,15 +812,16 @@ export default function PayrollManagement() {
           setEmployees(employeesData);
         }
       } catch (error) {
-        console.error('Erro ao carregar funcionários:', error);
-        alertManager.showError('Erro ao carregar funcionários');
+        errorHandler.handleAsyncError(error, 'carregar funcionários', {
+          userMessage: keys.ERROR.ERRO_CARREGAR_FUNCIONARIOS,
+        });
       } finally {
         setLoadingEmployees(false);
       }
     };
 
     loadEmployees();
-  }, []);
+  }, [errorHandler, keys.ERROR.ERRO_CARREGAR_FUNCIONARIOS]);
 
   const [payrollSummary] = useState<PayrollSummary>({
     id: '1',
@@ -868,18 +902,18 @@ export default function PayrollManagement() {
   };
 
   const handleDownloadDocument = (document: PayrollDocument) => {
-    alertManager.showSuccess(`Baixando ${getDocumentTypeName(document.type)}...`);
+      showSuccess('success.baixando_documento', { tipo: getDocumentTypeName(document.type) });
     // Aqui seria implementada a lógica de download
   };
 
   const handlePrintDocument = (document: PayrollDocument) => {
-    alertManager.showSuccess(`Imprimindo ${getDocumentTypeName(document.type)}...`);
+      showSuccess('success.imprimindo_documento', { tipo: getDocumentTypeName(document.type) });
     // Aqui seria implementada a lógica de impressão
   };
 
   const handleProcessPayment = () => {
     if (selectedEmployee) {
-      alertManager.showSuccess('Processando pagamento...');
+      showSuccess(keys.SUCCESS.PAGAMENTO_PROCESSANDO);
       setShowPaymentForm(false);
     }
   };
@@ -924,12 +958,6 @@ export default function PayrollManagement() {
     });
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
-  };
 
   return (
     <PageContainer $theme={theme} sidebarCollapsed={sidebarCollapsed}>
@@ -947,7 +975,7 @@ export default function PayrollManagement() {
           userRole={currentProfile?.role || 'Usuário'}
           notificationCount={0}
           onNotificationClick={() =>
-            alertManager.showInfo('Notificações em desenvolvimento')
+            showInfo(keys.INFO.NOTIFICACOES_DESENVOLVIMENTO)
           }
         />
       </TopBar>
@@ -1024,9 +1052,7 @@ export default function PayrollManagement() {
                 <>
                   <br />
                   Pago em:{' '}
-                  {new Date(payrollSummary.paymentDate).toLocaleDateString(
-                    'pt-BR'
-                  )}
+                  {formatDate(payrollSummary.paymentDate)}
                 </>
               )}
             </SummaryDetails>
@@ -1038,28 +1064,28 @@ export default function PayrollManagement() {
       <ChartSection $theme={theme}>
         <ChartTitle>Distribuição dos Valores</ChartTitle>
         <ChartContainer>
-          <PieChart />
+          <PieChart $theme={theme} />
           <ChartLegend>
-            <LegendItem>
-              <LegendColor $color='#3498db' />
+            <LegendItem $theme={theme}>
+              <LegendColor $color={theme?.colors?.info || theme?.colors?.primary || 'transparent'} $theme={theme} />
               <span>
                 Salário Base: {formatCurrency(payrollSummary.baseSalary)}
               </span>
             </LegendItem>
-            <LegendItem>
-              <LegendColor $color='#2ecc71' />
+            <LegendItem $theme={theme}>
+              <LegendColor $color={theme?.colors?.success || 'transparent'} $theme={theme} />
               <span>
                 Adicionais: {formatCurrency(payrollSummary.additions.total)}
               </span>
             </LegendItem>
-            <LegendItem>
-              <LegendColor $color='#e74c3c' />
+            <LegendItem $theme={theme}>
+              <LegendColor $color={theme?.colors?.error || 'transparent'} $theme={theme} />
               <span>
                 Descontos: {formatCurrency(payrollSummary.deductions.total)}
               </span>
             </LegendItem>
-            <LegendItem>
-              <LegendColor $color='#f39c12' />
+            <LegendItem $theme={theme}>
+              <LegendColor $color={theme?.colors?.warning || 'transparent'} $theme={theme} />
               <span>Líquido: {formatCurrency(payrollSummary.netSalary)}</span>
             </LegendItem>
           </ChartLegend>
@@ -1094,7 +1120,16 @@ export default function PayrollManagement() {
                 onClick={() => setSelectedEmployee(employee.id)}
               >
                 <EmployeeAvatar
-                  $color={employee.avatar === 'MS' ? '#90EE90' : '#29ABE2'}
+                  $color={
+                    employee.avatar === 'MS'
+                      ? (typeof theme?.colors?.status?.success === 'object' && theme?.colors?.status?.success && 'background' in theme.colors.status.success ? String((theme.colors.status.success as any).background) : null) ||
+                        (typeof (theme as any)?.status?.success === 'object' && (theme as any)?.status?.success && 'background' in (theme as any).status.success ? String(((theme as any).status.success as any).background) : null) ||
+                        (typeof theme?.colors?.success === 'string' ? theme.colors.success : null) ||
+                        'inherit'
+                      : theme?.colors?.primary ||
+                        (theme as any)?.accent ||
+                        'inherit'
+                  }
                 >
                   {employee.avatar}
                 </EmployeeAvatar>
@@ -1207,7 +1242,7 @@ export default function PayrollManagement() {
                       : 'error'
                 }
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <FlexRowBetween>
                   <DocumentType $type={document.type} $theme={theme}>
                     <span>{getDocumentTypeIcon(document.type)}</span>
                     <span>{getDocumentTypeName(document.type)}</span>
@@ -1219,14 +1254,14 @@ export default function PayrollManagement() {
                         ? 'Processando'
                         : 'Erro'}
                   </DocumentStatus>
-                </div>
+                </FlexRowBetween>
 
                 <DocumentInfo>
                   <DocumentTitle $theme={theme}>{document.employeeName}</DocumentTitle>
                   <DocumentPeriod $theme={theme}>Período: {document.period}</DocumentPeriod>
                   <DocumentPeriod $theme={theme}>
                     Emissão:{' '}
-                    {new Date(document.issueDate).toLocaleDateString('pt-BR')}
+                    {formatDate(document.issueDate)}
                   </DocumentPeriod>
                   <DocumentAmount $theme={theme}>
                     {formatCurrency(document.amount)}
@@ -1240,6 +1275,12 @@ export default function PayrollManagement() {
                     disabled={document.status !== 'available'}
                   >
                     <AccessibleEmoji emoji='👁' label='Visualizar' /> Visualizar
+                  </DocumentUnifiedButton>
+                  <DocumentUnifiedButton
+                    $theme={theme}
+                    onClick={() => setSelectedPayrollIdForChat(document.id)} // ✅ NOVO: Abrir comunicação contextual
+                  >
+                    <AccessibleEmoji emoji='💬' label='Comunicar' /> Comunicar
                   </DocumentUnifiedButton>
                   <DocumentUnifiedButton
                     $theme={theme}
@@ -1290,7 +1331,7 @@ export default function PayrollManagement() {
             </UnifiedModalSection>
 
             <PDFViewer $theme={theme}>
-              <StatItem>
+              <StatItem $theme={theme}>
                 <LargeIcon>
                   <AccessibleEmoji emoji='📄' label='Documento' />
                 </LargeIcon>
@@ -1391,6 +1432,26 @@ export default function PayrollManagement() {
         </div>
       </UnifiedModal>
 
+      {/* ✅ NOVO: Seção de Comunicação Contextual para Folha de Pagamento */}
+      {selectedPayrollIdForChat && (
+        <UnifiedModal
+          isOpen={!!selectedPayrollIdForChat}
+          onClose={() => setSelectedPayrollIdForChat(null)}
+          title={`Comunicação - Folha de Pagamento ${selectedPayrollIdForChat.slice(0, 8)}`}
+          $theme={theme}
+        >
+          <ContextualChat
+            contextoTipo="FOLHA"
+            contextoId={selectedPayrollIdForChat}
+            titulo={`Comunicação sobre esta Folha de Pagamento`}
+            altura="500px"
+            onMensagemEnviada={() => {
+              // Recarregar folhas ou atualizar UI se necessário
+              // loadPayrolls(); // Se houver função de reload
+            }}
+          />
+        </UnifiedModal>
+      )}
     </PageContainer>
   );
 }

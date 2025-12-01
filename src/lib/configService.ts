@@ -6,6 +6,8 @@ import {
   loadSystemConfig,
   getSystemConfig,
 } from '../config/centralized-config';
+import { profileThemes } from '../hooks/useTheme';
+import { DEFAULT_COLORS } from '../config/default-colors';
 
 // ========================================
 // CONFIGURAÇÕES DE SISTEMA
@@ -302,13 +304,15 @@ export async function getColorsForProfile(perfilCodigo: string): Promise<{
     return systemConfig.colors;
   } catch (error) {
     console.error('Erro ao obter configuração de cores:', error);
+    // Usar valores do design system em vez de cores hardcoded
+    const defaultTheme = profileThemes['empregado'];
     return {
-      primary: '#29ABE2',
-      secondary: '#90EE90',
-      success: '#10B981',
-      warning: '#F59E0B',
-      error: '#EF4444',
-      info: '#3B82F6',
+      primary: defaultTheme.colors.primary,
+      secondary: defaultTheme.colors.secondary,
+      success: DEFAULT_COLORS.success,
+      warning: DEFAULT_COLORS.warning,
+      error: DEFAULT_COLORS.error,
+      info: DEFAULT_COLORS.info,
     };
   }
 }

@@ -133,18 +133,44 @@ const Logo = styled.div<{ $theme?: any }>`
   width: 120px;
   height: 120px;
   border-radius: 30px;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.9),
-    rgba(255, 255, 255, 0.7)
-  );
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary ||
+                    props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `linear-gradient(135deg, rgba(${r}, ${g}, ${b}, 0.9), rgba(${r}, ${g}, ${b}, 0.7))`;
+    }
+    return 'transparent';
+  }};
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 20px 40px rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return props.$theme?.shadows?.xl || 'none';
+  }};
   /* backdrop-filter: blur(20px); - removido para melhorar legibilidade */
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary ||
+                    props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.3)`;
+    }
+    return 'transparent';
+  }};
 
   img {
     width: 80px;
@@ -159,7 +185,17 @@ const WelcomeTitle = styled.h1<{ $theme?: any }>`
   font-weight: ${fontWeight.bold};
   color: white;
   margin: 0 0 1rem 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 2px 4px rgba(${r}, ${g}, ${b}, 0.5)`;
+    }
+    return 'none';
+  }};
   /* Removido gradiente do texto para melhorar legibilidade */
 
   @media (max-width: 768px) {
@@ -172,13 +208,34 @@ const WelcomeSubtitle = styled.p<{ $theme?: any }>`
   color: white;
   margin: 0 0 2rem 0;
   font-weight: ${fontWeight.medium};
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 2px 4px rgba(${r}, ${g}, ${b}, 0.5)`;
+    }
+    return 'none';
+  }};
   font-family: ${fontFamily.body.join(', ')};
 `;
 
 const WelcomeDescription = styled.p<{ $theme?: any }>`
   font-size: ${fontSize.lg};
-  color: rgba(255, 255, 255, 0.95);
+  color: ${props => {
+    const textColor = props.$theme?.colors?.text?.onPrimary ||
+                      props.$theme?.text?.onPrimary ||
+                      props.$theme?.colors?.surface;
+    if (textColor && textColor.startsWith('#')) {
+      const r = parseInt(textColor.slice(1, 3), 16);
+      const g = parseInt(textColor.slice(3, 5), 16);
+      const b = parseInt(textColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.95)`;
+    }
+    return 'inherit';
+  }};
   margin: 0 0 3rem 0;
   line-height: ${lineHeight.relaxed};
   max-width: 600px;
@@ -200,8 +257,28 @@ const SkipButton = styled.button<{ $theme?: any }>`
   position: absolute;
   top: 2rem;
   right: 2rem;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary ||
+                    props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.2)`;
+    }
+    return 'transparent';
+  }};
+  border: 1px solid ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary ||
+                    props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.3)`;
+    }
+    return 'transparent';
+  }};
   border-radius: 25px;
   padding: 0.75rem 1.5rem;
   color: white;
@@ -211,7 +288,17 @@ const SkipButton = styled.button<{ $theme?: any }>`
   /* backdrop-filter: blur(10px); - removido para melhorar legibilidade */
 
   &:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: ${props => {
+      const bgColor = props.$theme?.colors?.background?.primary ||
+                      props.$theme?.background?.primary;
+      if (bgColor && bgColor.startsWith('#')) {
+        const r = parseInt(bgColor.slice(1, 3), 16);
+        const g = parseInt(bgColor.slice(3, 5), 16);
+        const b = parseInt(bgColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.3)`;
+      }
+      return 'transparent';
+    }};
     transform: translateY(-2px);
   }
 `;
@@ -220,8 +307,14 @@ const TutorialContainer = styled.div<{ $theme?: any }>`
   min-height: 100vh;
   background: linear-gradient(
     135deg,
-    ${props => props.$theme?.colors?.surface || '#f9fafb'} 0%,
-    ${props => props.$theme?.colors?.border || '#e5e7eb'} 100%
+    ${props => props.$theme?.colors?.surface || props.$theme?.colors?.background?.primary || publicColors.surface} 0%,
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border?.light) || 
+             props.$theme?.border?.light ||
+             (typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border) ||
+             'transparent';
+    }} 100%
   );
   display: flex;
   flex-direction: column;
@@ -229,12 +322,42 @@ const TutorialContainer = styled.div<{ $theme?: any }>`
 `;
 
 const TutorialHeader = styled.header<{ $theme?: any }>`
-  background: rgba(255, 255, 255, 0.98);
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary ||
+                    props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.98)`;
+    }
+    return 'transparent';
+  }};
   /* backdrop-filter: blur(20px); - removido para melhorar legibilidade */
   padding: 1.5rem 2rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 4px 16px rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return props.$theme?.shadows?.md || 'none';
+  }};
   border-bottom: 1px solid
-    ${props => props.$theme?.colors?.primary || '#29ABE2'}33;
+    ${props => {
+      const primaryColor = props.$theme?.colors?.primary || publicColors.primary;
+      // Adiciona opacidade ao hex color
+      if (primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      return primaryColor.replace(')', ', 0.2)').replace('rgb', 'rgba');
+    }};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -249,7 +372,17 @@ const ProgressContainer = styled.div<{ $theme?: any }>`
 const ProgressBar = styled.div<{ $theme?: any }>`
   width: 200px;
   height: 8px;
-  background: rgba(0, 0, 0, 0.1);
+  background: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return 'transparent';
+  }};
   border-radius: 4px;
   overflow: hidden;
 `;
@@ -259,8 +392,8 @@ const ProgressFill = styled.div<{ $progress: number; $theme?: any }>`
   height: 100%;
   background: linear-gradient(
     90deg,
-    ${props => props.$theme?.colors?.primary || '#29ABE2'},
-    ${props => props.$theme?.colors?.secondary || '#90EE90'}
+    ${props => props.$theme?.colors?.primary || publicColors.primary},
+    ${props => props.$theme?.colors?.secondary || publicColors.secondary}
   );
   transition: width 0.5s ease;
   border-radius: 4px;
@@ -268,7 +401,11 @@ const ProgressFill = styled.div<{ $progress: number; $theme?: any }>`
 
 const ProgressText = styled.span<{ $theme?: any }>`
   font-weight: 600;
-  color: ${props => props.$theme?.colors?.text?.primary || '#2c3e50'};
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary ||
+    publicColors.text?.primary ||
+    'inherit'};
   font-size: 0.9rem;
 `;
 
@@ -307,7 +444,17 @@ const SlideTitle = styled.h2<{ $color: string; $theme?: any }>`
   font-weight: ${fontWeight.bold};
   color: ${props => props.$theme?.colors?.primary || props.$color};
   margin: 0 0 0.75rem 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 2px 4px rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return 'none';
+  }};
 
   @media (max-width: 768px) {
     font-size: ${fontSize['2xl']};
@@ -321,7 +468,11 @@ const SlideTitle = styled.h2<{ $color: string; $theme?: any }>`
 
 const SlideDescription = styled.p<{ $theme?: any }>`
   font-size: ${fontSize.lg};
-  color: ${props => props.$theme?.colors?.text?.secondary || '#5a6c7d'};
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary ||
+    publicColors.text?.secondary ||
+    'inherit'};
   margin: 0 0 1.5rem 0;
   line-height: ${lineHeight.relaxed};
   font-family: ${fontFamily.body.join(', ')};
@@ -348,7 +499,11 @@ const FeatureItem = styled.li<{ $theme?: any }>`
   gap: 0.5rem;
   margin-bottom: 0.5rem;
   font-size: ${fontSize.sm};
-  color: ${props => props.$theme?.colors?.text?.primary || '#2c3e50'};
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary ||
+    publicColors.text?.primary ||
+    'inherit'};
   font-family: ${fontFamily.body.join(', ')};
 
   &::before {
@@ -374,7 +529,12 @@ const BenefitItem = styled.li<{ $theme?: any }>`
   gap: 0.5rem;
   margin-bottom: 0.5rem;
   font-size: ${fontSize.xs};
-  color: ${props => props.$theme?.colors?.text?.tertiary || '#7f8c8d'};
+  color: ${props => 
+    props.$theme?.colors?.text?.tertiary || 
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-family: ${fontFamily.body.join(', ')};
 
   &::before {
@@ -397,7 +557,17 @@ const SlideIllustration = styled.div<{ $color: string; $theme?: any }>`
   .illustration-icon {
     font-size: 6rem;
     color: ${props => props.$theme?.colors?.primary || props.$color};
-    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+    filter: ${props => {
+      const shadowColor = props.$theme?.colors?.shadow ||
+                          props.$theme?.shadow?.color;
+      if (shadowColor && shadowColor.startsWith('#')) {
+        const r = parseInt(shadowColor.slice(1, 3), 16);
+        const g = parseInt(shadowColor.slice(3, 5), 16);
+        const b = parseInt(shadowColor.slice(5, 7), 16);
+        return `drop-shadow(0 10px 20px rgba(${r}, ${g}, ${b}, 0.1))`;
+      }
+      return 'none';
+    }};
   }
 
   @media (max-height: 900px) {
@@ -412,15 +582,49 @@ const NavigationContainer = styled.div<{ $theme?: any }>`
   justify-content: space-between;
   align-items: center;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.98);
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary ||
+                    props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.98)`;
+    }
+    return 'transparent';
+  }};
   /* backdrop-filter: blur(20px); - removido para melhorar legibilidade */
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
 `;
 
 const NavigationButton = styled.button<{ $theme?: any; $disabled?: boolean }>`
-  background: ${props =>
-    props.$disabled ? '#e0e0e0' : props.$theme?.colors?.primary || '#29ABE2'};
-  color: ${props => (props.$disabled ? '#9e9e9e' : 'white')};
+  background: ${props => {
+    if (props.$disabled) {
+      return props.$theme?.colors?.text?.disabled ||
+             props.$theme?.colors?.text?.secondary ||
+             'transparent';
+    }
+    return props.$theme?.colors?.primary ||
+           props.$theme?.accent ||
+           'transparent';
+  }};
+  color: ${props => {
+    if (props.$disabled) {
+      return props.$theme?.colors?.text?.disabled ||
+             props.$theme?.colors?.text?.secondary ||
+             'inherit';
+    }
+    return props.$theme?.colors?.text?.primary ||
+           props.$theme?.text?.primary ||
+           props.$theme?.colors?.text ||
+           props.$theme?.colors?.surface ||
+           'inherit';
+  }};
   border: none;
   border-radius: 12px;
   padding: 1rem 2rem;
@@ -434,8 +638,17 @@ const NavigationButton = styled.button<{ $theme?: any; $disabled?: boolean }>`
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px
-      ${props => props.$theme?.colors?.primary || '#29ABE2'}66;
+    box-shadow: ${props => {
+      const primaryColor = props.$theme?.colors?.primary ||
+                           props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `0 8px 20px rgba(${r}, ${g}, ${b}, 0.4)`;
+      }
+      return 'none';
+    }};
   }
 
   &:disabled {
@@ -479,7 +692,17 @@ const CompletionTitle = styled.h1<{ $theme?: any }>`
   font-weight: ${fontWeight.bold};
   color: white;
   margin: 0 0 1rem 0;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  text-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 4px 8px rgba(${r}, ${g}, ${b}, 0.3)`;
+    }
+    return 'none';
+  }};
 
   @media (max-width: 768px) {
     font-size: ${fontSize['4xl']};
@@ -488,7 +711,18 @@ const CompletionTitle = styled.h1<{ $theme?: any }>`
 
 const CompletionDescription = styled.p<{ $theme?: any }>`
   font-size: ${fontSize.xl};
-  color: rgba(255, 255, 255, 0.9);
+  color: ${props => {
+    const textColor = props.$theme?.colors?.text?.onPrimary ||
+                      props.$theme?.text?.onPrimary ||
+                      props.$theme?.colors?.surface;
+    if (textColor && textColor.startsWith('#')) {
+      const r = parseInt(textColor.slice(1, 3), 16);
+      const g = parseInt(textColor.slice(3, 5), 16);
+      const b = parseInt(textColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.9)`;
+    }
+    return 'inherit';
+  }};
   margin: 0 0 3rem 0;
   line-height: ${lineHeight.relaxed};
   font-family: ${fontFamily.body.join(', ')};
@@ -502,14 +736,42 @@ const StatsContainer = styled.div<{ $theme?: any }>`
 `;
 
 const StatCard = styled.div<{ $theme?: any }>`
-  background: ${props =>
-    props.$theme?.colors?.primary || 'rgba(48, 71, 94, 0.9)'};
+  background: ${props => {
+    const primaryColor = props.$theme?.colors?.primary ||
+                         props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.9)`;
+    }
+    return 'transparent';
+  }};
   border-radius: 16px;
   padding: 1.5rem;
-  border: 1px solid
-    ${props => props.$theme?.colors?.primary || 'rgba(48, 71, 94, 0.3)'};
+  border: 1px solid ${props => {
+    const primaryColor = props.$theme?.colors?.primary ||
+                         props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.3)`;
+    }
+    return 'transparent';
+  }};
   text-align: center;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 8px 32px rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return props.$theme?.shadows?.md || 'none';
+  }};
 `;
 
 const StatNumber = styled.div<{ $theme?: any }>`
@@ -522,14 +784,29 @@ const StatNumber = styled.div<{ $theme?: any }>`
 
 const StatLabel = styled.div<{ $theme?: any }>`
   font-size: ${fontSize.sm};
-  color: rgba(255, 255, 255, 0.8);
+  color: ${props => {
+    const textColor = props.$theme?.colors?.text?.onPrimary ||
+                      props.$theme?.text?.onPrimary ||
+                      props.$theme?.colors?.surface;
+    if (textColor && textColor.startsWith('#')) {
+      const r = parseInt(textColor.slice(1, 3), 16);
+      const g = parseInt(textColor.slice(3, 5), 16);
+      const b = parseInt(textColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.8)`;
+    }
+    return 'inherit';
+  }};
   font-weight: ${fontWeight.medium};
   font-family: ${fontFamily.body.join(', ')};
 `;
 
 const TutorialHeaderTitle = styled.h3<{ $theme?: any }>`
   margin: 0;
-  color: ${props => props.$theme?.colors?.text?.primary || '#2c3e50'};
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary ||
+    publicColors.text?.primary ||
+    'inherit'};
   font-size: ${fontSize.xl};
   font-family: ${fontFamily.heading.join(', ')};
   font-weight: ${fontWeight.semibold};
@@ -537,7 +814,11 @@ const TutorialHeaderTitle = styled.h3<{ $theme?: any }>`
 
 const TutorialHeaderSubtitle = styled.p<{ $theme?: any }>`
   margin: 0.25rem 0 0 0;
-  color: #7f8c8d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: ${fontSize.sm};
   font-family: ${fontFamily.body.join(', ')};
 `;
@@ -546,8 +827,17 @@ const DotIndicator = styled.div<{ $active: boolean; $theme?: any }>`
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: ${props =>
-    props.$active ? props.$theme?.colors?.primary || '#29ABE2' : '#e0e0e0'};
+  background: ${props => {
+    if (props.$active) {
+      return props.$theme?.colors?.primary ||
+             props.$theme?.accent ||
+             'transparent';
+    }
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   cursor: pointer;
   transition: all 0.3s ease;
 `;

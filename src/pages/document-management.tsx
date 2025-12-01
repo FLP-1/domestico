@@ -1,8 +1,9 @@
 import AccessibleEmoji from '../components/AccessibleEmoji';
 // src/pages/document-management.tsx
 
+import React from 'react';
 import { useRouter } from 'next/router';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { useAlertManager } from '../hooks/useAlertManager';
 import styled from 'styled-components';
 import FilterSection from '../components/FilterSection';
@@ -15,7 +16,7 @@ import TopBar from '../components/TopBar';
 import WelcomeSection from '../components/WelcomeSection';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
-import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import { getThemeColor, getStatusColor, addOpacity } from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
 import { getTextSecondary } from '../utils/themeTypeGuards';
 import { UnifiedCard } from '../components/unified';
@@ -28,27 +29,33 @@ import DataList, {
   DataListAction,
   DataListItem,
 } from '../components/DataList';
+import ContextualChat from '../components/ContextualChat';
+import ESocialTemplatesGuide from '../components/ESocialTemplatesGuide';
+import { getDocumentTrabalhistaService, TipoDocumentoTrabalhista } from '../services/documentTrabalhistaService';
+import { 
+  TIPOS_DOCUMENTOS_TRABALHISTAS, 
+  getTipoDocumentoInfo,
+  getTiposObrigatorios 
+} from '../constants/documentosTrabalhistas';
+import { formatDate } from '../utils/formatters';
 
-// Interfaces
-interface Document {
+// ✅ REFORMULADO: Interfaces para Documentos Trabalhistas
+interface DocumentoTrabalhista {
   id: string;
-  name: string;
-  category: string;
-  description?: string;
-  dueDate?: string;
-  uploadDate: string;
-  fileSize: string;
-  fileType: string;
-  permissions: 'public' | 'private' | 'shared';
-  sharedWith?: string[];
-  isExpiring: boolean;
-}
-
-interface DocumentCategory {
-  id: string;
-  name: string;
-  color: string;
-  icon: React.ReactNode;
+  tipo: TipoDocumentoTrabalhista;
+  nome: string;
+  numero?: string;
+  orgaoEmissor?: string;
+  emissao?: string;
+  validade?: string;
+  esocialPronto: boolean;
+  esocialEnviado: boolean;
+  validado: boolean;
+  validadoEm?: string;
+  validadoPor?: string;
+  observacoes?: string;
+  caminhoArquivo: string;
+  criadoEm: string;
 }
 
 // Styled Components
@@ -62,10 +69,10 @@ const UploadCardWrapper = styled.div<{ $theme: Theme; $isDragOver: boolean }>`
     border: 2px dashed
       ${props =>
         props.$isDragOver
-          ? props.$theme?.colors?.primary || defaultColors.primary
+          ? getThemeColor(props.$theme, 'primary', 'transparent')
           : (() => {
               const border = props.$theme?.colors?.border;
-              return (typeof border === 'object' && border && (border as any).primary) || (typeof border === 'string' ? border : defaultColors.border);
+              return getThemeColor(props.$theme, 'border.primary', 'transparent');
             })()} !important;
     text-align: center;
     cursor: pointer;
@@ -73,7 +80,7 @@ const UploadCardWrapper = styled.div<{ $theme: Theme; $isDragOver: boolean }>`
 
     &:hover {
       border-color: ${props =>
-        props.$theme?.colors?.primary || defaultColors.primary};
+        getThemeColor(props.$theme, 'primary', 'transparent')};
     }
   }
 `;
@@ -87,7 +94,7 @@ const UploadContent = styled.div`
 
 const UploadIcon = styled.div<{ $theme?: Theme }>`
   font-size: 3rem;
-  color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
+  color: ${props => getThemeColor(props.$theme, 'primary', 'inherit')};
 `;
 
 const UploadText = styled.div<{ $theme?: Theme }>`
@@ -95,7 +102,7 @@ const UploadText = styled.div<{ $theme?: Theme }>`
     margin: 0 0 0.5rem 0;
     color: ${props => {
       const text = props.$theme?.colors?.text;
-      return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+      return getThemeColor(props.$theme, 'text.primary', 'inherit');
     }};
     font-size: 1.25rem;
   }
@@ -104,7 +111,7 @@ const UploadText = styled.div<{ $theme?: Theme }>`
     margin: 0;
     color: ${props => {
       const text = props.$theme?.colors?.text;
-      return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+      return getThemeColor(props.$theme, 'text.secondary', 'inherit');
     }};
     font-size: 0.9rem;
   }
@@ -139,7 +146,7 @@ const TextArea = styled.textarea<{ $theme: Theme }>`
   padding: 0.75rem;
   border: 2px solid ${props => {
     const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border && (border as any).primary) || (typeof border === 'string' ? border : defaultColors.border);
+    return getThemeColor(props.$theme, 'border.primary', 'transparent');
   }};
   border-radius: 8px;
   font-size: 1rem;
@@ -147,7 +154,7 @@ const TextArea = styled.textarea<{ $theme: Theme }>`
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
     const surfaceColor = (typeof surface === 'object' && surface && (surface as any).primary) || (typeof surface === 'string' ? surface : null);
-    return surfaceColor || props.$theme?.colors?.background || defaultColors.surface;
+    return surfaceColor || getThemeColor(props.$theme, 'background.primary', 'transparent') || getThemeColor(props.$theme, 'surface.primary', 'transparent');
   }};
   resize: vertical;
   min-height: 100px;
@@ -157,13 +164,13 @@ const TextArea = styled.textarea<{ $theme: Theme }>`
     border-color: ${props => {
       const border = props.$theme?.colors?.border;
       const borderFocus = (typeof border === 'object' && border && (border as any).focus) || null;
-      return props.$theme?.colors?.primary || borderFocus || defaultColors.primary;
+      return getThemeColor(props.$theme, 'primary', 'transparent') || borderFocus || 'transparent';
     }};
     box-shadow: 0 0 0 3px
       ${props => {
         const border = props.$theme?.colors?.border;
         const borderFocus = (typeof border === 'object' && border && (border as any).focus) || null;
-        const color = props.$theme?.colors?.primary || borderFocus || defaultColors.primary;
+        const color = getThemeColor(props.$theme, 'primary', 'transparent') || borderFocus || 'transparent';
         // Converter para rgba com opacidade
         const hexMatch = color.match(/^#([A-Fa-f\d]{6})$/);
         if (hexMatch) {
@@ -196,7 +203,7 @@ const DocumentNameWrapper = styled.div<{ $theme?: Theme }>`
     font-size: 0.8rem;
     color: ${props => {
       const text = props.$theme?.colors?.text;
-      return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+      return getThemeColor(props.$theme, 'text.secondary', 'inherit');
     }};
     max-width: 280px;
   }
@@ -223,7 +230,7 @@ const DocumentTitle = styled.h3<{ $theme?: Theme }>`
   margin: 0 0 0.5rem 0;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+      return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
 `;
 
@@ -231,7 +238,112 @@ const DocumentSubtitle = styled.p<{ $theme?: Theme }>`
   margin: 0 0 1rem 0;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+      return getThemeColor(props.$theme, 'text.secondary', 'inherit');
+  }};
+`;
+
+// Styled Components para Checklist e eSocial Badge
+const ESocialBadge: React.ComponentType<any> = styled(UnifiedBadge)<{ $pronto?: boolean; $theme?: Theme }>`
+  /* Estilos específicos se necessário */
+`;
+
+const ChecklistSection: React.ComponentType<any> = styled.div<{ $theme?: Theme }>`
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: ${props => {
+    const surface = props.$theme?.colors?.surface;
+    return (typeof surface === 'object' && surface && (surface as any).secondary) ||
+           (typeof surface === 'string' ? surface : null) ||
+           (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'secondary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).secondary) : null) ||
+           'transparent';
+  }};
+  border-radius: 8px;
+  border: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border && (border as any).primary) || 
+           (typeof border === 'string' ? border : null) ||
+           'transparent';
+  }};
+`;
+
+const ChecklistTitle: React.ComponentType<any> = styled.h3<{ $theme?: Theme }>`
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+      return getThemeColor(props.$theme, 'text.primary', 'inherit');
+  }};
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+`;
+
+const ChecklistGrid: React.ComponentType<any> = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+`;
+
+// Styled Components para substituir estilos inline
+const DocumentNameBold = styled.div`
+  font-weight: 600;
+`;
+
+const DocumentNumberText = styled.div<{ $theme?: Theme }>`
+  font-size: 0.875rem;
+  color: ${props => getTextSecondary(props.$theme)};
+`;
+
+const NoValidityText = styled.span<{ $theme?: Theme }>`
+  color: ${props => getTextSecondary(props.$theme)};
+`;
+
+const BadgeWithMargin = styled(UnifiedBadge)`
+  margin-left: 1rem;
+`;
+
+const FlexContainer = styled.div`
+  flex: 1;
+`;
+
+const ChecklistItemName = styled.div`
+  font-weight: 600;
+  font-size: 0.875rem;
+`;
+
+const ChecklistItemSubtext = styled.div<{ $theme?: Theme }>`
+  font-size: 0.75rem;
+  color: ${props => getTextSecondary(props.$theme)};
+`;
+
+const ChecklistItem: React.ComponentType<any> = styled.div<{ $theme?: Theme; $completo?: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: ${props => {
+    if (props.$completo) {
+      const success = (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'background' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).background) : null) ||
+                     (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'background' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).background) : null);
+      if (success && success.startsWith('#')) {
+        const r = parseInt(success.slice(1, 3), 16);
+        const g = parseInt(success.slice(3, 5), 16);
+        const b = parseInt(success.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return success || 'transparent';
+    }
+    const surface = props.$theme?.colors?.surface;
+    return (typeof surface === 'object' && surface && (surface as any).primary) || 
+           (typeof surface === 'string' ? surface : null) ||
+           'transparent';
+  }};
+  border: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border && (border as any).light) || 
+           (typeof border === 'string' ? border : null) ||
+           'transparent';
   }};
 `;
 
@@ -243,9 +355,9 @@ export default function DocumentManagement() {
   const [modalType, setUnifiedModalType] = useState<'view' | 'edit' | 'upload'>(
     'view'
   );
-  const [selectedDocument, setSelectedDocument] = useState<Document | null>(
-    null
-  );
+  const [selectedDocument, setSelectedDocument] = useState<DocumentoTrabalhista | null>(null);
+  const [selectedDocumentIdForChat, setSelectedDocumentIdForChat] = useState<string | null>(null);
+  const [showTemplatesGuide, setShowTemplatesGuide] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -254,27 +366,45 @@ export default function DocumentManagement() {
   const { currentProfile } = useUserProfile();
   const themeObject = useTheme(currentProfile?.role.toLowerCase());
   const theme = { colors: themeObject.colors };
+  const documentService = getDocumentTrabalhistaService();
 
-  // Usar dados centralizados
-  const [categories, setCategories] = useState<DocumentCategory[]>([]);
-
-  const [documents, setDocuments] = useState<Document[]>([]);
+  // ✅ REFORMULADO: Estados para documentos trabalhistas
+  const [documents, setDocuments] = useState<DocumentoTrabalhista[]>([]);
+  const [checklist, setChecklist] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   const [newDocument, setNewDocument] = useState({
-    name: '',
-    category: '',
-    description: '',
-    dueDate: '',
-    permissions: 'private' as 'public' | 'private' | 'shared',
+    tipo: 'CTPS' as TipoDocumentoTrabalhista,
+    nome: '',
+    numero: '',
+    orgaoEmissor: '',
+    emissao: '',
+    validade: '',
+    observacoes: '',
   });
 
   const [filters, setFilters] = useState({
     search: '',
-    category: '',
-    expiring: false,
+    tipo: '',
+    categoria: '',
+    esocialPronto: false,
+    proximosVencimento: false,
   });
 
-  // Configuração das colunas para o DataList
+  // ✅ Usa função centralizada para obter informações do tipo
+  const getTipoInfo = getTipoDocumentoInfo;
+
+  // ✅ NOVO: Verificar status no checklist
+  const getChecklistStatus = (tipo: TipoDocumentoTrabalhista) => {
+    if (!checklist?.documentos) return { completo: false, documentoId: null };
+    const docItem = checklist.documentos.find((d: any) => d.tipo === tipo);
+    return {
+      completo: docItem?.completo || false,
+      documentoId: docItem?.documentoId || null,
+    };
+  };
+
+  // ✅ REFORMULADO: Configuração das colunas para Documentos Trabalhistas
   const documentColumns: DataListColumn[] = [
     {
       key: 'icon',
@@ -282,198 +412,197 @@ export default function DocumentManagement() {
       width: '60px',
       align: 'center',
       render: (item: DataListItem) => {
-        const categoryInfo = getCategoryInfo(item.category);
-        return (
-          <DocumentIconWrapper $color={categoryInfo.color}>
-            {categoryInfo.icon}
-          </DocumentIconWrapper>
-        );
+        const tipoInfo = getTipoInfo((item as any).tipo);
+        return <AccessibleEmoji emoji={tipoInfo.icon} label={tipoInfo.nome} />;
       },
     },
     {
-      key: 'name',
-      label: 'Nome do Documento',
+      key: 'nome',
+      label: 'Documento',
       width: '300px',
       render: (item: DataListItem) => (
-        <DocumentNameWrapper $theme={theme}>
-          <div className='document-name'>{item.name}</div>
-          {item.description && (
-            <div className='document-description'>
-              {item.description.length > 50
-                ? `${item.description.substring(0, 50)}...`
-                : item.description}
-            </div>
+        <div>
+          <DocumentNameBold>{(item as any).nome}</DocumentNameBold>
+          {(item as any).numero && (
+            <DocumentNumberText $theme={theme}>
+              Nº {(item as any).numero}
+            </DocumentNumberText>
           )}
-        </DocumentNameWrapper>
+        </div>
       ),
     },
     {
-      key: 'category',
-      label: 'Categoria',
+      key: 'tipo',
+      label: 'Tipo',
       width: '150px',
       render: (item: DataListItem) => {
-        const categoryInfo = getCategoryInfo(item.category);
+        const tipoInfo = getTipoInfo((item as any).tipo);
         return (
-          <UnifiedBadge customColor={categoryInfo.color} size="sm" theme={theme}>
-            {item.category}
-          </UnifiedBadge>
-        );
-      },
-    },
-    {
-      key: 'meta',
-      label: 'Informações',
-      width: '200px',
-      render: (item: DataListItem) => (
-        <UnifiedMetaInfo
-          items={[
-            { label: 'Tamanho', value: item.fileSize, icon: <AccessibleEmoji emoji='📊' label='Tamanho' /> },
-            { label: 'Data', value: new Date(item.uploadDate).toLocaleDateString('pt-BR'), icon: <AccessibleEmoji emoji='📅' label='Data' /> },
-          ]}
-          variant="horizontal"
-          size="sm"
-          theme={theme}
-        />
-      ),
-    },
-    {
-      key: 'dueDate',
-      label: 'Vencimento',
-      width: '150px',
-      render: (item: DataListItem) => {
-        if (!item.dueDate) return '-';
-        return (
-          <UnifiedBadge variant="error" size="sm" theme={theme} icon={<AccessibleEmoji emoji='📅' label='Vencimento' />}>
-            {new Date(item.dueDate).toLocaleDateString('pt-BR')}
-          </UnifiedBadge>
-        );
-      },
-    },
-    {
-      key: 'permissions',
-      label: 'Permissões',
-      width: '120px',
-      render: (item: DataListItem) => {
-        const variantMap = {
-          public: 'success' as const,
-          private: 'error' as const,
-          shared: 'warning' as const,
-        };
-        return (
-          <UnifiedBadge 
-            variant={variantMap[item.permissions as keyof typeof variantMap] || 'neutral'}
-            size="sm" 
+          <UnifiedBadge
+            variant={tipoInfo.categoria === 'OBRIGATORIO' ? 'warning' : 'info'}
             theme={theme}
           >
-            {item.permissions === 'public'
-              ? 'Público'
-              : item.permissions === 'private'
-                ? 'Privado'
-                : 'Compartilhado'}
+            {tipoInfo.nome.split(' ')[0]}
+          </UnifiedBadge>
+        );
+      },
+    },
+    {
+      key: 'validade',
+      label: 'Validade',
+      width: '120px',
+      render: (item: DataListItem) => {
+        const validade = (item as any).validade;
+        if (!validade) return <NoValidityText $theme={theme}>Sem validade</NoValidityText>;
+        const dataValidade = new Date(validade);
+        const hoje = new Date();
+        const diasRestantes = Math.ceil((dataValidade.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (diasRestantes < 0) {
+          return <UnifiedBadge variant="error" theme={theme}>Vencido</UnifiedBadge>;
+        } else if (diasRestantes <= 30) {
+          return <UnifiedBadge variant="warning" theme={theme}>{diasRestantes} dias</UnifiedBadge>;
+        }
+        return <span>{formatDate(dataValidade)}</span>;
+      },
+    },
+    {
+      key: 'esocial',
+      label: 'eSocial',
+      width: '100px',
+      align: 'center',
+      render: (item: DataListItem) => (
+        <ESocialBadge
+          $pronto={(item as any).esocialPronto}
+          variant={(item as any).esocialPronto ? 'success' : 'secondary'}
+          theme={theme}
+        >
+          {(item as any).esocialPronto ? (
+            <>
+              <span role="img" aria-label="Pronto">✅</span> Pronto
+            </>
+          ) : (
+            <>
+              <span role="img" aria-label="Pendente">⏳</span> Pendente
+            </>
+          )}
+        </ESocialBadge>
+      ),
+    },
+    {
+      key: 'validado',
+      label: 'Status',
+      width: '100px',
+      render: (item: DataListItem) => {
+        const validado = (item as any).validado;
+        return (
+          <UnifiedBadge 
+            variant={validado ? 'success' : 'secondary'}
+            theme={theme}
+          >
+            {validado ? (
+              <>
+                <span role="img" aria-label="Validado">✅</span> Validado
+              </>
+            ) : (
+              <>
+                <span role="img" aria-label="Pendente">⏳</span> Pendente
+              </>
+            )}
           </UnifiedBadge>
         );
       },
     },
   ];
 
-  // Configuração das ações para o DataList
+  // ✅ REFORMULADO: Ações específicas para Documentos Trabalhistas
   const documentActions: DataListAction[] = [
     {
-      icon: '✏️',
-      label: 'Editar documento',
+      icon: '👁️',
+      label: 'Visualizar',
       variant: 'primary',
-      onClick: (item: DataListItem) =>
-        openUnifiedModal('edit', item as Document),
+      onClick: (item: DataListItem) => openUnifiedModal('view', item as any),
     },
     {
-      icon: '🔗',
-      label: 'Compartilhar documento',
+      icon: '✏️',
+      label: 'Editar',
       variant: 'secondary',
-      onClick: (item: DataListItem) =>
-        openUnifiedModal('view', item as Document),
+      onClick: (item: DataListItem) => openUnifiedModal('edit', item as any),
     },
     {
-      icon: '❌',
-      label: 'Excluir documento',
-      variant: 'danger',
-      onClick: (item: DataListItem) => handleDeleteDocument(item.id),
+      icon: '✅',
+      label: 'Marcar para eSocial',
+      variant: 'primary' as const,
+      onClick: async (item: DataListItem) => {
+        try {
+          const response = await fetch(`/api/documents/trabalhistas?id=${item.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ esocialPronto: true }),
+          });
+          if (response.ok) {
+            alertManager.showSuccess('Documento marcado como pronto para eSocial!');
+            loadDocumentos();
+          }
+        } catch (error) {
+          alertManager.showError('Erro ao marcar documento para eSocial');
+        }
+      },
+    },
+    {
+      icon: '💬',
+      label: 'Comunicar sobre documento',
+      variant: 'secondary',
+      onClick: (item: DataListItem) => setSelectedDocumentIdForChat(item.id),
     },
   ];
 
-  // Carregar dados da API
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        // Carregar documentos da API
-        const response = await fetch('/api/documents');
-        const result = await response.json();
+  // ✅ REFORMULADO: Carregar documentos trabalhistas da API
+  const loadDocumentos = useCallback(async () => {
+    if (!currentProfile?.id) return;
 
-        if (result.success && result.data) {
-          // Mapear dados da API para o formato da página
-          const mappedDocuments = result.data.map((doc: any) => ({
-            id: doc.id,
-            name: doc.name,
-            category: doc.category,
-            description: doc.description,
-            uploadDate:
-              doc.uploadDate?.split('T')[0] ||
-              new Date().toISOString().split('T')[0],
-            fileSize: `${(doc.fileSize / 1024 / 1024).toFixed(1)} MB`,
-            fileType: doc.fileType?.includes('pdf') ? 'PDF' : 'Arquivo',
-            permissions: doc.permissions || 'private',
-            isExpiring: doc.expirationDate
-              ? new Date(doc.expirationDate) <
-                new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-              : false,
-            dueDate: doc.expirationDate?.split('T')[0],
-          }));
-          setDocuments(mappedDocuments);
-        }
-
-        // Carregar categorias (usar categorias padrão por enquanto)
-        // Cores vêm de tokens do tema
-        const defaultCategories = [
-          {
-            id: '1',
-            name: 'Documentos Pessoais',
-            icon: <AccessibleEmoji emoji='📄' label='Documento' />,
-            color: theme?.colors?.info || defaultColors.info,
-          },
-          {
-            id: '2',
-            name: 'Recibos',
-            icon: <AccessibleEmoji emoji='🧾' label='Recibo' />,
-            color: theme?.colors?.error || defaultColors.error,
-          },
-          {
-            id: '3',
-            name: 'Certidões',
-            icon: <AccessibleEmoji emoji='📜' label='Certidão' />,
-            color: theme?.colors?.warning || defaultColors.warning,
-          },
-          {
-            id: '4',
-            name: 'Certificados',
-            icon: <AccessibleEmoji emoji='🏆' label='Certificado' />,
-            color: theme?.colors?.success || defaultColors.success,
-          },
-          {
-            id: '5',
-            name: 'Outros',
-            icon: <AccessibleEmoji emoji='📁' label='Pasta' />,
-            color: getTextSecondary(theme),
-          },
-        ];
-        setCategories(defaultCategories);
-      } catch (error) {
-        console.error('Erro ao carregar dados:', error);
-        alertManager.showError('Erro ao carregar documentos');
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/documents/trabalhistas?usuarioId=${currentProfile.id}`);
+      const documentosData = await response.json();
+      
+      if (Array.isArray(documentosData)) {
+        setDocuments(documentosData.map((doc: any) => ({
+          id: doc.id,
+          tipo: doc.tipo,
+          nome: doc.nome,
+          numero: doc.numero,
+          orgaoEmissor: doc.orgaoEmissor,
+          emissao: doc.emissao,
+          validade: doc.validade,
+          esocialPronto: doc.esocialPronto,
+          esocialEnviado: doc.esocialEnviado,
+          validado: doc.validado,
+          validadoEm: doc.validadoEm,
+          validadoPor: doc.validadoPor,
+          observacoes: doc.observacoes,
+          caminhoArquivo: doc.caminhoArquivo,
+          criadoEm: doc.criadoEm,
+        })));
       }
-    };
 
-    loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      // Carregar checklist
+      const checklistResponse = await fetch(`/api/documents/checklist?usuarioId=${currentProfile.id}`);
+      const checklistData = await checklistResponse.json();
+      if (checklistData) {
+        setChecklist(checklistData);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar documentos trabalhistas:', error);
+      alertManager.showError('Erro ao carregar documentos');
+    } finally {
+      setLoading(false);
+    }
+  }, [currentProfile?.id, alertManager]);
+
+  useEffect(() => {
+    loadDocumentos();
+  }, [loadDocumentos]);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -518,81 +647,98 @@ export default function DocumentManagement() {
     }, 200);
   };
 
-  const handleCreateDocument = (e: React.FormEvent) => {
+  // ✅ REFORMULADO: Criar documento trabalhista
+  const handleCreateDocument = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newDocument.name.trim()) return;
+    if (!newDocument.nome.trim() || !currentProfile?.id) return;
 
-    const document: Document = {
-      id: Date.now().toString(),
-      name: newDocument.name || 'Documento sem nome',
-      category: newDocument.category,
-      description: newDocument.description || '',
-      dueDate: newDocument.dueDate || '',
-      uploadDate:
-        new Date().toISOString().split('T')[0] || new Date().toISOString(),
-      fileSize: '1.2 MB',
-      fileType: 'PDF',
-      permissions: newDocument.permissions,
-      isExpiring: newDocument.dueDate
-        ? new Date(newDocument.dueDate) <
-          new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-        : false,
-    };
+    try {
+      // TODO: Implementar upload de arquivo real
+      const caminhoArquivo = '/temp/' + Date.now().toString(); // Placeholder
 
-    setDocuments(prev => [document, ...prev]);
-    setNewDocument({
-      name: '',
-      category: '',
-      description: '',
-      dueDate: '',
-      permissions: 'private',
-    });
-    setUnifiedModalOpen(false);
-    setUploadProgress(0);
-    alertManager.showSuccess('Documento criado com sucesso!');
+      const response = await fetch('/api/documents/trabalhistas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          usuarioId: currentProfile.id,
+          tipo: newDocument.tipo,
+          nome: newDocument.nome,
+          numero: newDocument.numero || undefined,
+          orgaoEmissor: newDocument.orgaoEmissor || undefined,
+          emissao: newDocument.emissao ? new Date(newDocument.emissao).toISOString() : undefined,
+          validade: newDocument.validade ? new Date(newDocument.validade).toISOString() : undefined,
+          caminhoArquivo,
+          observacoes: newDocument.observacoes || undefined,
+        }),
+      });
+
+      if (response.ok) {
+        alertManager.showSuccess('Documento trabalhista criado com sucesso!');
+        setNewDocument({
+          tipo: 'CTPS',
+          nome: '',
+          numero: '',
+          orgaoEmissor: '',
+          emissao: '',
+          validade: '',
+          observacoes: '',
+        });
+        setUnifiedModalOpen(false);
+        setUploadProgress(0);
+        loadDocumentos();
+      } else {
+        alertManager.showError('Erro ao criar documento');
+      }
+    } catch (error) {
+      console.error('Erro ao criar documento:', error);
+      alertManager.showError('Erro ao criar documento');
+    }
   };
 
-  const handleDeleteDocument = (id: string) => {
-    setDocuments(prev => prev.filter(doc => doc.id !== id));
-    alertManager.showSuccess('Documento excluído com sucesso!');
+  // ✅ REFORMULADO: Excluir documento trabalhista
+  const handleDeleteDocument = async (id: string) => {
+    try {
+      const response = await fetch(`/api/documents/trabalhistas?id=${id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        alertManager.showSuccess('Documento excluído com sucesso!');
+        loadDocumentos();
+      } else {
+        alertManager.showError('Erro ao excluir documento');
+      }
+    } catch (error) {
+      console.error('Erro ao excluir documento:', error);
+      alertManager.showError('Erro ao excluir documento');
+    }
   };
 
   const openUnifiedModal = (
     type: 'view' | 'edit' | 'upload',
-    document?: Document
+    document?: DocumentoTrabalhista
   ) => {
     setUnifiedModalType(type);
     setSelectedDocument(document || null);
     setUnifiedModalOpen(true);
   };
 
+  // ✅ REFORMULADO: Filtros para documentos trabalhistas
   const getFilteredDocuments = () => {
     return documents.filter(doc => {
       const matchesSearch =
         !filters.search ||
-        doc.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-        doc.description?.toLowerCase().includes(filters.search.toLowerCase());
+        doc.nome.toLowerCase().includes(filters.search.toLowerCase()) ||
+        doc.numero?.toLowerCase().includes(filters.search.toLowerCase());
 
-      const matchesCategory =
-        !filters.category || doc.category === filters.category;
+      const matchesTipo = !filters.tipo || doc.tipo === filters.tipo;
+      const matchesCategoria = !filters.categoria || getTipoInfo(doc.tipo).categoria === filters.categoria;
+      const matchesESocial = !filters.esocialPronto || doc.esocialPronto;
 
-      const matchesExpiring = !filters.expiring || doc.isExpiring;
+      const matchesVencimento = !filters.proximosVencimento || 
+        (doc.validade && new Date(doc.validade) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000));
 
-      return matchesSearch && matchesCategory && matchesExpiring;
+      return matchesSearch && matchesTipo && matchesCategoria && matchesESocial && matchesVencimento;
     });
-  };
-
-  const getExpiringDocumentsCount = () => {
-    return documents.filter(doc => doc.isExpiring).length;
-  };
-
-  const getCategoryInfo = (categoryName: string) => {
-    return (
-      categories.find(cat => cat.name === categoryName) || {
-        color: theme?.colors?.text?.secondary || defaultColors.text.secondary,
-        icon: <AccessibleEmoji emoji='📁' label='Pasta' />,
-      }
-    );
   };
 
   return (
@@ -609,7 +755,7 @@ export default function DocumentManagement() {
           userAvatar={currentProfile?.avatar || 'U'}
           userName={currentProfile?.name || 'Usuário'}
           userRole={currentProfile?.role || 'Usuário'}
-          notificationCount={getExpiringDocumentsCount()}
+          notificationCount={documents.filter(doc => doc.validade && new Date(doc.validade) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)).length}
           onNotificationClick={() =>
             alertManager.showInfo('Notificações em desenvolvimento')
           }
@@ -618,9 +764,55 @@ export default function DocumentManagement() {
 
       <PageHeader
         $theme={theme}
-        title='Gestão de Documentos'
-        subtitle='Organize, armazene e gerencie todos os documentos importantes do lar'
+        title='Documentos Trabalhistas'
+        subtitle='Gestão especializada de documentos trabalhistas domésticos. Templates, validações e integração com eSocial.'
+        actions={
+          <UnifiedButton
+            $variant="secondary"
+            $theme={theme}
+            onClick={() => setShowTemplatesGuide(true)}
+          >
+            <AccessibleEmoji emoji="📚" label="Guias" /> Templates e Guias eSocial
+          </UnifiedButton>
+        }
       />
+
+      {/* ✅ NOVO: Seção de Checklist */}
+      {checklist && (
+        <ChecklistSection $theme={theme}>
+          <ChecklistTitle $theme={theme}>
+            Checklist de Documentos Obrigatórios
+            {checklist.completo && (
+              <BadgeWithMargin variant="success" theme={theme}>
+                <span role="img" aria-label="Completo">✅</span> Completo
+              </BadgeWithMargin>
+            )}
+          </ChecklistTitle>
+          <ChecklistGrid>
+            {getTiposObrigatorios().map(tipoDoc => {
+                const status = getChecklistStatus(tipoDoc.tipo);
+                return (
+                  <ChecklistItem key={tipoDoc.tipo} $theme={theme} $completo={status.completo}>
+                    <AccessibleEmoji emoji={tipoDoc.icon} label={tipoDoc.nome} />
+                    <FlexContainer>
+                      <ChecklistItemName>{tipoDoc.nome}</ChecklistItemName>
+                      {tipoDoc.esocialRequerido && (
+                        <ChecklistItemSubtext $theme={theme}>
+                          Requerido para eSocial
+                        </ChecklistItemSubtext>
+                      )}
+                    </FlexContainer>
+                    {status.completo ? (
+                      <AccessibleEmoji emoji="✅" label="Completo" />
+                    ) : (
+                      <AccessibleEmoji emoji="⏳" label="Pendente" />
+                    )}
+                  </ChecklistItem>
+                );
+              })}
+          </ChecklistGrid>
+        </ChecklistSection>
+      )}
 
       <UploadCardWrapper
         $theme={theme}
@@ -668,7 +860,7 @@ export default function DocumentManagement() {
           <FormGroup>
             <OptimizedLabel>Buscar Documentos</OptimizedLabel>
             <Input
-              $theme={theme}
+              theme={theme}
               type='text'
               value={filters.search}
               onChange={e =>
@@ -679,47 +871,61 @@ export default function DocumentManagement() {
           </FormGroup>
 
           <FormGroup>
-            <OptimizedLabel htmlFor='filter-category'>
-              Filtrar por Categoria
+            <OptimizedLabel htmlFor='filter-tipo'>
+              Tipo de Documento
             </OptimizedLabel>
             <Select
-              id='filter-category'
-              $theme={theme}
-              value={filters.category}
+              id='filter-tipo'
+              theme={theme}
+              value={filters.tipo}
               onChange={e =>
-                setFilters(prev => ({ ...prev, category: e.target.value }))
+                setFilters(prev => ({ ...prev, tipo: e.target.value }))
               }
-              aria-label='Filtrar por categoria'
-              title='Filtrar por categoria'
             >
-              <option value=''>Todas as categorias</option>
-              {categories.map(category => (
-                <option key={category.id} value={category.name}>
-                  {category.name}
-                </option>
+              <option value=''>Todos</option>
+              {TIPOS_DOCUMENTOS_TRABALHISTAS.map(tipo => (
+                <option key={tipo.tipo} value={tipo.tipo}>{tipo.nome}</option>
               ))}
             </Select>
           </FormGroup>
 
           <FormGroup>
-            <OptimizedLabel htmlFor='filter-expiring'>
-              Mostrar apenas
+            <OptimizedLabel htmlFor='filter-categoria'>
+              Categoria
             </OptimizedLabel>
             <Select
-              id='filter-expiring'
-              $theme={theme}
-              value={filters.expiring ? 'expiring' : 'all'}
+              id='filter-categoria'
+              theme={theme}
+              value={filters.categoria}
+              onChange={e =>
+                setFilters(prev => ({ ...prev, categoria: e.target.value }))
+              }
+            >
+              <option value=''>Todas</option>
+              <option value='OBRIGATORIO'>Obrigatórios</option>
+              <option value='MEDICO'>Médicos</option>
+              <option value='BANCARIO'>Bancários</option>
+              <option value='TRABALHISTA'>Trabalhistas</option>
+            </Select>
+          </FormGroup>
+
+          <FormGroup>
+            <OptimizedLabel htmlFor='filter-esocial'>
+              Status eSocial
+            </OptimizedLabel>
+            <Select
+              id='filter-esocial'
+              theme={theme}
+              value={filters.esocialPronto ? 'pronto' : 'all'}
               onChange={e =>
                 setFilters(prev => ({
                   ...prev,
-                  expiring: e.target.value === 'expiring',
+                  esocialPronto: e.target.value === 'pronto',
                 }))
               }
-              aria-label='Filtrar documentos'
-              title='Filtrar documentos'
             >
-              <option value='all'>Todos os documentos</option>
-              <option value='expiring'>Documentos vencendo</option>
+              <option value='all'>Todos</option>
+              <option value='pronto'>Prontos para eSocial</option>
             </Select>
           </FormGroup>
         </FilterRow>
@@ -727,18 +933,11 @@ export default function DocumentManagement() {
 
       <DocumentsListContainer>
         <DataList
-          theme={theme}
-          items={getFilteredDocuments()}
           columns={documentColumns}
+          items={getFilteredDocuments()}
           actions={documentActions}
-          onItemClick={(item: any) =>
-            openUnifiedModal('view', item as Document)
-          }
-          emptyMessage='Nenhum documento encontrado. Clique no botão acima para fazer upload do seu primeiro documento.'
-          variant='detailed'
-          showHeader={true}
-          striped={true}
-          hoverable={true}
+          emptyMessage='Nenhum documento trabalhista encontrado'
+          theme={theme}
         />
       </DocumentsListContainer>
 
@@ -755,64 +954,70 @@ export default function DocumentManagement() {
       >
         {modalType === 'view' && selectedDocument && (
           <div>
-            <DocumentViewer>
-              <DocumentIcon
-                $color={getCategoryInfo(selectedDocument.category).color}
-              >
-                {getCategoryInfo(selectedDocument.category).icon}
-              </DocumentIcon>
-              <DocumentTitle $theme={theme}>{selectedDocument.name}</DocumentTitle>
-              <DocumentSubtitle $theme={theme}>
-                {selectedDocument.fileType} • {selectedDocument.fileSize}
-              </DocumentSubtitle>
-            </DocumentViewer>
-
-            <div style={{ 
-              padding: '1rem', 
-              background: ((): string => {
-                const surface = theme?.colors?.surface;
-                const surfaceColor = (typeof surface === 'object' && surface && (surface as any).secondary) || (typeof surface === 'string' ? surface : null);
-                const bgColor = theme?.colors?.background;
-                const bgColorStr = (typeof bgColor === 'object' && bgColor && (bgColor as any).primary) || (typeof bgColor === 'string' ? bgColor : null);
-                return surfaceColor || bgColorStr || defaultColors.surface;
-              })(),
-              borderRadius: '8px', 
-              marginBottom: '1rem' 
-            }}>
-              <h4 style={{ 
-                margin: '0 0 0.5rem 0', 
-                color: (() => {
-                  const text = theme?.colors?.text;
-                  return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
-                })()
-              }}>Informações do Documento</h4>
-              <UnifiedMetaInfo
-                items={[
-                  { label: 'Categoria', value: selectedDocument.category },
-                  ...(selectedDocument.description ? [{ label: 'Descrição', value: selectedDocument.description }] : []),
-                  ...(selectedDocument.dueDate ? [{ label: 'Data de Vencimento', value: new Date(selectedDocument.dueDate).toLocaleDateString('pt-BR') }] : []),
-                  { label: 'Data de Upload', value: new Date(selectedDocument.uploadDate).toLocaleDateString('pt-BR') },
-                  { 
-                    label: 'Permissões', 
-                    value: (
-                      <UnifiedBadge 
-                        variant={selectedDocument.permissions === 'public' ? 'success' : selectedDocument.permissions === 'private' ? 'error' : 'warning'}
-                        size="sm" 
-                        theme={theme}
-                      >
-                        {selectedDocument.permissions === 'public'
-                          ? 'Público'
-                          : selectedDocument.permissions === 'private'
-                            ? 'Privado'
-                            : 'Compartilhado'}
-                      </UnifiedBadge>
-                    )
-                  },
-                ]}
-                variant="vertical"
-                theme={theme}
-              />
-            </div>
+            <OptimizedFormRow>
+              <FormGroup>
+                <OptimizedLabel>Tipo</OptimizedLabel>
+                <div>{getTipoInfo(selectedDocument.tipo).nome}</div>
+              </FormGroup>
+              <FormGroup>
+                <OptimizedLabel>Nome</OptimizedLabel>
+                <div>{selectedDocument.nome}</div>
+              </FormGroup>
+            </OptimizedFormRow>
+            {selectedDocument.numero && (
+              <OptimizedFormRow>
+                <FormGroup>
+                  <OptimizedLabel>Número</OptimizedLabel>
+                  <div>{selectedDocument.numero}</div>
+                </FormGroup>
+                {selectedDocument.orgaoEmissor && (
+                  <FormGroup>
+                    <OptimizedLabel>Órgão Emissor</OptimizedLabel>
+                    <div>{selectedDocument.orgaoEmissor}</div>
+                  </FormGroup>
+                )}
+              </OptimizedFormRow>
+            )}
+            {selectedDocument.validade && (
+              <OptimizedFormRow>
+                <FormGroup>
+                  <OptimizedLabel>Validade</OptimizedLabel>
+                  <div>{formatDate(selectedDocument.validade)}</div>
+                </FormGroup>
+              </OptimizedFormRow>
+            )}
+            <OptimizedFormRow>
+              <FormGroup>
+                <ESocialBadge
+                  $pronto={selectedDocument.esocialPronto}
+                  variant={selectedDocument.esocialPronto ? 'success' : 'secondary'}
+                  theme={theme}
+                >
+                  {selectedDocument.esocialPronto ? (
+                    <>
+                      <span role="img" aria-label="Pronto">✅</span> Pronto para eSocial
+                    </>
+                  ) : (
+                    <>
+                      <span role="img" aria-label="Pendente">⏳</span> Pendente para eSocial
+                    </>
+                  )}
+                </ESocialBadge>
+              </FormGroup>
+              {selectedDocument.validado && (
+                <FormGroup>
+                  <UnifiedBadge variant="success" theme={theme}>
+                    <span role="img" aria-label="Validado">✅</span> Validado
+                  </UnifiedBadge>
+                </FormGroup>
+              )}
+            </OptimizedFormRow>
+            {selectedDocument.observacoes && (
+              <FormGroup>
+                <OptimizedLabel>Observações</OptimizedLabel>
+                <div>{selectedDocument.observacoes}</div>
+              </FormGroup>
+            )}
           </div>
         )}
 
@@ -820,102 +1025,102 @@ export default function DocumentManagement() {
           <DocumentForm onSubmit={handleCreateDocument}>
             <OptimizedFormRow>
               <FormGroup>
+                <OptimizedLabel>Tipo de Documento</OptimizedLabel>
+                <Select
+                  theme={theme}
+                  value={newDocument.tipo}
+                  onChange={e =>
+                    setNewDocument(prev => ({
+                      ...prev,
+                      tipo: e.target.value as TipoDocumentoTrabalhista,
+                    }))
+                  }
+                  required
+                >
+                  {TIPOS_DOCUMENTOS_TRABALHISTAS.map(tipo => (
+                    <option key={tipo.tipo} value={tipo.tipo}>{tipo.nome}</option>
+                  ))}
+                </Select>
+              </FormGroup>
+              <FormGroup>
                 <OptimizedLabel>Nome do Documento</OptimizedLabel>
                 <Input
-                  $theme={theme}
+                  theme={theme}
                   type='text'
-                  value={newDocument.name}
+                  value={newDocument.nome}
                   onChange={e =>
-                    setNewDocument(prev => ({ ...prev, name: e.target.value }))
+                    setNewDocument(prev => ({ ...prev, nome: e.target.value }))
                   }
                   placeholder='Digite o nome do documento'
                   required
                 />
               </FormGroup>
+            </OptimizedFormRow>
 
+            <OptimizedFormRow>
               <FormGroup>
-                <OptimizedLabel htmlFor='document-category'>
-                  Categoria
-                </OptimizedLabel>
-                <Select
-                  id='document-category'
-                  $theme={theme}
-                  value={newDocument.category}
+                <OptimizedLabel>Número (Opcional)</OptimizedLabel>
+                <Input
+                  theme={theme}
+                  type='text'
+                  value={newDocument.numero}
                   onChange={e =>
-                    setNewDocument(prev => ({
-                      ...prev,
-                      category: e.target.value,
-                    }))
+                    setNewDocument(prev => ({ ...prev, numero: e.target.value }))
                   }
-                  aria-label='Selecionar categoria'
-                  required
-                  title='Selecionar categoria'
-                >
-                  <option value=''>Selecionar categoria</option>
-                  {categories.map(category => (
-                    <option key={category.id} value={category.name}>
-                      {category.name}
-                    </option>
-                  ))}
-                </Select>
+                  placeholder='Número do documento'
+                />
+              </FormGroup>
+              <FormGroup>
+                <OptimizedLabel>Órgão Emissor (Opcional)</OptimizedLabel>
+                <Input
+                  theme={theme}
+                  type='text'
+                  value={newDocument.orgaoEmissor}
+                  onChange={e =>
+                    setNewDocument(prev => ({ ...prev, orgaoEmissor: e.target.value }))
+                  }
+                  placeholder='Ex: SSP, Receita Federal'
+                />
               </FormGroup>
             </OptimizedFormRow>
 
             <OptimizedFormRow>
               <FormGroup>
-                <OptimizedLabel>Data de Vencimento (Opcional)</OptimizedLabel>
+                <OptimizedLabel>Data de Emissão (Opcional)</OptimizedLabel>
                 <Input
-                  $theme={theme}
+                  theme={theme}
                   type='date'
-                  value={newDocument.dueDate}
+                  value={newDocument.emissao}
                   onChange={e =>
-                    setNewDocument(prev => ({
-                      ...prev,
-                      dueDate: e.target.value,
-                    }))
+                    setNewDocument(prev => ({ ...prev, emissao: e.target.value }))
                   }
                 />
               </FormGroup>
-
               <FormGroup>
-                <OptimizedLabel htmlFor='document-permissions'>
-                  Permissões
-                </OptimizedLabel>
-                <Select
-                  id='document-permissions'
-                  $theme={theme}
-                  value={newDocument.permissions}
+                <OptimizedLabel>Data de Validade (Opcional)</OptimizedLabel>
+                <Input
+                  theme={theme}
+                  type='date'
+                  value={newDocument.validade}
                   onChange={e =>
-                    setNewDocument(prev => ({
-                      ...prev,
-                      permissions: e.target.value as
-                        | 'public'
-                        | 'private'
-                        | 'shared',
-                    }))
+                    setNewDocument(prev => ({ ...prev, validade: e.target.value }))
                   }
-                  aria-label='Selecionar permissões'
-                  title='Selecionar permissões'
-                >
-                  <option value='private'>Privado</option>
-                  <option value='shared'>Compartilhado</option>
-                  <option value='public'>Público</option>
-                </Select>
+                />
               </FormGroup>
             </OptimizedFormRow>
 
             <FormGroup>
-              <OptimizedLabel>Descrição (Opcional)</OptimizedLabel>
+              <OptimizedLabel>Observações (Opcional)</OptimizedLabel>
               <TextArea
                 $theme={theme}
-                value={newDocument.description}
+                value={newDocument.observacoes}
                 onChange={e =>
                   setNewDocument(prev => ({
                     ...prev,
-                    description: e.target.value,
+                    observacoes: e.target.value,
                   }))
                 }
-                placeholder='Digite uma descrição para o documento'
+                placeholder='Observações sobre o documento'
               />
             </FormGroup>
 
@@ -950,6 +1155,38 @@ export default function DocumentManagement() {
         )}
       </UnifiedModal>
 
+      {/* ✅ NOVO: Seção de Comunicação Contextual para Documento */}
+      {selectedDocumentIdForChat && (
+        <UnifiedModal
+          isOpen={!!selectedDocumentIdForChat}
+          onClose={() => setSelectedDocumentIdForChat(null)}
+          title={`Comunicação - Documento ${selectedDocumentIdForChat.slice(0, 8)}`}
+          $theme={theme}
+        >
+          <ContextualChat
+            contextoTipo="DOCUMENTO"
+            contextoId={selectedDocumentIdForChat}
+            titulo={`Comunicação sobre este Documento`}
+            altura="500px"
+            onMensagemEnviada={() => {
+              loadDocumentos();
+            }}
+          />
+        </UnifiedModal>
+      )}
+
+      {/* ✅ NOVO: Templates e Guias eSocial */}
+      {showTemplatesGuide && (
+        <UnifiedModal
+          isOpen={showTemplatesGuide}
+          onClose={() => setShowTemplatesGuide(false)}
+          title="Templates e Guias para eSocial"
+          $theme={theme}
+          maxWidth="1000px"
+        >
+          <ESocialTemplatesGuide theme={theme} />
+        </UnifiedModal>
+      )}
     </PageContainer>
   );
 }

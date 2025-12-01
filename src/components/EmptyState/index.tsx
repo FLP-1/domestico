@@ -1,7 +1,7 @@
 // src/components/EmptyState/index.tsx
 import AccessibleEmoji from '../AccessibleEmoji';
 import styled from 'styled-components';
-import { defaultColors } from '../../utils/themeHelpers';
+import { DEFAULT_COLORS } from '../../config/default-colors';
 
 const EmptyStateContainer = styled.div<{ $theme?: any }>`
   text-align: center;
@@ -13,19 +13,19 @@ const EmptyIcon = styled.div<{ $theme?: any }>`
   margin-bottom: 1rem;
   opacity: 0.6;
   color: ${props =>
-    props.$theme?.colors?.text?.secondary || defaultColors.text.secondary};
+    props.$theme?.colors?.text?.secondary || DEFAULT_COLORS.text.secondary};
 `;
 
 const EmptyTitle = styled.h3<{ $theme?: any }>`
   color: ${props =>
-    props.$theme?.colors?.text?.primary || defaultColors.text.primary};
+    props.$theme?.colors?.text?.primary || DEFAULT_COLORS.text.primary};
   font-size: 1.25rem;
   margin-bottom: 0.5rem;
 `;
 
 const EmptyDescription = styled.p<{ $theme?: any }>`
   color: ${props =>
-    props.$theme?.colors?.text?.secondary || defaultColors.text.secondary};
+    props.$theme?.colors?.text?.secondary || DEFAULT_COLORS.text.secondary};
   font-size: 0.9rem;
   margin: 0;
 `;

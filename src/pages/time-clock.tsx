@@ -1,11 +1,15 @@
 import AccessibleEmoji from '../components/AccessibleEmoji';
 import { useRouter } from 'next/router';
 import { useEffect, useState, useMemo, useCallback, memo } from 'react';
-import { useAlertManager } from '../hooks/useAlertManager';
+import { useMessages } from '../hooks/useMessages';
+import { apiClient } from '../lib/apiClient';
+import { useAsyncOperation } from '../hooks/useAsyncOperation';
+import { OVERTIME_REQUEST_STATUSES, type OvertimeRequestStatus, toOvertimeRequestStatus } from '../constants/overtimeRequestStatuses';
 import styled from 'styled-components';
-import { useTheme } from '../hooks/useTheme';
+import { useTheme, profileThemes } from '../hooks/useTheme';
 import { useUserProfile } from '../contexts/UserProfileContext';
-import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import { getThemeColor, addOpacity } from '../utils/themeHelpers';
+import { getDefaultThemeColors } from '../utils/themeDefaults';
 import type { Theme } from '../types/theme';
 import {
   getTextPrimary,
@@ -19,6 +23,12 @@ const PendingApprovalContainer = styled.div`
   right: 1rem;
   z-index: 1000;
   cursor: pointer;
+`;
+
+// Styled Components para substituir estilos inline
+const ButtonContainerRight = styled.div`
+  margin-top: 1rem;
+  text-align: right;
 `;
 import FilterSection from '../components/FilterSection';
 import { FormGroup, Input, Label, Select } from '../components/FormComponents';
@@ -37,6 +47,7 @@ import {
   UnifiedModal,
   UnifiedCard,
 } from '../components/unified';
+import { formatDate, formatDateTime, formatTime, formatDateLong, formatMonthYear, formatTimeWithSeconds, formatDateISO } from '../utils/formatters';
 import { useGeolocationContext } from '../contexts/GeolocationContext';
 import { useAutoGeolocation } from '../hooks/useAutoGeolocation';
 import { useTimeClockNotifications } from '../hooks/useTimeClockNotifications';
@@ -101,6 +112,7 @@ import DataList, {
   DataListAction,
   DataListItem,
 } from '../components/DataList';
+import ContextualChat from '../components/ContextualChat';
 
 // Styled Components
 const TimeClockSection = styled.section<{ $theme?: Theme }>`
@@ -125,13 +137,11 @@ const CurrentTime = styled.h1<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'dark' in text && text.dark) {
       return text.dark;
     }
-    return props.$theme?.colors?.text?.dark || 
-           props.$theme?.text?.dark ||
-           'inherit';
+    return getThemeColor(props.$theme, 'text.dark', 'inherit');
   }};
   margin: 0 0 0.5rem 0;
   text-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    const shadowColor = getThemeColor(props.$theme, 'shadow', 'transparent');
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -187,16 +197,14 @@ const ScheduleItem = styled.div<{ $theme?: any }>`
   align-items: center;
   padding: 0.5rem 0;
   border-bottom: 1px solid ${props => {
-    const borderColor = props.$theme?.colors?.border?.light || props.$theme?.border?.light;
-    if (borderColor && borderColor.startsWith('#')) {
+    const borderColor = getThemeColor(props.$theme, 'border.light', 'transparent');
+    if (borderColor && borderColor !== 'transparent' && borderColor.startsWith('#')) {
       const r = parseInt(borderColor.slice(1, 3), 16);
       const g = parseInt(borderColor.slice(3, 5), 16);
       const b = parseInt(borderColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.1)`;
     }
-    return props.$theme?.colors?.border?.light || 
-           props.$theme?.border?.light ||
-           'transparent';
+    return borderColor !== 'transparent' ? borderColor : 'transparent';
   }};
 
   &:last-child {
@@ -219,28 +227,26 @@ const ScheduleLabel = styled.span<{ $theme?: Theme }>`
 const ScheduleTime = styled.span<{ $theme?: Theme }>`
   font-size: 1rem;
   font-weight: 600;
-  color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
+  color: ${props => getThemeColor(props.$theme, 'primary', 'inherit')};
 `;
 
 const HistorySection = styled.div<{ $theme?: Theme }>`
   background: ${props => {
-    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
-    if (bgColor && bgColor.startsWith('#')) {
+    const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
+    if (bgColor && bgColor !== 'transparent' && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
       const b = parseInt(bgColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.95)`;
     }
-    return props.$theme?.colors?.background?.primary || 
-           props.$theme?.background?.primary ||
-           'transparent';
+    return bgColor !== 'transparent' ? addOpacity(bgColor, 0.95) : 'transparent';
   }};
   backdrop-filter: blur(20px);
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 2rem;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    const shadowColor = getThemeColor(props.$theme, 'shadow', 'transparent');
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -250,16 +256,14 @@ const HistorySection = styled.div<{ $theme?: Theme }>`
     return 'none';
   }};
   border: 1px solid ${props => {
-    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+    const primaryColor = getThemeColor(props.$theme, 'colors.primary', 'transparent');
     if (primaryColor && primaryColor.startsWith('#')) {
       const r = parseInt(primaryColor.slice(1, 3), 16);
       const g = parseInt(primaryColor.slice(3, 5), 16);
       const b = parseInt(primaryColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.2)`;
     }
-    return props.$theme?.colors?.border?.light || 
-           props.$theme?.border?.light ||
-           'transparent';
+    return getThemeColor(props.$theme, 'border.light', 'transparent');
   }};
 `;
 
@@ -327,23 +331,25 @@ interface TimeClockHistory extends DataListItem {
 }
 
 const buildTimeClockTheme = (profileColors?: any, role?: string) => {
+  // Usar valores padrão do design system em vez de cores hardcoded
+  const defaultThemeColors = getDefaultThemeColors();
   const base = {
-    primary: '#2E8B57',
-    secondary: '#4682B4',
-    background: '#f8f9fa',
-    surface: '#ffffff',
+    primary: defaultThemeColors.primary,
+    secondary: defaultThemeColors.secondary,
+    background: defaultThemeColors.background,
+    surface: defaultThemeColors.surface,
     text: {
-      primary: '#2c3e50',
-      secondary: '#7f8c8d',
-      dark: '#2c3e50',
-      light: '#7f8c8d',
-      medium: '#7f8c8d',
+      primary: defaultThemeColors.text.primary,
+      secondary: defaultThemeColors.text.secondary,
+      dark: defaultThemeColors.text.dark,
+      light: defaultThemeColors.text.light,
+      medium: defaultThemeColors.text.medium,
     },
-    shadow: 'rgba(0, 0, 0, 0.1)',
+    shadow: defaultThemeColors.shadow,
     navigation: {
-      primary: '#2E8B57',
-      hover: '#2E8B57',
-      active: '#2E8B57',
+      primary: defaultThemeColors.primary,
+      hover: defaultThemeColors.primary,
+      active: defaultThemeColors.primary,
     },
   };
 
@@ -380,11 +386,19 @@ const buildTimeClockTheme = (profileColors?: any, role?: string) => {
 
   const normalizedRole = role?.toUpperCase();
   if (normalizedRole === 'EMPREGADOR') {
-    base.primary = '#2E8B57';
-    base.secondary = '#4682B4';
+    // Usar valores do design system para empregador
+    const empregadorTheme = profileThemes['empregador'];
+    if (empregadorTheme) {
+      base.primary = empregadorTheme.colors.primary;
+      base.secondary = empregadorTheme.colors.secondary;
+    }
   } else if (normalizedRole === 'EMPREGADO') {
-    base.primary = '#29ABE2';
-    base.secondary = '#4682B4';
+    // Usar valores do design system para empregado
+    const empregadoTheme = profileThemes['empregado'];
+    if (empregadoTheme) {
+      base.primary = empregadoTheme.colors.primary;
+      base.secondary = empregadoTheme.colors.secondary;
+    }
   }
 
   base.text.dark = base.text.dark ?? base.text.primary;
@@ -402,7 +416,7 @@ export default function TimeClock() {
     ? currentProfile.role.toLowerCase()
     : undefined;
   const { colors: profileColors } = useTheme(profileThemeKey);
-  const alertManager = useAlertManager();
+  const { showSuccess, showError, showWarning, showInfo, keys } = useMessages();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [modalOpen, setModalOpen] = useState(false);
@@ -425,6 +439,7 @@ export default function TimeClock() {
     []
   );
   const [historyRecords, setHistoryRecords] = useState<TimeClockHistory[]>([]);
+  const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
   const [overrideModalOpen, setOverrideModalOpen] = useState(false);
   const [overrideJustification, setOverrideJustification] = useState('');
   const [overrideDraft, setOverrideDraft] = useState<{
@@ -483,29 +498,21 @@ export default function TimeClock() {
         let token = null;
         try {
           // Obter configurações da empresa dinamicamente via API (não no cliente)
-          const configResponse = await fetch('/api/config/system');
+          const configResponse = await apiClient.config.getSystem();
           let empresaConfig: any = {};
-          if (configResponse.ok) {
-            const configData = await configResponse.json();
-            empresaConfig = configData.data?.empresa || {};
+          if (configResponse.success && configResponse.data) {
+            empresaConfig = configResponse.data?.empresa || {};
           }
           const senhaPadrao = empresaConfig?.sistema_senha_padrao || 'senha123';
           const cpfEmpresa = empresaConfig?.cpf || empresaConfig?.empresa_cpf_principal || '59876913700';
 
-          const loginResponse = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              cpf: cpfEmpresa,
-              senha: senhaPadrao,
-            }),
+          const loginResponse = await apiClient.auth.login({
+            cpf: cpfEmpresa,
+            senha: senhaPadrao,
           });
 
-          if (loginResponse.ok) {
-            const loginData = await loginResponse.json();
-            token = loginData.data.token;
+          if (loginResponse.success && loginResponse.data) {
+            token = loginResponse.data.token;
           }
         } catch (error) {
           // login automático falhou, continuar sem autenticação
@@ -526,32 +533,28 @@ export default function TimeClock() {
           overtimeResponse,
           payrollResponse,
         ] = await Promise.all([
-          fetch('/api/user/current', { headers }),
-          fetch('/api/time-clock/summary', { headers }),
-          fetch('/api/time-clock/overtime', { headers }),
-          fetch('/api/time-clock/payroll', { headers }),
+          apiClient.users.getCurrent(),
+          apiClient.timeClock.getSummary(),
+          apiClient.timeClock.getOvertime(),
+          apiClient.timeClock.getPayroll(),
         ]);
 
-        if (userResponse.ok) {
-          const userResult = await userResponse.json();
-          setCurrentUser(userResult.data.user);
-          setHorariosOficiais(userResult.data.horariosOficiais);
-          setDocumentosRecentes(userResult.data.documentosRecentes);
+        if (userResponse.success && userResponse.data) {
+          setCurrentUser(userResponse.data.user);
+          setHorariosOficiais(userResponse.data.horariosOficiais);
+          setDocumentosRecentes(userResponse.data.documentosRecentes);
         }
 
-        if (summaryResponse.ok) {
-          const summaryResult = await summaryResponse.json();
-          setTimeSummary(summaryResult.data);
+        if (summaryResponse.success && summaryResponse.data) {
+          setTimeSummary(summaryResponse.data);
         }
 
-        if (overtimeResponse.ok) {
-          const overtimeResult = await overtimeResponse.json();
-          setOvertimeData(overtimeResult.data);
+        if (overtimeResponse.success && overtimeResponse.data) {
+          setOvertimeData(overtimeResponse.data);
         }
 
-        if (payrollResponse.ok) {
-          const payrollResult = await payrollResponse.json();
-          setPayrollData(payrollResult.data);
+        if (payrollResponse.success && payrollResponse.data) {
+          setPayrollData(payrollResponse.data);
         }
       } catch (error) {
         console.error('Erro ao carregar dados do usuário:', error);
@@ -568,11 +571,10 @@ export default function TimeClock() {
         if (!hasAuthToken()) {
           return;
         }
-        const response = await fetch('/api/time-clock/records');
-        if (response.ok) {
-          const result = await response.json();
+        const response = await apiClient.timeClock.getRecords();
+        if (response.success && response.data) {
           const now = new Date();
-          const todays = (result.data as any[])
+          const todays = (response.data as any[])
             .map(r => ({ ...r, dt: new Date(r.dataHora) }))
             .filter(r => r.dt.toDateString() === now.toDateString())
             .sort((a: any, b: any) => a.dt.getTime() - b.dt.getTime());
@@ -612,15 +614,13 @@ export default function TimeClock() {
           return;
         }
         const [cnt, list] = await Promise.all([
-          fetch('/api/time-clock/pending?count=true'),
-          fetch('/api/time-clock/pending'),
+          apiClient.timeClock.getPending(true),
+          apiClient.timeClock.getPending(),
         ]);
-        if (cnt.ok) {
-          const cdata = await cnt.json();
+        if (cnt.success && cnt.data) {
           // Contagem de pendentes carregada
         }
-        if (list.ok) {
-          const ldata = await list.json();
+        if (list.success && list.data) {
           // Lista de pendentes carregada
         }
       } catch {}
@@ -664,19 +664,18 @@ export default function TimeClock() {
         if (!hasAuthToken()) {
           return;
         }
-        const resp = await fetch('/api/time-clock/overtime-requests');
-        if (resp.ok) {
-          const data = await resp.json();
+        const resp = await apiClient.timeClock.overtimeRequests.getAll();
+        if (resp.success && resp.data) {
           setOvertimeRequests(
-            (data.data || []).map((r: any) => ({
+            (resp.data || []).map((r: any) => ({
               id: r.id,
               employeeId: currentUser?.id || 'current-user',
               employeeName: currentUser?.nomeCompleto || 'Usuário',
-              date: new Date(r.data).toISOString().split('T')[0],
+              date: formatDateISO(r.data),
               startTime: r.inicio,
               endTime: r.fim,
               justification: r.justificativa || '',
-              status: (r.status || 'PENDENTE').toLowerCase(),
+              status: toOvertimeRequestStatus(r.status || OVERTIME_REQUEST_STATUSES.PENDING),
               requestedAt: new Date(r.criadoEm),
               reviewedAt: r.revisadaEm ? new Date(r.revisadaEm) : undefined,
               reviewedBy: r.revisadaPor || undefined,
@@ -765,29 +764,24 @@ export default function TimeClock() {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), 15000);
 
-        const response = await fetch('/api/time-clock/records', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            tipo: type,
-            observacao: `Registro via interface web - ${type}`,
-            latitude: locationData?.latitude,
-            longitude: locationData?.longitude,
-            precisao: locationData?.accuracy,
-            endereco: locationData?.address,
-            numeroEndereco:
-              locationData?.addressComponents?.number ||
-              locationData?.addressComponents?.house_number,
-            wifiName: locationData?.wifiName,
-            overrideJustification: locationData?.overrideJustification,
-            connectionType: locationData?.networkInfo?.connectionType,
-            effectiveType: locationData?.networkInfo?.effectiveType,
-            downlink: locationData?.networkInfo?.downlink,
-            rtt: locationData?.networkInfo?.rtt,
-            userAgent:
-              typeof navigator !== 'undefined' ? navigator.userAgent : '',
+        const response = await apiClient.timeClock.register({
+          tipo: type,
+          observacao: `Registro via interface web - ${type}`,
+          latitude: locationData?.latitude,
+          longitude: locationData?.longitude,
+          precisao: locationData?.accuracy,
+          endereco: locationData?.address,
+          numeroEndereco:
+            locationData?.addressComponents?.number ||
+            locationData?.addressComponents?.house_number,
+          wifiName: locationData?.wifiName,
+          overrideJustification: locationData?.overrideJustification,
+          connectionType: locationData?.networkInfo?.connectionType,
+          effectiveType: locationData?.networkInfo?.effectiveType,
+          downlink: locationData?.networkInfo?.downlink,
+          rtt: locationData?.networkInfo?.rtt,
+          userAgent:
+            typeof navigator !== 'undefined' ? navigator.userAgent : '',
             networkTimestamp: new Date().toISOString(),
             // ✅ Adicionar campos obrigatórios para a API
             grupoId: currentUser?.gruposUsuario?.[0]?.grupoId || null,
@@ -826,16 +820,13 @@ export default function TimeClock() {
                   anomalies: networkAnalysis.anomalies,
                 }
               : null,
-          }),
-          signal: controller.signal,
-        }).finally(() => clearTimeout(timer));
+        });
 
-        if (!response.ok) {
-          let message = 'Erro ao registrar ponto';
-          try {
-            const data = await response.json();
-            if (data?.error) message = data.error;
-          } catch {}
+        // Limpar timer após a requisição
+        clearTimeout(timer);
+
+        if (!response.success) {
+          const message = response.error || 'Erro ao registrar ponto';
 
           // ✅ Sempre atualizar contexto de geolocalização, mesmo em caso de erro
           if (locationData && setLastCaptureLocation) {
@@ -849,9 +840,10 @@ export default function TimeClock() {
             });
           }
 
+          // Tratamento específico por status HTTP
           if (response.status === 409) {
             // Duplicidade do mesmo tipo no dia
-            alertManager.showWarning(message);
+            showWarning('warning.duplicidade_ponto', undefined, message);
             setLastCaptureStatus &&
               setLastCaptureStatus({
                 pending: false,
@@ -863,7 +855,7 @@ export default function TimeClock() {
           }
           if (response.status === 422) {
             // Ordem inválida
-            alertManager.showWarning(message);
+            showWarning('warning.ordem_invalida', undefined, message);
             // Se for precisão insuficiente/idade, oferecer override via modal
             if (/Precisão|Localização antiga/i.test(message)) {
               setOverrideDraft({ data: locationData, type });
@@ -880,7 +872,7 @@ export default function TimeClock() {
             return;
           }
           if (response.status === 401) {
-            alertManager.showError('Sessão expirada. Faça login novamente.');
+            showError(keys.ERROR.SESSAO_EXPIRADA);
             setLastCaptureStatus &&
               setLastCaptureStatus({
                 pending: false,
@@ -893,54 +885,55 @@ export default function TimeClock() {
           throw new Error(message);
         }
 
-        const result = await response.json();
-        setLastCaptureStatus &&
-          setLastCaptureStatus({
-            pending: false,
-            approved: true,
-            imprecise: false,
-            serverRecordId: result?.data?.id,
+        if (response.success && response.data) {
+          setLastCaptureStatus &&
+            setLastCaptureStatus({
+              pending: false,
+              approved: true,
+              imprecise: false,
+              serverRecordId: response.data?.id,
+            });
+
+          // ✅ Atualizar contexto de geolocalização com dados do registro
+          if (locationData && setLastCaptureLocation) {
+            setLastCaptureLocation({
+              latitude: locationData.latitude,
+              longitude: locationData.longitude,
+              accuracy: locationData.accuracy,
+              address: locationData.address,
+              wifiName: locationData.wifiName,
+              timestamp: new Date(),
+            });
+          }
+
+          const now = new Date();
+          const timeString = now.toLocaleTimeString('pt-BR', {
+            hour: '2-digit',
+            minute: '2-digit',
           });
 
-        // ✅ Atualizar contexto de geolocalização com dados do registro
-        if (locationData && setLastCaptureLocation) {
-          setLastCaptureLocation({
-            latitude: locationData.latitude,
-            longitude: locationData.longitude,
-            accuracy: locationData.accuracy,
-            address: locationData.address,
-            wifiName: locationData.wifiName,
-            timestamp: new Date(),
-          });
+          const newRecord: TimeRecord = {
+            id: response.data.id || `temp-${Date.now()}`,
+            type,
+            time: timeString,
+            location:
+              locationData?.address ||
+              'Não foi possível identificar a localização',
+            wifi: locationData?.wifiName || 'WiFi não detectado',
+            timestamp: now,
+          };
+
+          setTimeRecords(prev => [...prev, newRecord]);
+          showSuccess(keys.SUCCESS.PONTO_REGISTRADO, { time: timeString });
         }
-
-        const now = new Date();
-        const timeString = now.toLocaleTimeString('pt-BR', {
-          hour: '2-digit',
-          minute: '2-digit',
-        });
-
-        const newRecord: TimeRecord = {
-          id: result.data.id,
-          type,
-          time: timeString,
-          location:
-            locationData?.address ||
-            'Não foi possível identificar a localização',
-          wifi: locationData?.wifiName || 'WiFi não detectado',
-          timestamp: now,
-        };
-
-        setTimeRecords(prev => [...prev, newRecord]);
-        alertManager.showSuccess(`Ponto registrado com sucesso: ${timeString}`);
 
         // Revalidar registros do servidor após sucesso
         try {
-          const refresh = await fetch('/api/time-clock/records');
-          if (refresh.ok) {
-            const server = await refresh.json();
+          const refresh = await apiClient.timeClock.getRecords();
+          if (refresh.success && refresh.data) {
+            const server = refresh;
             const now = new Date();
-            const todays: any[] = (server.data as any[])
+            const todays: any[] = ((server.data || server) as any[])
               .map(r => ({ ...r, dt: new Date(r.dataHora) }))
               .filter(r => r.dt.toDateString() === now.toDateString())
               .sort((a: any, b: any) => a.dt.getTime() - b.dt.getTime());
@@ -966,7 +959,7 @@ export default function TimeClock() {
           error?.name === 'AbortError'
             ? 'Tempo esgotado ao registrar ponto'
             : error?.message || 'Erro ao registrar ponto. Tente novamente.';
-        alertManager.showError(msg);
+        showError(keys.ERROR.ERRO_REGISTRAR_PONTO, undefined, msg);
       }
     },
     [
@@ -977,6 +970,12 @@ export default function TimeClock() {
       networkDetection.realSSID,
       networkDetection.ssidPlatform,
       networkFingerprint,
+      keys.ERROR.ERRO_REGISTRAR_PONTO,
+      keys.ERROR.SESSAO_EXPIRADA,
+      keys.SUCCESS.PONTO_REGISTRADO,
+      showError,
+      showSuccess,
+      showWarning,
     ]
   );
 
@@ -989,14 +988,11 @@ export default function TimeClock() {
         fim: request.endTime,
         justificativa: request.justification,
       };
-      const resp = await fetch('/api/time-clock/overtime-requests', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      if (!resp.ok) throw new Error('Falha ao criar solicitação');
-      const created = await resp.json();
-      const r = created.data;
+        const resp = await apiClient.timeClock.overtimeRequests.create(body);
+        if (!resp.success || !resp.data) {
+          throw new Error(resp.error || 'Falha ao criar solicitação');
+        }
+        const r = resp.data;
       const mapped: OvertimeRequest = {
         id: r.id,
         employeeId: currentUser?.id || 'current-user',
@@ -1005,63 +1001,59 @@ export default function TimeClock() {
         startTime: r.inicio,
         endTime: r.fim,
         justification: r.justificativa || '',
-        status: (r.status || 'PENDENTE').toLowerCase(),
+        status: toOvertimeRequestStatus(r.status || OVERTIME_REQUEST_STATUSES.PENDING),
         requestedAt: new Date(r.criadoEm),
         reviewedAt: r.revisadaEm ? new Date(r.revisadaEm) : undefined,
         reviewedBy: r.revisadaPor || undefined,
         reviewComment: r.observacao || undefined,
       };
       setOvertimeRequests(prev => [mapped, ...prev]);
-      alertManager.showSuccess('Solicitação de hora extra enviada para aprovação!');
+      showSuccess(keys.SUCCESS.SOLICITACAO_ENVIADA);
     } catch (e: any) {
-      alertManager.showError(e?.message || 'Erro ao solicitar hora extra');
+      showError('error.erro_solicitar_hora_extra', undefined, e?.message || 'Erro ao solicitar hora extra');
     }
   };
 
   const reviewOvertime = async (id: string, approve: boolean) => {
     try {
-      const resp = await fetch('/api/time-clock/overtime-requests', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id,
-          status: approve ? 'APROVADA' : 'REJEITADA',
-        }),
+      const resp = await apiClient.timeClock.overtimeRequests.update(id, {
+        status: approve ? OVERTIME_REQUEST_STATUSES.APPROVED : OVERTIME_REQUEST_STATUSES.REJECTED,
       });
-      if (!resp.ok) throw new Error('Falha ao atualizar solicitação');
-      const updated = await resp.json();
+      if (!resp.success || !resp.data) {
+        throw new Error(resp.error || 'Falha ao atualizar solicitação');
+      }
       setOvertimeRequests(prev =>
         prev.map(r =>
           r.id === id
             ? {
                 ...r,
-                status: (updated.data.status || 'PENDENTE').toLowerCase(),
-                reviewedAt: updated.data.revisadaEm
-                  ? new Date(updated.data.revisadaEm)
+                status: toOvertimeRequestStatus(resp.data.status || OVERTIME_REQUEST_STATUSES.PENDING),
+                reviewedAt: resp.data.revisadaEm
+                  ? new Date(resp.data.revisadaEm)
                   : undefined,
-                reviewedBy: updated.data.revisadaPor || undefined,
-                reviewComment: updated.data.observacao || undefined,
+                reviewedBy: resp.data.revisadaPor || undefined,
+                reviewComment: resp.data.observacao || undefined,
               }
             : r
         )
       );
-      alertManager.showSuccess(approve ? 'Solicitação aprovada' : 'Solicitação rejeitada');
+      showSuccess(approve ? 'success.solicitacao_aprovada' : 'success.solicitacao_rejeitada');
     } catch (e: any) {
-      alertManager.showError(e?.message || 'Erro ao atualizar solicitação');
+      showError('error.erro_atualizar_solicitacao', undefined, e?.message || 'Erro ao atualizar solicitação');
     }
   };
 
   // Handler para upload de documentos
   const handleDocumentUpload = (files: FileList) => {
     // Aqui seria integrado com o sistema de gestão de documentos
-    alertManager.showSuccess(`${files.length} documento(s) enviado(s) com sucesso!`);
+    showSuccess(keys.SUCCESS.DOCUMENTO_ENVIADO, { count: files.length });
   };
 
   // Handler para transferir para folha de pagamento
   const handlePayrollTransfer = async () => {
     // Simular transferência
     await new Promise(resolve => setTimeout(resolve, 2000));
-    alertManager.showSuccess('Dados transferidos para folha de pagamento com sucesso!');
+    showSuccess(keys.SUCCESS.TRANSFERENCIA_REALIZADA);
   };
 
   // Handlers para modal de geofencing
@@ -1074,34 +1066,27 @@ export default function TimeClock() {
         minute: '2-digit',
       });
 
-      const response = await fetch('/api/time-clock/registrar', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          tipo: 'ENTRADA', // ou determinar tipo baseado nos registros existentes
-          latitude: geofencingData?.coordenadas.latitude,
-          longitude: geofencingData?.coordenadas.longitude,
-          precisao: geofencingData?.coordenadas.precisao,
-          endereco:
-            geofencingData?.endereco ||
-            'Não foi possível identificar a localização',
-          wifiName: networkDetection.realSSID || 'WiFi não detectado',
-          justificativaGeofencing: justificativa,
-          requerAprovacao: true,
-        }),
+      const response = await apiClient.timeClock.register({
+        tipo: 'ENTRADA', // ou determinar tipo baseado nos registros existentes
+        latitude: geofencingData?.coordenadas.latitude,
+        longitude: geofencingData?.coordenadas.longitude,
+        precisao: geofencingData?.coordenadas.precisao,
+        endereco:
+          geofencingData?.endereco ||
+          'Não foi possível identificar a localização',
+        wifiName: networkDetection.realSSID || 'WiFi não detectado',
+        justificativaGeofencing: justificativa,
+        requerAprovacao: true,
       });
 
-      if (response.ok) {
-        alertManager.showSuccess(`Ponto registrado com justificativa: ${timeString}`);
+      if (response.success) {
+        showSuccess(keys.SUCCESS.PONTO_REGISTRADO, { time: timeString });
 
         // Recarregar registros
-        const refresh = await fetch('/api/time-clock/records');
-        if (refresh.ok) {
-          const server = await refresh.json();
+        const refresh = await apiClient.timeClock.getRecords();
+        if (refresh.success && refresh.data) {
           const now = new Date();
-          const todays: any[] = (server.data as any[])
+          const todays: any[] = ((refresh.data || refresh) as any[])
             .map(r => ({ ...r, dt: new Date(r.dataHora) }))
             .filter(r => r.dt.toDateString() === now.toDateString())
             .sort((a: any, b: any) => a.dt.getTime() - b.dt.getTime());
@@ -1125,9 +1110,8 @@ export default function TimeClock() {
         throw new Error('Erro ao registrar ponto');
       }
     } catch (error: any) {
-      alertManager.showError(
-        'Erro ao registrar ponto com justificativa: ' +
-          (error?.message || 'Erro desconhecido')
+      showError(keys.ERROR.ERRO_REGISTRAR_PONTO, undefined, 
+        'Erro ao registrar ponto com justificativa: ' + (error?.message || 'Erro desconhecido')
       );
     }
   };
@@ -1147,7 +1131,7 @@ export default function TimeClock() {
       width: '120px',
       render: (item: DataListItem) => {
         const history = item as TimeClockHistory;
-        return new Date(history.date).toLocaleDateString('pt-BR');
+        return formatDate(history.date);
       },
     },
     {
@@ -1206,7 +1190,7 @@ export default function TimeClock() {
       label: 'Data/Hora',
       width: '160px',
       render: (item: any) =>
-        new Date((item as any).dataHora).toLocaleString('pt-BR'),
+        formatDateTime((item as any).dataHora),
     },
     { key: 'tipo', label: 'Tipo', width: '140px' },
     {
@@ -1230,7 +1214,7 @@ export default function TimeClock() {
       label: 'Data',
       width: '120px',
       render: (item: any) =>
-        new Date((item as any).date).toLocaleDateString('pt-BR'),
+        formatDate((item as any).date),
     },
     {
       key: 'horario',
@@ -1275,7 +1259,7 @@ export default function TimeClock() {
       label: 'Editar registros',
       variant: 'primary',
       onClick: (item: DataListItem) => {
-        alertManager.showInfo('Funcionalidade de edição em desenvolvimento');
+        showInfo(keys.INFO.EDICAO_DESENVOLVIMENTO);
       },
     },
     {
@@ -1283,7 +1267,7 @@ export default function TimeClock() {
       label: 'Ver detalhes',
       variant: 'secondary',
       onClick: (item: DataListItem) => {
-        alertManager.showInfo('Funcionalidade de detalhes em desenvolvimento');
+        showInfo(keys.INFO.DETALHES_DESENVOLVIMENTO);
       },
     },
   ];
@@ -1402,7 +1386,7 @@ export default function TimeClock() {
           userRole={currentUser?.role || 'Usuário'}
           notificationCount={unreadCount}
           onNotificationClick={() =>
-            alertManager.showInfo('Notificações em desenvolvimento')
+            showInfo(keys.INFO.NOTIFICACOES_DESENVOLVIMENTO)
           }
         />
 
@@ -1432,19 +1416,10 @@ export default function TimeClock() {
       <TimeClockSection $theme={theme}>
         <CurrentTimeDisplay>
           <CurrentTime $theme={theme}>
-            {currentTime.toLocaleTimeString('pt-BR', {
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-            })}
+            {formatTimeWithSeconds(currentTime)}
           </CurrentTime>
           <CurrentDate $theme={theme}>
-            {currentTime.toLocaleDateString('pt-BR', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
+            {formatDateLong(currentTime)}
           </CurrentDate>
         </CurrentTimeDisplay>
 
@@ -1531,17 +1506,14 @@ export default function TimeClock() {
           overtimeHours: overtimeData?.totalOvertime
             ? parseFloat(overtimeData.totalOvertime)
             : 0,
-          period: new Date().toLocaleDateString('pt-BR', {
-            month: 'long',
-            year: 'numeric',
-          }),
+          period: formatMonthYear(new Date()),
           lastTransfer: payrollData?.lastTransfer?.criadoEm
             ? new Date(payrollData.lastTransfer.criadoEm)
             : undefined,
           ...payrollData, // Incluir dados reais da API
         }}
         onTransfer={handlePayrollTransfer}
-        onViewDetails={() => alertManager.showInfo('Detalhes em desenvolvimento')}
+        onViewDetails={() => showInfo(keys.INFO.DETALHES_DESENVOLVIMENTO)}
       />
 
       {/* Filtros para Histórico */}
@@ -1619,7 +1591,7 @@ export default function TimeClock() {
             columns={historyColumns}
             actions={historyActions}
             onItemClick={(item: any) => {
-              alertManager.showInfo('Detalhes do registro em desenvolvimento');
+              showInfo('info.detalhes_registro_desenvolvimento');
             }}
             emptyMessage='Nenhum registro encontrado para o período selecionado.'
             variant='detailed'
@@ -1635,6 +1607,35 @@ export default function TimeClock() {
 
       {/* Lista de Registros Pendentes */}
       <PendingRecordsList theme={theme} />
+
+      {/* ✅ NOVO: Seção de Comunicação Contextual para Registro de Ponto */}
+      {selectedRecordId && (
+        <HistorySection $theme={theme}>
+          <OptimizedSectionTitle $theme={theme} $size="lg">
+            <AccessibleEmoji emoji='💬' label='Comunicação' />
+            Comunicação sobre este Registro de Ponto
+          </OptimizedSectionTitle>
+          <ContextualChat
+            contextoTipo="PONTO"
+            contextoId={selectedRecordId}
+            titulo={`Comunicação - Registro ${selectedRecordId.slice(0, 8)}`}
+            altura="400px"
+            onMensagemEnviada={() => {
+              // Recarregar mensagens ou atualizar UI se necessário
+            }}
+          />
+          <ButtonContainerRight>
+            <UnifiedButton
+              onClick={() => setSelectedRecordId(null)}
+              $theme={theme}
+              $variant="secondary"
+              $size="sm"
+            >
+              Fechar Comunicação
+            </UnifiedButton>
+          </ButtonContainerRight>
+        </HistorySection>
+      )}
 
       {/* Solicitações de Hora Extra */}
       <HistorySection $theme={theme}>

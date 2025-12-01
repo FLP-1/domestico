@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { getThemeColor } from '../utils/themeHelpers';
 
 const Container = styled.div`
   padding: 20px;
@@ -8,16 +9,16 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  color: #333;
+  color: ${props => getThemeColor(props.theme, 'text.primary', 'inherit')};
   margin-bottom: 16px;
 `;
 
 const Result = styled.p`
-  color: #666;
-  background: #f8f9fa;
+  color: ${props => getThemeColor(props.theme, 'text.secondary', 'inherit')};
+  background: ${props => getThemeColor(props.theme, 'background.secondary', 'transparent')};
   padding: 12px;
   border-radius: 4px;
-  border-left: 4px solid #007bff;
+  border-left: 4px solid ${props => getThemeColor(props.theme, 'primary', 'transparent')};
 `;
 
 export default function TestAPI() {

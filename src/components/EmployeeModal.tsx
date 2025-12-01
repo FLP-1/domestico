@@ -42,9 +42,14 @@ import {
   OptimizedSelectStyled,
 } from './shared/optimized-styles';
 
-const Label = styled.label`
+const Label = styled.label<{ $theme?: any }>`
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
   display: block;
@@ -63,36 +68,100 @@ const RelativeContainer = styled.div`
   margin-top: 0.5rem;
 `;
 
-const InputStyled = styled(Input)<{ $hasError?: boolean }>`
+const InputStyled = styled(Input)<{ $hasError?: boolean; $theme?: any }>`
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid ${props => (props.$hasError ? '#e74c3c' : '#e9ecef')};
+  border: 2px solid ${props => {
+    if (props.$hasError) {
+      return props.$theme?.colors?.status?.error?.background ||
+             props.$theme?.status?.error?.background ||
+             props.$theme?.colors?.error ||
+             'transparent';
+    }
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
+    props.$theme?.background?.primary ||
+    props.$theme?.colors?.surface ||
+    'transparent'};
 
   &:focus {
     outline: none;
-    border-color: #29abe2;
-    box-shadow: 0 0 0 3px rgba(41, 171, 226, 0.1);
+    border-color: ${props =>
+      props.$theme?.colors?.primary ||
+      props.$theme?.accent ||
+      'transparent'};
+    box-shadow: 0 0 0 3px ${props => {
+      const primaryColor = props.$theme?.colors?.primary ||
+                           props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   }
 `;
 
-const SelectStyled = styled(Select)<{ $hasError?: boolean }>`
+const SelectStyled = styled(Select)<{ $hasError?: boolean; $theme?: any }>`
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid ${props => (props.$hasError ? '#e74c3c' : '#e9ecef')};
+  border: 2px solid ${props => {
+    if (props.$hasError) {
+      return props.$theme?.colors?.status?.error?.background ||
+             props.$theme?.status?.error?.background ||
+             props.$theme?.colors?.error ||
+             'transparent';
+    }
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
+  background: ${props => {
+    const bg = props.$theme?.colors?.background?.primary ||
+                props.$theme?.background?.primary ||
+                props.$theme?.colors?.surface ||
+                props.$theme?.colors?.background;
+    if (bg && bg.startsWith('#')) {
+      const r = parseInt(bg.slice(1, 3), 16);
+      const g = parseInt(bg.slice(3, 5), 16);
+      const b = parseInt(bg.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.9)`;
+    }
+    return 'transparent';
+  }};
   cursor: pointer;
 
   &:focus {
     outline: none;
-    border-color: #29abe2;
-    box-shadow: 0 0 0 3px rgba(41, 171, 226, 0.1);
+    border-color: ${props =>
+      props.$theme?.colors?.primary ||
+      props.$theme?.accent ||
+      'transparent'};
+    box-shadow: 0 0 0 3px ${props => {
+      const primaryColor = props.$theme?.colors?.primary ||
+                           props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   }
 `;
 

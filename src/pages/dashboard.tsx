@@ -17,6 +17,7 @@ import {
 } from '../components/unified';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
+import { getThemeColor } from '../utils/themeHelpers';
 
 // Animações
 const slideIn = keyframes`
@@ -37,13 +38,31 @@ const slideIn = keyframes`
 
 // Widget e WidgetsGrid components removed - now using reusable components
 
-const TaskList = styled.div`
+const TaskList = styled.div<{ $theme?: any }>`
   .task-item {
     display: flex;
     align-items: center;
     gap: 1rem;
     padding: 0.75rem 0;
-    border-bottom: 1px solid rgba(41, 171, 226, 0.1);
+    border-bottom: 1px solid ${props => {
+      const primaryColor = getThemeColor(props.$theme, 'colors.primary', 'transparent');
+      if (primaryColor) {
+        // Adiciona opacidade ao hex color
+        if (primaryColor.startsWith('#')) {
+          const r = parseInt(primaryColor.slice(1, 3), 16);
+          const g = parseInt(primaryColor.slice(3, 5), 16);
+          const b = parseInt(primaryColor.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, 0.1)`;
+        }
+        if (primaryColor.startsWith('rgb')) {
+          return primaryColor.replace(')', ', 0.1)').replace('rgb', 'rgba');
+        }
+      }
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border?.light) ||
+             props.$theme?.border?.light ||
+             'transparent';
+    }};
 
     &:last-child {
       border-bottom: none;
@@ -52,13 +71,18 @@ const TaskList = styled.div`
     .checkbox {
       width: 18px;
       height: 18px;
-      accent-color: #29abe2;
+      accent-color: ${props =>
+        getThemeColor(props.$theme, 'colors.primary', 'transparent')};
       cursor: pointer;
     }
 
     .task-text {
       flex: 1;
-      color: #5a6c7d;
+      color: ${props =>
+        props.$theme?.colors?.text?.secondary ||
+        props.$theme?.text?.secondary ||
+        props.$theme?.colors?.text ||
+        'inherit'};
       font-size: 0.9rem;
     }
 
@@ -69,18 +93,77 @@ const TaskList = styled.div`
       font-weight: 500;
 
       &.high {
-        background: rgba(231, 76, 60, 0.1);
-        color: #e74c3c;
+        background: ${props => {
+          const errorColor = props.$theme?.colors?.status?.error?.background || 
+                            props.$theme?.status?.error?.background ||
+                            props.$theme?.colors?.error;
+          if (!errorColor) return 'transparent';
+          if (errorColor.startsWith('#')) {
+            const r = parseInt(errorColor.slice(1, 3), 16);
+            const g = parseInt(errorColor.slice(3, 5), 16);
+            const b = parseInt(errorColor.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, 0.1)`;
+          }
+          if (errorColor.startsWith('rgb')) {
+            return errorColor.replace(')', ', 0.1)').replace('rgb', 'rgba');
+          }
+          return 'transparent';
+        }};
+        color: ${props => 
+          props.$theme?.colors?.status?.error?.text || 
+          props.$theme?.status?.error?.text ||
+          props.$theme?.colors?.error ||
+          'inherit'};
       }
 
       &.medium {
-        background: rgba(243, 156, 18, 0.1);
-        color: #f39c12;
+        background: ${props => {
+          const warningColor = props.$theme?.colors?.status?.warning?.background || 
+                              props.$theme?.status?.warning?.background ||
+                              props.$theme?.colors?.warning;
+          if (!warningColor) return 'transparent';
+          if (warningColor.startsWith('#')) {
+            const r = parseInt(warningColor.slice(1, 3), 16);
+            const g = parseInt(warningColor.slice(3, 5), 16);
+            const b = parseInt(warningColor.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, 0.1)`;
+          }
+          if (warningColor.startsWith('rgb')) {
+            return warningColor.replace(')', ', 0.1)').replace('rgb', 'rgba');
+          }
+          return 'transparent';
+        }};
+        color: ${props => 
+          props.$theme?.colors?.status?.warning?.text || 
+          props.$theme?.status?.warning?.text ||
+          props.$theme?.colors?.warning ||
+          'inherit'};
       }
 
       &.low {
-        background: rgba(144, 238, 144, 0.1);
-        color: #90ee90;
+        background: ${props => {
+          const successColor = props.$theme?.colors?.status?.success?.background || 
+                              props.$theme?.status?.success?.background ||
+                              props.$theme?.colors?.secondary ||
+                              props.$theme?.colors?.success;
+          if (!successColor) return 'transparent';
+          if (successColor.startsWith('#')) {
+            const r = parseInt(successColor.slice(1, 3), 16);
+            const g = parseInt(successColor.slice(3, 5), 16);
+            const b = parseInt(successColor.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, 0.1)`;
+          }
+          if (successColor.startsWith('rgb')) {
+            return successColor.replace(')', ', 0.1)').replace('rgb', 'rgba');
+          }
+          return 'transparent';
+        }};
+        color: ${props => 
+          props.$theme?.colors?.status?.success?.text || 
+          props.$theme?.status?.success?.text ||
+          props.$theme?.colors?.secondary ||
+          props.$theme?.colors?.success ||
+          'inherit'};
       }
     }
   }
@@ -104,9 +187,14 @@ const PendingCardRow = styled.div`
   justify-content: space-between;
 `;
 
-const PendingCardSubtitle = styled.p`
+const PendingCardSubtitle = styled.p<{ $theme?: any }>`
   margin: 0;
-  color: #7f8c8d;
+  color: ${props => 
+    props.$theme?.colors?.text?.secondary || 
+    props.$theme?.text?.secondary || 
+    props.$theme?.colors?.textSecondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
 const PendingCardCount = styled.div`
@@ -245,7 +333,7 @@ export default function Dashboard() {
           content: (
             <div>
               <h4>Tarefas Pendentes:</h4>
-              <TaskList>
+              <TaskList $theme={theme}>
                 {tasks
                   .filter(t => !t.completed)
                   .map(task => (
@@ -348,7 +436,7 @@ export default function Dashboard() {
       <PendingCardRow>
         <div>
           <PendingCardTitle>Registros Pendentes</PendingCardTitle>
-          <PendingCardSubtitle>Aprovação necessária</PendingCardSubtitle>
+          <PendingCardSubtitle $theme={theme}>Aprovação necessária</PendingCardSubtitle>
         </div>
         <PendingCardCount>{pendingPunches}</PendingCardCount>
       </PendingCardRow>

@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../lib/prisma';
 import { getCurrentUserId } from '../../../lib/configService';
+import { OVERTIME_REQUEST_STATUSES } from '../../../constants/overtimeRequestStatuses';
 
 export default async function handler(
   req: NextApiRequest,
@@ -50,7 +51,7 @@ export default async function handler(
           inicio,
           fim,
           justificativa: justificativa || null,
-          status: 'PENDENTE',
+          status: OVERTIME_REQUEST_STATUSES.PENDING,
         },
       });
       return res.status(201).json({ success: true, data: created });
@@ -63,7 +64,12 @@ export default async function handler(
           .status(400)
           .json({ success: false, error: 'id e status são obrigatórios' });
       const novo = String(status).toUpperCase();
-      if (!['APROVADA', 'REJEITADA', 'PENDENTE'].includes(novo)) {
+      const validStatuses = [
+        OVERTIME_REQUEST_STATUSES.APPROVED,
+        OVERTIME_REQUEST_STATUSES.REJECTED,
+        OVERTIME_REQUEST_STATUSES.PENDING,
+      ];
+      if (!validStatuses.includes(novo as any)) {
         return res
           .status(400)
           .json({ success: false, error: 'Status inválido' });
@@ -73,7 +79,7 @@ export default async function handler(
         data: {
           status: novo,
           revisadaPor: usuarioId,
-          revisadaEm: novo === 'PENDENTE' ? null : new Date(),
+          revisadaEm: novo === OVERTIME_REQUEST_STATUSES.PENDING ? null : new Date(),
           observacao: observacao || null,
         },
       });

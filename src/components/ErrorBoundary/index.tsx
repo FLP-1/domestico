@@ -26,21 +26,23 @@ const ErrorContainer = styled.div<{ $theme?: any }>`
   text-align: center;
   background: ${props =>
     props.$theme?.colors?.background?.secondary ||
-    props.$theme?.colors?.background ||
-    '#f8f9fa'};
+    props.$theme?.background?.secondary ||
+    props.$theme?.colors?.background?.primary ||
+    'transparent'};
   color: ${props =>
     props.$theme?.colors?.text?.primary ||
     props.$theme?.colors?.text ||
-    '#2c3e50'};
+    'inherit'};
 `;
 
 const ErrorTitle = styled.h1<{ $theme?: any }>`
   font-size: 2rem;
   margin-bottom: 1rem;
   color: ${props =>
-    props.$theme?.colors?.error?.primary ||
+    props.$theme?.colors?.status?.error?.background ||
+    props.$theme?.status?.error?.background ||
     props.$theme?.colors?.error ||
-    '#e74c3c'};
+    'inherit'};
 `;
 
 const ErrorMessage = styled.p<{ $theme?: any }>`
@@ -48,8 +50,9 @@ const ErrorMessage = styled.p<{ $theme?: any }>`
   margin-bottom: 1.5rem;
   color: ${props =>
     props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
     props.$theme?.colors?.text ||
-    '#7f8c8d'};
+    'inherit'};
   max-width: 600px;
 `;
 
@@ -58,13 +61,16 @@ const ErrorDetails = styled.details<{ $theme?: any }>`
   padding: 1rem;
   background: ${props =>
     props.$theme?.colors?.background?.tertiary ||
-    props.$theme?.colors?.background ||
-    '#ffffff'};
+    props.$theme?.background?.tertiary ||
+    props.$theme?.colors?.background?.primary ||
+    'transparent'};
   border: 1px solid
-    ${props =>
-      props.$theme?.colors?.border?.light ||
-      props.$theme?.colors?.border ||
-      '#e5e7eb'};
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border?.light) ||
+             props.$theme?.border?.light ||
+             'transparent';
+    }};
   border-radius: 8px;
   text-align: left;
   max-width: 800px;
@@ -77,8 +83,9 @@ const ErrorSummary = styled.summary<{ $theme?: any }>`
   margin-bottom: 0.5rem;
   color: ${props =>
     props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
     props.$theme?.colors?.text ||
-    '#2c3e50'};
+    'inherit'};
 `;
 
 const ErrorStack = styled.pre<{ $theme?: any }>`
@@ -86,8 +93,9 @@ const ErrorStack = styled.pre<{ $theme?: any }>`
   overflow-x: auto;
   color: ${props =>
     props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
     props.$theme?.colors?.text ||
-    '#7f8c8d'};
+    'inherit'};
   white-space: pre-wrap;
   word-wrap: break-word;
 `;
@@ -196,7 +204,9 @@ function ErrorBoundaryFallback({
 
   return (
     <ErrorContainer $theme={theme}>
-      <ErrorTitle $theme={theme}>⚠️ Ops! Algo deu errado</ErrorTitle>
+      <ErrorTitle $theme={theme}>
+        <span role="img" aria-label="Aviso">⚠️</span> Ops! Algo deu errado
+      </ErrorTitle>
       <ErrorMessage $theme={theme}>
         Ocorreu um erro inesperado. Nossa equipe foi notificada e está
         trabalhando para resolver o problema.

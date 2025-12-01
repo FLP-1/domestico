@@ -81,7 +81,8 @@ export async function getGoogleGeolocation(apiKey: string): Promise<{
       accuracy: data.accuracy,
     };
   } catch (error: any) {
-    logger.error('❌ Erro ao usar Google Geolocation API:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    logger.error('❌ Erro ao usar Google Geolocation API:', errorMessage, error);
     throw error;
   }
 }

@@ -2,8 +2,6 @@ import AccessibleEmoji from '../components/AccessibleEmoji';
 // src/pages/shopping-management.tsx
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import styled from 'styled-components';
 // import { UnifiedButton } from '../components/unified'; // Duplicado
 import FilterSection from '../components/FilterSection';
@@ -22,7 +20,9 @@ import TopBar from '../components/TopBar';
 import WelcomeSection from '../components/WelcomeSection';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
-import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import { useMessages } from '../hooks/useMessages';
+import { SHOPPING_CATEGORIES } from '../constants/shoppingCategories';
+import { getThemeColor, getStatusColor, addOpacity } from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
 import {
   UnifiedButton,
@@ -76,14 +76,14 @@ const CreateListSection = styled.div<{ $theme: Theme }>`
       : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
     return surfaceColor 
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(defaultColors.surface, 0.95);
+      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
   }};
   backdrop-filter: blur(20px);
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 2rem;
   box-shadow: 0 4px 16px
-    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+    ${props => props.$theme?.colors?.shadow || 'transparent'};
 `;
 
 const ListsGrid = styled.div`
@@ -97,6 +97,26 @@ const ListsGrid = styled.div`
 
 // ListHeader removido - usar div inline ou header prop do UnifiedCard
 
+// Styled Components para substituir estilos inline
+const FormGroupFlex = styled(FormGroup)`
+  flex: 1;
+`;
+
+const FlexRowBetween = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+`;
+
+const SectionWithMargin = styled.div`
+  margin-bottom: 1rem;
+`;
+
+const InputFlex = styled(Input)`
+  flex: 1;
+`;
+
 const ListTitle = styled.h3<{ $theme?: Theme }>`
   margin: 0;
   color: ${props => {
@@ -104,7 +124,7 @@ const ListTitle = styled.h3<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   font-size: 1.25rem;
 `;
@@ -135,7 +155,7 @@ const ListStats = styled.div<{ $theme?: Theme }>`
     } else if (typeof background === 'object' && background !== null && 'secondary' in background) {
       return background.secondary;
     }
-    return defaultColors.surface;
+    return getThemeColor(props.$theme, 'surface.secondary', 'transparent');
   }};
   border-radius: 8px;
 `;
@@ -151,7 +171,7 @@ const StatItem = styled.div<{ $theme?: Theme }>`
       if (typeof text === 'object' && text !== null && 'primary' in text) {
         return text.primary;
       }
-      return defaultColors.text.primary;
+      return getThemeColor(props.$theme, 'text.primary', 'inherit');
     }};
     margin: 0;
   }
@@ -163,7 +183,7 @@ const StatItem = styled.div<{ $theme?: Theme }>`
       if (typeof text === 'object' && text !== null && 'secondary' in text) {
         return text.secondary;
       }
-      return defaultColors.text.secondary;
+      return getThemeColor(props.$theme, 'text.secondary', 'inherit');
     }};
     margin: 0;
   }
@@ -176,7 +196,7 @@ const ListMeta = styled.div<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'secondary' in text) {
       return text.secondary;
     }
-    return defaultColors.text.secondary;
+    return getThemeColor(props.$theme, 'text.secondary', 'inherit');
   }};
   margin-bottom: 1rem;
 `;
@@ -205,7 +225,7 @@ const ItemRow = styled.div<{ $isBought: boolean; $theme?: Theme }>`
     props.$isBought
       ? props.$theme?.colors?.success
         ? addOpacity(props.$theme.colors.success, 0.1)
-        : addOpacity(defaultColors.success, 0.1)
+        : addOpacity(getStatusColor(props.$theme, 'success', 'background') || 'transparent', 0.1)
       : (() => {
           const surface = props.$theme?.colors?.surface;
           if (typeof surface === 'object' && surface !== null && 'secondary' in surface) {
@@ -217,7 +237,7 @@ const ItemRow = styled.div<{ $isBought: boolean; $theme?: Theme }>`
           } else if (typeof background === 'object' && background !== null && 'secondary' in background) {
             return background.secondary;
           }
-          return defaultColors.surface;
+          return getThemeColor(props.$theme, 'surface.secondary', 'transparent');
         })()};
   opacity: ${props => (props.$isBought ? 0.7 : 1)};
   transition: all 0.3s ease;
@@ -227,7 +247,7 @@ const ItemRow = styled.div<{ $isBought: boolean; $theme?: Theme }>`
       props.$isBought
         ? props.$theme?.colors?.success
           ? addOpacity(props.$theme.colors.success, 0.15)
-          : addOpacity(defaultColors.success, 0.15)
+          : addOpacity(getStatusColor(props.$theme, 'success', 'background') || 'transparent', 0.15)
         : (() => {
             const surface = props.$theme?.colors?.surface;
             if (typeof surface === 'object' && surface !== null && 'secondary' in surface) {
@@ -239,7 +259,7 @@ const ItemRow = styled.div<{ $isBought: boolean; $theme?: Theme }>`
             } else if (typeof background === 'object' && background !== null && 'secondary' in background) {
               return background.secondary;
             }
-            return defaultColors.surface;
+            return getThemeColor(props.$theme, 'surface.secondary', 'transparent');
           })()};
   }
 `;
@@ -249,7 +269,7 @@ const ItemCheckbox = styled.input<{ $theme?: Theme }>`
   height: 18px;
   cursor: pointer;
   accent-color: ${props =>
-    props.$theme?.colors?.primary || defaultColors.primary};
+    getThemeColor(props.$theme, 'primary', 'transparent')};
 `;
 
 const ItemInfo = styled.div<{ $isBought: boolean; $theme?: Theme }>`
@@ -263,7 +283,7 @@ const ItemInfo = styled.div<{ $isBought: boolean; $theme?: Theme }>`
       if (typeof text === 'object' && text !== null && 'primary' in text) {
         return text.primary;
       }
-      return defaultColors.text.primary;
+      return getThemeColor(props.$theme, 'text.primary', 'inherit');
     }};
     text-decoration: ${props => (props.$isBought ? 'line-through' : 'none')};
   }
@@ -276,7 +296,7 @@ const ItemInfo = styled.div<{ $isBought: boolean; $theme?: Theme }>`
       if (typeof text === 'object' && text !== null && 'secondary' in text) {
         return text.secondary;
       }
-      return defaultColors.text.secondary;
+      return getThemeColor(props.$theme, 'text.secondary', 'inherit');
     }};
   }
 `;
@@ -311,7 +331,7 @@ const ListSummary = styled.div<{ $theme?: Theme }>`
   background: ${props =>
     props.$theme?.colors?.primary
       ? addOpacity(props.$theme.colors.primary, 0.1)
-      : addOpacity(defaultColors.primary, 0.1)};
+      : addOpacity(getThemeColor(props.$theme, 'primary', 'transparent'), 0.1)};
   border-radius: 8px;
   margin-top: 1rem;
 
@@ -323,7 +343,7 @@ const ListSummary = styled.div<{ $theme?: Theme }>`
       if (typeof text === 'object' && text !== null && 'primary' in text) {
         return text.primary;
       }
-      return defaultColors.text.primary;
+      return getThemeColor(props.$theme, 'text.primary', 'inherit');
     }};
   }
 
@@ -331,14 +351,14 @@ const ListSummary = styled.div<{ $theme?: Theme }>`
     margin: 0;
     font-size: 1.25rem;
     font-weight: 700;
-    color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
+    color: ${props => getThemeColor(props.$theme, 'primary', 'inherit')};
   }
 `;
 
-const EmptyState = styled.div`
+const EmptyState = styled.div<{ $theme?: Theme }>`
   text-align: center;
   padding: 3rem;
-  color: #7f8c8d;
+  color: ${props => getThemeColor(props.$theme, 'text.secondary', 'inherit')};
 
   .empty-icon {
     font-size: 4rem;
@@ -348,7 +368,7 @@ const EmptyState = styled.div`
   .empty-title {
     margin: 0 0 0.5rem 0;
     font-size: 1.25rem;
-    color: #2c3e50;
+    color: ${props => getThemeColor(props.$theme, 'text.primary', 'inherit')};
   }
 
   .empty-description {
@@ -368,29 +388,10 @@ export default function ShoppingManagement() {
   const { currentProfile } = useUserProfile();
   const themeObject = useTheme(currentProfile?.role.toLowerCase());
   const theme = { colors: themeObject.colors };
+  const { showSuccess, showInfo, keys } = useMessages();
 
-  const categories: ShoppingCategory[] = [
-    {
-      id: '1',
-      name: 'Supermercado',
-      color: '#3498db',
-      icon: <AccessibleEmoji emoji='🛍' label='Carrinho' />,
-    },
-    {
-      id: '2',
-      name: 'Farmácia',
-      color: '#e74c3c',
-      icon: <AccessibleEmoji emoji='💉' label='Medicamento' />,
-    },
-    { id: '3', name: 'Limpeza', color: '#2ecc71', icon: '🧽' },
-    { id: '4', name: 'Padaria', color: '#f39c12', icon: '🥖' },
-    {
-      id: '5',
-      name: 'Outros',
-      color: '#95a5a6',
-      icon: <AccessibleEmoji emoji='📦' label='Pacote' />,
-    },
-  ];
+  // Usar constante centralizada
+  const categories = SHOPPING_CATEGORIES;
 
   const [shoppingLists, setShoppingLists] = useState<ShoppingList[]>([
     {
@@ -489,12 +490,12 @@ export default function ShoppingManagement() {
 
     setShoppingLists(prev => [list, ...prev]);
     setNewList({ name: '', category: '' });
-    toast.success('Lista de compras criada com sucesso!');
+    showSuccess(keys.SUCCESS.LISTA_CRIADA);
   };
 
   const handleDeleteList = (id: string) => {
     setShoppingLists(prev => prev.filter(list => list.id !== id));
-    toast.success('Lista excluída com sucesso!');
+    showSuccess(keys.SUCCESS.LISTA_EXCLUIDA);
   };
 
   const handleToggleItem = (listId: string, itemId: string) => {
@@ -549,7 +550,7 @@ export default function ShoppingManagement() {
     );
 
     setNewItemName('');
-    toast.success('Item adicionado à lista!');
+    showSuccess(keys.SUCCESS.ITEM_ADICIONADO);
   };
 
   const handleDeleteItem = (listId: string, itemId: string) => {
@@ -571,7 +572,7 @@ export default function ShoppingManagement() {
         return list;
       })
     );
-    toast.success('Item removido da lista!');
+    showSuccess(keys.SUCCESS.ITEM_REMOVIDO);
   };
 
   const openListUnifiedModal = (list: ShoppingList) => {
@@ -622,7 +623,7 @@ export default function ShoppingManagement() {
           userRole={currentProfile?.role || 'Usuário'}
           notificationCount={getTotalLists()}
           onNotificationClick={() =>
-            toast.info('Notificações em desenvolvimento')
+            showInfo(keys.INFO.NOTIFICACOES_DESENVOLVIMENTO)
           }
         />
       </TopBar>
@@ -637,7 +638,7 @@ export default function ShoppingManagement() {
         <OptimizedSectionTitle>Criar Nova Lista</OptimizedSectionTitle>
         <Form onSubmit={handleCreateList}>
           <OptimizedFormRow>
-            <FormGroup style={{ flex: 1 }}>
+            <FormGroupFlex>
               <OptimizedLabel>Nome da Lista</OptimizedLabel>
               <Input
                 $theme={theme}
@@ -649,9 +650,9 @@ export default function ShoppingManagement() {
                 placeholder='Ex: Compras da semana'
                 required
               />
-            </FormGroup>
+            </FormGroupFlex>
 
-            <FormGroup style={{ flex: 1 }}>
+            <FormGroupFlex>
               <OptimizedLabel>Categoria</OptimizedLabel>
               <Select
                 $theme={theme}
@@ -670,7 +671,7 @@ export default function ShoppingManagement() {
                   </option>
                 ))}
               </Select>
-            </FormGroup>
+            </FormGroupFlex>
 
             <UnifiedButton type='submit' $variant='primary' $theme={theme}>
               <AccessibleEmoji emoji='➕' label='Novo' /> Criar Lista
@@ -736,7 +737,7 @@ export default function ShoppingManagement() {
       </FilterSection>
 
       {getFilteredLists().length === 0 ? (
-        <EmptyState>
+        <EmptyState $theme={theme}>
           <div className='empty-icon'>
             <AccessibleEmoji emoji='🛍' label='Carrinho' />
           </div>
@@ -757,12 +758,12 @@ export default function ShoppingManagement() {
                 variant='default'
                 onClick={() => openListUnifiedModal(list)}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <FlexRowBetween>
                   <ListTitle $theme={theme}>{list.name}</ListTitle>
                   <CategoryBadge $color={categoryInfo.color}>
                     {categoryInfo.icon} {list.category}
                   </CategoryBadge>
-                </div>
+                </FlexRowBetween>
 
                 <ListStats $theme={theme}>
                   <StatItem $theme={theme}>
@@ -810,7 +811,7 @@ export default function ShoppingManagement() {
                     $variant='primary'
                     onClick={e => {
                       e.stopPropagation();
-                      toast.info('Compartilhamento em desenvolvimento');
+                      showInfo(keys.INFO.COMPARTILHAMENTO_DESENVOLVIMENTO);
                     }}
                   >
                     <AccessibleEmoji emoji='🔗' label='Compartilhar' />{' '}
@@ -843,23 +844,22 @@ export default function ShoppingManagement() {
       >
         {selectedList && (
           <div>
-            <div style={{ marginBottom: '1rem' }}>
+            <SectionWithMargin>
               <CategoryBadge
                 $color={getCategoryInfo(selectedList.category).color}
               >
                 {getCategoryInfo(selectedList.category).icon}{' '}
                 {selectedList.category}
               </CategoryBadge>
-            </div>
+            </SectionWithMargin>
 
             <AddItemForm onSubmit={e => handleAddItem(selectedList.id, e)}>
-              <Input
+              <InputFlex
                 $theme={theme}
                 type='text'
                 value={newItemName}
                 onChange={e => setNewItemName(e.target.value)}
                 placeholder='Adicionar novo item...'
-                style={{ flex: 1 }}
               />
               <UnifiedButton
                 $theme={theme}
@@ -915,18 +915,6 @@ export default function ShoppingManagement() {
         )}
       </UnifiedModal>
 
-      <ToastContainer
-        position='top-center'
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
     </PageContainer>
   );
 }

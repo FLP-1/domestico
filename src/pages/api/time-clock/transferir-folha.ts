@@ -93,7 +93,7 @@ export default async function handler(
       totalHorasExtras,
       totalHorasExtrasAprovadas,
       valorTotal,
-      status: 'PROCESSADO',
+      status: 'PROCESSADO', // Status específico de transferência, manter hardcoded
       processadoEm: new Date(),
     };
 

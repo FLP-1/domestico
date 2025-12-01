@@ -34,6 +34,17 @@
 - ❌ **NUNCA** usar localStorage sem validação
 - ❌ **NUNCA** criar dados hardcoded sem mock data
 
+#### **5. Cores e Tema - PROIBIÇÃO ABSOLUTA DE HARDCODED**
+
+- ❌ **NUNCA** usar cores hex hardcoded (`#29ABE2`, `#ffffff`, etc.)
+- ❌ **NUNCA** usar cores rgb/rgba hardcoded (`rgb(41, 171, 226)`, etc.)
+- ❌ **NUNCA** usar cores hsl hardcoded (`hsl(200, 80%, 50%)`, etc.)
+- ❌ **NUNCA** usar nomes de cores hardcoded (`white`, `black`, `red`, etc.)
+- ❌ **NUNCA** usar cores hardcoded em fallbacks (`|| '#29ABE2'`)
+- ✅ **SEMPRE** usar tema com fallback hierárquico
+- ✅ **SEMPRE** usar valores CSS seguros como último fallback (`inherit`, `transparent`, `currentColor`)
+- 📚 **CONSULTE**: `PROIBICAO_CORES_HARDCODED.md` para regras completas e exemplos
+
 ### ✅ **OBRIGAÇÕES ABSOLUTAS**
 
 #### **1. TypeScript - 100% OBRIGATÓRIO**
@@ -49,6 +60,9 @@
 - ✅ **SEMPRE** usar tema centralizado (theme.ts)
 - ✅ **SEMPRE** usar transient props ($prop) para props do styled-components
 - ✅ **SEMPRE** usar keyframes para animações
+- ❌ **NUNCA** usar cores hardcoded (hex, rgb, rgba, hsl, nomes de cores)
+- ✅ **SEMPRE** usar tema com fallbacks seguros (inherit, transparent, currentColor)
+- 📚 **CONSULTE**: `PROIBICAO_CORES_HARDCODED.md` para regras detalhadas
 
 #### **3. Componentes - ESTRUTURA OBRIGATÓRIA**
 
@@ -200,10 +214,39 @@ npm run format
 npm run type-check
 npm run build
 
+# Validar cores hardcoded (OBRIGATÓRIO antes de commit)
+npm run validate:hardcoded
+
+# Validação completa (inclui cores hardcoded)
+npm run validate:all
+
 # Corrigir automaticamente
 npm run lint:fix
 npm run format:fix
 ```
+
+## 🚨 **VALIDAÇÃO DE CORES HARDCODED**
+
+**OBRIGATÓRIO** executar antes de cada commit:
+
+```bash
+npm run validate:hardcoded
+```
+
+Este comando verifica:
+- ❌ Cores hex (`#...`)
+- ❌ Cores rgb/rgba hardcoded
+- ❌ Cores hsl hardcoded
+- ❌ Nomes de cores hardcoded
+- ❌ Fallbacks com cores hardcoded
+
+**Se encontrar cores hardcoded, o commit será bloqueado!**
+
+📚 **Consulte `PROIBICAO_CORES_HARDCODED.md` para:**
+- Regras detalhadas
+- Exemplos de código correto/incorreto
+- Padrões de fallback hierárquico
+- Utilitários disponíveis
 
 ## 🎯 **OBJETIVO DESTAS REGRAS**
 

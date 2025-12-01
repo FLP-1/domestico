@@ -1,20 +1,58 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
-const successPulse = keyframes`
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(41, 171, 226, 0.7);
+// Função para gerar keyframes dinamicamente baseado no tema
+const createSuccessPulse = (theme?: any) => {
+  const primaryColor = theme?.colors?.primary || theme?.accent;
+  
+  // Se não houver tema, usar shadow do tema ou transparent
+  if (!primaryColor) {
+    return keyframes`
+      0% {
+        transform: scale(1);
+        box-shadow: none;
+      }
+      70% {
+        transform: scale(1.1);
+        box-shadow: none;
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: none;
+      }
+    `;
   }
-  70% {
-    transform: scale(1.1);
-    box-shadow: 0 0 0 20px rgba(41, 171, 226, 0);
+  
+  let r = 0, g = 0, b = 0;
+  
+  if (primaryColor.startsWith('#')) {
+    r = parseInt(primaryColor.slice(1, 3), 16);
+    g = parseInt(primaryColor.slice(3, 5), 16);
+    b = parseInt(primaryColor.slice(5, 7), 16);
+  } else if (primaryColor.startsWith('rgb')) {
+    const match = primaryColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+      r = parseInt(match[1], 10);
+      g = parseInt(match[2], 10);
+      b = parseInt(match[3], 10);
+    }
   }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(41, 171, 226, 0);
-  }
-`;
+  
+  return keyframes`
+    0% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(${r}, ${g}, ${b}, 0.7);
+    }
+    70% {
+      transform: scale(1.1);
+      box-shadow: 0 0 0 20px rgba(${r}, ${g}, ${b}, 0);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(${r}, ${g}, ${b}, 0);
+    }
+  `;
+};
 
 const ButtonContainer = styled.button<{
   $isClockedIn: boolean;
@@ -45,17 +83,29 @@ const ButtonContainer = styled.button<{
   border-radius: 50%;
   border: none;
   background: ${props => {
-    if (props.$theme?.colors) {
-      return props.$isClockedIn
-        ? `linear-gradient(135deg, ${props.$theme.colors.accent || '#e74c3c'}, #c0392b)`
-        : `linear-gradient(135deg, ${props.$theme.colors.primary}, ${props.$theme.colors.secondary})`;
+    if (props.$isClockedIn) {
+      const errorColor = props.$theme?.colors?.status?.error?.background ||
+                        props.$theme?.status?.error?.background ||
+                        props.$theme?.colors?.error ||
+                        props.$theme?.colors?.accent ||
+                        'transparent';
+      const errorDark = props.$theme?.colors?.status?.error?.dark ||
+                       props.$theme?.status?.error?.dark ||
+                       props.$theme?.colors?.error ||
+                       errorColor;
+      return `linear-gradient(135deg, ${errorColor}, ${errorDark})`;
     }
-
-    return props.$isClockedIn
-      ? 'linear-gradient(135deg, #e74c3c, #c0392b)'
-      : 'linear-gradient(135deg, #29abe2, #90ee90)';
+    
+    const primaryColor = props.$theme?.colors?.primary || 'transparent';
+    const secondaryColor = props.$theme?.colors?.secondary || primaryColor;
+    return `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`;
   }};
-  color: white;
+  color: ${props => 
+    props.$theme?.colors?.text?.primary || 
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    props.$theme?.colors?.surface ||
+    'inherit'};
   font-family: 'Montserrat', sans-serif;
   font-size: ${props => {
     switch (props.$size) {
@@ -70,17 +120,46 @@ const ButtonContainer = styled.button<{
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: ${props =>
-    `0 8px 32px ${props.$theme?.colors.primary + '50' || 'rgba(41, 171, 226, 0.3)'}`};
+  box-shadow: ${props => {
+    const primaryColor = props.$theme?.colors?.primary;
+    if (!primaryColor) return 'none';
+    // Adiciona opacidade ao hex color
+    if (primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `0 8px 32px rgba(${r}, ${g}, ${b}, 0.3)`;
+    }
+    if (primaryColor.startsWith('rgb')) {
+      return `0 8px 32px ${primaryColor.replace(')', ', 0.3)').replace('rgb', 'rgba')}`;
+    }
+    return 'none';
+  }};
   position: relative;
   overflow: hidden;
-  animation: ${props => (props.$justRegistered ? successPulse : 'none')} 1s
-    ease-out;
+  animation: ${props => {
+    if (!props.$justRegistered) return 'none';
+    const pulseAnimation = createSuccessPulse(props.$theme);
+    return `${pulseAnimation} 1s ease-out`;
+  }};
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: ${props =>
-      `0 12px 40px ${props.$theme?.colors.primary + '60' || 'rgba(41, 171, 226, 0.4)'}`};
+    box-shadow: ${props => {
+      const primaryColor = props.$theme?.colors?.primary;
+      if (!primaryColor) return 'none';
+      // Adiciona opacidade ao hex color
+      if (primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `0 12px 40px rgba(${r}, ${g}, ${b}, 0.4)`;
+      }
+      if (primaryColor.startsWith('rgb')) {
+        return `0 12px 40px ${primaryColor.replace(')', ', 0.4)').replace('rgb', 'rgba')}`;
+      }
+      return 'none';
+    }};
   }
 
   &:active {
@@ -132,7 +211,24 @@ const ButtonContainer = styled.button<{
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(255, 255, 255, 0.2),
+      ${props => {
+        const textColor = props.$theme?.colors?.text?.primary || 
+                         props.$theme?.text?.primary ||
+                         props.$theme?.colors?.text ||
+                         props.$theme?.colors?.surface ||
+                         'currentColor';
+        // Adiciona opacidade à cor
+        if (textColor && textColor.startsWith('#')) {
+          const r = parseInt(textColor.slice(1, 3), 16);
+          const g = parseInt(textColor.slice(3, 5), 16);
+          const b = parseInt(textColor.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, 0.2)`;
+        }
+        if (textColor && textColor.startsWith('rgb')) {
+          return textColor.replace(')', ', 0.2)').replace('rgb', 'rgba');
+        }
+        return 'transparent';
+      }},
       transparent
     );
     transition: left 0.5s;

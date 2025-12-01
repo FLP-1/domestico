@@ -1,6 +1,9 @@
 import prisma from '@/lib/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+// Cor padrão para tipos de usuário quando não especificada
+const DEFAULT_USER_TYPE_COLOR = '#29ABE2';
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -89,7 +92,7 @@ async function createUserType(req: NextApiRequest, res: NextApiResponse) {
         codigo: nome.toLowerCase().replace(/\s+/g, '_'),
         nome,
         descricao,
-        cor: cor || '#3498db',
+        cor: cor || DEFAULT_USER_TYPE_COLOR,
         icone: icone || '👤',
         ativo: true,
       },

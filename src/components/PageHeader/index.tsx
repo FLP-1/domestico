@@ -1,6 +1,6 @@
 // src/components/PageHeader/index.tsx
 import styled from 'styled-components';
-import { defaultColors } from '../../utils/themeHelpers';
+// import { defaultColors } from '../../utils/themeHelpers';
 import { getSpacing, getFontSize } from '../shared/tokens';
 import { fadeIn } from '../shared/animations';
 import type { Theme } from '../../types/theme';
@@ -17,7 +17,13 @@ interface PageHeaderProps {
   animation?: boolean;
 }
 
-const HeaderContainer = styled.div<{
+const HeaderContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    if (prop === 'className' || prop === 'children') return true;
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{
   $variant?: PageHeaderProps['variant'];
   $showDivider?: boolean;
   $theme?: Theme;
@@ -27,10 +33,26 @@ const HeaderContainer = styled.div<{
     if (props.$variant === 'inline') return getSpacing('sm');
     return getSpacing('xl');
   }};
-  ${props => (props.$showDivider ? `border-bottom: 1px solid ${props.$theme?.colors?.border?.light || props.$theme?.border?.light || 'transparent'}; padding-bottom: ${getSpacing('md')};` : '')}
+  ${props => {
+    if (!props.$showDivider) return '';
+    const border = props.$theme?.colors?.border;
+    const borderColor = (typeof border === 'object' && border && 'light' in border 
+      ? String((border as any).light) 
+      : null) || 
+      (typeof (props.$theme as any)?.border === 'object' && (props.$theme as any)?.border && 'light' in (props.$theme as any).border
+        ? String((props.$theme as any).border.light)
+        : 'transparent');
+    return `border-bottom: 1px solid ${borderColor}; padding-bottom: ${getSpacing('md')};`;
+  }}
 `;
 
-const HeaderContent = styled.div<{ $variant?: PageHeaderProps['variant'] }>`
+const HeaderContent = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    if (prop === 'className' || prop === 'children') return true;
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $variant?: PageHeaderProps['variant'] }>`
   display: flex;
   align-items: ${props => {
     if (props.$variant === 'centered') return 'center';
@@ -47,7 +69,13 @@ const HeaderContent = styled.div<{ $variant?: PageHeaderProps['variant'] }>`
   text-align: ${props => (props.$variant === 'centered' ? 'center' : 'left')};
 `;
 
-const PageTitle = styled.h1<{
+const PageTitle = styled.h1.withConfig({
+  shouldForwardProp: (prop) => {
+    if (prop === 'className' || prop === 'children') return true;
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{
   $theme?: Theme;
   $size?: PageHeaderProps['size'];
   $variant?: PageHeaderProps['variant'];
@@ -70,28 +98,39 @@ const PageTitle = styled.h1<{
     }
   }};
   font-weight: 700;
-  color: ${props =>
-    props.$theme?.colors?.text?.dark ||
-    props.$theme?.text?.dark ||
-    props.$theme?.colors?.primary ||
-    defaultColors.text.primary};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    const textDark = (typeof text === 'object' && text && 'dark' in text ? String((text as any).dark) : null) ||
+                     (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'dark' in (props.$theme as any).text
+                       ? String((props.$theme as any).text.dark)
+                       : null) ||
+                     props.$theme?.colors?.primary ||
+                     'inherit';
+    return textDark;
+  }};
   margin: 0;
   ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    const shadowColor = props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
         return `text-shadow: 0 2px 4px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1);`;
       }
     }
-    return props.$theme?.colors?.shadow || defaultColors.shadow
-      ? `text-shadow: 0 2px 4px ${props.$theme?.colors?.shadow || defaultColors.shadow};`
+    return shadowColor
+      ? `text-shadow: 0 2px 4px ${shadowColor};`
       : '';
   }}
   ${props => (props.$animation ? `animation: ${fadeIn} 0.3s ease-out;` : '')}
 `;
 
-const PageSubtitle = styled.p<{
+const PageSubtitle = styled.p.withConfig({
+  shouldForwardProp: (prop) => {
+    if (prop === 'className' || prop === 'children') return true;
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{
   $theme?: Theme;
   $variant?: PageHeaderProps['variant'];
   $animation?: boolean;
@@ -100,10 +139,15 @@ const PageSubtitle = styled.p<{
     if (props.$variant === 'compact') return getFontSize('sm');
     return getFontSize('lg');
   }};
-  color: ${props =>
-    props.$theme?.colors?.text?.secondary ||
-    props.$theme?.text?.secondary ||
-    defaultColors.text.secondary};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    const textSecondary = (typeof text === 'object' && text && 'secondary' in text ? String((text as any).secondary) : null) ||
+                          (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'secondary' in (props.$theme as any).text
+                            ? String((props.$theme as any).text.secondary)
+                            : null) ||
+                          'inherit';
+    return textSecondary;
+  }};
   margin: 0;
   font-weight: 500;
   line-height: 1.5;

@@ -21,7 +21,9 @@ const TermsHeader = styled.div<{ $theme?: any }>`
   border-bottom: 1px solid
     ${props => {
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) || '#e0e0e0';
+      return (typeof border === 'object' && border?.light) ||
+             props.$theme?.border?.light ||
+             'transparent';
     }};
   text-align: center;
 `;

@@ -28,13 +28,23 @@ interface SelectionModalProps {
   type: 'profile' | 'group';
 }
 
-const SelectionModal = styled.div<{ $isOpen: boolean }>`
+const SelectionModal = styled.div<{ $isOpen: boolean; $theme?: any }>`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.5)`;
+    }
+    return 'transparent';
+  }};
   display: ${props => (props.$isOpen ? 'flex' : 'none')};
   align-items: center;
   justify-content: center;
@@ -43,7 +53,17 @@ const SelectionModal = styled.div<{ $isOpen: boolean }>`
 `;
 
 const SelectionModalContent = styled.div<{ $theme?: any }>`
-  background: rgba(255, 255, 255, 0.98);
+  background: ${props => {
+    const bgColor = props.$theme?.colors?.background?.primary ||
+                    props.$theme?.background?.primary;
+    if (bgColor && bgColor.startsWith('#')) {
+      const r = parseInt(bgColor.slice(1, 3), 16);
+      const g = parseInt(bgColor.slice(3, 5), 16);
+      const b = parseInt(bgColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.98)`;
+    }
+    return 'transparent';
+  }};
   backdrop-filter: blur(20px);
   border-radius: 24px;
   padding: 2.5rem;
@@ -51,9 +71,29 @@ const SelectionModalContent = styled.div<{ $theme?: any }>`
   width: 90%;
   max-height: 85vh;
   overflow-y: auto;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-  border: 1px solid
-    ${props => props.$theme?.navigation?.primary || 'rgba(41, 171, 226, 0.3)'};
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 25px 50px rgba(${r}, ${g}, ${b}, 0.25)`;
+    }
+    return props.$theme?.shadows?.xl || 'none';
+  }};
+  border: 1px solid ${props => {
+    const primaryColor = props.$theme?.navigation?.primary ||
+                         props.$theme?.colors?.primary ||
+                         props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.3)`;
+    }
+    return 'transparent';
+  }};
   animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 
   @keyframes fadeIn {
@@ -82,14 +122,26 @@ const SelectionModalContent = styled.div<{ $theme?: any }>`
     justify-content: space-between;
     margin-bottom: 2rem;
     border-bottom: 2px solid
-      ${props => props.theme?.border?.secondary || '#f1f3f4'};
+      ${props => {
+        const border = props.theme?.colors?.border;
+        return (typeof border === 'object' && border?.secondary) ||
+               props.theme?.border?.secondary ||
+               (typeof border === 'object' && border?.light) ||
+               props.theme?.border?.light ||
+               'transparent';
+      }};
     padding-bottom: 1.5rem;
 
     .title {
       font-family: 'Montserrat', sans-serif;
       font-size: 1.75rem;
       font-weight: 700;
-      color: ${props => props.theme?.text?.dark || '#2c3e50'};
+      color: ${props =>
+        props.theme?.colors?.text?.dark ||
+        props.theme?.text?.dark ||
+        props.theme?.colors?.text?.primary ||
+        props.theme?.colors?.text ||
+        'inherit'};
       margin: 0;
       display: flex;
       align-items: center;
@@ -103,33 +155,69 @@ const SelectionModalContent = styled.div<{ $theme?: any }>`
         font-family: 'Montserrat', sans-serif;
         font-size: 1.25rem;
         font-weight: 800;
-        color: ${props => props.theme?.navigation?.primary || '#29abe2'};
+        color: ${props =>
+          props.theme?.colors?.navigation?.primary ||
+          props.theme?.navigation?.primary ||
+          props.theme?.colors?.primary ||
+          props.theme?.accent ||
+          'inherit'};
         margin: 0 0 0.25rem 0;
         background: linear-gradient(
           135deg,
-          ${props => props.theme?.navigation?.primary || '#29abe2'},
-          ${props => props.theme?.accent?.green || '#90ee90'}
+          ${props =>
+            props.theme?.colors?.navigation?.primary ||
+            props.theme?.navigation?.primary ||
+            props.theme?.colors?.primary ||
+            props.theme?.accent ||
+            'transparent'},
+          ${props =>
+            props.theme?.colors?.success ||
+            props.theme?.accent?.green ||
+            'transparent'}
         );
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        text-shadow: 0 2px 4px rgba(41, 171, 226, 0.1);
+        text-shadow: ${props => {
+          const primaryColor = props.$theme?.navigation?.primary ||
+                               props.$theme?.colors?.primary ||
+                               props.$theme?.accent;
+          if (primaryColor && primaryColor.startsWith('#')) {
+            const r = parseInt(primaryColor.slice(1, 3), 16);
+            const g = parseInt(primaryColor.slice(3, 5), 16);
+            const b = parseInt(primaryColor.slice(5, 7), 16);
+            return `0 2px 4px rgba(${r}, ${g}, ${b}, 0.1)`;
+          }
+          return 'none';
+        }};
       }
 
       .user-name {
         font-family: 'Roboto', sans-serif;
         font-size: 1rem;
-        color: ${props => props.theme?.text?.secondary || '#6c757d'};
+        color: ${props =>
+          props.theme?.colors?.text?.secondary ||
+          props.theme?.text?.secondary ||
+          props.theme?.colors?.text ||
+          'inherit'};
         margin: 0;
         font-weight: 500;
       }
     }
 
     .close-button {
-      background: ${props => props.theme?.background?.secondary || '#f8f9fa'};
+      background: ${props =>
+        props.theme?.colors?.background?.secondary ||
+        props.theme?.background?.secondary ||
+        props.theme?.colors?.background?.primary ||
+        'transparent'};
       border: none;
       font-size: 1.25rem;
-      color: #6c757d;
+      color: ${props =>
+        props.theme?.colors?.text?.secondary ||
+        props.theme?.text?.secondary ||
+        props.theme?.colors?.text ||
+        'inherit'};
       cursor: pointer;
       padding: 0.75rem;
       border-radius: 12px;
@@ -139,8 +227,16 @@ const SelectionModalContent = styled.div<{ $theme?: any }>`
       justify-content: center;
 
       &:hover {
-        background: ${props => props.theme?.background?.tertiary || '#e9ecef'};
-        color: ${props => props.theme?.text?.secondary || '#495057'};
+        background: ${props =>
+          props.theme?.colors?.background?.tertiary ||
+          props.theme?.background?.tertiary ||
+          props.theme?.colors?.background?.secondary ||
+          'transparent'};
+        color: ${props =>
+          props.theme?.colors?.text?.secondary ||
+          props.theme?.text?.secondary ||
+          props.theme?.colors?.text ||
+          'inherit'};
         transform: scale(1.05);
       }
     }
@@ -150,7 +246,11 @@ const SelectionModalContent = styled.div<{ $theme?: any }>`
 const ModalSubtitle = styled.p<{ $theme?: any }>`
   font-family: 'Roboto', sans-serif;
   font-size: 1rem;
-  color: ${props => props.$theme?.text?.secondary || '#6c757d'};
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin: 0 0 2rem 0;
   line-height: 1.5;
   text-align: center;
@@ -168,15 +268,46 @@ const ItemButton = styled.button<{
   $theme?: any;
 }>`
   position: relative;
-  background: ${props =>
-    props.$isSelected
-      ? `${props.$color || props.$theme?.navigation?.primary || '#29abe2'}15`
-      : props.$theme?.background?.secondary || '#f8f9fa'};
+  background: ${props => {
+    if (props.$isSelected) {
+      const primaryColor = props.$color ||
+                           props.$theme?.colors?.navigation?.primary ||
+                           props.$theme?.navigation?.primary ||
+                           props.$theme?.colors?.primary ||
+                           props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.08)`;
+      }
+      return 'transparent';
+    }
+    return props.$theme?.colors?.background?.secondary ||
+           props.$theme?.background?.secondary ||
+           props.$theme?.colors?.background?.primary ||
+           'transparent';
+  }};
   border: 2px solid
-    ${props =>
-      props.$isSelected
-        ? `${props.$color || props.$theme?.navigation?.primary || '#29abe2'}40`
-        : props.$theme?.background?.tertiary || '#e9ecef'};
+    ${props => {
+      if (props.$isSelected) {
+        const primaryColor = props.$color ||
+                             props.$theme?.colors?.navigation?.primary ||
+                             props.$theme?.navigation?.primary ||
+                             props.$theme?.colors?.primary ||
+                             props.$theme?.accent;
+        if (primaryColor && primaryColor.startsWith('#')) {
+          const r = parseInt(primaryColor.slice(1, 3), 16);
+          const g = parseInt(primaryColor.slice(3, 5), 16);
+          const b = parseInt(primaryColor.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, 0.25)`;
+        }
+        return 'transparent';
+      }
+      return props.$theme?.colors?.background?.tertiary ||
+             props.$theme?.background?.tertiary ||
+             'transparent';
+    }};
   border-radius: 16px;
   padding: 1.5rem;
   cursor: pointer;
@@ -188,12 +319,47 @@ const ItemButton = styled.button<{
   gap: 1rem;
 
   &:hover {
-    background: ${props =>
-      `${props.$color || props.$theme?.navigation?.primary || '#29abe2'}10`};
-    border-color: ${props =>
-      `${props.$color || props.$theme?.navigation?.primary || '#29abe2'}60`};
+    background: ${props => {
+      const primaryColor = props.$color ||
+                           props.$theme?.colors?.navigation?.primary ||
+                           props.$theme?.navigation?.primary ||
+                           props.$theme?.colors?.primary ||
+                           props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.06)`;
+      }
+      return props.$theme?.colors?.background?.secondary ||
+             'transparent';
+    }};
+    border-color: ${props => {
+      const primaryColor = props.$color ||
+                           props.$theme?.colors?.navigation?.primary ||
+                           props.$theme?.navigation?.primary ||
+                           props.$theme?.colors?.primary ||
+                           props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.375)`;
+      }
+      return 'transparent';
+    }};
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: ${props => {
+      const shadowColor = props.$theme?.colors?.shadow ||
+                          props.$theme?.shadow?.color;
+      if (shadowColor && shadowColor.startsWith('#')) {
+        const r = parseInt(shadowColor.slice(1, 3), 16);
+        const g = parseInt(shadowColor.slice(3, 5), 16);
+        const b = parseInt(shadowColor.slice(5, 7), 16);
+        return `0 8px 25px rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return props.$theme?.shadows?.md || 'none';
+    }};
   }
 
   .item-info {
@@ -203,7 +369,12 @@ const ItemButton = styled.button<{
       font-family: 'Montserrat', sans-serif;
       font-size: 1.125rem;
       font-weight: 600;
-      color: ${props => props.theme?.text?.dark || '#2c3e50'};
+      color: ${props =>
+        props.theme?.colors?.text?.dark ||
+        props.theme?.text?.dark ||
+        props.theme?.colors?.text?.primary ||
+        props.theme?.colors?.text ||
+        'inherit'};
       margin: 0 0 0.25rem 0;
       display: flex;
       align-items: center;
@@ -213,7 +384,11 @@ const ItemButton = styled.button<{
     .item-description {
       font-family: 'Roboto', sans-serif;
       font-size: 0.875rem;
-      color: ${props => props.$theme?.text?.secondary || '#6c757d'};
+      color: ${props =>
+        props.$theme?.colors?.text?.secondary ||
+        props.$theme?.text?.secondary ||
+        props.$theme?.colors?.text ||
+        'inherit'};
       margin: 0;
       line-height: 1.4;
     }
@@ -221,7 +396,12 @@ const ItemButton = styled.button<{
     .item-role {
       font-family: 'Roboto', sans-serif;
       font-size: 0.75rem;
-      color: ${props => props.$theme?.navigation?.primary || '#29abe2'};
+      color: ${props =>
+        props.$theme?.colors?.navigation?.primary ||
+        props.$theme?.navigation?.primary ||
+        props.$theme?.colors?.primary ||
+        props.$theme?.accent ||
+        'inherit'};
       margin: 0.25rem 0 0 0;
       font-weight: 500;
       text-transform: uppercase;
@@ -233,21 +413,47 @@ const ItemButton = styled.button<{
     width: 48px;
     height: 48px;
     border-radius: 12px;
-    background: ${props =>
-      props.$isSelected
-        ? props.$color || props.$theme?.navigation?.primary || '#29abe2'
-        : props.$theme?.text?.secondary || '#6c757d'};
+    background: ${props => {
+      if (props.$isSelected) {
+        return props.$color ||
+               props.$theme?.colors?.navigation?.primary ||
+               props.$theme?.navigation?.primary ||
+               props.$theme?.colors?.primary ||
+               props.$theme?.accent ||
+               'transparent';
+      }
+      return props.$theme?.colors?.text?.secondary ||
+             props.$theme?.text?.secondary ||
+             props.$theme?.colors?.text ||
+             'transparent';
+    }};
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: ${props =>
+      props.$theme?.colors?.text?.primary ||
+      props.$theme?.text?.primary ||
+      props.$theme?.colors?.text ||
+      props.$theme?.colors?.surface ||
+      'inherit'};
     font-size: 1.25rem;
     font-weight: 600;
-    box-shadow: 0 4px 12px
-      ${props =>
-        props.$isSelected
-          ? `${props.$color || '#29abe2'}40`
-          : 'rgba(0, 0, 0, 0.1)'};
+    box-shadow: ${props => {
+      if (props.$isSelected) {
+        const primaryColor = props.$color ||
+                             props.$theme?.colors?.navigation?.primary ||
+                             props.$theme?.navigation?.primary ||
+                             props.$theme?.colors?.primary ||
+                             props.$theme?.accent;
+        if (primaryColor && primaryColor.startsWith('#')) {
+          const r = parseInt(primaryColor.slice(1, 3), 16);
+          const g = parseInt(primaryColor.slice(3, 5), 16);
+          const b = parseInt(primaryColor.slice(5, 7), 16);
+          return `0 4px 12px rgba(${r}, ${g}, ${b}, 0.25)`;
+        }
+      }
+      return 'none';
+    }};
     transition: all 0.3s ease;
   }
 
@@ -258,7 +464,13 @@ const ItemButton = styled.button<{
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: ${props => props.$color || '#29abe2'};
+    background: ${props =>
+      props.$color ||
+      props.$theme?.colors?.navigation?.primary ||
+      props.$theme?.navigation?.primary ||
+      props.$theme?.colors?.primary ||
+      props.$theme?.accent ||
+      'transparent'};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -301,7 +513,7 @@ const SelectionModalComponent: React.FC<SelectionModalProps> = ({
       : '';
 
   return (
-    <SelectionModal $isOpen={isOpen}>
+    <SelectionModal $isOpen={isOpen} $theme={theme}>
       <SelectionModalContent $theme={theme}>
         <div className='header'>
           <div>

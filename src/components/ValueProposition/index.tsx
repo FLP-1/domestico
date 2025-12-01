@@ -33,13 +33,13 @@ const Container = styled.div<{ $variant: string; $theme?: any }>`
   }}
 `;
 
-const MainTitle = styled.h1<{ $theme?: any }>`
+const MainTitle = styled.h1<{ $variant?: string; $theme?: any }>`
   font-size: ${props => (props.$variant === 'hero' ? '2.5rem' : '1.75rem')};
   font-weight: 700;
   color: ${props =>
     props.$theme?.colors?.text?.primary ||
     props.$theme?.colors?.text ||
-    '#2c3e50'};
+    'inherit'};
   margin-bottom: 1rem;
   line-height: 1.2;
 
@@ -48,12 +48,13 @@ const MainTitle = styled.h1<{ $theme?: any }>`
   }
 `;
 
-const Subtitle = styled.p<{ $theme?: any }>`
+const Subtitle = styled.p<{ $variant?: string; $theme?: any }>`
   font-size: ${props => (props.$variant === 'hero' ? '1.25rem' : '1rem')};
   color: ${props =>
     props.$theme?.colors?.text?.secondary ||
-    props.$theme?.colors?.text?.secondary ||
-    '#7f8c8d'};
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin-bottom: ${props => (props.$variant === 'hero' ? '2rem' : '1rem')};
   line-height: 1.6;
 `;
@@ -81,13 +82,14 @@ const DifferentialItem = styled.li<{ $theme?: any }>`
   background: ${props =>
     props.$theme?.colors?.background?.secondary ||
     props.$theme?.background?.secondary ||
-    '#f8f9fa'};
+    props.$theme?.colors?.background?.primary ||
+    'transparent'};
   border-radius: 8px;
   border-left: 4px solid
     ${props =>
       props.$theme?.colors?.primary ||
       props.$theme?.accent ||
-      '#29abe2'};
+      'transparent'};
 
   @media (min-width: 768px) {
     flex: 1;
@@ -105,7 +107,7 @@ const DifferentialText = styled.span<{ $theme?: any }>`
   color: ${props =>
     props.$theme?.colors?.text?.primary ||
     props.$theme?.colors?.text ||
-    '#2c3e50'};
+    'inherit'};
 `;
 
 /**

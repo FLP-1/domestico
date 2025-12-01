@@ -26,13 +26,23 @@ const slideIn = keyframes`
 `;
 
 // Styled Components
-const Overlay = styled.div<{ $isOpen: boolean }>`
+const Overlay = styled.div<{ $isOpen: boolean; $theme?: any }>`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: ${props => {
+    const overlayColor = props.$theme?.colors?.overlay ||
+                        props.$theme?.overlay?.background;
+    if (overlayColor && overlayColor.startsWith('#')) {
+      const r = parseInt(overlayColor.slice(1, 3), 16);
+      const g = parseInt(overlayColor.slice(3, 5), 16);
+      const b = parseInt(overlayColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.5)`;
+    }
+    return 'transparent';
+  }};
   display: ${props => (props.$isOpen ? 'flex' : 'none')};
   align-items: center;
   justify-content: center;
@@ -47,7 +57,12 @@ const Container = styled.div<{
   $variant?: 'default' | 'fullscreen' | 'compact';
   $theme?: any;
 }>`
-  background: white;
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
+    props.$theme?.background?.primary ||
+    props.$theme?.colors?.surface ||
+    props.$theme?.colors?.background ||
+    'transparent'};
   border-radius: ${props => {
     switch (props.$variant) {
       case 'fullscreen':
@@ -58,9 +73,18 @@ const Container = styled.div<{
         return '12px';
     }
   }};
-  box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                       props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 20px 25px -5px rgba(${r}, ${g}, ${b}, 0.1),
+              0 10px 10px -5px rgba(${r}, ${g}, ${b}, 0.04)`;
+    }
+    return props.$theme?.shadows?.lg || 'none';
+  }};
   max-height: 90vh;
   overflow: hidden;
   position: relative;
@@ -98,7 +122,12 @@ const Container = styled.div<{
 
 const Header = styled.div<{ $theme?: any }>`
   padding: 1.5rem 1.5rem 0 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -113,7 +142,11 @@ const Header = styled.div<{ $theme?: any }>`
 const Title = styled.h2<{ $theme?: any }>`
   font-size: 1.25rem;
   font-weight: 600;
-  color: #111827;
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin: 0;
   display: flex;
   align-items: center;
@@ -132,12 +165,24 @@ const CloseButton = styled.button<{ $theme?: any }>`
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 6px;
-  color: #6b7280;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   transition: all 0.2s ease;
 
   &:hover {
-    background: #f3f4f6;
-    color: #374151;
+    background: ${props =>
+      props.$theme?.colors?.background?.secondary ||
+      props.$theme?.background?.secondary ||
+      props.$theme?.colors?.surface ||
+      'transparent'};
+    color: ${props =>
+      props.$theme?.colors?.text?.primary ||
+      props.$theme?.text?.primary ||
+      props.$theme?.colors?.text ||
+      'inherit'};
   }
 
   ${props => {
@@ -164,7 +209,12 @@ const Body = styled.div<{ $theme?: any }>`
 
 const Footer = styled.div<{ $theme?: any }>`
   padding: 0 1.5rem 1.5rem 1.5rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   display: flex;
   gap: 0.75rem;
   justify-content: flex-end;
@@ -280,7 +330,12 @@ export const ModalBodyComponent = styled.div<{ $theme?: any }>`
 
 export const ModalHeaderComponent = styled.div<{ $theme?: any }>`
   padding: 1.5rem 1.5rem 0 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -294,7 +349,12 @@ export const ModalHeaderComponent = styled.div<{ $theme?: any }>`
 
 export const ModalFooterComponent = styled.div<{ $theme?: any }>`
   padding: 0 1.5rem 1.5rem 1.5rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   display: flex;
   gap: 0.75rem;
   justify-content: flex-end;

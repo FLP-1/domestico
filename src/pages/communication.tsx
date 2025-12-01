@@ -1,1101 +1,474 @@
-import AccessibleEmoji from '../components/AccessibleEmoji';
-// src/pages/communication.tsx
+/**
+ * Página: Comunicação Contextual
+ * Sistema DOM - Reformulação Completa
+ * 
+ * Comunicação vinculada a contextos específicos:
+ * - PONTO: Registros de ponto
+ * - TAREFA: Tarefas do sistema
+ * - DOCUMENTO: Documentos trabalhistas
+ * - FOLHA: Folha de pagamento
+ */
+
+import { useState, useEffect, useCallback, useMemo, memo } from 'react';
+import styled from 'styled-components';
 import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
 import { useAlertManager } from '../hooks/useAlertManager';
-import styled, { keyframes } from 'styled-components';
-import { UnifiedButton, UnifiedModal } from '../components/unified';
-import { FormGroup, Input, Label } from '../components/FormComponents';
+import { useErrorHandler } from '../hooks/useErrorHandler';
+import { useUserProfile } from '../contexts/UserProfileContext';
+import { useTheme } from '../hooks/useTheme';
 import PageContainer from '../components/PageContainer';
 import PageHeader from '../components/PageHeader';
 import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
 import WelcomeSection from '../components/WelcomeSection';
-import { useUserProfile } from '../contexts/UserProfileContext';
-import { useTheme } from '../hooks/useTheme';
-import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import { UnifiedCard, UnifiedButton, UnifiedBadge, UnifiedModal } from '../components/unified';
+import ContextualChat from '../components/ContextualChat';
+import EmptyState from '../components/EmptyState';
+import AccessibleEmoji from '../components/AccessibleEmoji';
+import { LoadingContainer } from '../components/shared/page-components';
+import { addOpacity, getThemeColor } from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
-import { getTextPrimary, getTextSecondary } from '../utils/themeTypeGuards';
-import { UnifiedCard } from '../components/unified';
-import { OptimizedLabel } from '../components/shared/optimized-styles';
-
-// Types
-interface Message {
-  id: string;
-  senderId: string;
-  senderName: string;
-  senderAvatar: string;
-  content: string;
-  timestamp: string;
-  type: 'text' | 'audio' | 'image' | 'file';
-  isRead: boolean;
-  isOwn: boolean;
-  replyTo?: {
-    id: string;
-    content: string;
-    senderName: string;
-  };
-}
-
-interface Conversation {
-  id: string;
-  name: string;
-  avatar: string;
-  lastMessage: string;
-  lastMessageTime: string;
-  unreadCount: number;
-  isGroup: boolean;
-  isPinned: boolean;
-  isMuted: boolean;
-  participants: string[];
-  onlineStatus: 'online' | 'offline' | 'away';
-}
-
-interface Contact {
-  id: string;
-  name: string;
-  avatar: string;
-  role: string;
-  onlineStatus: 'online' | 'offline' | 'away';
-  lastSeen?: string;
-}
-
-// Animations
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
+import type { ProfileTheme } from '../hooks/useTheme';
+import type { ContextoTipo } from '../services/communicationService';
+import type { MensagemContextual, ContextoComunicacao } from '../types/communication';
+import { truncateText } from '../utils/formatters';
+import { sortByDate } from '../utils/sorters';
+import { tokens, getSpacing, getFontSize } from '../components/shared/tokens';
+import { ContentGrid } from '../components/shared/page-components';
 
 // Styled Components
-
-const ChatLayout = styled.div`
-  display: flex;
-  width: 100%;
-  height: 100vh;
-  background: ${defaultColors.surface};
-  border-radius: 16px 0 0 16px;
-  box-shadow: 0 4px 16px ${defaultColors.shadow};
-  overflow: hidden;
+const ContextosGrid = styled(ContentGrid)`
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  margin-top: ${getSpacing('xl')};
 `;
 
-const ConversationsSidebar = styled.div<{ $theme?: Theme }>`
-  width: 350px;
-  background: ${props =>
-    props.$theme?.colors?.background || defaultColors.surface};
-  border-right: 1px solid
-    ${props =>
-      props.$theme?.colors?.border || addOpacity(defaultColors.primary, 0.08)};
-  display: flex;
-  flex-direction: column;
-`;
-
-const SidebarHeader = styled.div<{ $theme?: Theme }>`
-  padding: 1.5rem;
-  background: ${defaultColors.surface};
-  border-bottom: 1px solid
-    ${props =>
-      props.$theme?.colors?.border || addOpacity(defaultColors.primary, 0.08)};
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const HeaderTitle = styled.h2`
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: ${props =>
-    props.theme?.colors?.text?.primary || defaultColors.text.primary};
-  margin: 0;
-`;
-
-const HeaderActions = styled.div`
-  display: flex;
-  gap: 0.5rem;
-`;
-
-const ActionIcon = styled.button<{ $theme?: Theme }>`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  background: ${props =>
-    props.$theme?.colors?.primary
-      ? addOpacity(props.$theme?.colors?.primary, 0.15)
-      : addOpacity(defaultColors.primary, 0.15)};
-  color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: ${props =>
-      props.$theme?.colors?.primary
-        ? addOpacity(props.$theme?.colors?.primary, 0.3)
-        : addOpacity(defaultColors.primary, 0.3)};
-    transform: scale(1.1);
-  }
-`;
-
-const SearchContainer = styled.div`
-  padding: 1rem 1.5rem;
-  background: ${defaultColors.surface};
-  border-bottom: 1px solid
-    ${props => props.theme?.colors?.border || defaultColors.border};
-`;
-
-const SearchInput = styled.input<{ $theme?: Theme }>`
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 2px solid
-    ${props => props.theme?.colors?.border || defaultColors.border};
-  border-radius: 25px;
-  font-size: 0.9rem;
-  background: ${props =>
-    props.theme?.colors?.background || defaultColors.surface};
-  transition: all 0.3s ease;
-
-  &:focus {
-    outline: none;
-    border-color: ${props =>
-      props.$theme?.colors?.primary || defaultColors.primary};
-    background: ${defaultColors.surface};
-  }
-
-  &::placeholder {
-    color: ${props => getTextSecondary(props.theme)};
-  }
-`;
-
-const ConversationsList = styled.div`
-  flex: 1;
-  overflow-y: auto;
-  padding: 0.5rem 0;
-`;
-
-const ConversationItem = styled.div<{ $active: boolean; $theme?: Theme }>`
-  display: flex;
-  align-items: center;
-  padding: 1rem 1.5rem;
+const ContextoCard = styled(UnifiedCard)<{ $theme?: Theme; $selected?: boolean }>`
   cursor: pointer;
   transition: all 0.3s ease;
-  background: ${props =>
-    props.$active
-      ? addOpacity(props.$theme?.colors?.primary || defaultColors.primary, 0.1)
-      : 'transparent'};
-  border-left: ${props =>
-    props.$active
-      ? `3px solid ${props.$theme?.colors?.primary || defaultColors.primary}`
-      : '3px solid transparent'};
+  border: 2px solid ${props => 
+    props.$selected 
+      ? getThemeColor(props.$theme, 'primary')
+      : 'transparent'
+  };
 
   &:hover {
-    background: ${props =>
-      props.$theme?.colors?.primary
-        ? addOpacity(props.$theme?.colors?.primary, 0.05)
-        : addOpacity(defaultColors.primary, 0.05)};
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px ${props => 
+      addOpacity(getThemeColor(props.$theme, 'shadow') || 'transparent', 0.2)
+    };
   }
 `;
 
-const AvatarContainer = styled.div`
-  position: relative;
-  margin-right: 1rem;
-`;
-
-const Avatar = styled.div<{ $color: string }>`
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: ${props => props.$color};
+const ContextoHeader = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  font-size: 1.1rem;
+  align-items: flex-start;
+  gap: ${getSpacing('md')};
+  margin-bottom: ${getSpacing('md')};
 `;
 
-const OnlineIndicator = styled.div<{ $status: string }>`
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 2px solid ${defaultColors.surface};
-  background: ${props => {
-    switch (props.$status) {
-      case 'online':
-        return props.theme?.status?.success?.color || defaultColors.success;
-      case 'away':
-        return props.theme?.status?.warning?.color || defaultColors.warning;
-      default:
-        return props.theme?.status?.info?.color || defaultColors.info;
-    }
-  }};
+const ContextoIcon = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: Theme }>`
+  font-size: ${getSpacing('xl')};
+  flex-shrink: 0;
 `;
 
-const ConversationContent = styled.div`
+const ContextoInfo = styled.div`
   flex: 1;
   min-width: 0;
 `;
 
-const LastMessage = styled.p`
-  font-size: 0.85rem;
-  color: ${defaultColors.text.secondary};
+const ContextoTitulo = styled.h3.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: Theme }>`
+  margin: 0 0 ${getSpacing('xs')} 0;
+  font-size: ${getFontSize('lg')};
+  font-weight: 600;
+  color: ${props => getThemeColor(props.$theme, 'text.primary', 'inherit')};
+`;
+
+const ContextoDescricao = styled.p.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: Theme }>`
   margin: 0;
-  white-space: nowrap;
+  font-size: ${getFontSize('sm')};
+  color: ${props => getThemeColor(props.$theme, 'text.secondary', 'inherit')};
+`;
+
+const ContextoFooter = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: Theme }>`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: ${getSpacing('md')};
+  padding-top: ${getSpacing('md')};
+  border-top: 1px solid ${props => 
+    getThemeColor(props.$theme, 'border.light', 'transparent')
+  };
+`;
+
+const UltimaMensagem = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: Theme }>`
+  flex: 1;
+  font-size: ${getFontSize('xs')};
+  color: ${props => getThemeColor(props.$theme, 'text.secondary', 'inherit')};
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
-const ConversationMeta = styled.div`
+const MensagensInfo = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.25rem;
-`;
-
-const UnreadBadge = styled.div<{ $theme?: Theme }>`
-  background: ${props =>
-    props.$theme?.colors?.primary || defaultColors.primary};
-  color: ${defaultColors.surface};
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  display: flex;
+  gap: ${getSpacing('sm')};
   align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  font-weight: 600;
 `;
 
-const ChatArea = styled.div`
-  flex: 1;
+const FiltrosContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  background: ${defaultColors.surface};
+  gap: ${getSpacing('md')};
+  margin-bottom: ${getSpacing('lg')};
+  flex-wrap: wrap;
 `;
 
-const ChatHeader = styled.div<{ $theme?: Theme }>`
-  padding: 1rem 1.5rem;
-  background: ${defaultColors.surface};
-  border-bottom: 1px solid
-    ${props =>
-      props.$theme?.colors?.border || addOpacity(defaultColors.primary, 0.08)};
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+const FiltroButton = styled(UnifiedButton)<{ $active?: boolean }>`
+  ${props => props.$active && `
+    opacity: 1;
+    font-weight: 600;
+  `}
 `;
 
-const ChatHeaderInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+const ChatModalContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: Theme }>`
+  padding: ${getSpacing('md')};
+  background: ${props => getThemeColor(props.$theme, 'background.primary', 'transparent')};
 `;
 
-const ChatHeaderActions = styled.div`
-  display: flex;
-  gap: 0.5rem;
-`;
+// Desabilitar prerendering - página requer autenticação e contexto
+export const dynamic = 'force-dynamic';
 
-const ChatMessages = styled.div`
-  flex: 1;
-  padding: 1rem;
-  overflow-y: auto;
-  background: ${props =>
-    props.theme?.colors?.background || defaultColors.surface};
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
+import { GetServerSideProps } from 'next';
 
-const MessageBubble = styled.div<{ $isOwn: boolean; $theme?: Theme }>`
-  display: flex;
-  flex-direction: column;
-  align-items: ${props => (props.$isOwn ? 'flex-end' : 'flex-start')};
-  animation: ${fadeIn} 0.3s ease-out;
-`;
-
-const MessageContent = styled.div<{ $isOwn: boolean; $theme?: Theme }>`
-  max-width: 70%;
-  padding: 0.75rem 1rem;
-  border-radius: 18px;
-  background: ${props =>
-    props.$isOwn
-      ? props.$theme?.colors?.primary || defaultColors.primary
-      : defaultColors.surface};
-  color: ${props =>
-    props.$isOwn ? defaultColors.surface : defaultColors.text.primary};
-  box-shadow: 0 2px 8px ${defaultColors.shadow};
-  position: relative;
-  word-wrap: break-word;
-`;
-
-const MessageText = styled.p`
-  margin: 0;
-  line-height: 1.4;
-`;
-
-const MessageTime = styled.span<{ $isOwn: boolean }>`
-  font-size: 0.7rem;
-  color: ${props =>
-    props.$isOwn ? addOpacity(defaultColors.surface, 0.7) : defaultColors.info};
-  margin-top: 0.25rem;
-  align-self: ${props => (props.$isOwn ? 'flex-end' : 'flex-start')};
-`;
-
-const ConversationName = styled.h3`
-  margin: 0;
-  color: ${props =>
-    props.theme?.colors?.text?.primary || defaultColors.text.primary};
-`;
-
-const ConversationStatus = styled.p`
-  margin: 0;
-  font-size: 0.8rem;
-  color: ${defaultColors.text.secondary};
-`;
-
-const MessageInput = styled.div<{ $theme?: Theme }>`
-  padding: 1rem 1.5rem;
-  background: ${defaultColors.surface};
-  border-top: 1px solid
-    ${props =>
-      props.$theme?.colors?.border || addOpacity(defaultColors.primary, 0.08)};
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-`;
-
-const InputContainer = styled.div`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  background: ${props =>
-    props.theme?.colors?.background || defaultColors.surface};
-  border-radius: 25px;
-  padding: 0.5rem 1rem;
-  border: 2px solid transparent;
-  transition: all 0.3s ease;
-
-  &:focus-within {
-    border-color: ${defaultColors.primary};
-    background: ${defaultColors.surface};
-  }
-`;
-
-const MessageTextarea = styled.textarea`
-  flex: 1;
-  border: none;
-  background: transparent;
-  resize: none;
-  outline: none;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  max-height: 100px;
-  min-height: 20px;
-  font-family: inherit;
-
-  &::placeholder {
-    color: ${props => getTextSecondary(props.theme)};
-  }
-`;
-
-const SendButton = styled.button<{ $theme?: Theme; $disabled?: boolean }>`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  background: ${props =>
-    props.$disabled
-      ? defaultColors.border
-      : props.$theme?.colors?.primary || defaultColors.primary};
-  color: ${props =>
-    props.$disabled ? defaultColors.text.secondary : defaultColors.surface};
-  cursor: ${props => (props.$disabled ? 'not-allowed' : 'pointer')};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-
-  &:hover:not(:disabled) {
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px
-      ${props =>
-        props.$theme?.colors?.primary
-          ? addOpacity(props.$theme?.colors?.primary, 0.3)
-          : addOpacity(defaultColors.primary, 0.3)};
-  }
-`;
-
-const AttachmentButton = styled.button<{ $theme?: Theme }>`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  background: transparent;
-  color: ${defaultColors.text.secondary};
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: ${props =>
-      props.$theme?.colors?.primary
-        ? addOpacity(props.$theme?.colors?.primary, 0.15)
-        : addOpacity(defaultColors.primary, 0.15)};
-    color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
-  }
-`;
-
-const EmojiButton = styled.button<{ $theme?: Theme }>`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  background: transparent;
-  color: ${defaultColors.text.secondary};
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: ${props =>
-      props.$theme?.colors?.primary
-        ? addOpacity(props.$theme?.colors?.primary, 0.15)
-        : addOpacity(defaultColors.primary, 0.15)};
-    color: ${props => props.$theme?.colors?.primary || defaultColors.primary};
-  }
-`;
-
-const GroupUnifiedModalContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-`;
-
-const ContactsList = styled.div`
-  max-height: 300px;
-  overflow-y: auto;
-  border: 1px solid ${defaultColors.border};
-  border-radius: 8px;
-  padding: 0.5rem;
-`;
-
-const ContactItem = styled.div<{ $selected: boolean; $theme?: Theme }>`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.75rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background: ${props =>
-    props.$selected
-      ? `${props.$theme?.colors?.primary || '#29abe2'}20`
-      : 'transparent'};
-
-  &:hover {
-    background: ${props =>
-      props.$theme?.colors?.primary
-        ? `${props.$theme?.colors?.primary}10`
-        : 'rgba(41, 171, 226, 0.1)'};
-  }
-`;
-
-const ContactAvatar = styled.div<{ $color: string }>`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: ${props => props.$color};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  font-size: 0.9rem;
-`;
-
-const ContactInfo = styled.div`
-  flex: 1;
-`;
-
-const ContactName = styled.h4`
-  margin: 0 0 0.25rem 0;
-  font-size: 0.9rem;
-  color: ${props => getTextPrimary(props.theme)};
-`;
-
-const ContactRole = styled.p`
-  margin: 0;
-  font-size: 0.8rem;
-  color: #7f8c8d;
-`;
-
-const Checkbox = styled.input`
-  width: 18px;
-  height: 18px;
-  accent-color: #29abe2;
-`;
-
-const EmptyState = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: #7f8c8d;
-  text-align: center;
-  padding: 2rem;
-`;
-
-const EmptyStateIcon = styled.div`
-  font-size: 4rem;
-  margin-bottom: 1rem;
-  opacity: 0.5;
-`;
-
-const EmptyStateTitle = styled.h3`
-  margin: 0 0 0.5rem 0;
-  color: ${props => getTextPrimary(props.theme)};
-  font-size: 1.2rem;
-`;
-
-const EmptyStateDescription = styled.p`
-  margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.4;
-`;
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: {},
+  };
+};
 
 export default function Communication() {
-  const alertManager = useAlertManager();
   const router = useRouter();
+  const alertManager = useAlertManager();
+  const errorHandler = useErrorHandler();
   const { currentProfile } = useUserProfile();
-  const profileThemeKey = currentProfile?.role
-    ? currentProfile.role.toLowerCase()
-    : undefined;
+  const profileThemeKey = currentProfile?.role?.toLowerCase() || 'empregado';
   const themeObject = useTheme(profileThemeKey);
-  const theme = { colors: themeObject.colors };
+  const theme: Theme = themeObject && themeObject.colors ? { colors: themeObject.colors } as Theme : { colors: {} } as Theme;
+
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [selectedConversation, setSelectedConversation] = useState<
-    string | null
-  >(null);
-  const [newMessage, setNewMessage] = useState('');
-  const [showGroupUnifiedModal, setShowGroupUnifiedModal] = useState(false);
-  const [groupName, setGroupName] = useState('');
-  const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const contacts: Contact[] = [
-    {
-      id: '2',
-      name: 'Maria Santos',
-      avatar: 'MS',
-      role: 'Empregada',
-      onlineStatus: 'online',
-    },
-    {
-      id: '3',
-      name: 'Ana Silva',
-      avatar: 'AS',
-      role: 'Familiar',
-      onlineStatus: 'away',
-      lastSeen: 'há 5 minutos',
-    },
-    {
-      id: '4',
-      name: 'Carlos Silva',
-      avatar: 'CS',
-      role: 'Familiar',
-      onlineStatus: 'offline',
-      lastSeen: 'há 2 horas',
-    },
-    {
-      id: '5',
-      name: 'Pedro Costa',
-      avatar: 'PC',
-      role: 'Parceiro',
-      onlineStatus: 'online',
-    },
-  ];
+  const [loading, setLoading] = useState(true);
+  const [contextos, setContextos] = useState<ContextoComunicacao[]>([]);
+  const [filtroTipo, setFiltroTipo] = useState<ContextoTipo | 'TODOS'>('TODOS');
+  const [selectedContexto, setSelectedContexto] = useState<ContextoComunicacao | null>(null);
+  const [showChatModal, setShowChatModal] = useState(false);
 
-  const [conversations, setConversations] = useState<Conversation[]>([
-    {
-      id: '1',
-      name: 'Maria Santos',
-      avatar: 'MS',
-      lastMessage: 'Obrigada pela informação! Vou organizar isso hoje.',
-      lastMessageTime: '10:30',
-      unreadCount: 2,
-      isGroup: false,
-      isPinned: true,
-      isMuted: false,
-      participants: ['1', '2'],
-      onlineStatus: 'online',
-    },
-    {
-      id: '2',
-      name: 'Família Silva',
-      avatar: '👨‍👩‍👧‍👦',
-      lastMessage: 'Ana: Lembrem-se da reunião de amanhã às 14h',
-      lastMessageTime: '09:45',
-      unreadCount: 0,
-      isGroup: true,
-      isPinned: true,
-      isMuted: false,
-      participants: ['1', '2', '3', '4'],
-      onlineStatus: 'online',
-    },
-    {
-      id: '3',
-      name: 'Carlos Silva',
-      avatar: 'CS',
-      lastMessage: 'Tudo certo, pai!',
-      lastMessageTime: 'Ontem',
-      unreadCount: 0,
-      isGroup: false,
-      isPinned: false,
-      isMuted: false,
-      participants: ['1', '4'],
-      onlineStatus: 'offline',
-    },
-    {
-      id: '4',
-      name: 'Pedro Costa - Manutenção',
-      avatar: 'PC',
-      lastMessage: 'O orçamento ficou em R$ 350,00',
-      lastMessageTime: 'Ontem',
-      unreadCount: 1,
-      isGroup: false,
-      isPinned: false,
-      isMuted: false,
-      participants: ['1', '5'],
-      onlineStatus: 'online',
-    },
-  ]);
+  // ✅ Buscar contextos de comunicação
+  const loadContextos = useCallback(async () => {
+    if (!currentProfile?.id) return;
 
-  const [messages, setMessages] = useState<{
-    [conversationId: string]: Message[];
-  }>({
-    '1': [
-      {
-        id: '1',
-        senderId: '1',
-        senderName: 'João Silva',
-        senderAvatar: 'JS',
-        content: 'Bom dia, Maria! Como está o andamento das tarefas de hoje?',
-        timestamp: '10:15',
-        type: 'text',
-        isRead: true,
-        isOwn: true,
-      },
-      {
-        id: '2',
-        senderId: '2',
-        senderName: 'Maria Santos',
-        senderAvatar: 'MS',
-        content:
-          'Bom dia! Está tudo indo bem. Já organizei a sala e agora vou para a cozinha.',
-        timestamp: '10:18',
-        type: 'text',
-        isRead: true,
-        isOwn: false,
-      },
-      {
-        id: '3',
-        senderId: '1',
-        senderName: 'João Silva',
-        senderAvatar: 'JS',
-        content:
-          'Perfeito! Lembre-se de verificar se há algum documento para organizar também.',
-        timestamp: '10:25',
-        type: 'text',
-        isRead: true,
-        isOwn: true,
-      },
-      {
-        id: '4',
-        senderId: '2',
-        senderName: 'Maria Santos',
-        senderAvatar: 'MS',
-        content: 'Obrigada pela informação! Vou organizar isso hoje.',
-        timestamp: '10:30',
-        type: 'text',
-        isRead: false,
-        isOwn: false,
-      },
-    ],
-    '2': [
-      {
-        id: '1',
-        senderId: '3',
-        senderName: 'Ana Silva',
-        senderAvatar: 'AS',
-        content: 'Lembrem-se da reunião de amanhã às 14h',
-        timestamp: '09:45',
-        type: 'text',
-        isRead: true,
-        isOwn: false,
-      },
-    ],
-  });
+    try {
+      setLoading(true);
 
-  const handleSendMessage = () => {
-    if (!newMessage.trim() || !selectedConversation || !currentProfile) return;
+      // Buscar mensagens agrupadas por contexto
+      const response = await fetch(
+        `/api/communication/contextual?usuarioId=${currentProfile.id}&limit=100`
+      );
+      const result = await response.json();
 
-    const message: Message = {
-      id: Date.now().toString(),
-      senderId: currentProfile.id,
-      senderName: currentProfile.name,
-      senderAvatar: currentProfile.avatar,
-      content: newMessage,
-      timestamp: new Date().toLocaleTimeString('pt-BR', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-      type: 'text',
-      isRead: false,
-      isOwn: true,
-    };
+      if (!result.success) {
+        throw new Error(result.error || 'Erro ao carregar mensagens');
+      }
 
-    setMessages(prev => ({
-      ...prev,
-      [selectedConversation]: [...(prev[selectedConversation] || []), message],
-    }));
+      const mensagens: MensagemContextual[] = result.data || [];
 
-    setNewMessage('');
-    alertManager.showSuccess('Mensagem enviada!');
-  };
+      // Agrupar mensagens por contexto
+      const contextosMap = new Map<string, ContextoComunicacao>();
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
+      mensagens.forEach(msg => {
+        const key = `${msg.contextoTipo}-${msg.contextoId}`;
+        
+        if (!contextosMap.has(key)) {
+          // Determinar título e ícone baseado no tipo
+          let titulo = '';
+          let icon = '';
+          
+          switch (msg.contextoTipo) {
+            case 'PONTO':
+              titulo = `Registro de Ponto #${msg.contextoId.slice(0, 8)}`;
+              icon = '🕐';
+              break;
+            case 'TAREFA':
+              titulo = `Tarefa #${msg.contextoId.slice(0, 8)}`;
+              icon = '✅';
+              break;
+            case 'DOCUMENTO':
+              titulo = `Documento #${msg.contextoId.slice(0, 8)}`;
+              icon = '📄';
+              break;
+            case 'FOLHA':
+              titulo = `Folha de Pagamento #${msg.contextoId.slice(0, 8)}`;
+              icon = '💰';
+              break;
+            default:
+              titulo = `${msg.contextoTipo} #${msg.contextoId.slice(0, 8)}`;
+              icon = '💬';
+          }
+
+          contextosMap.set(key, {
+            contextoTipo: msg.contextoTipo,
+            contextoId: msg.contextoId,
+            titulo,
+            icon,
+            totalMensagens: 0,
+            mensagensNaoLidas: 0,
+          });
+        }
+
+        const contexto = contextosMap.get(key)!;
+        contexto.totalMensagens++;
+        if (!msg.lida) {
+          contexto.mensagensNaoLidas++;
+        }
+        
+        // Atualizar última mensagem se for mais recente
+        if (!contexto.ultimaMensagem || new Date(msg.criadoEm) > new Date(contexto.ultimaMensagem.criadoEm)) {
+          contexto.ultimaMensagem = msg;
+        }
+      });
+
+      // Converter para array e ordenar por última mensagem
+      const contextosArray = sortByDate(
+        Array.from(contextosMap.values()),
+        (contexto) => contexto.ultimaMensagem?.criadoEm || contexto.contextoId,
+        'desc'
+      );
+
+      setContextos(contextosArray);
+    } catch (error) {
+      errorHandler.handleAsyncError(error, 'carregar mensagens contextuais');
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const handleCreateGroup = () => {
-    if (!groupName.trim() || selectedContacts.length < 2 || !currentProfile) {
-      alertManager.showError('Nome do grupo e pelo menos 2 membros são obrigatórios!');
-      return;
-    }
-
-    const newGroup: Conversation = {
-      id: Date.now().toString(),
-      name: groupName,
-      avatar: '👥',
-      lastMessage: 'Grupo criado',
-      lastMessageTime: new Date().toLocaleTimeString('pt-BR', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-      unreadCount: 0,
-      isGroup: true,
-      isPinned: false,
-      isMuted: false,
-      participants: [currentProfile.id, ...selectedContacts],
-      onlineStatus: 'online',
-    };
-
-    setConversations(prev => [newGroup, ...prev]);
-    setGroupName('');
-    setSelectedContacts([]);
-    setShowGroupUnifiedModal(false);
-    alertManager.showSuccess('Grupo criado com sucesso!');
-  };
-
-  const handleContactToggle = (contactId: string) => {
-    setSelectedContacts(prev =>
-      prev.includes(contactId)
-        ? prev.filter(id => id !== contactId)
-        : [...prev, contactId]
-    );
-  };
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, [currentProfile?.id, errorHandler]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, selectedConversation]);
+    loadContextos();
+  }, [loadContextos]);
 
-  const selectedConv = conversations.find(c => c.id === selectedConversation);
-  const currentMessages = selectedConversation
-    ? messages[selectedConversation] || []
-    : [];
+  // Memoizar handlers
+  const handleSelectContexto = useCallback((contexto: ContextoComunicacao) => {
+    setSelectedContexto(contexto);
+    setShowChatModal(true);
+  }, []);
+
+  const handleCloseChat = useCallback(() => {
+    setShowChatModal(false);
+    setSelectedContexto(null);
+    loadContextos(); // Recarregar para atualizar contadores
+  }, [loadContextos]);
+
+  // Memoizar contextos filtrados
+  const contextosFiltrados = useMemo(() => {
+    return filtroTipo === 'TODOS' 
+      ? contextos 
+      : contextos.filter(c => c.contextoTipo === filtroTipo);
+  }, [contextos, filtroTipo]);
 
   return (
-    <PageContainer $theme={theme} sidebarCollapsed={sidebarCollapsed}>
-      <Sidebar
-        collapsed={sidebarCollapsed}
-        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-        currentPath={router.pathname}
-      />
-
-      <TopBar $theme={theme}>
-        <WelcomeSection
-          $theme={theme}
-          userAvatar={currentProfile?.avatar || 'U'}
-          userName={currentProfile?.name || 'Usuário'}
-          userRole={currentProfile?.role || 'Usuário'}
-          notificationCount={
-            conversations.filter(c => c.unreadCount > 0).length
-          }
-          onNotificationClick={() =>
-            alertManager.showInfo('Notificações em desenvolvimento')
-          }
-        />
-      </TopBar>
-
-      <PageHeader
+    <>
+      <Sidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} currentPath={router.pathname} />
+      <TopBar $theme={theme}>{null}</TopBar>
+      <WelcomeSection
         $theme={theme}
-        title='Comunicação Unificada'
-        subtitle='Mantenha-se conectado com sua equipe através de mensagens instantâneas'
+        userAvatar={currentProfile?.avatar || 'U'}
+        userName={currentProfile?.name || 'Usuário'}
+        userRole={currentProfile?.role || 'Usuário'}
       />
-
-      <ChatLayout>
-        <ConversationsSidebar $theme={theme}>
-          <SidebarHeader $theme={theme}>
-            <HeaderTitle>Conversas</HeaderTitle>
-            <HeaderActions>
-              <ActionIcon
-                $theme={theme}
-                onClick={() => setShowGroupUnifiedModal(true)}
-              >
-                <AccessibleEmoji emoji='👥' label='Equipe' />
-              </ActionIcon>
-              <ActionIcon $theme={theme}>
-                <AccessibleEmoji emoji='⚙' label='Configurações' />
-              </ActionIcon>
-            </HeaderActions>
-          </SidebarHeader>
-
-          <SearchContainer>
-            <SearchInput
-              $theme={theme}
-              type='text'
-              placeholder='Pesquisar conversas...'
-            />
-          </SearchContainer>
-
-          <ConversationsList>
-            {conversations.map(conversation => (
-              <ConversationItem
-                key={conversation.id}
-                $active={selectedConversation === conversation.id}
-                $theme={theme}
-                onClick={() => setSelectedConversation(conversation.id)}
-              >
-                <AvatarContainer>
-                  <Avatar $color={conversation.isGroup ? '#9B59B6' : '#29ABE2'}>
-                    {conversation.avatar}
-                  </Avatar>
-                  {!conversation.isGroup && (
-                    <OnlineIndicator $status={conversation.onlineStatus} />
-                  )}
-                </AvatarContainer>
-
-                <ConversationContent>
-                  <ConversationName>
-                    {conversation.isPinned && '📌 '}
-                    {conversation.name}
-                    {conversation.isMuted && ' 🔇'}
-                  </ConversationName>
-                  <LastMessage>{conversation.lastMessage}</LastMessage>
-                </ConversationContent>
-
-                <ConversationMeta>
-                  <MessageTime $isOwn={false}>
-                    {conversation.lastMessageTime}
-                  </MessageTime>
-                  {conversation.unreadCount > 0 && (
-                    <UnreadBadge $theme={theme}>
-                      {conversation.unreadCount}
-                    </UnreadBadge>
-                  )}
-                </ConversationMeta>
-              </ConversationItem>
-            ))}
-          </ConversationsList>
-        </ConversationsSidebar>
-
-        <ChatArea>
-          {selectedConv ? (
+      
+      <PageContainer $theme={theme} variant="dashboard">
+        <PageHeader
+          $theme={theme}
+          title={
             <>
-              <ChatHeader $theme={theme}>
-                <ChatHeaderInfo>
-                  <AvatarContainer>
-                    <Avatar
-                      $color={selectedConv.isGroup ? '#9B59B6' : '#29ABE2'}
-                    >
-                      {selectedConv.avatar}
-                    </Avatar>
-                    {!selectedConv.isGroup && (
-                      <OnlineIndicator $status={selectedConv.onlineStatus} />
-                    )}
-                  </AvatarContainer>
-                  <div>
-                    <ConversationName>{selectedConv.name}</ConversationName>
-                    <ConversationStatus>
-                      {selectedConv.isGroup
-                        ? `${selectedConv.participants.length} membros`
-                        : selectedConv.onlineStatus === 'online'
-                          ? 'Online'
-                          : 'Offline'}
-                    </ConversationStatus>
-                  </div>
-                </ChatHeaderInfo>
-
-                <ChatHeaderActions>
-                  <ActionIcon $theme={theme}>
-                    <AccessibleEmoji emoji='📞' label='Contato' />
-                  </ActionIcon>
-                  <ActionIcon $theme={theme}>
-                    <AccessibleEmoji emoji='📹' label='Vídeo' />
-                  </ActionIcon>
-                  <ActionIcon $theme={theme}>
-                    <AccessibleEmoji emoji='🔍' label='Pesquisa' />
-                  </ActionIcon>
-                  <ActionIcon $theme={theme}>⋯</ActionIcon>
-                </ChatHeaderActions>
-              </ChatHeader>
-
-              <ChatMessages>
-                {currentMessages.map(message => (
-                  <MessageBubble
-                    key={message.id}
-                    $isOwn={message.isOwn}
-                    $theme={theme}
-                  >
-                    <MessageContent $isOwn={message.isOwn} $theme={theme}>
-                      <MessageText>{message.content}</MessageText>
-                    </MessageContent>
-                    <MessageTime $isOwn={message.isOwn}>
-                      {message.timestamp}
-                    </MessageTime>
-                  </MessageBubble>
-                ))}
-                <div ref={messagesEndRef} />
-              </ChatMessages>
-
-              <MessageInput $theme={theme}>
-                <AttachmentButton $theme={theme}>
-                  <AccessibleEmoji emoji='📎' label='Anexo' />
-                </AttachmentButton>
-
-                <InputContainer>
-                  <MessageTextarea
-                    value={newMessage}
-                    onChange={e => setNewMessage(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder='Digite sua mensagem...'
-                    rows={1}
-                  />
-                  <EmojiButton $theme={theme}>
-                    <AccessibleEmoji emoji='😊' label='Sorriso' />
-                  </EmojiButton>
-                </InputContainer>
-
-                <SendButton
-                  $theme={theme}
-                  disabled={!newMessage.trim()}
-                  onClick={handleSendMessage}
-                >
-                  <AccessibleEmoji emoji='➤' label='Enviar' />
-                </SendButton>
-              </MessageInput>
+              <AccessibleEmoji emoji="💬" label="Comunicação" /> Comunicação Contextual
             </>
-          ) : (
-            <EmptyState>
-              <EmptyStateIcon>
-                <AccessibleEmoji emoji='💬' label='Comunicação' />
-              </EmptyStateIcon>
-              <EmptyStateTitle>Selecione uma conversa</EmptyStateTitle>
-              <EmptyStateDescription>
-                Escolha uma conversa da lista ao lado para começar a conversar
-              </EmptyStateDescription>
-            </EmptyState>
-          )}
-        </ChatArea>
-      </ChatLayout>
+          }
+          subtitle="Mensagens vinculadas a pontos, tarefas, documentos e folha de pagamento"
+          variant="default"
+          animation
+        />
 
-      <UnifiedModal
-        isOpen={showGroupUnifiedModal}
-        onClose={() => setShowGroupUnifiedModal(false)}
-        title='Criar Novo Grupo'
-      >
-        <GroupUnifiedModalContent>
-          <FormGroup>
-            <OptimizedLabel>Nome do Grupo</OptimizedLabel>
-            <Input
-              $theme={theme}
-              type='text'
-              value={groupName}
-              onChange={e => setGroupName(e.target.value)}
-              placeholder='Digite o nome do grupo...'
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <OptimizedLabel>
-              Selecionar Membros ({selectedContacts.length} selecionados)
-            </OptimizedLabel>
-            <ContactsList>
-              {contacts.map(contact => (
-                <ContactItem
-                  key={contact.id}
-                  $selected={selectedContacts.includes(contact.id)}
-                  $theme={theme}
-                  onClick={() => handleContactToggle(contact.id)}
-                >
-                  <ContactAvatar
-                    $color={
-                      contact.onlineStatus === 'online' ? '#2ecc71' : '#95a5a6'
-                    }
-                  >
-                    {contact.avatar}
-                  </ContactAvatar>
-                  <ContactInfo>
-                    <ContactName>{contact.name}</ContactName>
-                    <ContactRole>{contact.role}</ContactRole>
-                  </ContactInfo>
-                  <Checkbox
-                    type='checkbox'
-                    checked={selectedContacts.includes(contact.id)}
-                    onChange={() => handleContactToggle(contact.id)}
-                  />
-                </ContactItem>
-              ))}
-            </ContactsList>
-          </FormGroup>
-
-          <UnifiedButton
-            $variant='primary'
-            onClick={handleCreateGroup}
+        {/* Filtros */}
+        <FiltrosContainer>
+          <FiltroButton
             $theme={theme}
-            $disabled={!groupName.trim() || selectedContacts.length < 2}
+            $variant={filtroTipo === 'TODOS' ? 'primary' : 'secondary'}
+            $size="sm"
+            onClick={() => setFiltroTipo('TODOS')}
+            $active={filtroTipo === 'TODOS'}
           >
-            Criar Grupo
-          </UnifiedButton>
-        </GroupUnifiedModalContent>
-      </UnifiedModal>
+            Todos
+          </FiltroButton>
+          <FiltroButton
+            $theme={theme}
+            $variant={filtroTipo === 'PONTO' ? 'primary' : 'secondary'}
+            $size="sm"
+            onClick={() => setFiltroTipo('PONTO')}
+            $active={filtroTipo === 'PONTO'}
+          >
+            <AccessibleEmoji emoji="🕐" label="Ponto" /> Ponto
+          </FiltroButton>
+          <FiltroButton
+            $theme={theme}
+            $variant={filtroTipo === 'TAREFA' ? 'primary' : 'secondary'}
+            $size="sm"
+            onClick={() => setFiltroTipo('TAREFA')}
+            $active={filtroTipo === 'TAREFA'}
+          >
+            <AccessibleEmoji emoji="✅" label="Tarefa" /> Tarefa
+          </FiltroButton>
+          <FiltroButton
+            $theme={theme}
+            $variant={filtroTipo === 'DOCUMENTO' ? 'primary' : 'secondary'}
+            $size="sm"
+            onClick={() => setFiltroTipo('DOCUMENTO')}
+            $active={filtroTipo === 'DOCUMENTO'}
+          >
+            <AccessibleEmoji emoji="📄" label="Documento" /> Documento
+          </FiltroButton>
+          <FiltroButton
+            $theme={theme}
+            $variant={filtroTipo === 'FOLHA' ? 'primary' : 'secondary'}
+            $size="sm"
+            onClick={() => setFiltroTipo('FOLHA')}
+            $active={filtroTipo === 'FOLHA'}
+          >
+            <AccessibleEmoji emoji="💰" label="Folha" /> Folha
+          </FiltroButton>
+        </FiltrosContainer>
 
-    </PageContainer>
+        {/* Lista de Contextos */}
+        {loading ? (
+          <LoadingContainer $theme={theme}>
+            <AccessibleEmoji emoji="⏳" label="Carregando" /> Carregando mensagens...
+          </LoadingContainer>
+        ) : contextosFiltrados.length === 0 ? (
+          <EmptyState
+            icon="💬"
+            title="Nenhuma mensagem contextual encontrada"
+            description="As mensagens vinculadas a pontos, tarefas, documentos e folha de pagamento aparecerão aqui."
+            theme={theme}
+          />
+        ) : (
+          <ContextosGrid>
+            {contextosFiltrados.map(contexto => (
+              <ContextoCard
+                key={`${contexto.contextoTipo}-${contexto.contextoId}`}
+                theme={theme}
+                $theme={theme}
+                onClick={() => handleSelectContexto(contexto)}
+                $selected={selectedContexto?.contextoId === contexto.contextoId}
+              >
+                <ContextoHeader>
+                  <ContextoIcon $theme={theme}>
+                    <AccessibleEmoji emoji={contexto.icon} label={contexto.titulo} />
+                  </ContextoIcon>
+                  <ContextoInfo>
+                    <ContextoTitulo $theme={theme}>{contexto.titulo}</ContextoTitulo>
+                    {contexto.descricao && (
+                      <ContextoDescricao $theme={theme}>{contexto.descricao}</ContextoDescricao>
+                    )}
+                  </ContextoInfo>
+                </ContextoHeader>
+
+                <ContextoFooter>
+                  <UltimaMensagem $theme={theme}>
+                    {contexto.ultimaMensagem ? (
+                      <>
+                        <strong>
+                          {contexto.ultimaMensagem.remetente.apelido || contexto.ultimaMensagem.remetente.nomeCompleto}:
+                        </strong>{' '}
+                        {truncateText(contexto.ultimaMensagem.conteudo, 50)}
+                      </>
+                    ) : (
+                      'Nenhuma mensagem ainda'
+                    )}
+                  </UltimaMensagem>
+                  <MensagensInfo>
+                    {contexto.mensagensNaoLidas > 0 && (
+                      <UnifiedBadge
+                        theme={theme}
+                        variant="warning"
+                        size="sm"
+                      >
+                        {contexto.mensagensNaoLidas}
+                      </UnifiedBadge>
+                    )}
+                    <UnifiedBadge
+                      theme={theme}
+                      variant="secondary"
+                      size="sm"
+                    >
+                      {contexto.totalMensagens}
+                    </UnifiedBadge>
+                  </MensagensInfo>
+                </ContextoFooter>
+              </ContextoCard>
+            ))}
+          </ContextosGrid>
+        )}
+      </PageContainer>
+
+      {/* Modal de Chat Contextual */}
+      {showChatModal && selectedContexto && (
+        <UnifiedModal
+          isOpen={showChatModal}
+          onClose={handleCloseChat}
+          title={`${selectedContexto.icon} ${selectedContexto.titulo}`}
+          $theme={theme}
+        >
+          <ChatModalContainer $theme={theme}>
+            <ContextualChat
+              contextoTipo={selectedContexto.contextoTipo}
+              contextoId={selectedContexto.contextoId}
+              titulo={selectedContexto.titulo}
+              altura="500px"
+              onMensagemEnviada={() => {
+                loadContextos();
+              }}
+            />
+          </ChatModalContainer>
+        </UnifiedModal>
+      )}
+    </>
   );
 }

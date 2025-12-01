@@ -7,6 +7,7 @@ import {
   useCallback,
   useRef,
 } from 'react';
+import { logger } from '../utils/logger';
 // ❌ REMOVIDO: useGeolocation não é necessário aqui - pode estar causando solicitação automática
 // A geolocalização será solicitada apenas quando necessário (checkbox de termos, ações do usuário)
 // import { useGeolocation } from '../hooks/useGeolocation';
@@ -89,7 +90,7 @@ export const GeolocationProvider = ({ children }: { children: ReactNode }) => {
       // ✅ SEMPRE atualizar se não há localização anterior OU se a nova é mais recente
       // Não manter cache de coordenadas antigas que podem estar em local diferente
       if (!lastLocation) {
-        console.log('📍 Primeira localização, salvando:', {
+        logger.geo('📍 Primeira localização, salvando:', {
           lat: location.latitude,
           lon: location.longitude,
           accuracy: location.accuracy,
@@ -102,7 +103,7 @@ export const GeolocationProvider = ({ children }: { children: ReactNode }) => {
       // Isso garante que após login, a localização capturada seja usada
       const timeDiff = location.timestamp.getTime() - lastLocation.timestamp.getTime();
       if (timeDiff > 5 * 60 * 1000) { // 5 minutos
-        console.log('📍 Localização muito mais recente (>5min), atualizando:', {
+        logger.geo('📍 Localização muito mais recente (>5min), atualizando:', {
           lat: location.latitude,
           lon: location.longitude,
           accuracy: location.accuracy,
@@ -134,7 +135,7 @@ export const GeolocationProvider = ({ children }: { children: ReactNode }) => {
       if (distancia > 100) {
         // ✅ Se a última localização era muito precisa (< 200m) e a nova é ruim (> 1000m), não atualizar
         if (lastLocation.accuracy < 200 && location.accuracy > 1000) {
-          console.log('📍 Ignorando coordenada ruim após ter recebido coordenada precisa:', {
+          logger.geo('📍 Ignorando coordenada ruim após ter recebido coordenada precisa:', {
             distancia: Math.round(distancia),
             antiga: { lat: lastLocation.latitude, lon: lastLocation.longitude, accuracy: Math.round(lastLocation.accuracy) },
             nova: { lat: location.latitude, lon: location.longitude, accuracy: Math.round(location.accuracy) },
@@ -145,7 +146,7 @@ export const GeolocationProvider = ({ children }: { children: ReactNode }) => {
         // ✅ Se a nova localização é MELHOR (mais precisa), atualizar
         // ✅ Não aceitar coordenadas menos precisas mesmo que mudou de local
         if (location.accuracy < lastLocation.accuracy) {
-          console.log('📍 Localização mudou significativamente (>100m) e nova é MELHOR, atualizando:', {
+          logger.geo('📍 Localização mudou significativamente (>100m) e nova é MELHOR, atualizando:', {
             distancia: Math.round(distancia),
             antiga: { lat: lastLocation.latitude, lon: lastLocation.longitude, accuracy: Math.round(lastLocation.accuracy) },
             nova: { lat: location.latitude, lon: location.longitude, accuracy: Math.round(location.accuracy) },
@@ -153,7 +154,7 @@ export const GeolocationProvider = ({ children }: { children: ReactNode }) => {
           setLastLocation(location);
           return;
         } else {
-          console.log('📍 Ignorando coordenada menos precisa após mudança de local:', {
+          logger.geo('📍 Ignorando coordenada menos precisa após mudança de local:', {
             distancia: Math.round(distancia),
             antiga: { lat: lastLocation.latitude, lon: lastLocation.longitude, accuracy: Math.round(lastLocation.accuracy) },
             nova: { lat: location.latitude, lon: location.longitude, accuracy: Math.round(location.accuracy) },
@@ -165,7 +166,7 @@ export const GeolocationProvider = ({ children }: { children: ReactNode }) => {
       // Se não mudou de local, usar lógica de precisão
       // ✅ Se a nova localização é mais recente E mais precisa, sempre atualizar
       if (isNewer && isMoreAccurate) {
-        console.log('📍 Localização mais recente e mais precisa, atualizando:', {
+        logger.geo('📍 Localização mais recente e mais precisa, atualizando:', {
           antiga: { lat: lastLocation.latitude, lon: lastLocation.longitude, accuracy: Math.round(lastLocation.accuracy) },
           nova: { lat: location.latitude, lon: location.longitude, accuracy: Math.round(location.accuracy) },
         });
@@ -178,14 +179,14 @@ export const GeolocationProvider = ({ children }: { children: ReactNode }) => {
       if (isNewer && !isMoreAccurate) {
         // Se a nova não é muito pior (< 2x pior), atualizar (pode ser GPS melhorando)
         if (location.accuracy <= lastLocation.accuracy * 2) {
-          console.log('📍 Localização mais recente (não muito pior), atualizando:', {
+          logger.geo('📍 Localização mais recente (não muito pior), atualizando:', {
             antiga: { lat: lastLocation.latitude, lon: lastLocation.longitude, accuracy: Math.round(lastLocation.accuracy) },
             nova: { lat: location.latitude, lon: location.longitude, accuracy: Math.round(location.accuracy) },
           });
           setLastLocation(location);
           return;
         } else {
-          console.log('📍 Ignorando localização muito menos precisa:', {
+          logger.geo('📍 Ignorando localização muito menos precisa:', {
             antiga: { lat: lastLocation.latitude, lon: lastLocation.longitude, accuracy: Math.round(lastLocation.accuracy) },
             nova: { lat: location.latitude, lon: location.longitude, accuracy: Math.round(location.accuracy) },
           });
@@ -195,7 +196,7 @@ export const GeolocationProvider = ({ children }: { children: ReactNode }) => {
       
       // ✅ Se a nova localização é mais precisa mas mais antiga, atualizar (GPS melhorou)
       if (!isNewer && isMoreAccurate) {
-        console.log('📍 Localização mais precisa (mesmo que mais antiga), atualizando:', {
+        logger.geo('📍 Localização mais precisa (mesmo que mais antiga), atualizando:', {
           antiga: { lat: lastLocation.latitude, lon: lastLocation.longitude, accuracy: Math.round(lastLocation.accuracy) },
           nova: { lat: location.latitude, lon: location.longitude, accuracy: Math.round(location.accuracy) },
         });
@@ -204,7 +205,7 @@ export const GeolocationProvider = ({ children }: { children: ReactNode }) => {
       }
       
       // Se não atende nenhum critério, não atualizar
-      console.log('📍 Ignorando localização (não atende critérios):', {
+      logger.geo('📍 Ignorando localização (não atende critérios):', {
         antiga: { lat: lastLocation.latitude, lon: lastLocation.longitude, accuracy: Math.round(lastLocation.accuracy) },
         nova: { lat: location.latitude, lon: location.longitude, accuracy: Math.round(location.accuracy) },
         isNewer,
@@ -398,7 +399,7 @@ export const GeolocationProvider = ({ children }: { children: ReactNode }) => {
         !errorMessage.includes('user gesture') &&
         !errorMessage.includes('Timeout')
       ) {
-        console.warn('⚠️ Erro ao capturar localização periódica:', error);
+        logger.warn('⚠️ Erro ao capturar localização periódica:', error);
       }
     } finally {
       isCapturingRef.current = false;

@@ -13,9 +13,20 @@ interface DebugInfo {
   analysis: any;
 }
 
-const DebugContainer = styled.div`
-  background: ${props => props.theme?.background?.secondary || '#f8f9fa'};
-  border: 1px solid ${props => props.theme?.border?.secondary || '#e9ecef'};
+const DebugContainer = styled.div<{ $theme?: any }>`
+  background: ${props =>
+    props.$theme?.colors?.background?.secondary ||
+    props.$theme?.background?.secondary ||
+    props.$theme?.colors?.background?.primary ||
+    'transparent'};
+  border: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.secondary) ||
+           props.$theme?.border?.secondary ||
+           (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   border-radius: 8px;
   padding: 1rem;
   margin: 1rem 0;
@@ -23,18 +34,33 @@ const DebugContainer = styled.div`
   font-size: 0.8rem;
 `;
 
-const DebugSection = styled.div`
+const DebugSection = styled.div<{ $theme?: any }>`
   margin-bottom: 1rem;
 
   h4 {
-    color: ${props => props.theme?.text?.secondary || '#495057'};
+    color: ${props =>
+      props.$theme?.colors?.text?.secondary ||
+      props.$theme?.text?.secondary ||
+      props.$theme?.colors?.text ||
+      'inherit'};
     margin: 0 0 0.5rem 0;
     font-size: 0.9rem;
   }
 
   pre {
-    background: ${props => props.theme?.background?.primary || '#ffffff'};
-    border: 1px solid ${props => props.theme?.border?.primary || '#dee2e6'};
+    background: ${props =>
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary ||
+      props.$theme?.colors?.surface ||
+      'transparent'};
+    border: 1px solid ${props => {
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border?.primary) ||
+             props.$theme?.border?.primary ||
+             (typeof border === 'object' && border?.light) ||
+             props.$theme?.border?.light ||
+             'transparent';
+    }};
     border-radius: 4px;
     padding: 0.5rem;
     margin: 0;
@@ -43,9 +69,19 @@ const DebugSection = styled.div`
   }
 `;
 
-const RefreshButton = styled.button`
-  background: ${props => props.theme?.navigation?.primary || '#007bff'};
-  color: white;
+const RefreshButton = styled.button<{ $theme?: any }>`
+  background: ${props =>
+    props.$theme?.colors?.navigation?.primary ||
+    props.$theme?.navigation?.primary ||
+    props.$theme?.colors?.primary ||
+    props.$theme?.accent ||
+    'transparent'};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    props.$theme?.colors?.surface ||
+    'inherit'};
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -53,7 +89,12 @@ const RefreshButton = styled.button`
   margin-bottom: 1rem;
 
   &:hover {
-    background: ${props => props.theme?.navigation?.primary || '#0056b3'};
+    background: ${props =>
+      props.$theme?.colors?.navigation?.primary ||
+      props.$theme?.navigation?.primary ||
+      props.$theme?.colors?.primary ||
+      props.$theme?.accent ||
+      'transparent'};
   }
 `;
 
@@ -125,7 +166,7 @@ const NetworkDebugInfo: React.FC = () => {
 
   if (error) {
     return (
-      <DebugContainer>
+      <DebugContainer $theme={theme}>
         <h3>
           <span role='img' aria-label='Erro'>
             ❌
@@ -133,7 +174,7 @@ const NetworkDebugInfo: React.FC = () => {
           Erro ao Coletar Dados de Rede
         </h3>
         <p>{error}</p>
-        <RefreshButton onClick={collectDebugInfo}>
+        <RefreshButton $theme={theme} onClick={collectDebugInfo}>
           Tentar Novamente
         </RefreshButton>
       </DebugContainer>
@@ -141,7 +182,7 @@ const NetworkDebugInfo: React.FC = () => {
   }
 
   return (
-    <DebugContainer>
+    <DebugContainer $theme={theme}>
       <h3>
         <span role='img' aria-label='Lupa'>
           🔍
@@ -149,7 +190,7 @@ const NetworkDebugInfo: React.FC = () => {
         Dados de Rede Capturados Automaticamente
       </h3>
 
-      <RefreshButton onClick={collectDebugInfo} disabled={loading}>
+      <RefreshButton $theme={theme} onClick={collectDebugInfo} disabled={loading}>
         {loading ? (
           'Coletando...'
         ) : (
@@ -164,7 +205,7 @@ const NetworkDebugInfo: React.FC = () => {
 
       {debugInfo && (
         <>
-          <DebugSection>
+          <DebugSection $theme={theme}>
             <h4>
               <span role='img' aria-label='Sinal'>
                 📶
@@ -174,7 +215,7 @@ const NetworkDebugInfo: React.FC = () => {
             <pre>{JSON.stringify(debugInfo.networkDetection, null, 2)}</pre>
           </DebugSection>
 
-          <DebugSection>
+          <DebugSection $theme={theme}>
             <h4>
               <span role='img' aria-label='Lupa'>
                 🔍
@@ -184,7 +225,7 @@ const NetworkDebugInfo: React.FC = () => {
             <pre>{JSON.stringify(debugInfo.fingerprint, null, 2)}</pre>
           </DebugSection>
 
-          <DebugSection>
+          <DebugSection $theme={theme}>
             <h4>
               <span role='img' aria-label='Escudo'>
                 🛡️
@@ -194,7 +235,7 @@ const NetworkDebugInfo: React.FC = () => {
             <pre>{JSON.stringify(debugInfo.analysis, null, 2)}</pre>
           </DebugSection>
 
-          <DebugSection>
+          <DebugSection $theme={theme}>
             <h4>
               <span role='img' aria-label='Localização'>
                 📍
@@ -219,7 +260,7 @@ const NetworkDebugInfo: React.FC = () => {
             </pre>
           </DebugSection>
 
-          <DebugSection>
+          <DebugSection $theme={theme}>
             <h4>
               <span role='img' aria-label='Sinal'>
                 📶

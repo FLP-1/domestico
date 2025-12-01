@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { getThemeColor, getStatusColor } from '../utils/themeHelpers';
 
 const Container = styled.div`
   padding: 20px;
@@ -10,25 +11,43 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  color: #333;
+  color: ${props => getThemeColor(props.theme, 'text.primary', 'inherit')};
   margin-bottom: 20px;
 `;
 
 const Button = styled.button`
   padding: 10px 20px;
   font-size: 16px;
-  background: #28a745;
-  color: white;
+  background: ${props => getStatusColor(props.theme, 'success', 'background') || 'transparent'};
+  color: ${props => getThemeColor(props.theme, 'text.onPrimary', 'inherit') || getThemeColor(props.theme, 'surface', 'inherit')};
   border: none;
   border-radius: 4px;
   cursor: pointer;
 
   &:hover {
-    background: #218838;
+    background: ${props => {
+      const success = getStatusColor(props.theme, 'success', 'background');
+      if (success && success.startsWith('#')) {
+        const r = parseInt(success.slice(1, 3), 16);
+        const g = parseInt(success.slice(3, 5), 16);
+        const b = parseInt(success.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.8)`;
+      }
+      return success || 'transparent';
+    }};
   }
 
   &:active {
-    background: #1e7e34;
+    background: ${props => {
+      const success = getStatusColor(props.theme, 'success', 'background');
+      if (success && success.startsWith('#')) {
+        const r = parseInt(success.slice(1, 3), 16);
+        const g = parseInt(success.slice(3, 5), 16);
+        const b = parseInt(success.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.7)`;
+      }
+      return success || 'transparent';
+    }};
   }
 `;
 

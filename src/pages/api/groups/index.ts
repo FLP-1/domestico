@@ -1,6 +1,9 @@
 import prisma from '@/lib/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+// Cor padrão para grupos quando não especificada
+const DEFAULT_GROUP_COLOR = '#29ABE2';
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -89,7 +92,7 @@ async function createGroup(req: NextApiRequest, res: NextApiResponse) {
       data: {
         nome,
         descricao,
-        cor: cor || '#3498db',
+        cor: cor || DEFAULT_GROUP_COLOR,
         icone: icone || '👥',
         tipo: 'GERAL',
         ativo: true,

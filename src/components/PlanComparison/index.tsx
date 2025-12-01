@@ -20,18 +20,34 @@ const Table = styled.table<{ $theme?: any }>`
   background: ${props =>
     props.$theme?.colors?.background?.primary ||
     props.$theme?.background?.primary ||
-    '#ffffff'};
+    props.$theme?.colors?.surface ||
+    'transparent'};
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 4px 6px rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return props.$theme?.shadows?.md || 'none';
+  }};
 `;
 
 const HeaderRow = styled.tr<{ $theme?: any }>`
   background: ${props =>
     props.$theme?.colors?.primary ||
     props.$theme?.accent ||
-    '#29abe2'};
-  color: white;
+    'transparent'};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    props.$theme?.colors?.surface ||
+    'inherit'};
 `;
 
 const HeaderCell = styled.th<{ $highlighted?: boolean; $theme?: any }>`
@@ -43,7 +59,10 @@ const HeaderCell = styled.th<{ $highlighted?: boolean; $theme?: any }>`
   ${props =>
     props.$highlighted &&
     `
-    background: ${props.$theme?.colors?.status?.success?.background || '#28a745'};
+    background: ${props.$theme?.colors?.status?.success?.background ||
+                 props.$theme?.status?.success?.background ||
+                 props.$theme?.colors?.success ||
+                 'transparent'};
     position: relative;
     
     &::before {
@@ -61,10 +80,12 @@ const HeaderCell = styled.th<{ $highlighted?: boolean; $theme?: any }>`
 
 const FeatureRow = styled.tr<{ $theme?: any }>`
   border-bottom: 1px solid
-    ${props =>
-      props.$theme?.colors?.border?.light ||
-      props.$theme?.colors?.border ||
-      '#e5e7eb'};
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border?.light) ||
+             props.$theme?.border?.light ||
+             'transparent';
+    }};
 
   &:last-child {
     border-bottom: none;
@@ -77,7 +98,7 @@ const FeatureCell = styled.td<{ $theme?: any }>`
   color: ${props =>
     props.$theme?.colors?.text?.primary ||
     props.$theme?.colors?.text ||
-    '#2c3e50'};
+    'inherit'};
 `;
 
 const FeatureName = styled.td<{ $theme?: any }>`
@@ -86,22 +107,34 @@ const FeatureName = styled.td<{ $theme?: any }>`
   color: ${props =>
     props.$theme?.colors?.text?.primary ||
     props.$theme?.colors?.text ||
-    '#2c3e50'};
+    'inherit'};
 `;
 
-const CheckIcon = styled.span`
-  color: #28a745;
+const CheckIcon = styled.span<{ $theme?: any }>`
+  color: ${props =>
+    props.$theme?.colors?.status?.success?.background ||
+    props.$theme?.status?.success?.background ||
+    props.$theme?.colors?.success ||
+    'inherit'};
   font-size: 1.5rem;
   font-weight: bold;
 `;
 
-const LimitedIcon = styled.span`
-  color: #ffc107;
+const LimitedIcon = styled.span<{ $theme?: any }>`
+  color: ${props =>
+    props.$theme?.colors?.status?.warning?.background ||
+    props.$theme?.status?.warning?.background ||
+    props.$theme?.colors?.warning ||
+    'inherit'};
   font-size: 1.5rem;
 `;
 
-const CrossIcon = styled.span`
-  color: #dc3545;
+const CrossIcon = styled.span<{ $theme?: any }>`
+  color: ${props =>
+    props.$theme?.colors?.status?.error?.background ||
+    props.$theme?.status?.error?.background ||
+    props.$theme?.colors?.error ||
+    'inherit'};
   font-size: 1.5rem;
 `;
 
@@ -116,7 +149,7 @@ const Price = styled.div<{ $theme?: any }>`
   color: ${props =>
     props.$theme?.colors?.primary ||
     props.$theme?.accent ||
-    '#29abe2'};
+    'inherit'};
   margin-bottom: 0.5rem;
 `;
 
@@ -124,8 +157,9 @@ const PricePeriod = styled.div<{ $theme?: any }>`
   font-size: 0.875rem;
   color: ${props =>
     props.$theme?.colors?.text?.secondary ||
-    props.$theme?.colors?.text?.secondary ||
-    '#7f8c8d'};
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
 const features = [

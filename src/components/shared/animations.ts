@@ -1,12 +1,13 @@
 /**
-// 🎬 ANIMAÇÕES CENTRALIZADAS
-// 
-// Este arquivo centraliza todas as animações reutilizáveis do projeto.
-// Elimina duplicação e garante consistência visual.
-//
-// USO:
-// import { fadeIn, pulse, slideIn } from '../components/shared/animations';
-// animation: ${fadeIn} 0.6s ease-out;
+ * 🎬 ANIMAÇÕES CENTRALIZADAS
+ * 
+ * Este arquivo centraliza todas as animações reutilizáveis do projeto.
+ * Elimina duplicação e garante consistência visual.
+ *
+ * USO:
+ * import { fadeIn, pulse, slideIn } from '../components/shared/animations';
+ * animation: ${fadeIn} 0.6s ease-out;
+ */
 
 import { keyframes } from 'styled-components';
 

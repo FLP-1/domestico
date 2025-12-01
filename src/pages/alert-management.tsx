@@ -1,9 +1,13 @@
 import AccessibleEmoji from '../components/AccessibleEmoji';
 // src/pages/alert-management.tsx
 import { useRouter } from 'next/router';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
-import { useAlertManager } from '../hooks/useAlertManager';
+import { useMessages } from '../hooks/useMessages';
+import { ALERT_TYPES } from '../constants/alertTypes';
+import { apiClient } from '../lib/apiClient';
+import { useDataFetch } from '../hooks/useDataFetch';
+import { useAsyncOperation } from '../hooks/useAsyncOperation';
 import styled from 'styled-components';
 import FilterSection from '../components/FilterSection';
 import {
@@ -21,7 +25,7 @@ import WelcomeSection from '../components/WelcomeSection';
 import { UnifiedButton, UnifiedModal, UnifiedCard } from '../components/unified';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
-import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import { getThemeColor, getStatusColor, addOpacity } from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
 import {
   OptimizedFormRow,
@@ -31,18 +35,42 @@ import {
   OptimizedButtonGroup,
 } from '../components/shared/optimized-styles';
 import EmptyState from '../components/EmptyState';
+import { formatDate } from '../utils/formatters';
 
 // Styled Components
 const HelpText = styled.small<{ $theme?: Theme }>`
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+    return (text && typeof text === 'object' && text.secondary) || 'inherit';
   }};
   font-size: 0.8rem;
 `;
 
 const ButtonGroup = styled.div`
   margin-top: 1rem;
+`;
+
+// Styled components para substituir estilos inline
+const FormGroupFlex = styled(FormGroup)`
+  flex: 1;
+`;
+
+const InputSmall = styled(Input)`
+  flex: 1;
+  font-size: 0.85rem;
+  padding: 0.5rem;
+`;
+
+const SelectSmall = styled(Select)`
+  padding: 0.5rem;
+  font-size: 0.85rem;
+`;
+
+const FlexContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
 `;
 
 // EmptyIcon, EmptyTitle, EmptyDescription removidos - usar componente EmptyState centralizado
@@ -98,27 +126,30 @@ const StatCard = styled.div<{
 }>`
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    const surfaceColor = typeof surface === 'string' ? surface : (surface && typeof surface === 'object' && (surface as any).primary) || defaultColors.surface;
+    const surfaceColor = typeof surface === 'string' ? surface : (surface && typeof surface === 'object' && (surface as any).primary) || 'transparent';
     return addOpacity(surfaceColor, 0.95);
   }};
   backdrop-filter: blur(20px);
   border-radius: 16px;
   padding: 1.5rem;
   box-shadow: 0 4px 16px
-    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+    ${props => {
+      const shadow = props.$theme?.colors?.shadow;
+      return typeof shadow === 'string' ? shadow : 'transparent';
+    }};
   border-left: 4px solid
     ${props => {
       switch (props.$variant) {
         case 'primary':
-          return props.$theme?.colors?.primary || defaultColors.primary;
+          return props.$theme?.colors?.primary || 'transparent';
         case 'warning':
-          return props.$theme?.colors?.warning || defaultColors.warning;
+          return props.$theme?.colors?.warning || 'transparent';
         case 'success':
-          return props.$theme?.colors?.success || defaultColors.success;
+          return props.$theme?.colors?.success || 'transparent';
         case 'danger':
-          return props.$theme?.colors?.error || defaultColors.error;
+          return props.$theme?.colors?.error || 'transparent';
         default:
-          return props.$theme?.colors?.primary || defaultColors.primary;
+          return props.$theme?.colors?.primary || 'transparent';
       }
     }};
   transition: all 0.3s ease;
@@ -126,7 +157,10 @@ const StatCard = styled.div<{
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px
-      ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+      ${props => {
+        const shadow = props.$theme?.colors?.shadow;
+        return typeof shadow === 'string' ? shadow : 'transparent';
+      }};
   }
 `;
 
@@ -135,7 +169,7 @@ const StatNumber = styled.div<{ $theme?: Theme }>`
   font-weight: 700;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+    return (text && typeof text === 'object' && text.primary) || 'inherit';
   }};
   margin-bottom: 0.5rem;
 `;
@@ -144,7 +178,7 @@ const StatLabel = styled.div<{ $theme?: Theme }>`
   font-size: 0.9rem;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+    return (text && typeof text === 'object' && text.secondary) || 'inherit';
   }};
   font-weight: 500;
 `;
@@ -179,14 +213,14 @@ const AlertStatus = styled.span<{ $status: 'active' | 'inactive'; $theme?: Theme
   font-weight: 600;
   background: ${props => {
     if (props.$status === 'active') {
-      return props.$theme?.colors?.success || defaultColors.success;
+      return props.$theme?.colors?.success || 'transparent';
     }
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+    return (text && typeof text === 'object' && text.secondary) || 'transparent';
   }};
   color: ${props => {
     const surface = props.$theme?.colors?.surface;
-    return (typeof surface === 'string' ? surface : defaultColors.surface) || defaultColors.surface;
+    return typeof surface === 'string' ? surface : 'transparent';
   }};
 `;
 
@@ -194,7 +228,7 @@ const AlertTitle = styled.h3<{ $theme?: Theme }>`
   margin: 0 0 0.5rem 0;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+    return (text && typeof text === 'object' && text.primary) || 'inherit';
   }};
   font-size: 1.1rem;
   font-weight: 600;
@@ -204,7 +238,7 @@ const AlertDescription = styled.p<{ $theme?: Theme }>`
   margin: 0 0 1rem 0;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+    return (text && typeof text === 'object' && text.secondary) || 'inherit';
   }};
   font-size: 0.9rem;
   line-height: 1.4;
@@ -218,7 +252,7 @@ const AlertDateTime = styled.div<{ $theme?: Theme }>`
   font-size: 0.85rem;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+    return (text && typeof text === 'object' && text.secondary) || 'inherit';
   }};
 `;
 
@@ -230,7 +264,7 @@ const AlertFrequency = styled.div<{ $theme?: Theme }>`
   font-size: 0.85rem;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+    return (text && typeof text === 'object' && text.secondary) || 'inherit';
   }};
 `;
 
@@ -248,7 +282,7 @@ const AlertActions = styled.div`
 
 // FormRow removido - usar OptimizedFormRow
 
-// FormGroupFlex removido - usar FormGroup com style={{ flex: 1 }}
+// FormGroupFlex criado para substituir style={{ flex: 1 }}
 
 const ConditionsSection = styled.div<{ $theme?: Theme }>`
   margin-top: 1rem;
@@ -258,12 +292,12 @@ const ConditionsSection = styled.div<{ $theme?: Theme }>`
     if (surface && typeof surface === 'object' && 'secondary' in surface) {
       return (surface as any).secondary;
     }
-    return props.$theme?.colors?.background || defaultColors.surface;
+    return props.$theme?.colors?.background || 'transparent';
   }};
   border-radius: 8px;
   border: 1px solid ${props => {
     const border = props.$theme?.colors?.border;
-    return (typeof border === 'string' ? border : (border && typeof border === 'object' && (border as any).primary)) || defaultColors.border;
+    return (typeof border === 'string' ? border : (border && typeof border === 'object' && (border as any).primary)) || 'transparent';
   }};
 `;
 
@@ -282,54 +316,113 @@ const AddConditionButton = styled.button<{ $theme?: Theme }>`
   padding: 0.5rem 1rem;
   border-radius: 6px;
   border: none;
-  background: ${props =>
-    props.$theme?.colors?.primary || defaultColors.primary};
-  color: white;
+  background: ${props => {
+    const primary = props.$theme?.colors?.primary;
+    return typeof primary === 'string' ? primary : 'transparent';
+  }};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text && 'primary' in text) {
+      return String((text as any).primary);
+    }
+    if (typeof text === 'string') {
+      return text;
+    }
+    return 'inherit';
+  }};
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 600;
   transition: all 0.3s ease;
 
   &:hover {
-    background: ${props =>
-      props.$theme?.colors?.primary || defaultColors.primary};
+    background: ${props => {
+      const primary = props.$theme?.colors?.primary;
+      return typeof primary === 'string' ? primary : 'transparent';
+    }};
   }
 `;
 
-const RemoveConditionButton = styled.button`
+const RemoveConditionButton = styled.button<{ $theme?: Theme }>`
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   border: none;
-  background: #e74c3c;
-  color: white;
+  background: ${props => {
+    const statusError = props.$theme?.colors?.status?.error;
+    if (typeof statusError === 'object' && statusError && 'background' in statusError) {
+      return String((statusError as any).background);
+    }
+    const error = props.$theme?.colors?.error;
+    return typeof error === 'string' ? error : 'transparent';
+  }};
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text && 'primary' in text) {
+      return String((text as any).primary);
+    }
+    if (typeof text === 'string') {
+      return text;
+    }
+    return 'inherit';
+  }};
   cursor: pointer;
   font-size: 0.8rem;
   transition: all 0.3s ease;
 
   &:hover {
-    background: #c0392b;
+    background: ${props => {
+      const statusError = props.$theme?.colors?.status?.error;
+      if (typeof statusError === 'object' && statusError && 'background' in statusError) {
+        return String((statusError as any).background);
+      }
+      const error = props.$theme?.colors?.error;
+      return typeof error === 'string' ? error : 'transparent';
+    }};
   }
 `;
 
 const NotificationPreview = styled.div<{ $theme?: Theme }>`
   margin-top: 1rem;
   padding: 1rem;
-  background: ${props =>
-    (props.$theme?.colors?.primary || defaultColors.primary) + '10'};
+  background: ${props => {
+    const primary = props.$theme?.colors?.primary;
+    return primary ? addOpacity(String(primary), 0.1) : 'transparent';
+  }};
   border-radius: 8px;
   border: 1px solid
-    ${props => (props.$theme?.colors?.primary || defaultColors.primary) + '30'};
+    ${props => {
+      const primary = props.$theme?.colors?.primary;
+      return primary ? addOpacity(String(primary), 0.3) : 'transparent';
+    }};
 `;
 
-const PreviewTitle = styled.h4`
+const PreviewTitle = styled.h4<{ $theme?: Theme }>`
   margin: 0 0 0.5rem 0;
-  color: #2c3e50;
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text && 'primary' in text) {
+      return String((text as any).primary);
+    }
+    if (typeof text === 'string') {
+      return text;
+    }
+    return 'inherit';
+  }};
   font-size: 0.9rem;
 `;
 
-const PreviewText = styled.p`
+const PreviewText = styled.p<{ $theme?: Theme }>`
   margin: 0;
-  color: #5a6c7d;
+  color: ${props => {
+    const text = props.$theme?.colors?.text;
+    if (typeof text === 'object' && text && 'secondary' in text) {
+      return String((text as any).secondary);
+    }
+    if (typeof text === 'string') {
+      return text;
+    }
+    return 'inherit';
+  }};
   font-size: 0.85rem;
   font-style: italic;
 `;
@@ -347,161 +440,54 @@ export default function AlertManagement() {
   const { currentProfile } = useUserProfile();
   const themeObject = useTheme(currentProfile?.role.toLowerCase());
   const theme = { colors: themeObject.colors };
-  const alertManager = useAlertManager();
+  const { showSuccess, showError, showInfo, keys } = useMessages();
 
-  const alertTypes: AlertType[] = [
+  // Usar constante centralizada
+  const alertTypes = ALERT_TYPES;
+
+  // Hook de data fetching para carregar alertas
+  const { data: alertsData, loading: loadingAlerts, refetch: reloadAlerts } = useDataFetch(
+    () => apiClient.alerts.getAll(),
     {
-      id: '1',
-      name: 'Vencimento de Documento',
-      icon: <AccessibleEmoji emoji='📄' label='Documento' />,
-      color: '#e74c3c',
-      category: 'Documentos',
-    },
-    {
-      id: '2',
-      name: 'Pagamento Pendente',
-      icon: <AccessibleEmoji emoji='💵' label='Pagamento' />,
-      color: '#f39c12',
-      category: 'Financeiro',
-    },
-    {
-      id: '3',
-      name: 'Tarefa Atrasada',
-      icon: '⏰',
-      color: '#e67e22',
-      category: 'Tarefas',
-    },
-    {
-      id: '4',
-      name: 'Manutenção Preventiva',
-      icon: <AccessibleEmoji emoji='🔧' label='Manutenção' />,
-      color: '#3498db',
-      category: 'Manutenção',
-    },
-    {
-      id: '5',
-      name: 'Reunião Importante',
-      icon: <AccessibleEmoji emoji='📅' label='Calendário' />,
-      color: '#9b59b6',
-      category: 'Agenda',
-    },
-    {
-      id: '6',
-      name: 'Aniversário',
-      icon: <AccessibleEmoji emoji='🎂' label='Aniversário' />,
-      color: '#e91e63',
-      category: 'Pessoal',
-    },
-    {
-      id: '7',
-      name: 'Backup do Sistema',
-      icon: <AccessibleEmoji emoji='💾' label='Armazenar' />,
-      color: '#607d8b',
-      category: 'Sistema',
-    },
-    {
-      id: '8',
-      name: 'Limpeza Periódica',
-      icon: '🧹',
-      color: '#795548',
-      category: 'Limpeza',
-    },
-  ];
+      mapper: (apiData: any[]) => apiData.map((alerta: any) => {
+        // Encontrar o tipo de alerta correspondente
+        const alertType = alertTypes.find(
+          t => t.name.toLowerCase() === alerta.type?.toLowerCase() ||
+               t.category.toLowerCase() === alerta.category?.toLowerCase()
+        ) || alertTypes[0]!;
 
-  const [alerts, setAlerts] = useState<Alert[]>([]);
-  const [loadingAlerts, setLoadingAlerts] = useState(true);
-
-  // Carregar alertas da API
-  useEffect(() => {
-    const loadAlerts = async () => {
-      try {
-        setLoadingAlerts(true);
-        const response = await fetch('/api/alerts');
-        const result = await response.json();
-
-        if (result.success && result.data) {
-          // Mapear dados da API para formato esperado pelo componente
-          const mappedAlerts: Alert[] = result.data.map((alerta: any) => {
-            // Encontrar o tipo de alerta correspondente
-            const alertType = alertTypes.find(
-              t => t.name.toLowerCase() === alerta.type?.toLowerCase() ||
-                   t.category.toLowerCase() === alerta.category?.toLowerCase()
-            ) || alertTypes[0]!;
-
-            return {
-              id: alerta.id,
-              title: alerta.title,
-              description: alerta.description,
-              type: alertType,
-              date: alerta.date,
-              time: alerta.time || '09:00',
-              frequency: alerta.frequency || 'once',
-              notificationType: alerta.notifyEmail ? 'email' : 
-                                alerta.notifyPush ? 'push' : 
-                                alerta.notifySMS ? 'sms' : 'email',
-              notificationText: alerta.notificationText || alerta.description,
-              status: alerta.status === 'ativo' || alerta.status === 'active' ? 'active' : 'inactive',
-              createdAt: alerta.createdAt || new Date().toISOString().split('T')[0],
-              lastTriggered: alerta.lastTrigger,
-              triggerCount: alerta.triggerCount || 0,
-              conditions: alerta.conditions,
-            };
-          });
-          setAlerts(mappedAlerts);
-        }
-      } catch (error) {
-        console.error('Erro ao carregar alertas:', error);
-        alertManager.showError('Erro ao carregar alertas');
-      } finally {
-        setLoadingAlerts(false);
-      }
-    };
-
-    loadAlerts();
-  }, [alertManager]);
-
-  // Função auxiliar para recarregar alertas
-  const reloadAlerts = useCallback(async () => {
-    try {
-      setLoadingAlerts(true);
-      const response = await fetch('/api/alerts');
-      const result = await response.json();
-
-      if (result.success && result.data) {
-        const mappedAlerts: Alert[] = result.data.map((alerta: any) => {
-          const alertType = alertTypes.find(
-            t => t.name.toLowerCase() === alerta.type?.toLowerCase() ||
-                 t.category.toLowerCase() === alerta.category?.toLowerCase()
-          ) || alertTypes[0]!;
-
-          return {
-            id: alerta.id,
-            title: alerta.title,
-            description: alerta.description,
-            type: alertType,
-            date: alerta.date,
-            time: alerta.time || '09:00',
-            frequency: alerta.frequency || 'once',
-            notificationType: alerta.notifyEmail ? 'email' : 
-                              alerta.notifyPush ? 'push' : 
-                              alerta.notifySMS ? 'sms' : 'email',
-            notificationText: alerta.notificationText || alerta.description,
-            status: alerta.status === 'ativo' || alerta.status === 'active' ? 'active' : 'inactive',
-            createdAt: alerta.createdAt || new Date().toISOString().split('T')[0],
-            lastTriggered: alerta.lastTrigger,
-            triggerCount: alerta.triggerCount || 0,
-            conditions: alerta.conditions,
-          };
-        });
-        setAlerts(mappedAlerts);
-      }
-    } catch (error) {
-      console.error('Erro ao recarregar alertas:', error);
-      alertManager.showError('Erro ao recarregar alertas');
-    } finally {
-      setLoadingAlerts(false);
+        return {
+          id: alerta.id,
+          title: alerta.title,
+          description: alerta.description,
+          type: alertType,
+          date: alerta.date,
+          time: alerta.time || '09:00',
+          frequency: alerta.frequency || 'once',
+          notificationType: (alerta.notifyEmail ? 'email' : 
+                            alerta.notifyPush ? 'push' : 
+                            alerta.notifySMS ? 'sms' : 'email') as NotificationType,
+          notificationText: alerta.notificationText || alerta.description,
+          status: (alerta.status === 'ativo' || alerta.status === 'active' ? 'active' : 'inactive') as 'active' | 'inactive',
+          createdAt: alerta.createdAt || new Date().toISOString().split('T')[0],
+          lastTriggered: alerta.lastTrigger,
+          triggerCount: alerta.triggerCount || 0,
+          conditions: alerta.conditions,
+        };
+      }),
+      onError: () => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
     }
-  }, [alertManager, alertTypes]);
+  );
+
+  // Converter dados do hook para estado local (compatibilidade temporária)
+  const [alerts, setAlerts] = useState<Alert[]>(alertsData || []);
+  
+  // Sincronizar dados do hook com estado local
+  useEffect(() => {
+    if (alertsData) {
+      setAlerts(alertsData);
+    }
+  }, [alertsData]);
 
   const [newAlert, setNewAlert] = useState({
     title: '',
@@ -522,62 +508,51 @@ export default function AlertManagement() {
 
   const [conditions, setConditions] = useState<AlertCondition[]>([]);
 
-  const handleCreateAlert = async (e: React.FormEvent) => {
+  // Hook de async operation para criar alerta
+  const { execute: createAlert } = useAsyncOperation({
+    onSuccess: () => {
+      reloadAlerts();
+      setNewAlert({
+        title: '',
+        description: '',
+        type: '',
+        date: '',
+        time: '',
+        frequency: 'once',
+        notificationType: 'email',
+        notificationText: '',
+      });
+      setConditions([]);
+      setShowConditions(false);
+      showSuccess('success.alerta_criado');
+    },
+    onError: () => showError('error.erro_criar_alerta'),
+  });
+
+  const handleCreateAlert = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newAlert.title.trim() || !newAlert.type) return;
 
     const alertType = alertTypes.find(t => t.id === newAlert.type);
     if (!alertType) return;
 
-    try {
-      const response = await fetch('/api/alerts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          titulo: newAlert.title,
-          descricao: newAlert.description,
-          tipo: alertType.name,
-          prioridade: 'NORMAL',
-          categoria: alertType.category,
-          dataAlerta: newAlert.date,
-          usuarioId: currentProfile?.id,
-          notificarEmail: newAlert.notificationType === 'email' || newAlert.notificationType === 'all',
-          notificarPush: newAlert.notificationType === 'push' || newAlert.notificationType === 'all',
-          horaAlerta: newAlert.time,
-          frequencia: newAlert.frequency,
-          textoNotificacao: newAlert.notificationText,
-          condicoes: conditions.length > 0 ? conditions : null,
-        }),
+    createAlert(async () => {
+      await apiClient.alerts.create({
+        titulo: newAlert.title,
+        descricao: newAlert.description,
+        tipo: alertType.name,
+        prioridade: 'NORMAL',
+        categoria: alertType.category,
+        dataAlerta: newAlert.date,
+        usuarioId: currentProfile?.id,
+        notificarEmail: newAlert.notificationType === 'email' || newAlert.notificationType === 'all',
+        notificarPush: newAlert.notificationType === 'push' || newAlert.notificationType === 'all',
+        horaAlerta: newAlert.time,
+        frequencia: newAlert.frequency,
+        textoNotificacao: newAlert.notificationText,
+        condicoes: conditions.length > 0 ? conditions : null,
       });
-
-      const result = await response.json();
-
-      if (result.success) {
-        // Recarregar alertas da API
-        await reloadAlerts();
-
-        setNewAlert({
-          title: '',
-          description: '',
-          type: '',
-          date: '',
-          time: '',
-          frequency: 'once',
-          notificationType: 'email',
-          notificationText: '',
-        });
-        setConditions([]);
-        setShowConditions(false);
-        alertManager.showSuccess('Alerta criado com sucesso!');
-      } else {
-        alertManager.showError(result.error || 'Erro ao criar alerta');
-      }
-    } catch (error) {
-      console.error('Erro ao criar alerta:', error);
-      alertManager.showError('Erro ao criar alerta');
-    }
+    });
   };
 
   const handleEditAlert = (alert: Alert) => {
@@ -597,115 +572,87 @@ export default function AlertManagement() {
     setUnifiedModalOpen(true);
   };
 
-  const handleUpdateAlert = async (e: React.FormEvent) => {
+  // Hook de async operation para atualizar alerta
+  const { execute: updateAlert } = useAsyncOperation({
+    onSuccess: () => {
+      reloadAlerts();
+      setUnifiedModalOpen(false);
+      setEditingAlert(null);
+      setNewAlert({
+        title: '',
+        description: '',
+        type: '',
+        date: '',
+        time: '',
+        frequency: 'once',
+        notificationType: 'email',
+        notificationText: '',
+      });
+      setConditions([]);
+      setShowConditions(false);
+      showSuccess('success.alerta_atualizado');
+    },
+    onError: () => showError('error.erro_atualizar_alerta'),
+  });
+
+  const handleUpdateAlert = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingAlert || !newAlert.title.trim() || !newAlert.type) return;
 
     const alertType = alertTypes.find(t => t.id === newAlert.type);
     if (!alertType) return;
 
-    try {
-      const response = await fetch(`/api/alerts/${editingAlert.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          titulo: newAlert.title,
-          descricao: newAlert.description,
-          tipo: alertType.name,
-          prioridade: 'NORMAL',
-          categoria: alertType.category,
-          dataAlerta: newAlert.date,
-          horaAlerta: newAlert.time,
-          frequencia: newAlert.frequency,
-          textoNotificacao: newAlert.notificationText,
-          notificarEmail: newAlert.notificationType === 'email' || newAlert.notificationType === 'all',
-          notificarPush: newAlert.notificationType === 'push' || newAlert.notificationType === 'all',
-          condicoes: conditions.length > 0 ? conditions : null,
-        }),
+    updateAlert(async () => {
+      await apiClient.alerts.update(editingAlert.id, {
+        titulo: newAlert.title,
+        descricao: newAlert.description,
+        tipo: alertType.name,
+        prioridade: 'NORMAL',
+        categoria: alertType.category,
+        dataAlerta: newAlert.date,
+        horaAlerta: newAlert.time,
+        frequencia: newAlert.frequency,
+        textoNotificacao: newAlert.notificationText,
+        notificarEmail: newAlert.notificationType === 'email' || newAlert.notificationType === 'all',
+        notificarPush: newAlert.notificationType === 'push' || newAlert.notificationType === 'all',
+        condicoes: conditions.length > 0 ? conditions : null,
       });
-
-      const result = await response.json();
-
-      if (result.success) {
-        // Recarregar alertas da API
-        await reloadAlerts();
-
-        setUnifiedModalOpen(false);
-        setEditingAlert(null);
-        setNewAlert({
-          title: '',
-          description: '',
-          type: '',
-          date: '',
-          time: '',
-          frequency: 'once',
-          notificationType: 'email',
-          notificationText: '',
-        });
-        setConditions([]);
-        setShowConditions(false);
-        alertManager.showSuccess('Alerta atualizado com sucesso!');
-      } else {
-        alertManager.showError(result.error || 'Erro ao atualizar alerta');
-      }
-    } catch (error) {
-      console.error('Erro ao atualizar alerta:', error);
-      alertManager.showError('Erro ao atualizar alerta');
-    }
+    });
   };
 
-  const handleToggleAlertStatus = async (id: string) => {
-    try {
-      const alert = alerts.find(a => a.id === id);
-      if (!alert) return;
+  // Hook de async operation para alternar status
+  const { execute: toggleStatus } = useAsyncOperation({
+    onSuccess: () => {
+      reloadAlerts();
+      showSuccess('success.status_alerta_alterado');
+    },
+    onError: () => showError('error.erro_alterar_status_alerta'),
+  });
 
-      const newStatus = alert.status === 'active' ? 'inactive' : 'active';
-      const response = await fetch(`/api/alerts/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          status: newStatus,
-        }),
-      });
+  const handleToggleAlertStatus = (id: string) => {
+    const alert = alerts.find(a => a.id === id);
+    if (!alert) return;
 
-      const result = await response.json();
-
-      if (result.success) {
-        // Recarregar alertas da API
-        await reloadAlerts();
-        alertManager.showSuccess('Status do alerta alterado!');
-      } else {
-        alertManager.showError(result.error || 'Erro ao alterar status do alerta');
-      }
-    } catch (error) {
-      console.error('Erro ao alterar status do alerta:', error);
-      alertManager.showError('Erro ao alterar status do alerta');
-    }
+    const newStatus = alert.status === 'active' ? 'inactive' : 'active';
+    
+    toggleStatus(async () => {
+      await apiClient.alerts.toggleStatus(id, newStatus);
+    });
   };
 
-  const handleDeleteAlert = async (id: string) => {
-    try {
-      const response = await fetch(`/api/alerts/${id}`, {
-        method: 'DELETE',
-      });
+  // Hook de async operation para excluir alerta
+  const { execute: deleteAlert } = useAsyncOperation({
+    onSuccess: () => {
+      reloadAlerts();
+      showSuccess('success.alerta_excluido');
+    },
+    onError: () => showError('error.erro_excluir_alerta'),
+  });
 
-      const result = await response.json();
-
-      if (result.success) {
-        // Recarregar alertas da API
-        await reloadAlerts();
-        alertManager.showSuccess('Alerta excluído com sucesso!');
-      } else {
-        alertManager.showError(result.error || 'Erro ao excluir alerta');
-      }
-    } catch (error) {
-      console.error('Erro ao excluir alerta:', error);
-      alertManager.showError('Erro ao excluir alerta');
-    }
+  const handleDeleteAlert = (id: string) => {
+    deleteAlert(async () => {
+      await apiClient.alerts.delete(id);
+    });
   };
 
   const addCondition = () => {
@@ -793,7 +740,7 @@ export default function AlertManagement() {
           userRole={currentProfile?.role || 'Usuário'}
           notificationCount={stats.activeAlerts}
           onNotificationClick={() =>
-            alertManager.showInfo('Notificações em desenvolvimento')
+            showInfo(keys.INFO.NOTIFICACOES_DESENVOLVIMENTO)
           }
         />
       </TopBar>
@@ -829,7 +776,7 @@ export default function AlertManagement() {
         <OptimizedSectionTitle>Criar Novo Alerta</OptimizedSectionTitle>
         <Form onSubmit={handleCreateAlert}>
           <OptimizedFormRow>
-            <FormGroup style={{ flex: 1 }}>
+            <FormGroupFlex>
               <OptimizedLabel>Título do Alerta</OptimizedLabel>
               <Input
                 $theme={theme}
@@ -841,8 +788,8 @@ export default function AlertManagement() {
                 placeholder='Ex: Vencimento do Contrato'
                 required
               />
-            </FormGroup>
-            <FormGroup style={{ flex: 1 }}>
+            </FormGroupFlex>
+            <FormGroupFlex>
               <OptimizedLabel htmlFor='alert-type'>
                 Tipo de Alerta
               </OptimizedLabel>
@@ -864,7 +811,7 @@ export default function AlertManagement() {
                   </option>
                 ))}
               </Select>
-            </FormGroup>
+            </FormGroupFlex>
           </OptimizedFormRow>
 
           <FormGroup>
@@ -884,7 +831,7 @@ export default function AlertManagement() {
           </FormGroup>
 
           <OptimizedFormRow>
-            <FormGroup style={{ flex: 1 }}>
+            <FormGroupFlex>
               <OptimizedLabel>Data</OptimizedLabel>
               <Input
                 $theme={theme}
@@ -895,8 +842,8 @@ export default function AlertManagement() {
                 }
                 required
               />
-            </FormGroup>
-            <FormGroup style={{ flex: 1 }}>
+            </FormGroupFlex>
+            <FormGroupFlex>
               <OptimizedLabel>Hora</OptimizedLabel>
               <Input
                 $theme={theme}
@@ -907,8 +854,8 @@ export default function AlertManagement() {
                 }
                 required
               />
-            </FormGroup>
-            <FormGroup style={{ flex: 1 }}>
+            </FormGroupFlex>
+            <FormGroupFlex>
               <OptimizedLabel>Frequência</OptimizedLabel>
               <Select
                 $theme={theme}
@@ -928,11 +875,11 @@ export default function AlertManagement() {
                 <option value='monthly'>Mensalmente</option>
                 <option value='yearly'>Anualmente</option>
               </Select>
-            </FormGroup>
+            </FormGroupFlex>
           </OptimizedFormRow>
 
           <OptimizedFormRow>
-            <FormGroup style={{ flex: 1 }}>
+            <FormGroupFlex>
               <OptimizedLabel>Tipo de Notificação</OptimizedLabel>
               <Select
                 $theme={theme}
@@ -951,7 +898,7 @@ export default function AlertManagement() {
                 <option value='sms'>SMS</option>
                 <option value='all'>Todos os tipos</option>
               </Select>
-            </FormGroup>
+            </FormGroupFlex>
           </OptimizedFormRow>
 
           <FormGroup>
@@ -976,8 +923,8 @@ export default function AlertManagement() {
 
           {newAlert.notificationText && (
             <NotificationPreview $theme={theme}>
-              <PreviewTitle>Preview da Notificação:</PreviewTitle>
-              <PreviewText>{generateNotificationPreview()}</PreviewText>
+              <PreviewTitle $theme={theme}>Preview da Notificação:</PreviewTitle>
+              <PreviewText $theme={theme}>{generateNotificationPreview()}</PreviewText>
             </NotificationPreview>
           )}
 
@@ -1003,7 +950,6 @@ export default function AlertManagement() {
                       updateCondition(condition.id, 'field', e.target.value)
                     }
                     placeholder='Campo (ex: valor, status)'
-                    style={{ flex: 1, fontSize: '0.85rem', padding: '0.5rem' }}
                   />
                   <Select
                     $theme={theme}
@@ -1017,7 +963,6 @@ export default function AlertManagement() {
                     }
                     aria-label='Selecionar operador da condição'
                     title='Selecionar operador da condição'
-                    style={{ padding: '0.5rem', fontSize: '0.85rem' }}
                   >
                     <option value='equals'>Igual a</option>
                     <option value='greater_than'>Maior que</option>
@@ -1031,7 +976,6 @@ export default function AlertManagement() {
                       updateCondition(condition.id, 'value', e.target.value)
                     }
                     placeholder='Valor'
-                    style={{ flex: 1, fontSize: '0.85rem', padding: '0.5rem' }}
                   />
                   <RemoveConditionButton
                     onClick={() => removeCondition(condition.id)}
@@ -1129,7 +1073,7 @@ export default function AlertManagement() {
               size='md'
               status={alert.status === 'active' ? 'success' : 'default'}
             >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+              <FlexContainer>
                 <AlertTypeBadge $color={alert.type.color}>
                   <span>{alert.type.icon}</span>
                   <span>{alert.type.name}</span>
@@ -1137,14 +1081,14 @@ export default function AlertManagement() {
                 <AlertStatus $status={alert.status} $theme={theme}>
                   {alert.status === 'active' ? 'Ativo' : 'Inativo'}
                 </AlertStatus>
-              </div>
+              </FlexContainer>
 
               <AlertTitle $theme={theme}>{alert.title}</AlertTitle>
               <AlertDescription $theme={theme}>{alert.description}</AlertDescription>
 
               <AlertDateTime $theme={theme}>
                 <AccessibleEmoji emoji='📅' label='Calendário' />{' '}
-                {new Date(alert.date).toLocaleDateString('pt-BR')} às{' '}
+                {formatDate(alert.date)} às{' '}
                 {alert.time}
               </AlertDateTime>
 
@@ -1164,7 +1108,7 @@ export default function AlertManagement() {
               {alert.lastTriggered && (
                 <OptimizedHelpText>
                   Último disparo:{' '}
-                  {new Date(alert.lastTriggered).toLocaleDateString('pt-BR')}
+                  {formatDate(alert.lastTriggered)}
                 </OptimizedHelpText>
               )}
 
@@ -1231,7 +1175,7 @@ export default function AlertManagement() {
         {editingAlert && (
           <Form onSubmit={handleUpdateAlert}>
             <OptimizedFormRow>
-              <FormGroup style={{ flex: 1 }}>
+              <FormGroupFlex>
                 <OptimizedLabel>Título do Alerta</OptimizedLabel>
                 <Input
                   $theme={theme}
@@ -1242,8 +1186,8 @@ export default function AlertManagement() {
                   }
                   required
                 />
-              </FormGroup>
-              <FormGroup style={{ flex: 1 }}>
+              </FormGroupFlex>
+              <FormGroupFlex>
                 <OptimizedLabel>Tipo de Alerta</OptimizedLabel>
                 <Select
                   $theme={theme}
@@ -1261,7 +1205,7 @@ export default function AlertManagement() {
                     </option>
                   ))}
                 </Select>
-              </FormGroup>
+              </FormGroupFlex>
             </OptimizedFormRow>
 
             <FormGroup>
@@ -1280,7 +1224,7 @@ export default function AlertManagement() {
             </FormGroup>
 
             <OptimizedFormRow>
-              <FormGroup style={{ flex: 1 }}>
+              <FormGroupFlex>
                 <OptimizedLabel>Data</OptimizedLabel>
                 <Input
                   $theme={theme}
@@ -1291,8 +1235,8 @@ export default function AlertManagement() {
                   }
                   required
                 />
-              </FormGroup>
-              <FormGroup style={{ flex: 1 }}>
+              </FormGroupFlex>
+              <FormGroupFlex>
                 <OptimizedLabel>Hora</OptimizedLabel>
                 <Input
                   $theme={theme}
@@ -1303,10 +1247,10 @@ export default function AlertManagement() {
                   }
                   required
                 />
-              </FormGroup>
-              <FormGroup style={{ flex: 1 }}>
-                <OptimizedLabel>Frequência</OptimizedLabel>
-                <Select
+              </FormGroupFlex>
+            <FormGroupFlex>
+              <OptimizedLabel>Frequência</OptimizedLabel>
+              <Select
                   $theme={theme}
                   value={newAlert.frequency}
                   onChange={e =>
@@ -1324,11 +1268,11 @@ export default function AlertManagement() {
                   <option value='monthly'>Mensalmente</option>
                   <option value='yearly'>Anualmente</option>
                 </Select>
-              </FormGroup>
+              </FormGroupFlex>
             </OptimizedFormRow>
 
             <OptimizedFormRow>
-              <FormGroup style={{ flex: 1 }}>
+              <FormGroupFlex>
                 <OptimizedLabel>Tipo de Notificação</OptimizedLabel>
                 <Select
                   $theme={theme}
@@ -1347,7 +1291,7 @@ export default function AlertManagement() {
                   <option value='sms'>SMS</option>
                   <option value='all'>Todos os tipos</option>
                 </Select>
-              </FormGroup>
+              </FormGroupFlex>
             </OptimizedFormRow>
 
             <FormGroup>

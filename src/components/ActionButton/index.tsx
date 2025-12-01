@@ -17,41 +17,83 @@ const ButtonContainer = styled.button<{
     const themedStyles = createThemedStyles(props.$theme);
 
     const getVariantStyles = () => {
+      // Obter cores de texto do tema (fallback hierárquico)
+      const textColor = props.$theme?.colors?.text?.primary || 
+                       props.$theme?.text?.primary ||
+                       props.$theme?.colors?.text ||
+                       props.$theme?.colors?.surface ||
+                       'inherit';
+      
+      // Obter cores de background do tema
+      const surfaceColor = props.$theme?.colors?.surface ||
+                          props.$theme?.colors?.background?.primary ||
+                          props.$theme?.background?.primary ||
+                          'transparent';
+      
+      // Função para adicionar opacidade a uma cor
+      const addOpacity = (color: string, opacity: number) => {
+        if (!color || color === 'transparent' || color === 'inherit' || color === 'currentColor') {
+          return 'transparent';
+        }
+        if (color.startsWith('#')) {
+          const r = parseInt(color.slice(1, 3), 16);
+          const g = parseInt(color.slice(3, 5), 16);
+          const b = parseInt(color.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+        }
+        if (color.startsWith('rgb')) {
+          return color.replace(')', `, ${opacity})`).replace('rgb', 'rgba');
+        }
+        return 'transparent';
+      };
+
       switch (props.$variant) {
         case 'primary':
           return {
             background: `linear-gradient(135deg, ${themedStyles.primary}, ${themedStyles.secondary})`,
-            color: '#FFFFFF',
+            color: textColor,
             border: 'none',
           };
         case 'secondary':
           return {
-            background: 'rgba(255, 255, 255, 0.9)',
-            color: themedStyles.text,
-            border: `2px solid ${themedStyles.border}`,
+            background: addOpacity(surfaceColor, 0.9),
+            color: themedStyles.text || 'inherit',
+            border: `2px solid ${themedStyles.border || 'transparent'}`,
           };
         case 'success':
+          const successDark = props.$theme?.colors?.status?.success?.dark ||
+                             props.$theme?.status?.success?.dark ||
+                             props.$theme?.colors?.success ||
+                             themedStyles.success;
           return {
-            background: `linear-gradient(135deg, ${themedStyles.success}, #2ECC71)`,
-            color: '#FFFFFF',
+            background: `linear-gradient(135deg, ${themedStyles.success}, ${successDark})`,
+            color: textColor,
             border: 'none',
           };
         case 'warning':
+          const warningDark = props.$theme?.colors?.status?.warning?.dark ||
+                             props.$theme?.status?.warning?.dark ||
+                             props.$theme?.colors?.warning ||
+                             themedStyles.warning;
           return {
-            background: `linear-gradient(135deg, ${themedStyles.warning}, #E67E22)`,
-            color: '#FFFFFF',
+            background: `linear-gradient(135deg, ${themedStyles.warning}, ${warningDark})`,
+            color: textColor,
             border: 'none',
           };
         case 'danger':
+          const errorDark = props.$theme?.colors?.status?.error?.dark ||
+                           props.$theme?.status?.error?.dark ||
+                           props.$theme?.colors?.error ||
+                           themedStyles.error;
           return {
-            background: `linear-gradient(135deg, ${themedStyles.error}, #C0392B)`,
-            color: '#FFFFFF',
+            background: `linear-gradient(135deg, ${themedStyles.error}, ${errorDark})`,
+            color: textColor,
             border: 'none',
           };
         default:
           return {
             background: `linear-gradient(135deg, ${themedStyles.primary}, ${themedStyles.secondary})`,
-            color: '#FFFFFF',
+            color: textColor,
             border: 'none',
           };
       }
@@ -171,7 +213,24 @@ const ButtonContainer = styled.button<{
 const LoadingSpinner = styled.div<{ $theme?: any }>`
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid ${props => {
+    const textColor = props.$theme?.colors?.text?.primary || 
+                     props.$theme?.text?.primary ||
+                     props.$theme?.colors?.text ||
+                     props.$theme?.colors?.surface ||
+                     'currentColor';
+    // Adiciona opacidade à cor
+    if (textColor && textColor.startsWith('#')) {
+      const r = parseInt(textColor.slice(1, 3), 16);
+      const g = parseInt(textColor.slice(3, 5), 16);
+      const b = parseInt(textColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.3)`;
+    }
+    if (textColor && textColor.startsWith('rgb')) {
+      return textColor.replace(')', ', 0.3)').replace('rgb', 'rgba');
+    }
+    return 'transparent';
+  }};
   border-top: 2px solid currentColor;
   border-radius: 50%;
   animation: spin 1s linear infinite;

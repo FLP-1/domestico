@@ -19,6 +19,7 @@ import {
   OptimizedHelpText,
   OptimizedValidationContainer,
 } from '../components/shared/optimized-styles';
+import { ALLOWED_FILE_TYPES, isAllowedCertificateMinimalType } from '../constants/allowedFileTypes';
 
 const FormRow = styled.div`
   display: grid;
@@ -714,13 +715,9 @@ const EmployerModal: React.FC<EmployerModalProps> = ({
         }
 
         // Validar tipo de arquivo
-        const allowedTypes = ['.pfx', '.p12'];
-        const fileExtension = file.name
-          .toLowerCase()
-          .substring(file.name.lastIndexOf('.'));
-        if (!allowedTypes.includes(fileExtension)) {
+        if (!isAllowedCertificateMinimalType(file.name)) {
           alertManager.showError(
-            'Por favor, selecione um arquivo .pfx ou .p12 válido'
+            `Por favor, selecione um arquivo ${ALLOWED_FILE_TYPES.CERTIFICATES_MINIMAL.join(' ou ')} válido`
           );
           event.target.value = '';
           return;

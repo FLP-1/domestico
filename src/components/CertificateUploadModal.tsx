@@ -6,6 +6,7 @@ import { getESocialApiService } from '../services/esocialHybridApi';
 import AccessibleEmoji from './AccessibleEmoji';
 import { UnifiedButton, UnifiedModal } from './unified';
 import { OptimizedErrorMessage } from '../components/shared/optimized-styles';
+import { ALLOWED_FILE_TYPES, isAllowedCertificateType } from '../constants/allowedFileTypes';
 
 // Animações
 const fadeIn = keyframes`
@@ -21,43 +22,94 @@ const pulse = keyframes`
 // Styled Components
 const UploadArea = styled.div<{ $isDragOver: boolean; $theme?: any }>`
   border: 2px dashed
-    ${props =>
-      props.$isDragOver
-        ? props.$theme?.colors?.primary || '#29ABE2'
-        : '#e9ecef'};
+    ${props => {
+      if (props.$isDragOver) {
+        return props.$theme?.colors?.primary ||
+               props.$theme?.accent ||
+               'transparent';
+      }
+      const border = props.$theme?.colors?.border;
+      return (typeof border === 'object' && border?.light) ||
+             props.$theme?.border?.light ||
+             'transparent';
+    }};
   border-radius: 12px;
   padding: 3rem 2rem;
   text-align: center;
-  background: ${props =>
-    props.$isDragOver
-      ? 'rgba(41, 171, 226, 0.05)'
-      : 'rgba(255, 255, 255, 0.9)'};
+  background: ${props => {
+    if (props.$isDragOver) {
+      const primaryColor = props.$theme?.colors?.primary ||
+                           props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.05)`;
+      }
+      return 'transparent';
+    }
+    const bg = props.$theme?.colors?.background?.primary ||
+                props.$theme?.background?.primary ||
+                props.$theme?.colors?.surface ||
+                props.$theme?.colors?.background;
+    if (bg && bg.startsWith('#')) {
+      const r = parseInt(bg.slice(1, 3), 16);
+      const g = parseInt(bg.slice(3, 5), 16);
+      const b = parseInt(bg.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.9)`;
+    }
+    return 'transparent';
+  }};
   transition: all 0.3s ease;
   cursor: pointer;
   animation: ${fadeIn} 0.6s ease-out;
 
   &:hover {
-    border-color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
-    background: rgba(41, 171, 226, 0.05);
+    border-color: ${props =>
+      props.$theme?.colors?.primary ||
+      props.$theme?.accent ||
+      'transparent'};
+    background: ${props => {
+      const primaryColor = props.$theme?.colors?.primary ||
+                           props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.05)`;
+      }
+      return 'transparent';
+    }};
   }
 `;
 
 const UploadIcon = styled.div<{ $theme?: any }>`
   font-size: 3rem;
   margin-bottom: 1rem;
-  color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
+  color: ${props =>
+    props.$theme?.colors?.primary ||
+    props.$theme?.accent ||
+    'inherit'};
 `;
 
 const UploadText = styled.div<{ $theme?: any }>`
   font-size: 1.1rem;
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin-bottom: 0.5rem;
 `;
 
 const UploadSubtext = styled.div<{ $theme?: any }>`
   font-size: 0.9rem;
-  color: #7f8c8d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin-bottom: 1rem;
 `;
 
@@ -66,8 +118,25 @@ const FileInput = styled.input<{ $theme?: any }>`
 `;
 
 const FileInfo = styled.div<{ $theme?: any }>`
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #e9ecef;
+  background: ${props => {
+    const bg = props.$theme?.colors?.background?.primary ||
+                props.$theme?.background?.primary ||
+                props.$theme?.colors?.surface ||
+                props.$theme?.colors?.background;
+    if (bg && bg.startsWith('#')) {
+      const r = parseInt(bg.slice(1, 3), 16);
+      const g = parseInt(bg.slice(3, 5), 16);
+      const b = parseInt(bg.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.9)`;
+    }
+    return 'transparent';
+  }};
+  border: 1px solid ${props => {
+    const border = props.$theme?.colors?.border;
+    return (typeof border === 'object' && border?.light) ||
+           props.$theme?.border?.light ||
+           'transparent';
+  }};
   border-radius: 8px;
   padding: 1rem;
   margin-top: 1rem;
@@ -76,22 +145,45 @@ const FileInfo = styled.div<{ $theme?: any }>`
 
 const FileName = styled.div<{ $theme?: any }>`
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin-bottom: 0.5rem;
 `;
 
 const FileSize = styled.div<{ $theme?: any }>`
   font-size: 0.9rem;
-  color: #7f8c8d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
 const CertificateInfo = styled.div<{ $theme?: any }>`
-  background: linear-gradient(
-    135deg,
-    ${props => props.$theme?.colors?.success || '#90EE90'}20,
-    ${props => props.$theme?.colors?.primary || '#29ABE2'}20
-  );
-  border: 1px solid ${props => props.$theme?.colors?.success || '#90EE90'};
+  background: ${props => {
+    const successColor = props.$theme?.colors?.success ||
+                         props.$theme?.colors?.status?.success?.background;
+    const primaryColor = props.$theme?.colors?.primary ||
+                         props.$theme?.accent;
+    
+    if (successColor && primaryColor && successColor.startsWith('#') && primaryColor.startsWith('#')) {
+      const sR = parseInt(successColor.slice(1, 3), 16);
+      const sG = parseInt(successColor.slice(3, 5), 16);
+      const sB = parseInt(successColor.slice(5, 7), 16);
+      const pR = parseInt(primaryColor.slice(1, 3), 16);
+      const pG = parseInt(primaryColor.slice(3, 5), 16);
+      const pB = parseInt(primaryColor.slice(5, 7), 16);
+      return `linear-gradient(135deg, rgba(${sR}, ${sG}, ${sB}, 0.2), rgba(${pR}, ${pG}, ${pB}, 0.2))`;
+    }
+    return 'transparent';
+  }};
+  border: 1px solid ${props =>
+    props.$theme?.colors?.success ||
+    props.$theme?.colors?.status?.success?.background ||
+    'transparent'};
   border-radius: 8px;
   padding: 1.5rem;
   margin-top: 1rem;
@@ -99,7 +191,10 @@ const CertificateInfo = styled.div<{ $theme?: any }>`
 
 const InfoTitle = styled.div<{ $theme?: any }>`
   font-weight: 700;
-  color: ${props => props.$theme?.colors?.primary || '#29ABE2'};
+  color: ${props =>
+    props.$theme?.colors?.primary ||
+    props.$theme?.accent ||
+    'inherit'};
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
@@ -115,11 +210,19 @@ const InfoRow = styled.div<{ $theme?: any }>`
 
 const InfoLabel = styled.span<{ $theme?: any }>`
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
 `;
 
 const InfoValue = styled.span<{ $theme?: any }>`
-  color: #7f8c8d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   text-align: right;
   max-width: 60%;
   word-break: break-all;
@@ -130,17 +233,44 @@ const StatusBadge = styled.span<{ $isValid: boolean; $theme?: any }>`
   border-radius: 12px;
   font-size: 0.8rem;
   font-weight: 600;
-  background: ${props =>
-    props.$isValid ? props.$theme?.colors?.success || '#90EE90' : '#e74c3c'};
-  color: white;
+  background: ${props => {
+    if (props.$isValid) {
+      return props.$theme?.colors?.success ||
+             props.$theme?.colors?.status?.success?.background ||
+             'transparent';
+    }
+    return props.$theme?.colors?.error ||
+           props.$theme?.colors?.status?.error?.background ||
+           'transparent';
+  }};
+  color: ${props =>
+    props.$theme?.colors?.text?.onPrimary ||
+    props.$theme?.text?.onPrimary ||
+    props.$theme?.colors?.text?.primary ||
+    'inherit'};
   animation: ${props => (props.$isValid ? pulse : 'none')} 2s infinite;
 `;
 
 const LoadingSpinner = styled.div<{ $theme?: any }>`
   width: 20px;
   height: 20px;
-  border: 2px solid #f3f3f3;
-  border-top: 2px solid ${props => props.$theme?.colors?.primary || '#29ABE2'};
+  border: 2px solid ${props => {
+    const bg = props.$theme?.colors?.background?.secondary ||
+                props.$theme?.background?.secondary ||
+                props.$theme?.colors?.surface ||
+                'transparent';
+    if (bg && bg.startsWith('#')) {
+      const r = parseInt(bg.slice(1, 3), 16);
+      const g = parseInt(bg.slice(3, 5), 16);
+      const b = parseInt(bg.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.3)`;
+    }
+    return 'transparent';
+  }};
+  border-top: 2px solid ${props =>
+    props.$theme?.colors?.primary ||
+    props.$theme?.accent ||
+    'inherit'};
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-right: 0.5rem;
@@ -156,13 +286,29 @@ const LoadingSpinner = styled.div<{ $theme?: any }>`
 `;
 
 const ErrorMessage = styled.div<{ $theme?: any }>`
-  color: #e74c3c;
+  color: ${props =>
+    props.$theme?.colors?.error ||
+    props.$theme?.colors?.status?.error?.text ||
+    'inherit'};
   font-size: 0.9rem;
   margin-top: 0.5rem;
   padding: 0.5rem;
-  background: rgba(231, 76, 60, 0.1);
+  background: ${props => {
+    const errorColor = props.$theme?.colors?.error ||
+                        props.$theme?.colors?.status?.error?.background;
+    if (errorColor && errorColor.startsWith('#')) {
+      const r = parseInt(errorColor.slice(1, 3), 16);
+      const g = parseInt(errorColor.slice(3, 5), 16);
+      const b = parseInt(errorColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return 'transparent';
+  }};
   border-radius: 4px;
-  border-left: 3px solid #e74c3c;
+  border-left: 3px solid ${props =>
+    props.$theme?.colors?.error ||
+    props.$theme?.colors?.status?.error?.background ||
+    'transparent'};
 `;
 
 // Interfaces
@@ -212,14 +358,9 @@ const CertificateUploadModal: React.FC<CertificateUploadModalProps> = ({
 
   const handleFileSelect = (file: File) => {
     // Validar tipo de arquivo
-    const allowedTypes = ['.pfx', '.p12', '.cer', '.crt', '.pem'];
-    const fileExtension = file.name
-      .toLowerCase()
-      .substring(file.name.lastIndexOf('.'));
-
-    if (!allowedTypes.includes(fileExtension)) {
+    if (!isAllowedCertificateType(file.name)) {
       setError(
-        'Tipo de arquivo não suportado. Use .pfx, .p12, .cer, .crt ou .pem'
+        `Tipo de arquivo não suportado. Use ${ALLOWED_FILE_TYPES.CERTIFICATES.join(', ')}`
       );
       return;
     }

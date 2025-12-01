@@ -1,0 +1,1 @@
+﻿Type error: Property '$theme' does not exist on type 'ThemedStyledProps<Omit<DetailedHTMLProps<SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>, "ref"> & { ...; } & { ...; }, any>'. Did you mean 'theme'?

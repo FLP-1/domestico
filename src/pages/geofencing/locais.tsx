@@ -54,6 +54,13 @@ const Actions = styled.div<{ $theme?: Theme }>`
   gap: 10px;
 `;
 
+// Styled Components para substituir estilos inline
+const FooterActions = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+`;
+
 const ActionButton = styled.button<{
   $variant?: 'primary' | 'secondary' | 'danger';
   $theme?: Theme;
@@ -88,14 +95,24 @@ const ActionButton = styled.button<{
   }}
 `;
 
-const Modal = styled.div<{ $show: boolean }>`
+const Modal = styled.div<{ $show: boolean; $theme?: Theme }>`
   display: ${props => (props.$show ? 'flex' : 'none')};
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        (typeof (props.$theme as any)?.shadow === 'object' && (props.$theme as any)?.shadow && 'color' in (props.$theme as any).shadow ? String(((props.$theme as any).shadow as any).color) : null);
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.5)`;
+    }
+    return 'transparent';
+  }};
   justify-content: center;
   align-items: center;
   z-index: 1000;
@@ -380,24 +397,24 @@ export default function LocaisTrabalho() {
   // Loading state para tema
   if (themeLoading || !theme) {
     return (
-      <Container>
-        <Loading $theme={theme || { colors: { text: { secondary: '#666' } } }}>
+      <PageContainer>
+        <Loading $theme={theme || { colors: { text: { secondary: 'inherit' } } }}>
           Carregando tema...
         </Loading>
-      </Container>
+      </PageContainer>
     );
   }
 
   if (loading) {
     return (
-      <Container>
+      <PageContainer>
         <Loading $theme={theme}>Carregando locais de trabalho...</Loading>
-      </Container>
+      </PageContainer>
     );
   }
 
   return (
-    <Container>
+    <PageContainer>
       <PageHeader
         $theme={theme}
         title={
@@ -448,7 +465,7 @@ export default function LocaisTrabalho() {
             size='md'
             title={local.nome}
             footer={
-              <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+              <FooterActions>
                 <UnifiedBadge 
                   variant={local.ativo ? 'success' : 'error'} 
                   size="sm" 
@@ -472,7 +489,7 @@ export default function LocaisTrabalho() {
                   </span>{' '}
                   Excluir
                 </ActionButton>
-              </div>
+              </FooterActions>
             }
           >
             <UnifiedMetaInfo
@@ -499,7 +516,7 @@ export default function LocaisTrabalho() {
         ))
       )}
 
-      <Modal $show={showModal}>
+      <Modal $show={showModal} $theme={theme}>
         <ModalContent>
           <ModalHeader>
             <ModalTitle $theme={theme}>
@@ -540,8 +557,9 @@ export default function LocaisTrabalho() {
             </FormGroup>
 
             <FormGroup>
-              <Label>Grupo</Label>
+              <Label htmlFor='grupo-select'>Grupo</Label>
               <Select
+                id='grupo-select'
                 $theme={theme}
                 value={formData.grupoId}
                 onChange={(e: any) =>
@@ -549,6 +567,7 @@ export default function LocaisTrabalho() {
                 }
                 required
                 aria-label='Selecionar grupo'
+                title='Selecionar grupo'
               >
                 <option value=''>Selecione um grupo</option>
                 {grupos.map((grupo: any) => (

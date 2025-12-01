@@ -5,6 +5,7 @@ import configService from '../../../lib/configService';
 import { logger } from '../../../utils/logger';
 import timeClockNotificationService from '../../../services/timeClockNotificationService';
 import crypto from 'crypto';
+import { ALLOWED_FILE_TYPES, isValidTimeClockRecordType } from '../../../constants/allowedFileTypes';
 
 export default async function handler(
   req: NextApiRequest,
@@ -57,12 +58,8 @@ export default async function handler(
   } else if (req.method === 'POST') {
     try {
       const allowedTypes = new Set([
-        'entrada',
-        'saida_almoco',
-        'retorno_almoco',
-        'saida',
-        'inicio_extra',
-        'fim_extra',
+        ...ALLOWED_FILE_TYPES.TIME_CLOCK_RECORDS,
+        'fim_extra', // Mantido para compatibilidade
       ]);
 
       const body = req.body || {};
@@ -173,7 +170,8 @@ export default async function handler(
             usuarioPerfilIdFinal,
           });
         } catch (error) {
-          logger.error('Erro ao buscar dados do usuário:', error);
+          const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+          logger.error('Erro ao buscar dados do usuário:', errorMessage, error);
           return res
             .status(500)
             .json({ success: false, error: 'Erro ao buscar dados do usuário' });
@@ -181,7 +179,7 @@ export default async function handler(
       }
 
       // Validações básicas de entrada
-      if (!tipo || typeof tipo !== 'string' || !allowedTypes.has(tipo)) {
+      if (!tipo || typeof tipo !== 'string' || (!isValidTimeClockRecordType(tipo) && tipo !== 'fim_extra')) {
         return res
           .status(400)
           .json({ success: false, error: 'Tipo de registro inválido' });

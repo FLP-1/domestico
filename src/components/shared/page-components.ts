@@ -24,13 +24,26 @@ import type { Theme } from '../../types/theme';
 export const PageSection = styled.section<{ $theme?: Theme }>`
   margin-bottom: ${getSpacing('xl')};
   padding: ${getSpacing('lg')};
-  background: ${props =>
-    props.$theme?.colors?.background?.primary ||
-    props.$theme?.background?.primary ||
-    'transparent'};
+  background: ${props => {
+    const bg = props.$theme?.colors?.background;
+    if (typeof bg === 'object' && bg && 'primary' in bg) {
+      return String((bg as any).primary);
+    }
+    if (typeof bg === 'string') {
+      return bg;
+    }
+    const themeBg = (props.$theme as any)?.background;
+    if (typeof themeBg === 'object' && themeBg && 'primary' in themeBg) {
+      return String((themeBg as any).primary);
+    }
+    if (typeof themeBg === 'string') {
+      return themeBg;
+    }
+    return 'transparent';
+  }};
   border-radius: ${getBorderRadius('lg')};
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    const shadowColor = props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -40,8 +53,8 @@ export const PageSection = styled.section<{ $theme?: Theme }>`
     return getShadow('md');
   }};
   border: 1px solid ${props =>
-    props.$theme?.colors?.border?.light ||
-    props.$theme?.border?.light ||
+    (typeof props.$theme?.colors?.border === 'object' && props.$theme?.colors?.border && 'light' in props.$theme.colors.border ? String((props.$theme.colors.border as any).light) : null) ||
+    (typeof (props.$theme as any)?.border === 'object' && (props.$theme as any)?.border && 'light' in (props.$theme as any).border ? String((props.$theme as any).border.light) : null) ||
     props.$theme?.colors?.border ||
     'transparent'};
   animation: ${fadeIn} 0.3s ease-out;
@@ -74,7 +87,13 @@ export const ContentGrid = styled.div<{
  * FlexRow - Linha flexível horizontal
  * Uso: Agrupar elementos horizontalmente com espaçamento consistente
  */
-export const FlexRow = styled.div<{
+export const FlexRow = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    if (prop === 'className' || prop === 'children') return true;
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{
   $gap?: 'sm' | 'md' | 'lg' | 'xl';
   $align?: 'start' | 'center' | 'end' | 'stretch';
   $justify?: 'start' | 'center' | 'end' | 'space-between' | 'space-around';
@@ -91,7 +110,13 @@ export const FlexRow = styled.div<{
  * FlexColumn - Coluna flexível vertical
  * Uso: Agrupar elementos verticalmente com espaçamento consistente
  */
-export const FlexColumn = styled.div<{
+export const FlexColumn = styled.div.withConfig({
+  shouldForwardProp: (prop) => {
+    if (prop === 'className' || prop === 'children') return true;
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{
   $gap?: 'sm' | 'md' | 'lg' | 'xl';
   $align?: 'start' | 'center' | 'end' | 'stretch';
 }>`
@@ -125,13 +150,13 @@ export const PageTitle = styled.h1<{ $theme?: Theme; $size?: 'md' | 'lg' | 'xl' 
   }};
   font-weight: 700;
   color: ${props =>
-    props.$theme?.colors?.text?.dark ||
-    props.$theme?.text?.dark ||
+    (typeof props.$theme?.colors?.text === 'object' && props.$theme?.colors?.text && 'dark' in props.$theme.colors.text ? String((props.$theme.colors.text as any).dark) : null) ||
+    (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'dark' in (props.$theme as any).text ? String((props.$theme as any).text.dark) : null) ||
     props.$theme?.colors?.primary ||
     'inherit'};
   margin: 0 0 ${getSpacing('sm')} 0;
   text-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    const shadowColor = props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -149,8 +174,8 @@ export const PageTitle = styled.h1<{ $theme?: Theme; $size?: 'md' | 'lg' | 'xl' 
 export const PageSubtitle = styled.p<{ $theme?: Theme }>`
   font-size: ${getFontSize('lg')};
   color: ${props =>
-    props.$theme?.colors?.text?.secondary ||
-    props.$theme?.text?.secondary ||
+    (typeof props.$theme?.colors?.text === 'object' && props.$theme?.colors?.text && 'secondary' in props.$theme.colors.text ? String((props.$theme.colors.text as any).secondary) : null) ||
+    (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'secondary' in (props.$theme as any).text ? String((props.$theme as any).text.secondary) : null) ||
     'inherit'};
   margin: 0 0 ${getSpacing('xl')} 0;
   font-weight: 500;
@@ -177,8 +202,8 @@ export const SectionTitle = styled.h2<{ $theme?: Theme; $size?: 'sm' | 'md' | 'l
   }};
   font-weight: 600;
   color: ${props =>
-    props.$theme?.colors?.text?.dark ||
-    props.$theme?.text?.dark ||
+    (typeof props.$theme?.colors?.text === 'object' && props.$theme?.colors?.text && 'dark' in props.$theme.colors.text ? String((props.$theme.colors.text as any).dark) : null) ||
+    (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'dark' in (props.$theme as any).text ? String((props.$theme as any).text.dark) : null) ||
     'inherit'};
   margin: 0 0 ${getSpacing('md')} 0;
   display: flex;
@@ -186,8 +211,8 @@ export const SectionTitle = styled.h2<{ $theme?: Theme; $size?: 'sm' | 'md' | 'l
   gap: ${getSpacing('sm')};
   padding-bottom: ${getSpacing('sm')};
   border-bottom: 1px solid ${props =>
-    props.$theme?.colors?.border?.light ||
-    props.$theme?.border?.light ||
+    (typeof props.$theme?.colors?.border === 'object' && props.$theme?.colors?.border && 'light' in props.$theme.colors.border ? String((props.$theme.colors.border as any).light) : null) ||
+    (typeof (props.$theme as any)?.border === 'object' && (props.$theme as any)?.border && 'light' in (props.$theme as any).border ? String((props.$theme as any).border.light) : null) ||
     'transparent'};
 `;
 
@@ -198,18 +223,15 @@ export const SectionTitle = styled.h2<{ $theme?: Theme; $size?: 'sm' | 'md' | 'l
 export const BodyText = styled.p<{ $theme?: Theme; $variant?: 'primary' | 'secondary' }>`
   font-size: ${getFontSize('md')};
   color: ${props => {
+    const text = props.$theme?.colors?.text;
     if (props.$variant === 'secondary') {
-      return (
-        props.$theme?.colors?.text?.secondary ||
-        props.$theme?.text?.secondary ||
-        'inherit'
-      );
+      return (typeof text === 'object' && text && 'secondary' in text ? String((text as any).secondary) : null) ||
+             (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'secondary' in (props.$theme as any).text ? String((props.$theme as any).text.secondary) : null) ||
+             'inherit';
     }
-    return (
-      props.$theme?.colors?.text?.dark ||
-      props.$theme?.text?.dark ||
-      'inherit'
-    );
+    return (typeof text === 'object' && text && 'dark' in text ? String((text as any).dark) : null) ||
+           (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'dark' in (props.$theme as any).text ? String((props.$theme as any).text.dark) : null) ||
+           'inherit';
   }};
   margin: 0 0 ${getSpacing('md')} 0;
   line-height: 1.6;
@@ -228,10 +250,23 @@ export const CardContainer = styled.div<{
   $variant?: 'default' | 'elevated' | 'outlined';
   $padding?: 'sm' | 'md' | 'lg';
 }>`
-  background: ${props =>
-    props.$theme?.colors?.background?.primary ||
-    props.$theme?.background?.primary ||
-    'transparent'};
+  background: ${props => {
+    const bg = props.$theme?.colors?.background;
+    if (typeof bg === 'object' && bg && 'primary' in bg) {
+      return String((bg as any).primary);
+    }
+    if (typeof bg === 'string') {
+      return bg;
+    }
+    const themeBg = (props.$theme as any)?.background;
+    if (typeof themeBg === 'object' && themeBg && 'primary' in themeBg) {
+      return String((themeBg as any).primary);
+    }
+    if (typeof themeBg === 'string') {
+      return themeBg;
+    }
+    return 'transparent';
+  }};
   border-radius: ${getBorderRadius('lg')};
   padding: ${props => {
     switch (props.$padding) {
@@ -257,8 +292,8 @@ export const CardContainer = styled.div<{
   border: ${props => {
     if (props.$variant === 'outlined') {
       return `1px solid ${
-        props.$theme?.colors?.border?.light ||
-        props.$theme?.border?.light ||
+        (typeof props.$theme?.colors?.border === 'object' && props.$theme?.colors?.border && 'light' in props.$theme.colors.border ? String((props.$theme.colors.border as any).light) : null) ||
+        (typeof (props.$theme as any)?.border === 'object' && (props.$theme as any)?.border && 'light' in (props.$theme as any).border ? String((props.$theme as any).border.light) : null) ||
         'transparent'
       }`;
     }
@@ -278,87 +313,75 @@ export const InfoBox = styled.div<{
   padding: ${getSpacing('md')};
   border-radius: ${getBorderRadius('md')};
   border-left: 4px solid ${props => {
+    const getStatusBorder = (statusType: 'success' | 'warning' | 'error' | 'info') => {
+      const status = props.$theme?.colors?.status?.[statusType];
+      if (typeof status === 'object' && status && 'border' in status) {
+        return String((status as any).border);
+      }
+      const altStatus = (props.$theme as any)?.status?.[statusType];
+      if (typeof altStatus === 'object' && altStatus && 'border' in altStatus) {
+        return String((altStatus as any).border);
+      }
+      return 'transparent';
+    };
+    
     switch (props.$variant) {
       case 'success':
-        return (
-          props.$theme?.colors?.status?.success?.border ||
-          props.$theme?.status?.success?.border ||
-          'transparent'
-        );
+        return getStatusBorder('success');
       case 'warning':
-        return (
-          props.$theme?.colors?.status?.warning?.border ||
-          props.$theme?.status?.warning?.border ||
-          'transparent'
-        );
+        return getStatusBorder('warning');
       case 'error':
-        return (
-          props.$theme?.colors?.status?.error?.border ||
-          props.$theme?.status?.error?.border ||
-          'transparent'
-        );
+        return getStatusBorder('error');
       default:
-        return (
-          props.$theme?.colors?.status?.info?.border ||
-          props.$theme?.status?.info?.border ||
-          'transparent'
-        );
+        return getStatusBorder('info');
     }
   }};
   background: ${props => {
+    const getStatusBackground = (statusType: 'success' | 'warning' | 'error' | 'info') => {
+      const status = props.$theme?.colors?.status?.[statusType];
+      if (typeof status === 'object' && status && 'background' in status) {
+        return String((status as any).background);
+      }
+      const altStatus = (props.$theme as any)?.status?.[statusType];
+      if (typeof altStatus === 'object' && altStatus && 'background' in altStatus) {
+        return String((altStatus as any).background);
+      }
+      return 'transparent';
+    };
+    
     switch (props.$variant) {
       case 'success':
-        return (
-          props.$theme?.colors?.status?.success?.background ||
-          props.$theme?.status?.success?.background ||
-          'transparent'
-        );
+        return getStatusBackground('success');
       case 'warning':
-        return (
-          props.$theme?.colors?.status?.warning?.background ||
-          props.$theme?.status?.warning?.background ||
-          'transparent'
-        );
+        return getStatusBackground('warning');
       case 'error':
-        return (
-          props.$theme?.colors?.status?.error?.background ||
-          props.$theme?.status?.error?.background ||
-          'transparent'
-        );
+        return getStatusBackground('error');
       default:
-        return (
-          props.$theme?.colors?.status?.info?.background ||
-          props.$theme?.status?.info?.background ||
-          'transparent'
-        );
+        return getStatusBackground('info');
     }
   }};
   color: ${props => {
+    const getStatusText = (statusType: 'success' | 'warning' | 'error' | 'info') => {
+      const status = props.$theme?.colors?.status?.[statusType];
+      if (typeof status === 'object' && status && 'text' in status) {
+        return String((status as any).text);
+      }
+      const altStatus = (props.$theme as any)?.status?.[statusType];
+      if (typeof altStatus === 'object' && altStatus && 'text' in altStatus) {
+        return String((altStatus as any).text);
+      }
+      return 'inherit';
+    };
+    
     switch (props.$variant) {
       case 'success':
-        return (
-          props.$theme?.colors?.status?.success?.text ||
-          props.$theme?.status?.success?.text ||
-          'inherit'
-        );
+        return getStatusText('success');
       case 'warning':
-        return (
-          props.$theme?.colors?.status?.warning?.text ||
-          props.$theme?.status?.warning?.text ||
-          'inherit'
-        );
+        return getStatusText('warning');
       case 'error':
-        return (
-          props.$theme?.colors?.status?.error?.text ||
-          props.$theme?.status?.error?.text ||
-          'inherit'
-        );
+        return getStatusText('error');
       default:
-        return (
-          props.$theme?.colors?.status?.info?.text ||
-          props.$theme?.status?.info?.text ||
-          'inherit'
-        );
+        return getStatusText('info');
     }
   }};
   margin-bottom: ${getSpacing('md')};
@@ -376,8 +399,8 @@ export const Divider = styled.hr<{ $theme?: Theme; $variant?: 'solid' | 'dashed'
   border: none;
   border-top: 1px ${props => props.$variant || 'solid'}
     ${props =>
-      props.$theme?.colors?.border?.light ||
-      props.$theme?.border?.light ||
+      (typeof props.$theme?.colors?.border === 'object' && props.$theme?.colors?.border && 'light' in props.$theme.colors.border ? String((props.$theme.colors.border as any).light) : null) ||
+      (typeof (props.$theme as any)?.border === 'object' && (props.$theme as any)?.border && 'light' in (props.$theme as any).border ? String((props.$theme as any).border.light) : null) ||
       'transparent'};
   margin: ${getSpacing('xl')} 0;
 `;
@@ -405,8 +428,8 @@ export const LoadingContainer = styled.div<{ $theme?: Theme }>`
   justify-content: center;
   min-height: 400px;
   color: ${props =>
-    props.$theme?.colors?.text?.secondary ||
-    props.$theme?.text?.secondary ||
+    (typeof props.$theme?.colors?.text === 'object' && props.$theme?.colors?.text && 'secondary' in props.$theme.colors.text ? String((props.$theme.colors.text as any).secondary) : null) ||
+    (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'secondary' in (props.$theme as any).text ? String((props.$theme as any).text.secondary) : null) ||
     'inherit'};
 `;
 
@@ -418,8 +441,8 @@ export const EmptyState = styled.div<{ $theme?: Theme }>`
   text-align: center;
   padding: ${getSpacing('2xl')};
   color: ${props =>
-    props.$theme?.colors?.text?.secondary ||
-    props.$theme?.text?.secondary ||
+    (typeof props.$theme?.colors?.text === 'object' && props.$theme?.colors?.text && 'secondary' in props.$theme.colors.text ? String((props.$theme.colors.text as any).secondary) : null) ||
+    (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'secondary' in (props.$theme as any).text ? String((props.$theme as any).text.secondary) : null) ||
     'inherit'};
 `;
 

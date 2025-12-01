@@ -131,7 +131,8 @@ export const useGeolocationCapture = () => {
             : null,
         };
       } catch (error: any) {
-        logger.error(`❌ Erro na ação ${actionName}:`, error);
+        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+        logger.error(`❌ Erro na ação ${actionName}:`, errorMessage, error);
 
         // Mesmo com erro de geolocalização, tentar executar a ação
         try {

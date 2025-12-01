@@ -8,96 +8,100 @@ datasource db {
 }
 
 model Usuario {
-  id                       String                         @id @default(uuid())
-  cpf                      String                         @unique @db.VarChar(11)
-  nomeCompleto             String                         @db.VarChar(255)
-  apelido                  String?                        @db.VarChar(100)
-  dataNascimento           DateTime                       @db.Date
-  email                    String                         @unique @db.VarChar(255)
-  emailVerificado          Boolean                        @default(false)
-  telefone                 String                         @db.VarChar(11)
-  telefoneVerificado       Boolean                        @default(false)
-  logradouro               String?                        @db.VarChar(255)
-  numero                   String?                        @db.VarChar(20)
-  complemento              String?                        @db.VarChar(100)
-  bairro                   String?                        @db.VarChar(100)
-  cidade                   String?                        @db.VarChar(100)
-  uf                       String?                        @db.VarChar(2)
-  cep                      String?                        @db.VarChar(8)
-  senhaHash                String                         @db.VarChar(255)
-  salt                     String                         @db.VarChar(255)
-  autenticacao2FA          Boolean                        @default(false)
-  secret2FA                String?                        @db.VarChar(255)
-  refreshToken             String?
-  resetPasswordToken       String?
-  resetPasswordExpires     DateTime?
-  codigoRecuperacao        String?                        @db.VarChar(10)
-  codigoExpiraEm           DateTime?
-  biometriaAtiva           Boolean                        @default(false)
-  biometriaHash            String?
-  bloqueado                Boolean                        @default(false)
-  bloqueadoAte             DateTime?
-  motivoBloqueio           String?
-  tentativasLogin          Int                            @default(0)
-  ultimasTentativasLogin   Json?
-  ultimoAcesso             DateTime?
-  notificarNovoDispositivo Boolean                        @default(true)
-  notificarLoginSuspeito   Boolean                        @default(true)
-  consentimentoLGPD        Boolean                        @default(false)
-  dataConsentimento        DateTime?
-  termosAceitos            Boolean                        @default(false)
-  versaoTermos             String?                        @db.VarChar(20)
-  ativo                    Boolean                        @default(true)
-  criadoEm                 DateTime                       @default(now())
-  atualizadoEm             DateTime                       @updatedAt
-  aceitesTermos            AceiteTermo[]
-  alertas                  Alerta[]
-  assinaturas              Assinatura[]
-  atividadeRecente         AtividadeRecente[]
-  analisesComportamento    BehaviorAnalysis[]
-  conversasParticipante    ConversaParticipante[]
-  convites                 Convite[]
-  deviceFingerprints       DeviceFingerprint[]
-  dispositivos             Dispositivo[]
-  documentos               Documento[]
-  documentosCompartilhados DocumentoCompartilhamento[]
-  emprestimosSolicitados   Emprestimo[]                   @relation("EmprestimosEmpregado")
-  emprestimosAprovados     Emprestimo[]                   @relation("EmprestimosEmpregador")
-  folhaPagamento           FolhaPagamento[]
-  geofencingLogs           GeofencingLog[]
-  geofencingValidacoes     GeofencingValidacao[]
-  geolocalizacoesHistorico GeolocationHistory[]
-  guiasImpostos            GuiaImposto[]
-  historicosLogin          HistoricoLogin[]
-  listasCompras            ListaCompras[]
-  listasCompartilhadas     ListaComprasCompartilhamento[]
-  locaisAtualizados        LocalTrabalho[]                @relation("LocaisAtualizados")
-  locaisCriados            LocalTrabalho[]                @relation("LocaisCriados")
-  locaisEmpregador         LocalTrabalho[]                @relation("LocaisEmpregador")
-  logs                     LogAuditoria[]
-  membrosFamilia           MembroFamilia[]                @relation("MembrosFamiliaPrincipal")
-  membrosFamiliaVinculados MembroFamilia[]                @relation("MembrosFamiliaVinculados")
-  mensagens                Mensagem[]
-  mensagensLidas           MensagemLeitura[]
-  mensagensReacoes         MensagemReacao[]
-  networkFingerprints      NetworkFingerprint[]
-  notificacoes             Notificacao[]
-  onboarding               Onboarding?
-  pontosRegistrados        RegistroPonto[]
-  analisesRisco            RiskAnalysis[]
-  sessoes                  Sessao[]
-  solicitacoesHoraExtra    SolicitacaoHoraExtra[]
-  tarefas                  Tarefa[]                       @relation("TarefasAtribuidas")
-  tarefasCriadas           Tarefa[]                       @relation("TarefasCriadas")
-  tarefasComentarios       TarefaComentario[]
-  gruposUsuario            UsuarioGrupo[]
-  perfis                   UsuarioPerfil[]
-  validacoesContato        ValidacaoContato[]
+  id                          String                         @id @default(uuid())
+  cpf                         String                         @unique @db.VarChar(11)
+  nomeCompleto                String                         @db.VarChar(255)
+  apelido                     String?                        @db.VarChar(100)
+  dataNascimento              DateTime                       @db.Date
+  email                       String                         @unique @db.VarChar(255)
+  emailVerificado             Boolean                        @default(false)
+  telefone                    String                         @db.VarChar(11)
+  telefoneVerificado          Boolean                        @default(false)
+  logradouro                  String?                        @db.VarChar(255)
+  numero                      String?                        @db.VarChar(20)
+  complemento                 String?                        @db.VarChar(100)
+  bairro                      String?                        @db.VarChar(100)
+  cidade                      String?                        @db.VarChar(100)
+  uf                          String?                        @db.VarChar(2)
+  cep                         String?                        @db.VarChar(8)
+  senhaHash                   String                         @db.VarChar(255)
+  salt                        String                         @db.VarChar(255)
+  autenticacao2FA             Boolean                        @default(false)
+  secret2FA                   String?                        @db.VarChar(255)
+  refreshToken                String?
+  resetPasswordToken          String?
+  resetPasswordExpires        DateTime?
+  codigoRecuperacao           String?                        @db.VarChar(10)
+  codigoExpiraEm              DateTime?
+  biometriaAtiva              Boolean                        @default(false)
+  biometriaHash               String?
+  bloqueado                   Boolean                        @default(false)
+  bloqueadoAte                DateTime?
+  motivoBloqueio              String?
+  tentativasLogin             Int                            @default(0)
+  ultimasTentativasLogin      Json?
+  ultimoAcesso                DateTime?
+  notificarNovoDispositivo    Boolean                        @default(true)
+  notificarLoginSuspeito      Boolean                        @default(true)
+  consentimentoLGPD           Boolean                        @default(false)
+  dataConsentimento           DateTime?
+  termosAceitos               Boolean                        @default(false)
+  versaoTermos                String?                        @db.VarChar(20)
+  ativo                       Boolean                        @default(true)
+  criadoEm                    DateTime                       @default(now())
+  atualizadoEm                DateTime                       @updatedAt
+  aceitesTermos               AceiteTermo[]
+  alertas                     Alerta[]
+  assinaturas                 Assinatura[]
+  atividadeRecente            AtividadeRecente[]
+  analisesComportamento       BehaviorAnalysis[]
+  conversasParticipante       ConversaParticipante[]
+  convites                    Convite[]
+  deviceFingerprints          DeviceFingerprint[]
+  dispositivos                Dispositivo[]
+  documentos                  Documento[]
+  documentosCompartilhados    DocumentoCompartilhamento[]
+  emprestimosSolicitados      Emprestimo[]                   @relation("EmprestimosEmpregado")
+  emprestimosAprovados        Emprestimo[]                   @relation("EmprestimosEmpregador")
+  folhaPagamento              FolhaPagamento[]
+  geofencingLogs              GeofencingLog[]
+  geofencingValidacoes        GeofencingValidacao[]
+  geolocalizacoesHistorico    GeolocationHistory[]
+  guiasImpostos               GuiaImposto[]
+  historicosLogin             HistoricoLogin[]
+  listasCompras               ListaCompras[]
+  listasCompartilhadas        ListaComprasCompartilhamento[]
+  locaisAtualizados           LocalTrabalho[]                @relation("LocaisAtualizados")
+  locaisCriados               LocalTrabalho[]                @relation("LocaisCriados")
+  locaisEmpregador            LocalTrabalho[]                @relation("LocaisEmpregador")
+  logs                        LogAuditoria[]
+  membrosFamilia              MembroFamilia[]                @relation("MembrosFamiliaPrincipal")
+  membrosFamiliaVinculados    MembroFamilia[]                @relation("MembrosFamiliaVinculados")
+  mensagens                   Mensagem[]
+  mensagensLidas              MensagemLeitura[]
+  mensagensReacoes            MensagemReacao[]
+  networkFingerprints         NetworkFingerprint[]
+  notificacoes                Notificacao[]
+  onboarding                  Onboarding?
+  pontosRegistrados           RegistroPonto[]
+  analisesRisco               RiskAnalysis[]
+  sessoes                     Sessao[]
+  solicitacoesHoraExtra       SolicitacaoHoraExtra[]
+  tarefas                     Tarefa[]                       @relation("TarefasAtribuidas")
+  tarefasCriadas              Tarefa[]                       @relation("TarefasCriadas")
+  tarefasComentarios          TarefaComentario[]
+  gruposUsuario               UsuarioGrupo[]
+  perfis                      UsuarioPerfil[]
+  validacoesContato           ValidacaoContato[]
   configuracoesGeolocalizacao ConfiguracaoGeolocalizacao[]
-  configuracoesAntifraude  ConfiguracaoAntifraude[]
-  historicosConfiguracao   HistoricoConfiguracao[]
-  guideProgress            GuideProgress[]
-  mensagensHistorico       MensagemHistorico[]
+  configuracoesAntifraude     ConfiguracaoAntifraude[]
+  historicosConfiguracao      HistoricoConfiguracao[]
+  guideProgress               GuideProgress[]
+  mensagensHistorico          MensagemHistorico[]
+  documentosTrabalhistas      DocumentoTrabalhista[]
+  checklistsDocumentos        ChecklistDocumentos[]
+  listasSuprimentos           ListaSuprimentos[]                @relation("ListasSuprimentos")
+  estoqueDomestico            EstoqueDomestico[]                 @relation("EstoqueDomestico")
 
   @@index([cpf])
   @@index([email])
@@ -155,8 +159,8 @@ model GeofencingValidacao {
   id              String        @id @default(uuid())
   localTrabalhoId String
   usuarioId       String
-  latitude        Float                 @db.DoublePrecision
-  longitude       Float                 @db.DoublePrecision
+  latitude        Float         @db.DoublePrecision
+  longitude       Float         @db.DoublePrecision
   distancia       Float
   dentroGeofence  Boolean
   precisao        Float
@@ -175,17 +179,17 @@ model GeofencingValidacao {
 }
 
 model Perfil {
-  id           String                 @id @default(uuid())
-  codigo       String                 @unique @db.VarChar(50)
-  nome         String                 @db.VarChar(100)
-  descricao    String?
-  cor          String                 @db.VarChar(7)
-  icone        String?                @db.VarChar(50)
-  ativo        Boolean                @default(true)
-  criadoEm     DateTime               @default(now())
-  atualizadoEm DateTime               @updatedAt
-  permissoes   PerfilFuncionalidade[]
-  usuarios     UsuarioPerfil[]
+  id            String                 @id @default(uuid())
+  codigo        String                 @unique @db.VarChar(50)
+  nome          String                 @db.VarChar(100)
+  descricao     String?
+  cor           String                 @db.VarChar(7)
+  icone         String?                @db.VarChar(50)
+  ativo         Boolean                @default(true)
+  criadoEm      DateTime               @default(now())
+  atualizadoEm  DateTime               @updatedAt
+  permissoes    PerfilFuncionalidade[]
+  usuarios      UsuarioPerfil[]
   configuracoes ConfiguracaoPerfil[]
 
   @@map("perfis")
@@ -248,22 +252,22 @@ model PerfilFuncionalidade {
 }
 
 model Grupo {
-  id                   String                 @id @default(uuid())
-  nome                 String                 @db.VarChar(255)
-  descricao            String?
-  cor                  String?                @db.VarChar(7)
-  icone                String?                @db.VarChar(50)
-  tipo                 String                 @db.VarChar(50)
-  privado              Boolean                @default(false)
-  ativo                Boolean                @default(true)
-  criadoEm             DateTime               @default(now())
-  atualizadoEm         DateTime               @updatedAt
-  locaisTrabalho       LocalTrabalho[]
-  RegistroPonto        RegistroPonto[]
-  SolicitacaoHoraExtra SolicitacaoHoraExtra[]
-  membros              UsuarioGrupo[]
+  id                          String                       @id @default(uuid())
+  nome                        String                       @db.VarChar(255)
+  descricao                   String?
+  cor                         String?                      @db.VarChar(7)
+  icone                       String?                      @db.VarChar(50)
+  tipo                        String                       @db.VarChar(50)
+  privado                     Boolean                      @default(false)
+  ativo                       Boolean                      @default(true)
+  criadoEm                    DateTime                     @default(now())
+  atualizadoEm                DateTime                     @updatedAt
+  locaisTrabalho              LocalTrabalho[]
+  RegistroPonto               RegistroPonto[]
+  SolicitacaoHoraExtra        SolicitacaoHoraExtra[]
+  membros                     UsuarioGrupo[]
   configuracoesGeolocalizacao ConfiguracaoGeolocalizacao[]
-  configuracoesAntifraude ConfiguracaoAntifraude[]
+  configuracoesAntifraude     ConfiguracaoAntifraude[]
 
   @@map("grupos")
 }
@@ -499,11 +503,19 @@ model ConversaParticipante {
 }
 
 model Mensagem {
-  id             String            @id @default(uuid())
-  conversaId     String
-  remetenteId    String
-  conteudo       String
-  tipo           String            @db.VarChar(50)
+  id          String  @id @default(uuid())
+  conversaId  String? // Opcional - pode ser null para mensagens contextuais
+  remetenteId String
+  conteudo    String
+  tipo        String  @db.VarChar(50)
+
+  // ✅ NOVO: Campos para comunicação contextual (sem redundância)
+  contextoTipo String? @db.VarChar(50) // 'PONTO', 'TAREFA', 'DOCUMENTO', 'FOLHA'
+  contextoId   String? // ID do contexto (ponto, tarefa, documento, etc.)
+  origem       String? @db.VarChar(50) // 'ALERTA', 'ACAO', 'SISTEMA', 'USUARIO'
+  alertaId     String? // Se veio de um alerta
+  exibidaToast Boolean @default(false) // Se já foi exibida como Toast
+
   respostaParaId String?
   lida           Boolean           @default(false)
   editada        Boolean           @default(false)
@@ -512,16 +524,19 @@ model Mensagem {
   criadoEm       DateTime          @default(now())
   atualizadoEm   DateTime          @updatedAt
   excluidaEm     DateTime?
-  conversa       Conversa          @relation(fields: [conversaId], references: [id], onDelete: Cascade)
+  conversa       Conversa?         @relation(fields: [conversaId], references: [id], onDelete: Cascade)
   remetente      Usuario           @relation(fields: [remetenteId], references: [id], onDelete: Cascade)
   respostaPara   Mensagem?         @relation("MensagemResposta", fields: [respostaParaId], references: [id])
   respostas      Mensagem[]        @relation("MensagemResposta")
   anexos         MensagemAnexo[]
   leituras       MensagemLeitura[]
   reacoes        MensagemReacao[]
+  alerta         Alerta?           @relation(fields: [alertaId], references: [id], onDelete: SetNull)
 
   @@index([conversaId])
   @@index([remetenteId])
+  @@index([contextoTipo, contextoId]) // NOVO: Índice para busca contextual
+  @@index([alertaId]) // NOVO: Índice para integração com alertas
   @@index([criadoEm])
   @@map("mensagens")
 }
@@ -618,6 +633,97 @@ model DocumentoCompartilhamento {
   @@index([documentoId])
   @@index([usuarioId])
   @@map("documentos_compartilhamento")
+}
+
+// ✅ NOVO: Documentação Trabalhista Especializada
+model DocumentoTrabalhista {
+  id               String    @id @default(uuid())
+  usuarioId        String
+  tipo             String    @db.VarChar(50) // 'CTPS', 'RG', 'CPF', 'COMP_RESIDENCIA', 'CERTIDAO', 'ASO', 'BANCO', 'TITULO_ELEITOR', 'CONTRATO'
+  nome             String    @db.VarChar(255)
+  numero           String?   @db.VarChar(100)
+  orgaoEmissor     String?   @db.VarChar(100)
+  emissao          DateTime?
+  validade         DateTime?
+  caminhoArquivo   String    @db.Text
+  esocialPronto    Boolean   @default(false)
+  esocialEnviado   Boolean   @default(false)
+  esocialEnviadoEm DateTime?
+  validado         Boolean   @default(false)
+  validadoEm       DateTime?
+  validadoPor      String?
+  assinadoDigital  Boolean   @default(false)
+  assinaturaHash   String?   @db.VarChar(255)
+  observacoes      String?   @db.Text
+  criadoEm         DateTime  @default(now())
+  atualizadoEm     DateTime  @updatedAt
+
+  usuario     Usuario               @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  vinculacoes DocumentoVinculacao[]
+
+  @@index([usuarioId])
+  @@index([tipo])
+  @@index([esocialPronto])
+  @@index([validade])
+  @@index([esocialEnviado])
+  @@map("documentos_trabalhistas")
+}
+
+model DocumentoVinculacao {
+  id             String   @id @default(uuid())
+  documentoId    String
+  vinculacaoTipo String   @db.VarChar(50) // 'ESOCIAL', 'FOLHA', 'TAREFA', 'PONTO'
+  vinculacaoId   String
+  criadoEm       DateTime @default(now())
+
+  documento DocumentoTrabalhista @relation(fields: [documentoId], references: [id], onDelete: Cascade)
+
+  @@unique([documentoId, vinculacaoTipo, vinculacaoId])
+  @@index([documentoId])
+  @@index([vinculacaoTipo, vinculacaoId])
+  @@map("documentos_vinculacoes")
+}
+
+model ChecklistDocumentos {
+  id                  String    @id @default(uuid())
+  usuarioId           String
+  perfilId            String? // Perfil do empregado
+  perfilTipo          String?   @db.VarChar(50) // 'EMPREGADOR', 'EMPREGADO'
+  documentos          Json // Array de documentos obrigatórios com status
+  documentosCompletos Json // Array de documentos já enviados/validados
+  completo            Boolean   @default(false)
+  completoEm          DateTime?
+  criadoEm            DateTime  @default(now())
+  atualizadoEm        DateTime  @updatedAt
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, perfilId])
+  @@index([usuarioId])
+  @@index([completo])
+  @@index([perfilTipo])
+  @@map("checklist_documentos")
+}
+
+model TemplateDocumento {
+  id               String   @id @default(uuid())
+  nome             String   @db.VarChar(255)
+  tipo             String   @db.VarChar(50) // Tipo de documento
+  categoria        String   @db.VarChar(50) // 'OBRIGATORIO', 'MEDICO', 'BANCARIO', 'TRABALHISTA'
+  descricao        String?  @db.Text
+  guiaPassoAPasso  Json? // Array de passos para obtenção/validação
+  validacoes       Json? // Regras de validação automática
+  esocialRequerido Boolean  @default(false)
+  esocialEvento    String?  @db.VarChar(50) // Evento eSocial que requer este documento
+  ativo            Boolean  @default(true)
+  criadoEm         DateTime @default(now())
+  atualizadoEm     DateTime @updatedAt
+
+  @@index([tipo])
+  @@index([categoria])
+  @@index([esocialRequerido])
+  @@index([ativo])
+  @@map("templates_documento")
 }
 
 model Tarefa {
@@ -950,6 +1056,7 @@ model Alerta {
   atualizadoEm     DateTime          @updatedAt
   usuario          Usuario?          @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   historico        AlertaHistorico[]
+  mensagens        Mensagem[] // NOVO: Relação com mensagens contextuais
 
   @@index([usuarioId])
   @@index([tipo])
@@ -976,17 +1083,17 @@ model AlertaHistorico {
 
 /// @description Histórico de Mensagens Exibidas (Toast/Notificações)
 model MensagemHistorico {
-  id            String   @id @default(uuid())
-  usuarioId     String?
-  tipo          String   @db.VarChar(20) // success, error, warning, info
-  titulo        String?  @db.VarChar(255)
-  mensagem      String   @db.Text
-  origem        String   @db.VarChar(50) // 'toast', 'alerta', 'sistema'
-  alertaId      String?
-  exibidoEm     DateTime @default(now())
-  duracao       Int?     // Duração em ms
-  lido          Boolean  @default(false)
-  usuario       Usuario? @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  id        String   @id @default(uuid())
+  usuarioId String?
+  tipo      String   @db.VarChar(20) // success, error, warning, info
+  titulo    String?  @db.VarChar(255)
+  mensagem  String   @db.Text
+  origem    String   @db.VarChar(50) // 'toast', 'alerta', 'sistema'
+  alertaId  String?
+  exibidoEm DateTime @default(now())
+  duracao   Int? // Duração em ms
+  lido      Boolean  @default(false)
+  usuario   Usuario? @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 
   @@index([usuarioId])
   @@index([tipo])
@@ -1055,6 +1162,110 @@ model ListaComprasCompartilhamento {
   @@index([listaId])
   @@index([usuarioId])
   @@map("listas_compras_compartilhamento")
+}
+
+// ==========================================
+// 🛒 GESTÃO INTELIGENTE DE SUPRIMENTOS
+// ==========================================
+
+/// @description Lista de Suprimentos (reformulada - gestão inteligente)
+model ListaSuprimentos {
+  id              String   @id @default(uuid())
+  usuarioId       String
+  nome            String   @db.VarChar(255)
+  tipoServico     String   @db.VarChar(50) // 'LIMPEZA', 'COZINHA', 'ORGANIZACAO', 'MANUTENCAO', 'GERAL'
+  templateId      String?
+  vinculadaTarefa String?  // ID da tarefa relacionada
+  orcamento       Decimal? @db.Decimal(10, 2)
+  descricao       String?  @db.Text
+  ativa           Boolean  @default(true)
+  concluida       Boolean  @default(false)
+  criadoEm        DateTime @default(now())
+  atualizadoEm    DateTime @updatedAt
+  
+  usuario         Usuario  @relation("ListasSuprimentos", fields: [usuarioId], references: [id], onDelete: Cascade)
+  template        TemplateLista? @relation(fields: [templateId], references: [id])
+  itens           ItemSuprimento[]
+  
+  @@index([usuarioId])
+  @@index([tipoServico])
+  @@index([vinculadaTarefa])
+  @@index([ativa])
+  @@map("listas_suprimentos")
+}
+
+/// @description Itens de Suprimento (estruturado)
+model ItemSuprimento {
+  id              String   @id @default(uuid())
+  listaId         String
+  nome            String   @db.VarChar(255)
+  categoria       String   @db.VarChar(50) // 'LIMPEZA', 'ALIMENTO', 'UTENSILIO', 'ORGANIZACAO', 'OUTRO'
+  quantidade      Decimal  @db.Decimal(10, 2)
+  unidade         String   @db.VarChar(20) // 'UN', 'KG', 'L', 'CX', 'PCT'
+  precoEstimado   Decimal? @db.Decimal(10, 2)
+  precoReal       Decimal? @db.Decimal(10, 2)
+  fornecedor      String?  @db.VarChar(255)
+  comprado        Boolean  @default(false)
+  compradoEm      DateTime?
+  compradoPor     String?
+  estoqueAtual    Decimal? @db.Decimal(10, 2) // Quantidade atual em estoque
+  estoqueMinimo   Decimal? @db.Decimal(10, 2) // Quantidade mínima para alerta
+  ordem           Int      @default(0)
+  observacao      String?  @db.Text
+  
+  lista           ListaSuprimentos @relation(fields: [listaId], references: [id], onDelete: Cascade)
+  
+  @@index([listaId])
+  @@index([categoria])
+  @@index([comprado])
+  @@index([nome])
+  @@map("itens_suprimento")
+}
+
+/// @description Template de Lista por Tipo de Serviço
+model TemplateLista {
+  id              String   @id @default(uuid())
+  nome            String   @db.VarChar(255)
+  tipoServico     String   @db.VarChar(50) // 'LIMPEZA', 'COZINHA', 'ORGANIZACAO', 'MANUTENCAO', 'GERAL'
+  descricao       String?  @db.Text
+  itensPadrao     Json     // Array de itens padrão [{nome, categoria, quantidade, unidade, precoEstimado}]
+  ativo           Boolean  @default(true)
+  criadoEm        DateTime @default(now())
+  atualizadoEm    DateTime @updatedAt
+  
+  listas          ListaSuprimentos[]
+  
+  @@index([tipoServico])
+  @@index([ativo])
+  @@map("templates_lista")
+}
+
+/// @description Estoque Doméstico (controle de estoque)
+model EstoqueDomestico {
+  id                  String   @id @default(uuid())
+  usuarioId           String
+  itemNome            String   @db.VarChar(255)
+  categoria           String   @db.VarChar(50) // 'LIMPEZA', 'ALIMENTO', 'UTENSILIO', 'ORGANIZACAO', 'OUTRO'
+  quantidadeAtual     Decimal  @db.Decimal(10, 2)
+  quantidadeMinima    Decimal  @db.Decimal(10, 2)
+  unidade             String   @db.VarChar(20) // 'UN', 'KG', 'L', 'CX', 'PCT'
+  ultimaCompra        DateTime?
+  ultimoUso           DateTime?
+  fornecedorPreferido String?  @db.VarChar(255)
+  precoMedio          Decimal? @db.Decimal(10, 2)
+  localArmazenamento  String?  @db.VarChar(255) // Onde está armazenado
+  validade            DateTime? // Se aplicável
+  criadoEm            DateTime @default(now())
+  atualizadoEm        DateTime @updatedAt
+  
+  usuario             Usuario  @relation("EstoqueDomestico", fields: [usuarioId], references: [id], onDelete: Cascade)
+  
+  @@unique([usuarioId, itemNome])
+  @@index([usuarioId])
+  @@index([categoria])
+  @@index([quantidadeAtual])
+  @@index([quantidadeMinima])
+  @@map("estoque_domestico")
 }
 
 model CalculoSalarial {
@@ -1561,8 +1772,8 @@ model GeolocationHistory {
   id                     String             @id @default(uuid())
   usuarioId              String?
   fingerprintId          String?
-  latitude               Float                 @db.DoublePrecision
-  longitude              Float                 @db.DoublePrecision
+  latitude               Float              @db.DoublePrecision
+  longitude              Float              @db.DoublePrecision
   precisao               Float?
   altitude               Float?
   altitudePrecisao       Float?
@@ -1679,57 +1890,56 @@ model BehaviorAnalysis {
 // Nota: ConfiguracaoSistema já existe no schema
 
 model ConfiguracaoPerfil {
-  id          String    @id @default(uuid())
-  perfilId    String
-  chave       String
-  categoria   String
-  valor       String
-  descricao   String?
-  ativo       Boolean   @default(true)
-  prioridade  Int       @default(1)
-  criadoEm    DateTime  @default(now())
+  id           String   @id @default(uuid())
+  perfilId     String
+  chave        String
+  categoria    String
+  valor        String
+  descricao    String?
+  ativo        Boolean  @default(true)
+  prioridade   Int      @default(1)
+  criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
-  
-  perfil      Perfil    @relation(fields: [perfilId], references: [id], onDelete: Cascade)
-  
+
+  perfil Perfil @relation(fields: [perfilId], references: [id], onDelete: Cascade)
+
   @@unique([perfilId, chave])
   @@map("configuracao_perfil")
 }
 
 model ConfiguracaoGeolocalizacao {
-  id          String    @id @default(uuid())
-  usuarioId   String?
-  grupoId     String?
-  chave       String
-  valor       String
-  descricao   String?
-  ativo       Boolean   @default(true)
-  criadoEm    DateTime  @default(now())
+  id           String   @id @default(uuid())
+  usuarioId    String?
+  grupoId      String?
+  chave        String
+  valor        String
+  descricao    String?
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
-  
-  usuario     Usuario?  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-  grupo       Grupo?    @relation(fields: [grupoId], references: [id], onDelete: Cascade)
-  
+
+  usuario Usuario? @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  grupo   Grupo?   @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+
   @@map("configuracao_geolocalizacao")
 }
 
 model ConfiguracaoAntifraude {
-  id          String    @id @default(uuid())
-  usuarioId   String?
-  grupoId     String?
-  chave       String
-  valor       String
-  descricao   String?
-  ativo       Boolean   @default(true)
-  criadoEm    DateTime  @default(now())
+  id           String   @id @default(uuid())
+  usuarioId    String?
+  grupoId      String?
+  chave        String
+  valor        String
+  descricao    String?
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
-  
-  usuario     Usuario?  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-  grupo       Grupo?    @relation(fields: [grupoId], references: [id], onDelete: Cascade)
-  
+
+  usuario Usuario? @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  grupo   Grupo?   @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+
   @@map("configuracao_antifraude")
 }
-
 
 // ============================================
 // MODELOS DE CONFIGURAÇÃO E CUSTOMIZAÇÃO
@@ -1744,11 +1954,11 @@ model TemaVisual {
   descricao    String?
   ativo        Boolean  @default(false)
   padrao       Boolean  @default(false)
-  cores        Json     // { primary, secondary, success, error, etc }
-  tipografia   Json     // { fontFamily, fontSize, fontWeight, lineHeight }
-  espacamentos Json     // { xs, sm, md, lg, xl }
-  sombras      Json     // { sm, md, lg }
-  bordas       Json     // { radius, width }
+  cores        Json // { primary, secondary, success, error, etc }
+  tipografia   Json // { fontFamily, fontSize, fontWeight, lineHeight }
+  espacamentos Json // { xs, sm, md, lg, xl }
+  sombras      Json // { sm, md, lg }
+  bordas       Json // { radius, width }
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 
@@ -1757,18 +1967,18 @@ model TemaVisual {
 
 /// Progresso de guias assistidos
 model GuideProgress {
-  id           String   @id @default(uuid())
+  id           String    @id @default(uuid())
   usuarioId    String
-  guideId      String   @db.VarChar(100)
-  currentStep  String   @db.VarChar(100)
+  guideId      String    @db.VarChar(100)
+  currentStep  String    @db.VarChar(100)
   progressData Json
-  completed    Boolean  @default(false)
-  startedAt    DateTime @default(now())
+  completed    Boolean   @default(false)
+  startedAt    DateTime  @default(now())
   completedAt  DateTime?
-  updatedAt    DateTime @updatedAt
-  
-  usuario      Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-  
+  updatedAt    DateTime  @updatedAt
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
   @@unique([usuarioId, guideId])
   @@index([usuarioId])
   @@index([guideId])
@@ -1782,10 +1992,10 @@ model ComponenteReutilizavel {
   nome         String   @unique @db.VarChar(100)
   categoria    String   @db.VarChar(50) // button, input, modal, card, layout
   descricao    String?
-  codigo       String   // Código do componente
-  props        Json?    // Propriedades aceitas
-  exemplos     Json?    // Exemplos de uso
-  documentacao String?  // Documentação markdown
+  codigo       String // Código do componente
+  props        Json? // Propriedades aceitas
+  exemplos     Json? // Exemplos de uso
+  documentacao String? // Documentação markdown
   versao       String   @default("1.0.0") @db.VarChar(20)
   ativo        Boolean  @default(true)
   criadoEm     DateTime @default(now())
@@ -1796,14 +2006,14 @@ model ComponenteReutilizavel {
 
 /// Constantes da aplicação
 model ConstanteAplicacao {
-  id          String   @id @default(uuid())
-  chave       String   @db.VarChar(100)
-  valor       String
-  tipo        String   @db.VarChar(50) // string, number, boolean, url
-  categoria   String   @db.VarChar(50) // api, limite, timeout, url
-  descricao   String?
-  ambiente    String   @default("all") @db.VarChar(20) // all, development, production
-  criadoEm    DateTime @default(now())
+  id           String   @id @default(uuid())
+  chave        String   @db.VarChar(100)
+  valor        String
+  tipo         String   @db.VarChar(50) // string, number, boolean, url
+  categoria    String   @db.VarChar(50) // api, limite, timeout, url
+  descricao    String?
+  ambiente     String   @default("all") @db.VarChar(20) // all, development, production
+  criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 
   @@unique([chave, ambiente])
@@ -1812,16 +2022,16 @@ model ConstanteAplicacao {
 
 /// Histórico de mudanças nas configurações
 model HistoricoConfiguracao {
-  id             String   @id @default(uuid())
-  tabelaOrigem   String   @db.VarChar(100)
-  registroId     String
-  campo          String   @db.VarChar(100)
-  valorAnterior  String?
-  valorNovo      String
-  usuarioId      String?
-  usuario        Usuario? @relation(fields: [usuarioId], references: [id])
-  motivo         String?
-  criadoEm       DateTime @default(now())
+  id            String   @id @default(uuid())
+  tabelaOrigem  String   @db.VarChar(100)
+  registroId    String
+  campo         String   @db.VarChar(100)
+  valorAnterior String?
+  valorNovo     String
+  usuarioId     String?
+  usuario       Usuario? @relation(fields: [usuarioId], references: [id])
+  motivo        String?
+  criadoEm      DateTime @default(now())
 
   @@index([tabelaOrigem, registroId])
   @@index([usuarioId])

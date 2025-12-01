@@ -148,7 +148,7 @@ async function createLoan(req: NextApiRequest, res: NextApiResponse) {
         dataConcessao: new Date(),
         dataVencimento: new Date(dueDate),
         dataSolicitacao: new Date(),
-        status: 'PENDENTE',
+        status: 'PENDENTE', // Status específico de empréstimo, manter hardcoded por enquanto
         justificativa: justification,
       },
       include: {

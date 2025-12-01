@@ -29,8 +29,8 @@ export default async function handler(
       // Listar todas as feature flags
       const flags = await getAllFeatureFlags({
         userId: decoded.userId,
-        profileId: decoded.profileId,
-        groupId: decoded.groupId,
+        profileId: (decoded as any).profileId,
+        groupId: (decoded as any).groupId,
       });
 
       return res.status(200).json({ flags });

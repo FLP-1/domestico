@@ -1,8 +1,9 @@
 import AccessibleEmoji from '../components/AccessibleEmoji';
 // task-management.tsx
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useAlertManager } from '../hooks/useAlertManager';
+import { useErrorHandler } from '../hooks/useErrorHandler';
 import styled from 'styled-components';
 
 import FilterSection from '../components/FilterSection';
@@ -21,7 +22,8 @@ import WelcomeSection from '../components/WelcomeSection';
 import { UnifiedButton, UnifiedModal } from '../components/unified';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
-import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import ContextualChat from '../components/ContextualChat';
+import { getThemeColor, getStatusColor } from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
 import {
   getTextPrimary,
@@ -32,11 +34,14 @@ import {
   OptimizedLabel,
   OptimizedFormRow,
 } from '../components/shared/optimized-styles';
+import { TASK_STATUSES, type TaskStatus } from '../constants/taskStatuses';
+import { TASK_PRIORITIES, type TaskPriority } from '../constants/taskPriorities';
+import { formatDate, formatDateTime } from '../utils/formatters';
 
 // Styled Components
 const TaskCount = styled.span<{ $theme?: any }>`
   background: ${props => {
-    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
@@ -46,8 +51,7 @@ const TaskCount = styled.span<{ $theme?: any }>`
     return 'transparent';
   }};
   color: ${props => 
-    props.$theme?.colors?.text?.primary || 
-    props.$theme?.text?.primary ||
+    getThemeColor(props.$theme, 'text.primary', 'inherit') ||
     'inherit'};
   padding: 0.25rem 0.5rem;
   border-radius: 12px;
@@ -58,8 +62,7 @@ const TaskCount = styled.span<{ $theme?: any }>`
 const TaskAssignee = styled.div<{ $theme?: any }>`
   font-size: 0.8rem;
   color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
-    props.$theme?.text?.secondary ||
+    getThemeColor(props.$theme, 'text.secondary', 'inherit') ||
     'inherit'};
   margin-top: 0.5rem;
 `;
@@ -68,12 +71,9 @@ const TaskDueDate = styled.div<{ $isOverdue: boolean; $theme?: any }>`
   font-size: 0.8rem;
   color: ${props => 
     props.$isOverdue
-      ? props.$theme?.colors?.status?.error?.text ||
-        props.$theme?.status?.error?.text ||
+      ? getStatusColor(props.$theme, 'error', 'text') ||
         'inherit'
-      : props.$theme?.colors?.text?.secondary || 
-        props.$theme?.text?.secondary ||
-        'inherit'};
+      : getThemeColor(props.$theme, 'text.secondary', 'inherit')};
   margin-top: 0.5rem;
   font-weight: ${props => (props.$isOverdue ? '600' : '400')};
 `;
@@ -83,8 +83,8 @@ interface Task {
   id: string;
   title: string;
   description: string;
-  priority: 'high' | 'medium' | 'low';
-  status: 'todo' | 'in-progress' | 'completed';
+  priority: TaskPriority;
+  status: TaskStatus;
   assignee: string;
   dueDate: string;
   createdAt: string;
@@ -109,21 +109,13 @@ interface ChecklistItem {
 // Styled Components
 
 const TaskCreationSection = styled.section<{ $theme?: Theme }>`
-  background: ${props =>
-    props.$theme?.colors?.background?.primary || 
-    props.$theme?.background?.primary ||
-    'transparent'};
-  border: 1px solid
-    ${props => 
-      props.$theme?.colors?.border?.light || 
-      props.$theme?.border?.light ||
-      props.$theme?.colors?.border ||
-      'transparent'};
+  background: ${props => getThemeColor(props.$theme, 'background.primary', 'transparent')};
+  border: 1px solid ${props => getThemeColor(props.$theme, 'border.light', 'transparent')};
   border-radius: 12px;
   padding: 2rem;
   margin-bottom: 2rem;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    const shadowColor = getThemeColor(props.$theme, 'shadow', 'transparent');
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -160,20 +152,16 @@ const TaskBoard = styled.div`
 
 const TaskColumn = styled.div<{ $theme?: Theme }>`
   background: ${props =>
-    props.$theme?.colors?.background?.primary || 
-    props.$theme?.background?.primary ||
-    'transparent'};
+    getThemeColor(props.$theme, 'background.primary', 'transparent')};
   border: 1px solid
     ${props => 
-      props.$theme?.colors?.border?.light || 
-      props.$theme?.border?.light ||
-      props.$theme?.colors?.border ||
+      getThemeColor(props.$theme, 'border.light', 'transparent') ||
       'transparent'};
   border-radius: 12px;
   padding: 1.5rem;
   min-height: 500px;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    const shadowColor = getThemeColor(props.$theme, 'shadow', 'transparent');
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -193,30 +181,20 @@ const ColumnHeader = styled.div<{ $theme?: Theme; $status: string }>`
   border-bottom: 2px solid
     ${props => {
       switch (props.$status) {
-        case 'todo':
-          return props.$theme?.colors?.status?.warning?.border ||
-                 props.$theme?.status?.warning?.border ||
-                 'transparent';
-        case 'in-progress':
-          return props.$theme?.colors?.primary || 
-                 props.$theme?.accent ||
-                 'transparent';
-        case 'completed':
-          return props.$theme?.colors?.status?.success?.border ||
-                 props.$theme?.status?.success?.border ||
-                 'transparent';
+        case TASK_STATUSES.TODO:
+          return getStatusColor(props.$theme, 'warning', 'border');
+        case TASK_STATUSES.IN_PROGRESS:
+          return getThemeColor(props.$theme, 'primary', 'transparent');
+        case TASK_STATUSES.COMPLETED:
+          return getStatusColor(props.$theme, 'success', 'border');
         default:
-          return props.$theme?.colors?.border?.light || 
-                 props.$theme?.border?.light ||
-                 props.$theme?.colors?.border ||
-                 'transparent';
+          return getThemeColor(props.$theme, 'border.light', 'transparent');
       }
     }};
 
   h3 {
     color: ${props =>
-      props.$theme?.colors?.text?.dark || 
-      props.$theme?.text?.dark ||
+      getThemeColor(props.$theme, 'text.dark', 'inherit') ||
       'inherit'};
     font-size: 1.2rem;
     font-weight: 600;
@@ -226,42 +204,27 @@ const ColumnHeader = styled.div<{ $theme?: Theme; $status: string }>`
   .count {
     background: ${props => {
       switch (props.$status) {
-        case 'todo':
-          return props.$theme?.colors?.status?.warning?.background ||
-                 props.$theme?.status?.warning?.background ||
-                 'transparent';
-        case 'in-progress':
-          return props.$theme?.colors?.primary || 
-                 props.$theme?.accent ||
-                 'transparent';
-        case 'completed':
-          return props.$theme?.colors?.status?.success?.background ||
-                 props.$theme?.status?.success?.background ||
+        case TASK_STATUSES.TODO:
+          return getStatusColor(props.$theme, 'warning', 'background');
+        case TASK_STATUSES.IN_PROGRESS:
+          return getThemeColor(props.$theme, 'primary', 'transparent');
+        case TASK_STATUSES.COMPLETED:
+          return getStatusColor(props.$theme, 'success', 'background') ||
                  'transparent';
         default:
-          return props.$theme?.colors?.background?.secondary || 
-                 props.$theme?.background?.secondary ||
-                 'transparent';
+          return getThemeColor(props.$theme, 'background.secondary', 'transparent');
       }
     }};
     color: ${props => {
       switch (props.$status) {
-        case 'todo':
-          return props.$theme?.colors?.status?.warning?.text ||
-                 props.$theme?.status?.warning?.text ||
-                 'inherit';
-        case 'in-progress':
-          return props.$theme?.colors?.text?.primary || 
-                 props.$theme?.text?.primary ||
-                 'inherit';
-        case 'completed':
-          return props.$theme?.colors?.status?.success?.text ||
-                 props.$theme?.status?.success?.text ||
-                 'inherit';
+        case TASK_STATUSES.TODO:
+          return getStatusColor(props.$theme, 'warning', 'text');
+        case TASK_STATUSES.IN_PROGRESS:
+          return getThemeColor(props.$theme, 'text.primary', 'inherit');
+        case TASK_STATUSES.COMPLETED:
+          return getStatusColor(props.$theme, 'success', 'text');
         default:
-          return props.$theme?.colors?.text?.dark || 
-                 props.$theme?.text?.dark ||
-                 'inherit';
+          return getThemeColor(props.$theme, 'text.dark', 'inherit');
       }
     }};
     padding: 0.25rem 0.75rem;
@@ -273,50 +236,31 @@ const ColumnHeader = styled.div<{ $theme?: Theme; $status: string }>`
 
 const TaskCard = styled.div<{ $theme?: Theme; $priority: string }>`
   background: ${props =>
-    props.$theme?.colors?.background?.primary || 
-    props.$theme?.background?.primary ||
-    'transparent'};
+    getThemeColor(props.$theme, 'background.primary', 'transparent')};
   border: 1px solid
     ${props => {
       switch (props.$priority) {
-        case 'high':
-          return props.$theme?.colors?.status?.error?.border ||
-                 props.$theme?.status?.error?.border ||
-                 'transparent';
-        case 'medium':
-          return props.$theme?.colors?.status?.warning?.border ||
-                 props.$theme?.status?.warning?.border ||
-                 'transparent';
-        case 'low':
-          return props.$theme?.colors?.status?.success?.border ||
-                 props.$theme?.status?.success?.border ||
-                 'transparent';
+        case TASK_PRIORITIES.HIGH:
+          return getStatusColor(props.$theme, 'error', 'border');
+        case TASK_PRIORITIES.MEDIUM:
+          return getStatusColor(props.$theme, 'warning', 'border');
+        case TASK_PRIORITIES.LOW:
+          return getStatusColor(props.$theme, 'success', 'border');
         default:
-          return props.$theme?.colors?.border?.light || 
-                 props.$theme?.border?.light ||
-                 props.$theme?.colors?.border ||
-                 'transparent';
+          return getThemeColor(props.$theme, 'border.light', 'transparent');
       }
     }};
   border-left: 4px solid
     ${props => {
       switch (props.$priority) {
-        case 'high':
-          return props.$theme?.colors?.status?.error?.border ||
-                 props.$theme?.status?.error?.border ||
-                 'transparent';
-        case 'medium':
-          return props.$theme?.colors?.status?.warning?.border ||
-                 props.$theme?.status?.warning?.border ||
-                 'transparent';
-        case 'low':
-          return props.$theme?.colors?.status?.success?.border ||
-                 props.$theme?.status?.success?.border ||
-                 'transparent';
+        case TASK_PRIORITIES.HIGH:
+          return getStatusColor(props.$theme, 'error', 'border');
+        case TASK_PRIORITIES.MEDIUM:
+          return getStatusColor(props.$theme, 'warning', 'border');
+        case TASK_PRIORITIES.LOW:
+          return getStatusColor(props.$theme, 'success', 'border');
         default:
-          return props.$theme?.colors?.primary || 
-                 props.$theme?.accent ||
-                 'transparent';
+          return getThemeColor(props.$theme, 'primary', 'transparent');
       }
     }};
   border-radius: 8px;
@@ -325,7 +269,7 @@ const TaskCard = styled.div<{ $theme?: Theme; $priority: string }>`
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+    const shadowColor = getThemeColor(props.$theme, 'shadow', 'transparent');
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -338,7 +282,7 @@ const TaskCard = styled.div<{ $theme?: Theme; $priority: string }>`
   &:hover {
     transform: translateY(-2px);
     box-shadow: ${props => {
-      const shadowColor = props.$theme?.colors?.shadow || props.$theme?.shadow;
+      const shadowColor = getThemeColor(props.$theme, 'shadow', 'transparent');
       if (shadowColor && shadowColor.startsWith('rgba')) {
         const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
         if (match) {
@@ -351,8 +295,7 @@ const TaskCard = styled.div<{ $theme?: Theme; $priority: string }>`
 
   h4 {
     color: ${props =>
-      props.$theme?.colors?.text?.dark || 
-      props.$theme?.text?.dark ||
+      getThemeColor(props.$theme, 'text.dark', 'inherit') ||
       'inherit'};
     font-size: 1rem;
     font-weight: 600;
@@ -360,10 +303,7 @@ const TaskCard = styled.div<{ $theme?: Theme; $priority: string }>`
   }
 
   p {
-    color: ${props => 
-      props.$theme?.colors?.text?.secondary || 
-      props.$theme?.text?.secondary ||
-      'inherit'};
+    color: ${props => getThemeColor(props.$theme, 'text.secondary', 'inherit')};
     font-size: 0.875rem;
     margin: 0 0 0.75rem 0;
     line-height: 1.4;
@@ -376,8 +316,7 @@ const TaskMeta = styled.div<{ $theme?: Theme }>`
   align-items: center;
   font-size: 0.75rem;
   color: ${props =>
-    props.$theme?.colors?.text?.secondary || 
-    props.$theme?.text?.secondary ||
+    getThemeColor(props.$theme, 'text.secondary', 'inherit') ||
     'inherit'};
 
   .assignee {
@@ -387,9 +326,7 @@ const TaskMeta = styled.div<{ $theme?: Theme }>`
   .due-date {
     &.overdue {
       color: ${props =>
-        props.$theme?.colors?.status?.error?.text ||
-        props.$theme?.status?.error?.text ||
-        'inherit'};
+        getStatusColor(props.$theme, 'error', 'text')};
       font-weight: 600;
     }
   }
@@ -404,41 +341,28 @@ const PriorityBadge = styled.span<{ $priority: string; $theme?: any }>`
   text-transform: uppercase;
   background: ${props => {
     switch (props.$priority) {
-      case 'high':
-        return props.$theme?.colors?.status?.error?.background ||
-               props.$theme?.status?.error?.background ||
+      case TASK_PRIORITIES.HIGH:
+          return getStatusColor(props.$theme, 'error', 'background') ||
                'transparent';
-      case 'medium':
-        return props.$theme?.colors?.status?.warning?.background ||
-               props.$theme?.status?.warning?.background ||
-               'transparent';
-      case 'low':
-        return props.$theme?.colors?.status?.success?.background ||
-               props.$theme?.status?.success?.background ||
-               'transparent';
+      case TASK_PRIORITIES.MEDIUM:
+        return getStatusColor(props.$theme, 'warning', 'background');
+      case TASK_PRIORITIES.LOW:
+        return getStatusColor(props.$theme, 'success', 'background');
       default:
-        return props.$theme?.colors?.background?.secondary || 
-               props.$theme?.background?.secondary ||
+        return getThemeColor(props.$theme, 'background.secondary', 'transparent') ||
                'transparent';
     }
   }};
   color: ${props => {
     switch (props.$priority) {
-      case 'high':
-        return props.$theme?.colors?.status?.error?.text ||
-               props.$theme?.status?.error?.text ||
-               'inherit';
-      case 'medium':
-        return props.$theme?.colors?.status?.warning?.text ||
-               props.$theme?.status?.warning?.text ||
-               'inherit';
-      case 'low':
-        return props.$theme?.colors?.status?.success?.text ||
-               props.$theme?.status?.success?.text ||
-               'inherit';
+      case TASK_PRIORITIES.HIGH:
+        return getStatusColor(props.$theme, 'error', 'text');
+      case TASK_PRIORITIES.MEDIUM:
+        return getStatusColor(props.$theme, 'warning', 'text');
+      case TASK_PRIORITIES.LOW:
+        return getStatusColor(props.$theme, 'success', 'text');
       default:
-        return props.$theme?.colors?.text?.dark || 
-               props.$theme?.text?.dark ||
+        return getThemeColor(props.$theme, 'text.dark', 'inherit') ||
                'inherit';
     }
   }};
@@ -456,14 +380,10 @@ const CommentForm = styled.form<{ $theme?: Theme }>`
 
 const CommentItem = styled.div<{ $theme?: Theme }>`
   background: ${props =>
-    props.$theme?.colors?.background?.primary || 
-    props.$theme?.background?.primary ||
-    'transparent'};
+    getThemeColor(props.$theme, 'background.primary', 'transparent')};
   border: 1px solid
     ${props => 
-      props.$theme?.colors?.border?.light || 
-      props.$theme?.border?.light ||
-      props.$theme?.colors?.border ||
+      getThemeColor(props.$theme, 'border.light', 'transparent') ||
       'transparent'};
   border-radius: 8px;
   padding: 1rem;
@@ -482,12 +402,10 @@ const CommentAvatar = styled.div<{ $theme?: Theme }>`
   height: 32px;
   border-radius: 50%;
   background: ${props =>
-    props.$theme?.colors?.primary || 
-    props.$theme?.accent ||
+    getThemeColor(props.$theme, 'primary', 'transparent') || 
     'transparent'};
   color: ${props => 
-    props.$theme?.colors?.text?.primary || 
-    props.$theme?.text?.primary ||
+    getThemeColor(props.$theme, 'text.primary', 'inherit') ||
     'inherit'};
   display: flex;
   align-items: center;
@@ -498,8 +416,7 @@ const CommentAvatar = styled.div<{ $theme?: Theme }>`
 
 const CommentText = styled.p<{ $theme?: Theme }>`
   color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
+    getThemeColor(props.$theme, 'text.dark', 'inherit') ||
     'inherit'};
   margin: 0;
   line-height: 1.4;
@@ -507,8 +424,7 @@ const CommentText = styled.p<{ $theme?: Theme }>`
 
 const CommentTime = styled.span<{ $theme?: Theme }>`
   color: ${props =>
-    props.$theme?.colors?.text?.secondary || 
-    props.$theme?.text?.secondary ||
+    getThemeColor(props.$theme, 'text.secondary', 'inherit') ||
     'inherit'};
   font-size: 0.75rem;
 `;
@@ -530,9 +446,7 @@ const ChecklistItem = styled.div<{ $theme?: Theme }>`
   padding: 0.5rem 0;
   border-bottom: 1px solid
     ${props => 
-      props.$theme?.colors?.border?.light || 
-      props.$theme?.border?.light ||
-      props.$theme?.colors?.border ||
+      getThemeColor(props.$theme, 'border.light', 'transparent') ||
       'transparent'};
 
   &:last-child {
@@ -543,7 +457,7 @@ const ChecklistItem = styled.div<{ $theme?: Theme }>`
     width: 18px;
     height: 18px;
     accent-color: ${props =>
-      props.$theme?.colors?.primary || defaultColors.primary};
+      getThemeColor(props.$theme, 'primary', 'transparent')};
   }
 
   label {
@@ -570,8 +484,8 @@ interface TaskData {
   id: string;
   title: string;
   description: string;
-  priority: 'low' | 'medium' | 'high';
-  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
+  priority: TaskPriority;
+  status: 'pending' | 'in_progress' | 'completed' | 'cancelled'; // Mantido formato API
   assignee: string;
   assigneeId: string;
   dueDate: string;
@@ -601,6 +515,7 @@ interface TaskData {
 
 const TaskManagement: React.FC = () => {
   const alertManager = useAlertManager();
+  const errorHandler = useErrorHandler();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [tasks, setTasks] = useState<TaskData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -615,7 +530,7 @@ const TaskManagement: React.FC = () => {
   const theme = { colors: themeObject.colors };
 
   // Função para carregar tarefas da API
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await fetch('/api/tasks');
@@ -627,21 +542,21 @@ const TaskManagement: React.FC = () => {
         alertManager.showError(result.error || 'Erro ao carregar tarefas');
       }
     } catch (error) {
-      console.error('Erro ao carregar tarefas:', error);
-      alertManager.showError('Erro ao conectar com o servidor');
+      errorHandler.handleAsyncError(error, 'carregar tarefas');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [alertManager, errorHandler]);
 
   // Carregar tarefas ao montar o componente
   React.useEffect(() => {
     loadTasks();
-  }, []);
+  }, [loadTasks]);
   const [selectedTask, setSelectedTask] = useState<TaskData | null>(null);
+  const [selectedTaskIdForChat, setSelectedTaskIdForChat] = useState<string | null>(null); // ✅ NOVO: Para comunicação contextual
   const [newTask, setNewTask] = useState({
     title: '',
-    priority: 'medium' as 'high' | 'medium' | 'low',
+    priority: TASK_PRIORITIES.MEDIUM as TaskPriority,
     assignee: '',
     dueDate: '',
   });
@@ -687,7 +602,7 @@ const TaskManagement: React.FC = () => {
         // Limpar formulário
         setNewTask({
           title: '',
-          priority: 'medium',
+          priority: TASK_PRIORITIES.MEDIUM,
           assignee: '',
           dueDate: '',
         });
@@ -697,8 +612,7 @@ const TaskManagement: React.FC = () => {
         alertManager.showError(result.error || 'Erro ao criar tarefa');
       }
     } catch (error) {
-      console.error('Erro ao criar tarefa:', error);
-      alertManager.showError('Erro ao conectar com o servidor');
+      errorHandler.handleAsyncError(error, 'criar tarefa');
     }
   };
 
@@ -790,7 +704,7 @@ const TaskManagement: React.FC = () => {
   const isOverdue = (dueDate: string) => {
     return (
       new Date(dueDate) < new Date() &&
-      tasks.find(t => t.dueDate === dueDate)?.status !== 'completed'
+      tasks.find(t => t.dueDate === dueDate)?.status !== 'completed' // Mantido formato API
     );
   };
 
@@ -851,14 +765,14 @@ const TaskManagement: React.FC = () => {
               onChange={e =>
                 setNewTask(prev => ({
                   ...prev,
-                  priority: e.target.value as 'high' | 'medium' | 'low',
+                  priority: e.target.value as TaskPriority,
                 }))
               }
               aria-label='Selecionar prioridade da tarefa'
             >
-              <option value='low'>Baixa</option>
-              <option value='medium'>Média</option>
-              <option value='high'>Alta</option>
+              <option value={TASK_PRIORITIES.LOW}>Baixa</option>
+              <option value={TASK_PRIORITIES.MEDIUM}>Média</option>
+              <option value={TASK_PRIORITIES.HIGH}>Alta</option>
             </Select>
           </FormGroup>
 
@@ -914,9 +828,9 @@ const TaskManagement: React.FC = () => {
             }
           >
             <option value='all'>Todos os status</option>
-            <option value='todo'>A Fazer</option>
-            <option value='in-progress'>Em Andamento</option>
-            <option value='completed'>Concluído</option>
+            <option value={TASK_STATUSES.TODO}>A Fazer</option>
+            <option value={TASK_STATUSES.IN_PROGRESS}>Em Andamento</option>
+            <option value={TASK_STATUSES.COMPLETED}>Concluído</option>
           </Select>
         </FormGroup>
 
@@ -935,9 +849,9 @@ const TaskManagement: React.FC = () => {
             }
           >
             <option value='all'>Todas as prioridades</option>
-            <option value='high'>Alta</option>
-            <option value='medium'>Média</option>
-            <option value='low'>Baixa</option>
+            <option value={TASK_PRIORITIES.HIGH}>Alta</option>
+            <option value={TASK_PRIORITIES.MEDIUM}>Média</option>
+            <option value={TASK_PRIORITIES.LOW}>Baixa</option>
           </Select>
         </FormGroup>
 
@@ -967,7 +881,7 @@ const TaskManagement: React.FC = () => {
 
       <TaskBoard>
         <TaskColumn $theme={theme}>
-          <ColumnHeader $theme={theme} $status='todo'>
+          <ColumnHeader $theme={theme} $status={TASK_STATUSES.TODO}>
             <h3>A Fazer</h3>
             <TaskCount $theme={theme}>{getTasksByStatus('pending').length}</TaskCount>
           </ColumnHeader>
@@ -983,9 +897,9 @@ const TaskManagement: React.FC = () => {
               <TaskMeta $theme={theme}>
                 <div>
                   <PriorityBadge $priority={task.priority} $theme={theme}>
-                    {task.priority === 'high'
+                    {task.priority === TASK_PRIORITIES.HIGH
                       ? 'Alta'
-                      : task.priority === 'medium'
+                      : task.priority === TASK_PRIORITIES.MEDIUM
                         ? 'Média'
                         : 'Baixa'}
                   </PriorityBadge>
@@ -994,7 +908,7 @@ const TaskManagement: React.FC = () => {
               </TaskMeta>
               <TaskMeta $theme={theme}>
                 <TaskDueDate $isOverdue={isOverdue(task.dueDate)} $theme={theme}>
-                  {new Date(task.dueDate).toLocaleDateString('pt-BR')}
+                  {formatDate(task.dueDate)}
                 </TaskDueDate>
                 <div>
                   <UnifiedButton
@@ -1002,7 +916,7 @@ const TaskManagement: React.FC = () => {
                     $size='sm'
                     onClick={e => {
                       e.stopPropagation();
-                      handleTaskClick(task, 'comments');
+                      setSelectedTaskIdForChat(task.id); // ✅ NOVO: Abrir comunicação contextual
                     }}
                   >
                     <AccessibleEmoji emoji='💬' label='Comentário' />{' '}
@@ -1026,7 +940,7 @@ const TaskManagement: React.FC = () => {
         </TaskColumn>
 
         <TaskColumn $theme={theme}>
-          <ColumnHeader $theme={theme} $status='in-progress'>
+          <ColumnHeader $theme={theme} $status={TASK_STATUSES.IN_PROGRESS}>
             <h3>Em Andamento</h3>
             <span className='count'>
               {getTasksByStatus('in_progress').length}
@@ -1044,9 +958,9 @@ const TaskManagement: React.FC = () => {
               <TaskMeta $theme={theme}>
                 <div>
                   <PriorityBadge $priority={task.priority} $theme={theme}>
-                    {task.priority === 'high'
+                    {task.priority === TASK_PRIORITIES.HIGH
                       ? 'Alta'
-                      : task.priority === 'medium'
+                      : task.priority === TASK_PRIORITIES.MEDIUM
                         ? 'Média'
                         : 'Baixa'}
                   </PriorityBadge>
@@ -1055,7 +969,7 @@ const TaskManagement: React.FC = () => {
               </TaskMeta>
               <TaskMeta $theme={theme}>
                 <TaskDueDate $isOverdue={isOverdue(task.dueDate)} $theme={theme}>
-                  {new Date(task.dueDate).toLocaleDateString('pt-BR')}
+                  {formatDate(task.dueDate)}
                 </TaskDueDate>
                 <div>
                   <UnifiedButton
@@ -1063,7 +977,7 @@ const TaskManagement: React.FC = () => {
                     $size='sm'
                     onClick={e => {
                       e.stopPropagation();
-                      handleTaskClick(task, 'comments');
+                      setSelectedTaskIdForChat(task.id); // ✅ NOVO: Abrir comunicação contextual
                     }}
                   >
                     <AccessibleEmoji emoji='💬' label='Comentário' />{' '}
@@ -1087,7 +1001,7 @@ const TaskManagement: React.FC = () => {
         </TaskColumn>
 
         <TaskColumn $theme={theme}>
-          <ColumnHeader $theme={theme} $status='completed'>
+          <ColumnHeader $theme={theme} $status={TASK_STATUSES.COMPLETED}>
             <h3>Concluído</h3>
             <span className='count'>
               {getTasksByStatus('completed').length}
@@ -1105,9 +1019,9 @@ const TaskManagement: React.FC = () => {
               <TaskMeta $theme={theme}>
                 <div>
                   <PriorityBadge $priority={task.priority} $theme={theme}>
-                    {task.priority === 'high'
+                    {task.priority === TASK_PRIORITIES.HIGH
                       ? 'Alta'
-                      : task.priority === 'medium'
+                      : task.priority === TASK_PRIORITIES.MEDIUM
                         ? 'Média'
                         : 'Baixa'}
                   </PriorityBadge>
@@ -1116,7 +1030,7 @@ const TaskManagement: React.FC = () => {
               </TaskMeta>
               <TaskMeta $theme={theme}>
                 <TaskDueDate $isOverdue={isOverdue(task.dueDate)} $theme={theme}>
-                  {new Date(task.dueDate).toLocaleDateString('pt-BR')}
+                  {formatDate(task.dueDate)}
                 </TaskDueDate>
                 <div>
                   <UnifiedButton
@@ -1124,7 +1038,7 @@ const TaskManagement: React.FC = () => {
                     $size='sm'
                     onClick={e => {
                       e.stopPropagation();
-                      handleTaskClick(task, 'comments');
+                      setSelectedTaskIdForChat(task.id); // ✅ NOVO: Abrir comunicação contextual
                     }}
                   >
                     <AccessibleEmoji emoji='💬' label='Comentário' />{' '}
@@ -1187,7 +1101,7 @@ const TaskManagement: React.FC = () => {
                         {comment.author}
                       </CommentAuthor>
                       <CommentTime $theme={theme}>
-                        {new Date(comment.timestamp).toLocaleString('pt-BR')}
+                        {formatDateTime(comment.timestamp)}
                       </CommentTime>
                     </div>
                   </CommentHeader>
@@ -1243,6 +1157,27 @@ const TaskManagement: React.FC = () => {
           </div>
         )}
       </UnifiedModal>
+
+      {/* ✅ NOVO: Seção de Comunicação Contextual para Tarefa */}
+      {selectedTaskIdForChat && (
+        <UnifiedModal
+          isOpen={!!selectedTaskIdForChat}
+          onClose={() => setSelectedTaskIdForChat(null)}
+          title={`Comunicação - Tarefa ${selectedTaskIdForChat.slice(0, 8)}`}
+          $theme={theme}
+        >
+          <ContextualChat
+            contextoTipo="TAREFA"
+            contextoId={selectedTaskIdForChat}
+            titulo={`Comunicação sobre esta Tarefa`}
+            altura="500px"
+            onMensagemEnviada={() => {
+              // Recarregar tarefas ou atualizar UI se necessário
+              loadTasks();
+            }}
+          />
+        </UnifiedModal>
+      )}
     </PageContainer>
   );
 };

@@ -21,7 +21,7 @@ import TopBar from '../components/TopBar';
 import WelcomeSection from '../components/WelcomeSection';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
-import { defaultColors, addOpacity } from '../utils/themeHelpers';
+import { getThemeColor, getStatusColor, addOpacity } from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
 import {
   OptimizedFormRow,
@@ -30,6 +30,7 @@ import {
   OptimizedSectionTitle,
 } from '../components/shared/optimized-styles';
 import EmptyState from '../components/EmptyState';
+import { formatCurrency } from '../utils/formatters';
 
 // Styled Components para substituir estilos inline
 // ButtonGroup removido - usar OptimizedButtonGroup
@@ -51,7 +52,7 @@ const SectionText = styled.p<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'secondary' in text) {
       return text.secondary;
     }
-    return defaultColors.text.secondary;
+    return getThemeColor(props.$theme, 'text.secondary', 'inherit');
   }};
   font-size: 0.9rem;
   margin: 0.25rem 0;
@@ -65,6 +66,27 @@ const FlexRowWithMargin = styled.div`
   display: flex;
   gap: 1rem;
   margin-top: 1.5rem;
+`;
+
+// Styled Components para substituir estilos inline
+const FormGroupFlex = styled(FormGroup)`
+  flex: 1;
+`;
+
+const InputNumberStyled = styled(Input)`
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+`;
+
+const FlexRowBetween = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+`;
+
+const SectionWithMargin = styled.div`
+  margin-bottom: 1.5rem;
 `;
 
 // Interfaces
@@ -106,14 +128,14 @@ const SummarySection = styled.section<{ $theme: Theme }>`
       : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
     return surfaceColor 
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(defaultColors.surface, 0.95);
+      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
   }};
   backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
   box-shadow: 0 8px 32px
-    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+    ${props => props.$theme?.colors?.shadow || 'transparent'};
 `;
 
 const SummaryTitle = styled.h2<{ $theme?: Theme }>`
@@ -124,7 +146,7 @@ const SummaryTitle = styled.h2<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   margin: 0 0 1.5rem 0;
   font-family: 'Montserrat', sans-serif;
@@ -145,19 +167,19 @@ const SummaryCard = styled.div<{
       case 'primary':
         return props.$theme?.colors?.primary
           ? addOpacity(props.$theme.colors.primary, 0.1)
-          : addOpacity(defaultColors.primary, 0.1);
+          : addOpacity(getThemeColor(props.$theme, 'primary', 'transparent'), 0.1);
       case 'success':
         return props.$theme?.colors?.success
           ? addOpacity(props.$theme.colors.success, 0.1)
-          : addOpacity(defaultColors.success, 0.1);
+          : addOpacity(getStatusColor(props.$theme, 'success', 'background') || 'transparent', 0.1);
       case 'warning':
         return props.$theme?.colors?.warning
           ? addOpacity(props.$theme.colors.warning, 0.1)
-          : addOpacity(defaultColors.warning, 0.1);
+          : addOpacity(getStatusColor(props.$theme, 'warning', 'background') || 'transparent', 0.1);
       case 'info':
         return props.$theme?.colors?.info
           ? addOpacity(props.$theme.colors.info, 0.1)
-          : addOpacity(defaultColors.info, 0.1);
+          : addOpacity(getStatusColor(props.$theme, 'info', 'background') || 'transparent', 0.1);
       default: {
         const surface = props.$theme?.colors?.surface;
         const surfaceColor = typeof surface === 'string' 
@@ -165,7 +187,7 @@ const SummaryCard = styled.div<{
           : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
         return surfaceColor 
           ? addOpacity(surfaceColor, 0.8)
-          : addOpacity(defaultColors.surface, 0.8);
+          : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.8);
       }
     }
   }};
@@ -177,21 +199,21 @@ const SummaryCard = styled.div<{
         case 'primary':
           return props.$theme?.colors?.primary
             ? addOpacity(props.$theme.colors.primary, 0.3)
-            : addOpacity(defaultColors.primary, 0.3);
+            : addOpacity(getThemeColor(props.$theme, 'primary', 'transparent'), 0.3);
         case 'success':
           return props.$theme?.colors?.success
             ? addOpacity(props.$theme.colors.success, 0.3)
-            : addOpacity(defaultColors.success, 0.3);
+            : addOpacity(getStatusColor(props.$theme, 'success', 'background') || 'transparent', 0.3);
         case 'warning':
           return props.$theme?.colors?.warning
             ? addOpacity(props.$theme.colors.warning, 0.3)
-            : addOpacity(defaultColors.warning, 0.3);
+            : addOpacity(getStatusColor(props.$theme, 'warning', 'background') || 'transparent', 0.3);
         case 'info':
           return props.$theme?.colors?.info
             ? addOpacity(props.$theme.colors.info, 0.3)
-            : addOpacity(defaultColors.info, 0.3);
+            : addOpacity(getStatusColor(props.$theme, 'info', 'background') || 'transparent', 0.3);
         default:
-          return props.$theme?.colors?.border || defaultColors.border;
+          return getThemeColor(props.$theme, 'border.primary', 'transparent');
       }
     }};
   transition: all 0.3s ease;
@@ -199,7 +221,7 @@ const SummaryCard = styled.div<{
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 16px
-      ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+      ${props => props.$theme?.colors?.shadow || 'transparent'};
   }
 `;
 
@@ -211,7 +233,7 @@ const SummaryCardTitle = styled.h3<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   margin: 0 0 0.75rem 0;
   display: flex;
@@ -227,7 +249,7 @@ const SummaryValue = styled.div<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   font-family: 'Montserrat', sans-serif;
 `;
@@ -240,7 +262,7 @@ const SummaryDetails = styled.div<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'secondary' in text) {
       return text.secondary;
     }
-    return defaultColors.text.secondary;
+    return getThemeColor(props.$theme, 'text.secondary', 'inherit');
   }};
 `;
 
@@ -266,7 +288,7 @@ const ConditionsSection = styled.div<{ $theme?: Theme }>`
     } else if (typeof background === 'object' && background !== null && 'secondary' in background) {
       return background.secondary;
     }
-    return defaultColors.surface;
+    return getThemeColor(props.$theme, 'surface.primary', 'transparent');
   }};
   border-radius: 12px;
   padding: 1.5rem;
@@ -278,7 +300,7 @@ const ConditionsSection = styled.div<{ $theme?: Theme }>`
     } else if (typeof border === 'object' && border !== null && 'primary' in border) {
       return border.primary;
     }
-    return defaultColors.border;
+    return getThemeColor(props.$theme, 'border.primary', 'transparent');
   }};
 `;
 
@@ -290,7 +312,7 @@ const ConditionsTitle = styled.h3<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   margin: 0 0 1rem 0;
 `;
@@ -306,7 +328,7 @@ const ConditionRow = styled.div<{ $theme?: Theme }>`
     margin-bottom: 0;
     padding-top: 0.75rem;
     border-top: 1px solid ${props =>
-      props.$theme?.colors?.border || defaultColors.border};
+      getThemeColor(props.$theme, 'border.primary', 'transparent')};
     font-weight: 600;
   }
 `;
@@ -317,7 +339,7 @@ const ConditionLabel = styled.span<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'secondary' in text) {
       return text.secondary;
     }
-    return defaultColors.text.secondary;
+    return getThemeColor(props.$theme, 'text.secondary', 'inherit');
   }};
 `;
 
@@ -327,7 +349,7 @@ const ConditionValue = styled.span<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   font-weight: 500;
 `;
@@ -340,14 +362,14 @@ const RequestsSection = styled.section<{ $theme: Theme }>`
       : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
     return surfaceColor 
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(defaultColors.surface, 0.95);
+      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
   }};
   backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
   box-shadow: 0 8px 32px
-    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+    ${props => props.$theme?.colors?.shadow || 'transparent'};
 `;
 
 const RequestsTitle = styled.h2<{ $theme?: Theme }>`
@@ -358,7 +380,7 @@ const RequestsTitle = styled.h2<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   margin: 0 0 1.5rem 0;
   font-family: 'Montserrat', sans-serif;
@@ -382,14 +404,14 @@ const RequestType = styled.div<{ $type: 'loan' | 'advance'; $theme?: Theme }>`
   border-radius: 20px;
   background: ${props => {
     const color = props.$type === 'loan'
-      ? props.$theme?.colors?.info || defaultColors.info
-      : props.$theme?.colors?.success || defaultColors.success;
+      ? getStatusColor(props.$theme, 'info', 'background') || 'transparent'
+      : getStatusColor(props.$theme, 'success', 'background') || 'transparent';
     return addOpacity(color, 0.2);
   }};
   color: ${props =>
     props.$type === 'loan'
-      ? props.$theme?.colors?.info || defaultColors.info
-      : props.$theme?.colors?.success || defaultColors.success};
+      ? getStatusColor(props.$theme, 'info', 'background') || 'transparent'
+      : getStatusColor(props.$theme, 'success', 'background') || 'transparent'};
   font-size: 0.8rem;
   font-weight: 600;
 `;
@@ -405,28 +427,28 @@ const RequestStatus = styled.span<{
   background: ${props => {
     switch (props.$status) {
       case 'pending':
-        return props.$theme?.colors?.warning || defaultColors.warning;
+        return getStatusColor(props.$theme, 'warning', 'background') || 'transparent';
       case 'approved':
-        return props.$theme?.colors?.success || defaultColors.success;
+        return getStatusColor(props.$theme, 'success', 'background') || 'transparent';
       case 'rejected':
-        return props.$theme?.colors?.error || defaultColors.error;
+        return getStatusColor(props.$theme, 'error', 'background') || 'transparent';
       case 'paid': {
         const text = props.$theme?.colors?.text;
         if (typeof text === 'object' && text !== null && 'secondary' in text) {
           return text.secondary;
         }
-        return defaultColors.text.secondary;
+        return getThemeColor(props.$theme, 'text.secondary', 'inherit');
       }
       default: {
         const text = props.$theme?.colors?.text;
         if (typeof text === 'object' && text !== null && 'secondary' in text) {
           return text.secondary;
         }
-        return defaultColors.text.secondary;
+        return getThemeColor(props.$theme, 'text.secondary', 'inherit');
       }
     }
   }};
-  color: ${props => props.$theme?.colors?.surface || defaultColors.surface};
+  color: ${props => getThemeColor(props.$theme, 'surface.primary', 'inherit')};
 `;
 
 const RequestInfo = styled.div`
@@ -441,7 +463,7 @@ const RequestTitle = styled.h3<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   margin: 0 0 0.5rem 0;
 `;
@@ -453,7 +475,7 @@ const RequestDetails = styled.div<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'secondary' in text) {
       return text.secondary;
     }
-    return defaultColors.text.secondary;
+    return getThemeColor(props.$theme, 'text.secondary', 'inherit');
   }};
   margin-bottom: 0.25rem;
 `;
@@ -466,7 +488,7 @@ const RequestAmount = styled.div<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   font-family: 'Montserrat', sans-serif;
   margin-top: 0.5rem;
@@ -494,14 +516,14 @@ const TermsSection = styled.section<{ $theme: Theme }>`
       : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
     return surfaceColor 
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(defaultColors.surface, 0.95);
+      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
   }};
   backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
   box-shadow: 0 8px 32px
-    ${props => props.$theme?.colors?.shadow || defaultColors.shadow};
+    ${props => props.$theme?.colors?.shadow || 'transparent'};
 `;
 
 const TermsTitle = styled.h2<{ $theme?: Theme }>`
@@ -512,7 +534,7 @@ const TermsTitle = styled.h2<{ $theme?: Theme }>`
     if (typeof text === 'object' && text !== null && 'primary' in text) {
       return text.primary;
     }
-    return defaultColors.text.primary;
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   margin: 0 0 1.5rem 0;
   font-family: 'Montserrat', sans-serif;
@@ -520,7 +542,7 @@ const TermsTitle = styled.h2<{ $theme?: Theme }>`
 
 const TermsContent = styled.div<{ $theme?: Theme }>`
   font-size: 0.9rem;
-  color: ${defaultColors.text.secondary};
+  color: ${props => getThemeColor(props.$theme, 'text.secondary', 'inherit')};
   line-height: 1.6;
 
   h3 {
@@ -529,7 +551,7 @@ const TermsContent = styled.div<{ $theme?: Theme }>`
       if (typeof text === 'object' && text !== null && 'primary' in text) {
         return text.primary;
       }
-      return defaultColors.text.primary;
+      return getThemeColor(props.$theme, 'text.primary', 'inherit');
     }};
     margin: 1.5rem 0 0.75rem 0;
     font-size: 1rem;
@@ -618,7 +640,7 @@ export default function LoanManagement() {
     };
 
     loadLoansData();
-  }, [currentProfile?.id]);
+  }, [currentProfile?.id, alertManager]);
 
   const [newRequest, setNewRequest] = useState({
     type: 'advance' as 'loan' | 'advance',
@@ -808,12 +830,7 @@ export default function LoanManagement() {
     }
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
-  };
+  // formatCurrency agora usa utilitário centralizado de src/utils/formatters.ts
 
   const formatCurrencyInput = (value: string) => {
     const numericValue = value.replace(/[^\d]/g, '');
@@ -978,7 +995,7 @@ export default function LoanManagement() {
         </OptimizedSectionTitle>
         <Form onSubmit={handleSubmitRequest}>
           <OptimizedFormRow>
-            <FormGroup style={{ flex: 1 }}>
+            <FormGroupFlex>
               <OptimizedLabel>Tipo de Operação</OptimizedLabel>
               <Select
                 $theme={theme}
@@ -995,10 +1012,10 @@ export default function LoanManagement() {
                 <option value='advance'>Adiantamento de Salário</option>
                 <option value='loan'>Empréstimo</option>
               </Select>
-            </FormGroup>
-            <FormGroup style={{ flex: 1 }}>
+            </FormGroupFlex>
+            <FormGroupFlex>
               <OptimizedLabel>Valor Solicitado</OptimizedLabel>
-              <Input
+              <InputNumberStyled
                 $theme={theme}
                 type='text'
                 value={newRequest.amount}
@@ -1010,13 +1027,9 @@ export default function LoanManagement() {
                 }
                 placeholder='R$ 0,00'
                 required
-                style={{
-                  WebkitAppearance: 'none',
-                  MozAppearance: 'textfield',
-                }}
               />
-            </FormGroup>
-            <FormGroup style={{ flex: 1 }}>
+            </FormGroupFlex>
+            <FormGroupFlex>
               <OptimizedLabel>Parcelas</OptimizedLabel>
               <Input
                 $theme={theme}
@@ -1032,7 +1045,7 @@ export default function LoanManagement() {
                 }
                 required
               />
-            </FormGroup>
+            </FormGroupFlex>
           </OptimizedFormRow>
 
           <FormGroup>
@@ -1188,7 +1201,7 @@ export default function LoanManagement() {
                         : 'default'
                 }
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <FlexRowBetween>
                   <RequestType $type={request.type} $theme={theme}>
                     <span>{getRequestTypeIcon(request.type)}</span>
                     <span>{getRequestTypeName(request.type)}</span>
@@ -1196,7 +1209,7 @@ export default function LoanManagement() {
                   <RequestStatus $status={request.status} $theme={theme}>
                     {getStatusName(request.status)}
                   </RequestStatus>
-                </div>
+                </FlexRowBetween>
 
                 <RequestInfo>
                   <RequestTitle $theme={theme}>{request.employeeName}</RequestTitle>
@@ -1318,7 +1331,7 @@ export default function LoanManagement() {
       >
         {selectedRequest && (
           <div>
-            <div style={{ marginBottom: '1.5rem' }}>
+            <SectionWithMargin>
               <OptimizedSectionTitle $theme={theme}>
                 {selectedRequest.employeeName}
               </OptimizedSectionTitle>
@@ -1340,7 +1353,7 @@ export default function LoanManagement() {
               <SectionText $theme={theme}>
                 <strong>Justificativa:</strong> {selectedRequest.justification}
               </SectionText>
-            </div>
+            </SectionWithMargin>
 
             <FlexRow>
               <FlexColumn>
@@ -1369,13 +1382,13 @@ export default function LoanManagement() {
       >
         {selectedRequest && (
           <div>
-            <div style={{ marginBottom: '1.5rem' }}>
+            <SectionWithMargin>
               <h3 className='section-title'>
                 {selectedRequest.employeeName} -{' '}
                 {formatCurrency(selectedRequest.totalAmount)}
               </h3>
               <SectionText $theme={theme}>{selectedRequest.justification}</SectionText>
-            </div>
+            </SectionWithMargin>
 
             <FormGroup>
               <OptimizedLabel>

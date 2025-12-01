@@ -1,6 +1,6 @@
 {
   "name": "dom-frontend",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -19,7 +19,8 @@
     "validate:strict": "node scripts/validate-rules.js",
     "validate:js": "node scripts/prevent-js-usage.js",
     "validate:syntax": "node scripts/prevent-syntax-errors.js",
-    "validate:all": "npm run validate && npm run validate:strict",
+    "validate:hardcoded": "node scripts/validate-hardcoded-colors.js",
+    "validate:all": "npm run validate && npm run validate:strict && npm run validate:hardcoded",
     "validate:rigorous": "node scripts/strict-validation.js",
     "validate:naming": "node scripts/validate-file-naming-final.js",
     "fix:emergency": "node scripts/emergency-fix.js",

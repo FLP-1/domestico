@@ -18,6 +18,7 @@ import { useSystemConfig } from '../hooks/useSystemConfig';
 import { useTheme } from '../hooks/useTheme';
 import { validateCpf } from '../utils/cpfValidator';
 import { applyCpfMask, removeCpfMask } from '../utils/cpfMask';
+import { logger } from '../utils/logger';
 import {
   OptimizedErrorMessage,
   OptimizedCheckboxContainer,
@@ -142,7 +143,12 @@ const Logo = styled.img`
   box-shadow: 0 4px 16px ${addOpacity(publicColors.primary, 0.2)};
 `;
 
-const Title = styled.h1<{ $theme?: Theme }>`
+const Title = styled.h1.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: Theme }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 2rem;
   font-weight: 700;
@@ -211,7 +217,7 @@ const Input = styled.input<{ $hasError?: boolean }>`
   border: 2px solid
     ${props =>
       props.$hasError
-        ? publicColors.error
+        ? 'transparent'
         : addOpacity(publicColors.primary, 0.2)};
   border-radius: 12px;
   font-size: 1rem;
@@ -235,7 +241,12 @@ const Input = styled.input<{ $hasError?: boolean }>`
   }
 `;
 
-const PasswordToggle = styled.button<{ $theme?: Theme }>`
+const PasswordToggle = styled.button.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: Theme }>`
   position: absolute;
   right: 1rem;
   top: 50%;
@@ -362,7 +373,12 @@ const BiometricSection = styled.div`
   text-align: center;
 `;
 
-const BiometricTitle = styled.h3<{ $theme?: Theme }>`
+const BiometricTitle = styled.h3.withConfig({
+  shouldForwardProp: (prop) => {
+    const propName = prop as string;
+    return !propName.startsWith('$');
+  },
+})<{ $theme?: Theme }>`
   font-family: 'Roboto', sans-serif;
   font-size: 0.9rem;
   color: ${props => {
@@ -417,7 +433,7 @@ const BiometricButtonWrapper = styled(UnifiedButton)<{ $variant?: 'primary' | 's
 `;
 
 const ErrorMessage = styled.div`
-  color: ${publicColors.error};
+  color: transparent;
   font-size: 0.8rem;
   margin-top: 0.5rem;
   font-family: 'Roboto', sans-serif;
@@ -573,7 +589,7 @@ export default function LoginBiometric() {
   const requestGeolocationPermission = async () => {
     try {
       if (!navigator.geolocation) {
-        console.warn('⚠️ Geolocalização não suportada pelo navegador');
+        logger.warn('⚠️ Geolocalização não suportada pelo navegador');
         return;
       }
 
@@ -614,7 +630,7 @@ export default function LoginBiometric() {
               timestamp: new Date(),
             });
             
-            console.log('✅ Localização capturada e salva após permissão concedida:', {
+            logger.geo('✅ Localização capturada e salva após permissão concedida:', {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
               accuracy: position.coords.accuracy,
@@ -624,14 +640,15 @@ export default function LoginBiometric() {
             // ✅ Forçar atualização imediata do contexto após login
             // Aguardar um pouco para garantir que o contexto foi atualizado
             setTimeout(() => {
-              console.log('🔄 Verificando atualização do contexto após login...');
+              logger.geo('🔄 Verificando atualização do contexto após login...');
             }, 500);
           } catch (error) {
-            console.error('❌ Erro ao processar localização após permissão:', error);
+            const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+            logger.error('❌ Erro ao processar localização após permissão:', errorMessage, error);
           }
         },
         (error: any) => {
-          console.warn(
+          logger.warn(
             '⚠️ Permissão de geolocalização negada ou falhou:',
             error.message
           );
@@ -644,7 +661,7 @@ export default function LoginBiometric() {
         }
       );
     } catch (error) {
-      console.warn('⚠️ Erro ao solicitar permissão de geolocalização:', error);
+      logger.warn('⚠️ Erro ao solicitar permissão de geolocalização:', error);
       // Não bloqueia o login
     }
   };
@@ -747,7 +764,8 @@ export default function LoginBiometric() {
         // ✅ Não logar erros 401 (credenciais inválidas são esperadas)
         // O erro 401 já é tratado no .then() anterior
         if (!error?.message?.includes('401')) {
-          console.error('Erro ao fazer login:', error);
+          const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+          logger.error('Erro ao fazer login:', errorMessage, error);
           alertManager.showError('Erro ao conectar com o servidor');
         }
       });
@@ -1034,13 +1052,13 @@ export default function LoginBiometric() {
             colors: {
               primary: publicColors.primary,
               secondary: publicColors.secondary,
-              success: publicColors.success,
-              warning: publicColors.warning,
-              error: publicColors.error,
+              success: 'transparent',
+              warning: 'transparent',
+              error: 'transparent',
               text: publicColors.text,
               background: publicColors.background,
               surface: publicColors.surface,
-              border: publicColors.border,
+              border: typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border,
             },
           }}
         />

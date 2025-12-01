@@ -20,14 +20,44 @@ const StatusContainer = styled.div<{
   $status: 'in' | 'out' | 'break' | 'success' | 'warning' | 'info';
   $theme?: any;
 }>`
-  background: rgba(255, 255, 255, 0.95);
+  background: ${props => {
+    const bg = props.$theme?.colors?.background?.primary ||
+                props.$theme?.background?.primary ||
+                props.$theme?.colors?.surface ||
+                props.$theme?.colors?.background;
+    if (bg && bg.startsWith('#')) {
+      const r = parseInt(bg.slice(1, 3), 16);
+      const g = parseInt(bg.slice(3, 5), 16);
+      const b = parseInt(bg.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.95)`;
+    }
+    return 'transparent';
+  }};
   backdrop-filter: blur(20px);
   border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 4px 16px
-    ${props => props.$theme?.colors.shadow || 'rgba(0, 0, 0, 0.1)'};
-  border: 1px solid
-    ${props => props.$theme?.colors.primary + '20' || 'rgba(41, 171, 226, 0.1)'};
+  box-shadow: ${props => {
+    const shadowColor = props.$theme?.colors?.shadow ||
+                        props.$theme?.shadow?.color;
+    if (shadowColor && shadowColor.startsWith('#')) {
+      const r = parseInt(shadowColor.slice(1, 3), 16);
+      const g = parseInt(shadowColor.slice(3, 5), 16);
+      const b = parseInt(shadowColor.slice(5, 7), 16);
+      return `0 4px 16px rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return props.$theme?.shadows?.md || 'none';
+  }};
+  border: 1px solid ${props => {
+    const primaryColor = props.$theme?.colors?.primary ||
+                         props.$theme?.accent;
+    if (primaryColor && primaryColor.startsWith('#')) {
+      const r = parseInt(primaryColor.slice(1, 3), 16);
+      const g = parseInt(primaryColor.slice(3, 5), 16);
+      const b = parseInt(primaryColor.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.1)`;
+    }
+    return 'transparent';
+  }};
   text-align: center;
   animation: ${fadeIn} 0.6s ease-out;
   min-width: 300px;
@@ -35,8 +65,17 @@ const StatusContainer = styled.div<{
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px
-      ${props => props.$theme?.colors.shadow || 'rgba(0, 0, 0, 0.15)'};
+    box-shadow: ${props => {
+      const shadowColor = props.$theme?.colors?.shadow ||
+                          props.$theme?.shadow?.color;
+      if (shadowColor && shadowColor.startsWith('#')) {
+        const r = parseInt(shadowColor.slice(1, 3), 16);
+        const g = parseInt(shadowColor.slice(3, 5), 16);
+        const b = parseInt(shadowColor.slice(5, 7), 16);
+        return `0 8px 24px rgba(${r}, ${g}, ${b}, 0.15)`;
+      }
+      return props.$theme?.shadows?.lg || 'none';
+    }};
   }
 `;
 
@@ -51,34 +90,34 @@ const StatusIcon = styled.div<{
       switch (props.$status) {
         case 'in':
         case 'success':
-          return props.$theme.colors.primary;
+          return props.$theme?.colors?.primary ||
+                 props.$theme?.accent ||
+                 'inherit';
         case 'out':
-          return props.$theme.colors.accent || '#e74c3c';
+          return props.$theme?.colors?.status?.error?.background ||
+                 props.$theme?.status?.error?.background ||
+                 props.$theme?.colors?.error ||
+                 'inherit';
         case 'break':
         case 'warning':
-          return props.$theme.colors.accent || '#f39c12';
+          return props.$theme?.colors?.status?.warning?.background ||
+                 props.$theme?.status?.warning?.background ||
+                 props.$theme?.colors?.warning ||
+                 'inherit';
         case 'info':
-          return props.$theme.colors.textSecondary || '#7f8c8d';
+          return props.$theme?.colors?.text?.secondary ||
+                 props.$theme?.text?.secondary ||
+                 props.$theme?.colors?.text ||
+                 'inherit';
         default:
-          return props.$theme.colors.primary;
+          return props.$theme?.colors?.primary ||
+                 props.$theme?.accent ||
+                 'inherit';
       }
     }
 
-    // Fallback colors
-    switch (props.$status) {
-      case 'in':
-      case 'success':
-        return '#29abe2';
-      case 'out':
-        return '#e74c3c';
-      case 'break':
-      case 'warning':
-        return '#f39c12';
-      case 'info':
-        return '#7f8c8d';
-      default:
-        return '#29abe2';
-    }
+    // Fallback seguro
+    return 'inherit';
   }};
 `;
 
@@ -86,19 +125,31 @@ const StatusText = styled.h3<{ $theme?: any }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #2c3e50;
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin: 0 0 0.5rem 0;
 `;
 
 const StatusTime = styled.p<{ $theme?: any }>`
   font-size: 1rem;
-  color: #7f8c8d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin: 0;
 `;
 
 const StatusDescription = styled.p<{ $theme?: any }>`
   font-size: 0.9rem;
-  color: #5a6c7d;
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin: 0.5rem 0 0 0;
   line-height: 1.4;
 `;
@@ -135,11 +186,11 @@ export const StatusCard: React.FC<StatusCardProps> = ({
         {icon}
       </StatusIcon>
 
-      <StatusText>{title}</StatusText>
+      <StatusText $theme={theme}>{title}</StatusText>
 
-      {time && <StatusTime>{time}</StatusTime>}
+      {time && <StatusTime $theme={theme}>{time}</StatusTime>}
 
-      {description && <StatusDescription>{description}</StatusDescription>}
+      {description && <StatusDescription $theme={theme}>{description}</StatusDescription>}
 
       {children}
     </StatusContainer>

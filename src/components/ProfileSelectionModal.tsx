@@ -27,7 +27,7 @@ const ProfileModal = styled.div<{ $isOpen: boolean; $theme?: any }>`
         return `rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.5)`;
       }
     }
-    return 'rgba(0, 0, 0, 0.5)'; // Fallback absoluto para overlay
+    return 'transparent';
   }};
   display: ${props => (props.$isOpen ? 'flex' : 'none')};
   align-items: center;
@@ -241,7 +241,7 @@ const ModalSubtitle = styled.p<{ $theme?: any }>`
   line-height: 1.5;
 `;
 
-const ProfileItem = styled.div<{ $isSelected: boolean; $color: string }>`
+const ProfileItem = styled.div<{ $isSelected: boolean; $color: string; $theme?: any }>`
   display: flex;
   align-items: center;
   padding: 1.25rem;

@@ -9,34 +9,83 @@ interface NotificationBadgeProps {
   position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
   showZero?: boolean;
   className?: string;
+  $theme?: any;
 }
 
-const getVariantStyles = (variant: NotificationBadgeProps['variant']) => {
+const getVariantStyles = (variant: NotificationBadgeProps['variant'], theme?: any) => {
+  const getThemeColor = (colorPath: string[], fallback: string) => {
+    let value = theme;
+    for (const key of colorPath) {
+      value = value?.[key];
+    }
+    return value || fallback;
+  };
+
   const variants = {
     default: {
-      backgroundColor: '#dc3545',
-      color: 'white',
-      borderColor: 'white',
+      backgroundColor: getThemeColor(['colors', 'status', 'error', 'background'], 'transparent') ||
+                      getThemeColor(['colors', 'error'], 'transparent') ||
+                      'transparent',
+      color: getThemeColor(['colors', 'text', 'onPrimary'], 'inherit') ||
+             getThemeColor(['text', 'onPrimary'], 'inherit') ||
+             getThemeColor(['colors', 'surface'], 'inherit') ||
+             'inherit',
+      borderColor: getThemeColor(['colors', 'text', 'onPrimary'], 'transparent') ||
+                   getThemeColor(['text', 'onPrimary'], 'transparent') ||
+                   getThemeColor(['colors', 'surface'], 'transparent') ||
+                   'transparent',
     },
     warning: {
-      backgroundColor: '#ffc107',
-      color: '#212529',
-      borderColor: 'white',
+      backgroundColor: getThemeColor(['colors', 'status', 'warning', 'background'], 'transparent') ||
+                      getThemeColor(['colors', 'warning'], 'transparent') ||
+                      'transparent',
+      color: getThemeColor(['colors', 'status', 'warning', 'text'], 'inherit') ||
+             getThemeColor(['status', 'warning', 'text'], 'inherit') ||
+             getThemeColor(['colors', 'text', 'primary'], 'inherit') ||
+             'inherit',
+      borderColor: getThemeColor(['colors', 'text', 'onPrimary'], 'transparent') ||
+                   getThemeColor(['text', 'onPrimary'], 'transparent') ||
+                   getThemeColor(['colors', 'surface'], 'transparent') ||
+                   'transparent',
     },
     error: {
-      backgroundColor: '#dc3545',
-      color: 'white',
-      borderColor: 'white',
+      backgroundColor: getThemeColor(['colors', 'status', 'error', 'background'], 'transparent') ||
+                      getThemeColor(['colors', 'error'], 'transparent') ||
+                      'transparent',
+      color: getThemeColor(['colors', 'text', 'onPrimary'], 'inherit') ||
+             getThemeColor(['text', 'onPrimary'], 'inherit') ||
+             getThemeColor(['colors', 'surface'], 'inherit') ||
+             'inherit',
+      borderColor: getThemeColor(['colors', 'text', 'onPrimary'], 'transparent') ||
+                   getThemeColor(['text', 'onPrimary'], 'transparent') ||
+                   getThemeColor(['colors', 'surface'], 'transparent') ||
+                   'transparent',
     },
     success: {
-      backgroundColor: '#28a745',
-      color: 'white',
-      borderColor: 'white',
+      backgroundColor: getThemeColor(['colors', 'status', 'success', 'background'], 'transparent') ||
+                      getThemeColor(['colors', 'success'], 'transparent') ||
+                      'transparent',
+      color: getThemeColor(['colors', 'text', 'onPrimary'], 'inherit') ||
+             getThemeColor(['text', 'onPrimary'], 'inherit') ||
+             getThemeColor(['colors', 'surface'], 'inherit') ||
+             'inherit',
+      borderColor: getThemeColor(['colors', 'text', 'onPrimary'], 'transparent') ||
+                   getThemeColor(['text', 'onPrimary'], 'transparent') ||
+                   getThemeColor(['colors', 'surface'], 'transparent') ||
+                   'transparent',
     },
     info: {
-      backgroundColor: '#17a2b8',
-      color: 'white',
-      borderColor: 'white',
+      backgroundColor: getThemeColor(['colors', 'status', 'info', 'background'], 'transparent') ||
+                      getThemeColor(['colors', 'info'], 'transparent') ||
+                      'transparent',
+      color: getThemeColor(['colors', 'text', 'onPrimary'], 'inherit') ||
+             getThemeColor(['text', 'onPrimary'], 'inherit') ||
+             getThemeColor(['colors', 'surface'], 'inherit') ||
+             'inherit',
+      borderColor: getThemeColor(['colors', 'text', 'onPrimary'], 'transparent') ||
+                   getThemeColor(['text', 'onPrimary'], 'transparent') ||
+                   getThemeColor(['colors', 'surface'], 'transparent') ||
+                   'transparent',
     },
   };
 
@@ -103,10 +152,10 @@ const StyledBadge = styled.div<NotificationBadgeProps>`
   font-size: ${props => getSizeStyles(props.size || 'medium').fontSize};
   line-height: 1;
   border: ${props => getSizeStyles(props.size || 'medium').borderWidth} solid
-    ${props => getVariantStyles(props.variant).borderColor};
+    ${props => getVariantStyles(props.variant, props.$theme).borderColor};
 
-  background-color: ${props => getVariantStyles(props.variant).backgroundColor};
-  color: ${props => getVariantStyles(props.variant).color};
+  background-color: ${props => getVariantStyles(props.variant, props.$theme).backgroundColor};
+  color: ${props => getVariantStyles(props.variant, props.$theme).color};
 
   ${props => {
     const positionStyles = getPositionStyles(props.position || 'top-right');
