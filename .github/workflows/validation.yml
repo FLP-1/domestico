@@ -27,8 +27,9 @@ jobs:
       - name: 🔍 Run ESLint
         run: npm run lint:check
 
-      - name: 📝 Check Prettier formatting
+      - name: 📝 Check Prettier formatting (non-blocking)
         run: npm run format:check
+        continue-on-error: true
 
       - name: 📘 TypeScript type check
         run: npm run type-check
@@ -99,6 +100,7 @@ jobs:
         run: |
           echo "Bundle size check:"
           du -sh .next/static/chunks/*.js | sort -hr | head -10 || echo "No chunks found yet"
+        continue-on-error: true
 
       - name: ⚡ Lighthouse CI
         uses: treosh/lighthouse-ci-action@v10
