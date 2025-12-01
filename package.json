@@ -31,6 +31,7 @@
     "test:e2e": "playwright test",
     "test:watch": "jest --watch --passWithNoTests",
     "test:coverage": "echo \"Coverage tests not implemented yet\" && exit 0",
+    "prepare": "husky install",
     "performance:lighthouse": "npx lhci autorun --config=./lighthouse.config.js",
     "performance:analyze": "next build --profile",
     "performance:k6": "k6 run scripts/performance/load-test.js",

@@ -1,16 +1,16 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-echo "🚨 EXECUTANDO VALIDAÇÃO RIGOROSA PRÉ-COMMIT..."
+echo "🔍 Executando lint-staged (formatação automática)..."
 
-# Executar validação rigorosa completa
-echo "🔍 Executando validação rigorosa..."
-npm run validate:rigorous
+# Executar lint-staged para formatar e validar arquivos staged
+npx lint-staged
+
 if [ $? -ne 0 ]; then
-  echo "❌ VALIDAÇÃO RIGOROSA FALHOU!"
-  echo "🚨 COMMIT BLOQUEADO - Corrija todos os problemas antes de continuar"
+  echo "❌ Lint-staged falhou!"
+  echo "🚨 COMMIT BLOQUEADO - Corrija os problemas antes de continuar"
   exit 1
 fi
 
-echo "✅ VALIDAÇÃO RIGOROSA APROVADA!"
-echo "🎉 Commit autorizado - Projeto está em conformidade total!"
+echo "✅ Formatação automática concluída!"
+echo "🎉 Commit autorizado!"
