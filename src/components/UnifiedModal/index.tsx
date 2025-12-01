@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { createThemedStyles } from '../../design-system';
 
@@ -277,17 +277,28 @@ export const UnifiedModal: React.FC<UnifiedModalProps> = ({
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      onClose();
-    }
-  };
+  // Fecha modal com ESC
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEsc);
+    return () => document.removeEventListener('keydown', handleEsc);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <Overlay
       $isOpen={isOpen}
       onClick={handleOverlayClick}
-      onKeyDown={handleKeyDown}
       role='dialog'
       aria-modal='true'
       aria-label={ariaLabel || title}

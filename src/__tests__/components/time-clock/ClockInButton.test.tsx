@@ -144,7 +144,7 @@ describe('ClockInButton', () => {
         </ThemeWrapper>
       );
 
-      const button = screen.getByText('Entrar');
+      const button = screen.getByRole('button', { name: /entrar/i });
       expect(button).toBeDisabled();
     });
   });

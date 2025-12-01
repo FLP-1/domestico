@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 
 // Função para gerar keyframes dinamicamente baseado no tema
 const createSuccessPulse = (theme?: any) => {
@@ -141,11 +141,16 @@ const ButtonContainer = styled.button<{
   }};
   position: relative;
   overflow: hidden;
-  animation: ${props => {
-    if (!props.$justRegistered) return 'none';
+  ${props => {
+    if (!props.$justRegistered)
+      return css`
+        animation: none;
+      `;
     const pulseAnimation = createSuccessPulse(props.$theme);
-    return `${pulseAnimation} 1s ease-out`;
-  }};
+    return css`
+      animation: ${pulseAnimation} 1s ease-out;
+    `;
+  }}
 
   &:hover {
     transform: translateY(-4px);

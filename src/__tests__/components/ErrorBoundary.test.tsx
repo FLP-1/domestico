@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ErrorBoundary from '../../components/ErrorBoundary';
+import { UserProfileProvider } from '../../contexts/UserProfileContext';
 
 // Componente que lança erro propositalmente
 const ThrowError = ({ shouldThrow = false }: { shouldThrow?: boolean }) => {
@@ -9,6 +10,11 @@ const ThrowError = ({ shouldThrow = false }: { shouldThrow?: boolean }) => {
   }
   return <div>No error</div>;
 };
+
+// Wrapper com UserProfileProvider
+const TestWrapper = ({ children }: { children: React.ReactNode }) => (
+  <UserProfileProvider>{children}</UserProfileProvider>
+);
 
 describe('ErrorBoundary', () => {
   // Suprimir console.error durante os testes
@@ -23,9 +29,11 @@ describe('ErrorBoundary', () => {
 
   it('deve renderizar children quando não há erro', () => {
     render(
-      <ErrorBoundary>
-        <ThrowError shouldThrow={false} />
-      </ErrorBoundary>
+      <TestWrapper>
+        <ErrorBoundary>
+          <ThrowError shouldThrow={false} />
+        </ErrorBoundary>
+      </TestWrapper>
     );
 
     expect(screen.getByText('No error')).toBeInTheDocument();
@@ -33,9 +41,11 @@ describe('ErrorBoundary', () => {
 
   it('deve renderizar fallback quando há erro', () => {
     render(
-      <ErrorBoundary>
-        <ThrowError shouldThrow={true} />
-      </ErrorBoundary>
+      <TestWrapper>
+        <ErrorBoundary>
+          <ThrowError shouldThrow={true} />
+        </ErrorBoundary>
+      </TestWrapper>
     );
 
     expect(screen.getByText(/Ops! Algo deu errado/i)).toBeInTheDocument();
@@ -44,9 +54,11 @@ describe('ErrorBoundary', () => {
 
   it('deve ter botão de tentar novamente', () => {
     render(
-      <ErrorBoundary>
-        <ThrowError shouldThrow={true} />
-      </ErrorBoundary>
+      <TestWrapper>
+        <ErrorBoundary>
+          <ThrowError shouldThrow={true} />
+        </ErrorBoundary>
+      </TestWrapper>
     );
 
     const retryButton = screen.getByText(/Tentar Novamente/i);
@@ -54,24 +66,33 @@ describe('ErrorBoundary', () => {
   });
 
   it('deve resetar erro ao clicar em tentar novamente', () => {
+    let shouldThrow = true;
+
+    const ThrowErrorControlled = () => {
+      if (shouldThrow) {
+        throw new Error('Test error');
+      }
+      return <div>No error</div>;
+    };
+
     const { rerender } = render(
-      <ErrorBoundary>
-        <ThrowError shouldThrow={true} />
-      </ErrorBoundary>
+      <TestWrapper>
+        <ErrorBoundary key='error-boundary-1'>
+          <ThrowErrorControlled />
+        </ErrorBoundary>
+      </TestWrapper>
     );
 
     expect(screen.getByText(/Ops! Algo deu errado/i)).toBeInTheDocument();
 
     const retryButton = screen.getByText(/Tentar Novamente/i);
+
+    // Mudar shouldThrow antes de clicar
+    shouldThrow = false;
+
     fireEvent.click(retryButton);
 
-    // Após reset, deve renderizar children novamente
-    rerender(
-      <ErrorBoundary>
-        <ThrowError shouldThrow={false} />
-      </ErrorBoundary>
-    );
-
+    // Aguardar re-render após reset
     expect(screen.getByText('No error')).toBeInTheDocument();
   });
 
@@ -79,9 +100,11 @@ describe('ErrorBoundary', () => {
     const customFallback = <div>Custom error message</div>;
 
     render(
-      <ErrorBoundary fallback={customFallback}>
-        <ThrowError shouldThrow={true} />
-      </ErrorBoundary>
+      <TestWrapper>
+        <ErrorBoundary fallback={customFallback}>
+          <ThrowError shouldThrow={true} />
+        </ErrorBoundary>
+      </TestWrapper>
     );
 
     expect(screen.getByText('Custom error message')).toBeInTheDocument();
@@ -92,9 +115,11 @@ describe('ErrorBoundary', () => {
     const onError = jest.fn();
 
     render(
-      <ErrorBoundary onError={onError}>
-        <ThrowError shouldThrow={true} />
-      </ErrorBoundary>
+      <TestWrapper>
+        <ErrorBoundary onError={onError}>
+          <ThrowError shouldThrow={true} />
+        </ErrorBoundary>
+      </TestWrapper>
     );
 
     expect(onError).toHaveBeenCalled();
