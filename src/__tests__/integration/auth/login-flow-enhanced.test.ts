@@ -21,6 +21,9 @@ jest.mock('../../../lib/prisma', () => ({
 // Mock do bcrypt
 jest.mock('bcryptjs', () => ({
   compare: jest.fn(),
+  hash: jest.fn((password: string, rounds: number) =>
+    Promise.resolve(`hashed_${password}`)
+  ),
 }));
 
 // Mock do logger
