@@ -42,6 +42,16 @@ jest.mock('@/lib/logger', () => ({
   },
 }));
 
+// Mock do profileConflictValidator
+jest.mock('@/utils/profileConflictValidator', () => ({
+  validarSelecaoCompleta: jest.fn(() => ({
+    valido: true,
+    motivo: null,
+    sugestoes: [],
+  })),
+  filtrarPerfisValidosParaGrupo: jest.fn((perfis, grupoId) => perfis),
+}));
+
 describe('Fluxo Completo de Login', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -123,11 +133,40 @@ describe('Fluxo Completo de Login', () => {
         principal: true,
       });
 
+      const grupoId = 'grupo-id-123';
+      const usuarioPerfilId = 'up-id-123';
+      (prisma.usuario.findUnique as jest.Mock).mockResolvedValue({
+        id: userId,
+        perfis: [
+          {
+            id: usuarioPerfilId, // Este é o ID que a API procura
+            usuarioId: userId,
+            perfilId: perfilId,
+            principal: false,
+            ativo: true,
+            perfil: {
+              id: perfilId,
+              codigo: 'EMPREGADO',
+              nome: 'Empregado',
+            },
+          },
+        ],
+        gruposUsuario: [
+          {
+            grupo: {
+              id: grupoId,
+              nome: 'Grupo Teste',
+            },
+          },
+        ],
+      });
+
       const { req: validateReq, res: validateRes } = createMocks({
         method: 'POST',
         body: {
-          usuarioId: userId,
-          perfilId: perfilId,
+          userId: userId,
+          perfilId: usuarioPerfilId, // Usar o ID do usuarioPerfil, não do perfil
+          grupoId: grupoId,
         },
         headers: {
           authorization: `Bearer ${loginData.token}`,
