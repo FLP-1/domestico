@@ -1242,8 +1242,8 @@ export default function WelcomeTutorial() {
 
               {slide.tip && (
                 <TipBox $theme={theme}>
-                  <TipIcon role="img" aria-label="Dica">
-                    💡
+                  <TipIcon>
+                    <AccessibleEmoji emoji='💡' label='Dica' />
                   </TipIcon>
                   <TipText $theme={theme}>
                     <strong>Dica:</strong> {slide.tip}
