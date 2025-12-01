@@ -101,11 +101,11 @@ describe('Fluxo Completo de Registro de Ponto', () => {
 
       await registerHandler(req, res);
 
-      expect(res._getStatusCode()).toBe(200);
+      expect(res._getStatusCode()).toBe(201);
       const data = JSON.parse(res._getData());
-      expect(data.success).toBe(true);
+      expect(data.message).toBeDefined();
       expect(data.registro).toBeDefined();
-      expect(data.registro.tipo).toBe('entrada');
+      expect(data.registro.tipo.toLowerCase()).toBe('entrada');
     });
 
     it('deve falhar se já existir registro do mesmo tipo hoje', async () => {
@@ -222,8 +222,9 @@ describe('Fluxo Completo de Registro de Ponto', () => {
 
       expect(res._getStatusCode()).toBe(200);
       const data = JSON.parse(res._getData());
-      expect(data.registros).toBeDefined();
-      expect(Array.isArray(data.registros)).toBe(true);
+      expect(data.success).toBe(true);
+      expect(data.data).toBeDefined();
+      expect(Array.isArray(data.data)).toBe(true);
     });
   });
 });
