@@ -73,7 +73,7 @@ describe('ClockInButton', () => {
     it('deve renderizar com ícone customizado', () => {
       render(
         <ThemeWrapper>
-          <ClockInButton isClockedIn={false} icon="🚀" />
+          <ClockInButton isClockedIn={false} icon='🚀' />
         </ThemeWrapper>
       );
 
@@ -83,7 +83,7 @@ describe('ClockInButton', () => {
     it('deve renderizar com texto customizado', () => {
       render(
         <ThemeWrapper>
-          <ClockInButton isClockedIn={false} text="Custom Text" />
+          <ClockInButton isClockedIn={false} text='Custom Text' />
         </ThemeWrapper>
       );
 
@@ -181,4 +181,3 @@ describe('ClockInButton', () => {
     });
   });
 });
-

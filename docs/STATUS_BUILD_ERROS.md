@@ -16,6 +16,7 @@
 **Problema:** O tipo `Theme` foi atualizado para aceitar `string | object` para propriedades como `text`, `surface`, `border`, `background`, mas os componentes genéricos ainda tentam acessar propriedades aninhadas diretamente.
 
 **Arquivos Afetados:**
+
 - `src/components/unified/UnifiedProgressBar/index.tsx` - ✅ CORRIGIDO
 - `src/components/unified/UnifiedMetaInfo/index.tsx` - ⚠️ PARCIAL (border ainda precisa correção)
 - `src/components/unified/UnifiedTabs/index.tsx` - ❌ PENDENTE
@@ -23,13 +24,15 @@
 - `src/pages/alert-management.tsx` - ✅ CORRIGIDO
 
 **Solução Aplicada:**
+
 ```typescript
 // Antes (ERRO)
-props.$theme?.colors?.text?.secondary
+props.$theme?.colors?.text?.secondary;
 
 // Depois (CORRETO)
 const text = props.$theme?.colors?.text;
-(text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary
+(text && typeof text === 'object' && text.secondary) ||
+  defaultColors.text.secondary;
 ```
 
 ---
@@ -43,6 +46,7 @@ const text = props.$theme?.colors?.text;
 **Status:** ✅ CORRIGIDO (eslint-disable adicionado)
 
 **Dependências faltando:**
+
 - `theme?.colors?.error`
 - `theme?.colors?.info`
 - `theme?.colors?.success`
@@ -74,17 +78,21 @@ const text = props.$theme?.colors?.text;
 ## 🔧 Pendências para Corrigir
 
 ### 1. **UnifiedMetaInfo - border**
+
 **Arquivo:** `src/components/unified/UnifiedMetaInfo/index.tsx:73-76`  
 **Erro:** Acesso direto a `props.$theme?.colors?.border` sem verificação de tipo  
 **Ação:** Aplicar verificação de tipo similar às outras propriedades
 
 ### 2. **UnifiedTabs - text.secondary**
+
 **Arquivo:** `src/components/unified/UnifiedTabs/index.tsx:134`  
 **Erro:** Acesso direto a `props.$theme?.colors?.text?.secondary`  
 **Ação:** Aplicar verificação de tipo
 
 ### 3. **Outros arquivos com `surface?.secondary`**
+
 **Arquivos:**
+
 - `src/pages/document-management.tsx:754`
 - `src/pages/loan-management.tsx:223`
 - `src/pages/shopping-management.tsx:167`
@@ -113,4 +121,3 @@ const text = props.$theme?.colors?.text;
 ---
 
 **Última atualização:** 31/10/2025
-

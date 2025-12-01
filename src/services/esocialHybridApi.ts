@@ -279,7 +279,9 @@ class ESocialHybridApiService {
       }
 
       if (!response.data) {
-        throw new Error('API do eSocial retornou resposta vazia para dados do empregador.');
+        throw new Error(
+          'API do eSocial retornou resposta vazia para dados do empregador.'
+        );
       }
 
       return response.data;

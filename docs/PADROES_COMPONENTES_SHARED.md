@@ -9,12 +9,18 @@ Documentar os padrões estabelecidos para uso de componentes compartilhados, ani
 ## 🎬 **ANIMAÇÕES CENTRALIZADAS**
 
 ### **Localização:**
+
 `src/components/shared/animations.ts`
 
 ### **Uso:**
 
 ```typescript
-import { fadeIn, pulse, slideInLeft, bounce } from '../components/shared/animations';
+import {
+  fadeIn,
+  pulse,
+  slideInLeft,
+  bounce,
+} from '../components/shared/animations';
 
 // Em styled-components
 const MyComponent = styled.div`
@@ -22,7 +28,11 @@ const MyComponent = styled.div`
 `;
 
 // Com helper para animação completa
-import { createAnimation, animationDurations, animationTimings } from '../components/shared/animations';
+import {
+  createAnimation,
+  animationDurations,
+  animationTimings,
+} from '../components/shared/animations';
 
 const MyComponent = styled.div`
   animation: ${createAnimation(fadeIn, 'normal', 'easeOut')};
@@ -32,6 +42,7 @@ const MyComponent = styled.div`
 ### **Animações Disponíveis:**
 
 #### **Entrada:**
+
 - `fadeIn` - Aparece suavemente de baixo para cima
 - `fadeInUp` - Versão com mais movimento vertical
 - `fadeOut` - Desaparece suavemente
@@ -41,22 +52,26 @@ const MyComponent = styled.div`
 - `slideOutLeft` - Desliza para esquerda (sai)
 
 #### **Escala:**
+
 - `pulse` - Pulso suave
 - `pulseStrong` - Pulso mais forte
 - `scaleIn` - Aparece com escala
 - `scaleOut` - Desaparece com escala
 
 #### **Movimento:**
+
 - `bounce` - Salto suave
 - `float` - Flutuação vertical
 - `floatSlow` - Flutuação lenta
 - `shake` - Tremor horizontal
 
 #### **Rotação:**
+
 - `spin` - Rotação contínua
 - `rotate` - Rotação com escala
 
 #### **Compostas:**
+
 - `fadeInScale` - Combina fade e scale
 - `slideFadeIn` - Combina slide e fade
 
@@ -64,18 +79,18 @@ const MyComponent = styled.div`
 
 ```typescript
 // Durações padrão
-animationDurations.fast   // '0.2s'
-animationDurations.normal // '0.3s'
-animationDurations.slow   // '0.6s'
-animationDurations.slower // '1s'
+animationDurations.fast; // '0.2s'
+animationDurations.normal; // '0.3s'
+animationDurations.slow; // '0.6s'
+animationDurations.slower; // '1s'
 
 // Timing functions
-animationTimings.ease      // 'ease'
-animationTimings.easeOut   // 'ease-out'
-animationTimings.bounce    // 'cubic-bezier(0.4, 0, 0.2, 1)'
+animationTimings.ease; // 'ease'
+animationTimings.easeOut; // 'ease-out'
+animationTimings.bounce; // 'cubic-bezier(0.4, 0, 0.2, 1)'
 
 // Criar animação completa
-createAnimation(fadeIn, 'normal', 'easeOut')
+createAnimation(fadeIn, 'normal', 'easeOut');
 ```
 
 ---
@@ -83,21 +98,24 @@ createAnimation(fadeIn, 'normal', 'easeOut')
 ## 🎨 **TOKENS EXPANDIDOS**
 
 ### **Localização:**
+
 `src/components/shared/tokens.ts`
 
 ### **Novos Tokens Adicionados:**
 
 #### **Durações de Animação:**
+
 ```typescript
 tokens.animationDurations = {
   fast: '0.2s',
   normal: '0.3s',
   slow: '0.6s',
   slower: '1s',
-}
+};
 ```
 
 #### **Timing Functions:**
+
 ```typescript
 tokens.animationTimings = {
   ease: 'ease',
@@ -106,16 +124,19 @@ tokens.animationTimings = {
   easeInOut: 'ease-in-out',
   bounce: 'cubic-bezier(0.4, 0, 0.2, 1)',
   smooth: 'cubic-bezier(0.4, 0, 0.2, 1)',
-}
+};
 ```
 
 ### **Helpers:**
 
 ```typescript
-import { getAnimationDuration, getAnimationTiming } from '../components/shared/tokens';
+import {
+  getAnimationDuration,
+  getAnimationTiming,
+} from '../components/shared/tokens';
 
 const duration = getAnimationDuration('normal'); // '0.3s'
-const timing = getAnimationTiming('easeOut');   // 'ease-out'
+const timing = getAnimationTiming('easeOut'); // 'ease-out'
 ```
 
 ---
@@ -123,10 +144,13 @@ const timing = getAnimationTiming('easeOut');   // 'ease-out'
 ## 🧩 **COMPONENTES AUXILIARES OPCIONAIS**
 
 ### **Localização:**
+
 `src/components/shared/page-components.ts`
 
 ### **⚠️ IMPORTANTE:**
+
 Estes componentes são **OPCIONAIS** e **NÃO substituem** componentes existentes. Podem ser usados por:
+
 - Novas páginas
 - Migração gradual de páginas existentes
 - Casos específicos onde UnifiedCard/UnifiedButton não se adequam
@@ -304,16 +328,19 @@ import { PageSection, PageTitle } from '../components/shared/page-components';
 ## 📊 **BENEFÍCIOS**
 
 ### **Animações Centralizadas:**
+
 - ✅ Elimina ~60 duplicações
 - ✅ Consistência visual garantida
 - ✅ Fácil manutenção
 
 ### **Tokens Expandidos:**
+
 - ✅ Base sólida para padronização
 - ✅ Valores consistentes
 - ✅ Fácil ajuste global
 
 ### **Componentes Auxiliares:**
+
 - ✅ Opção disponível sem quebrar código existente
 - ✅ Facilita criação de novas páginas
 - ✅ Migração gradual possível
@@ -342,4 +369,3 @@ import { PageSection, PageTitle } from '../components/shared/page-components';
 1. ✅ Fase 1 concluída - Fundação estabelecida
 2. ⏭️ Fase 2 - Melhorar componentes existentes
 3. ⏭️ Fase 3 - Migração gradual de páginas
-

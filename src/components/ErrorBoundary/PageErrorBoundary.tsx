@@ -42,10 +42,5 @@ export default function PageErrorBoundary({ children, pageName }: Props) {
     }
   };
 
-  return (
-    <ErrorBoundary onError={handleError}>
-      {children}
-    </ErrorBoundary>
-  );
+  return <ErrorBoundary onError={handleError}>{children}</ErrorBoundary>;
 }
-

@@ -1,12 +1,12 @@
 /**
  * ⏳ Hook de Async Operations
- * 
+ *
  * Hook para simplificar operações assíncronas com loading e error handling.
- * 
+ *
  * USO:
  * ```typescript
  * const { execute, loading, error } = useAsyncOperation();
- * 
+ *
  * const handleSave = execute(async () => {
  *   await apiClient.alerts.create(data);
  *   showSuccess(keys.SUCCESS.REGISTRO_CRIADO);
@@ -76,7 +76,8 @@ export function useAsyncOperation(
     ): Promise<T | undefined> => {
       const finalOptions = { ...options, ...localOptions };
 
-      if (!mountedRef.current) return Promise.resolve(undefined as T | undefined);
+      if (!mountedRef.current)
+        return Promise.resolve(undefined as T | undefined);
 
       setLoading(true);
       setError(null);

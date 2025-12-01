@@ -18,7 +18,7 @@ interface PageContainerProps {
 }
 
 const Container = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     if (prop === 'className' || prop === 'children') return true;
     const propName = prop as string;
     return !propName.startsWith('$');
@@ -33,11 +33,11 @@ const Container = styled.div.withConfig({
   display: flex;
   font-family: 'Roboto', sans-serif;
   ${props => (props.$animation ? `animation: ${fadeIn} 0.6s ease-out;` : '')}
-  
+
   /* Variantes de background */
   background: ${props => {
     const theme = props.$theme;
-    
+
     switch (props.$background) {
       case 'transparent':
         return 'transparent';
@@ -66,16 +66,29 @@ const Container = styled.div.withConfig({
             const surface = theme?.colors?.surface;
             if (typeof surface === 'string') return surface;
             const bg = theme?.colors?.background;
-            if (typeof bg === 'object' && bg && 'primary' in bg) return String((bg as any).primary);
+            if (typeof bg === 'object' && bg && 'primary' in bg)
+              return String((bg as any).primary);
             if (typeof bg === 'string') return bg;
             return 'transparent';
           })()} 0%,
           ${(() => {
             const border = theme?.colors?.border;
-            return (typeof border === 'object' && border && 'light' in border ? String((border as any).light) : null) ||
-                   (typeof (theme as any)?.border === 'object' && (theme as any)?.border && 'light' in (theme as any).border ? String((theme as any).border.light) : null) ||
-                   (typeof theme?.colors?.background === 'object' && theme?.colors?.background && 'secondary' in theme.colors.background ? String((theme.colors.background as any).secondary) : null) ||
-                   'transparent';
+            return (
+              (typeof border === 'object' && border && 'light' in border
+                ? String((border as any).light)
+                : null) ||
+              (typeof (theme as any)?.border === 'object' &&
+              (theme as any)?.border &&
+              'light' in (theme as any).border
+                ? String((theme as any).border.light)
+                : null) ||
+              (typeof theme?.colors?.background === 'object' &&
+              theme?.colors?.background &&
+              'secondary' in theme.colors.background
+                ? String((theme.colors.background as any).secondary)
+                : null) ||
+              'transparent'
+            );
           })()} 100%
         )`;
       default:
@@ -86,16 +99,29 @@ const Container = styled.div.withConfig({
             const surface = theme?.colors?.surface;
             if (typeof surface === 'string') return surface;
             const bg = theme?.colors?.background;
-            if (typeof bg === 'object' && bg && 'primary' in bg) return String((bg as any).primary);
+            if (typeof bg === 'object' && bg && 'primary' in bg)
+              return String((bg as any).primary);
             if (typeof bg === 'string') return bg;
             return 'transparent';
           })()} 0%,
           ${(() => {
             const border = theme?.colors?.border;
-            return (typeof border === 'object' && border && 'light' in border ? String((border as any).light) : null) ||
-                   (typeof (theme as any)?.border === 'object' && (theme as any)?.border && 'light' in (theme as any).border ? String((theme as any).border.light) : null) ||
-                   (typeof theme?.colors?.background === 'object' && theme?.colors?.background && 'secondary' in theme.colors.background ? String((theme.colors.background as any).secondary) : null) ||
-                   'transparent';
+            return (
+              (typeof border === 'object' && border && 'light' in border
+                ? String((border as any).light)
+                : null) ||
+              (typeof (theme as any)?.border === 'object' &&
+              (theme as any)?.border &&
+              'light' in (theme as any).border
+                ? String((theme as any).border.light)
+                : null) ||
+              (typeof theme?.colors?.background === 'object' &&
+              theme?.colors?.background &&
+              'secondary' in theme.colors.background
+                ? String((theme.colors.background as any).secondary)
+                : null) ||
+              'transparent'
+            );
           })()} 100%
         )`;
     }
@@ -103,7 +129,7 @@ const Container = styled.div.withConfig({
 `;
 
 const MainContent = styled.main.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     if (prop === 'className' || prop === 'children') return true;
     const propName = prop as string;
     return !propName.startsWith('$');
@@ -120,7 +146,7 @@ const MainContent = styled.main.withConfig({
   min-height: 100vh;
   position: relative;
   z-index: 1;
-  
+
   /* Variantes de largura */
   ${props => {
     if (props.$variant === 'full-width') {
@@ -141,7 +167,7 @@ const MainContent = styled.main.withConfig({
 `;
 
 const ContentWrapper = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     if (prop === 'className' || prop === 'children') return true;
     const propName = prop as string;
     return !propName.startsWith('$');

@@ -40,7 +40,11 @@ const dots = keyframes`
 `;
 
 // Spinner básico
-const SpinnerContainer = styled.div<{ $size: string; $color: string; $theme?: any }>`
+const SpinnerContainer = styled.div<{
+  $size: string;
+  $color: string;
+  $theme?: any;
+}>`
   ${props => {
     const getSizeStyles = () => {
       switch (props.$size) {
@@ -61,10 +65,11 @@ const SpinnerContainer = styled.div<{ $size: string; $color: string; $theme?: an
 
     const sizeStyles = getSizeStyles();
 
-    const bgColor = props.$theme?.colors?.background?.primary ||
-                    props.$theme?.background?.primary ||
-                    props.$theme?.colors?.surface ||
-                    props.$theme?.colors?.background;
+    const bgColor =
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary ||
+      props.$theme?.colors?.surface ||
+      props.$theme?.colors?.background;
     let borderColor = 'transparent';
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
@@ -107,10 +112,11 @@ const LoadingOverlayStyled = styled.div<{ $isVisible: boolean; $theme?: any }>`
   ${props => {
     const themedStyles = createThemedStyles(props.$theme);
 
-    const bgColor = props.$theme?.colors?.background?.primary ||
-                    props.$theme?.background?.primary ||
-                    props.$theme?.colors?.surface ||
-                    props.$theme?.colors?.background;
+    const bgColor =
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary ||
+      props.$theme?.colors?.surface ||
+      props.$theme?.colors?.background;
     let overlayBg = 'transparent';
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);

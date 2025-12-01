@@ -26,12 +26,9 @@ jobs:
       - name: 🔍 Run validations
         run: |
           npm run lint:check
+          npm run format:check
           npm run type-check
           npm run build
-      
-      - name: 📝 Check formatting (non-blocking)
-        run: npm run format:check
-        continue-on-error: true
 
       - name: 🧪 Run tests
         run: npm run test:unit

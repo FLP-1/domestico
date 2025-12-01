@@ -30,6 +30,7 @@ Reforçar a proibição absoluta de cores hardcoded no código, criando mecanism
 **Arquivo:** `scripts/validate-hardcoded-colors.js`
 
 **Funcionalidades:**
+
 - ✅ Detecta cores hex (`#...`)
 - ✅ Detecta cores rgb/rgba hardcoded
 - ✅ Detecta cores hsl hardcoded
@@ -40,6 +41,7 @@ Reforçar a proibição absoluta de cores hardcoded no código, criando mecanism
 - ✅ Relatório detalhado com linha e código
 
 **Uso:**
+
 ```bash
 npm run validate:hardcoded
 ```
@@ -47,11 +49,13 @@ npm run validate:hardcoded
 ### 3. 📦 Integração com Package.json
 
 **Comando adicionado:**
+
 ```json
 "validate:hardcoded": "node scripts/validate-hardcoded-colors.js"
 ```
 
 **Integrado em:**
+
 ```json
 "validate:all": "npm run validate && npm run validate:strict && npm run validate:hardcoded"
 ```
@@ -61,6 +65,7 @@ npm run validate:hardcoded
 **Arquivo:** `DEVELOPMENT_RULES.md`
 
 **Adicionado:**
+
 - ✅ Seção específica sobre proibição de cores hardcoded
 - ✅ Referência ao documento completo
 - ✅ Comandos de validação atualizados
@@ -73,6 +78,7 @@ npm run validate:hardcoded
 ### ❌ PROIBIDO
 
 1. **Cores Hex**
+
    ```typescript
    // ❌ PROIBIDO
    color: #29ABE2;
@@ -80,6 +86,7 @@ npm run validate:hardcoded
    ```
 
 2. **Cores RGB/RGBA Hardcoded**
+
    ```typescript
    // ❌ PROIBIDO
    color: rgb(41, 171, 226);
@@ -87,12 +94,14 @@ npm run validate:hardcoded
    ```
 
 3. **Cores HSL Hardcoded**
+
    ```typescript
    // ❌ PROIBIDO
    color: hsl(200, 80%, 50%);
    ```
 
 4. **Nomes de Cores Hardcoded**
+
    ```typescript
    // ❌ PROIBIDO
    color: white;
@@ -108,6 +117,7 @@ npm run validate:hardcoded
 ### ✅ PERMITIDO
 
 1. **Tema com Fallback Hierárquico**
+
    ```typescript
    // ✅ PERMITIDO
    color: ${props =>
@@ -167,11 +177,13 @@ npm run validate:all
 ### Saída do Script
 
 **✅ Sucesso:**
+
 ```
 ✅ Nenhuma cor hardcoded encontrada!
 ```
 
 **❌ Erro:**
+
 ```
 ❌ X ocorrência(s) de cores hardcoded encontrada(s):
 
@@ -255,6 +267,7 @@ Adicionar validação no pipeline:
 **Status:** ✅ **PROIBIÇÃO REFORÇADA E ATIVA**
 
 A proibição de cores hardcoded agora está:
+
 - ✅ Documentada completamente
 - ✅ Validada automaticamente
 - ✅ Integrada ao processo de desenvolvimento
@@ -267,4 +280,3 @@ A proibição de cores hardcoded agora está:
 
 **Última atualização:** Dezembro 2024  
 **Mantido por:** Equipe DOM
-

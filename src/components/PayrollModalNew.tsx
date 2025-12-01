@@ -20,7 +20,10 @@ import {
   OptimizedRadioGroup,
   OptimizedPeriodGroup,
 } from '../components/shared/optimized-styles';
-import { ESOCIAL_STATUSES, type ESocialStatus } from '../constants/esocialStatuses';
+import {
+  ESOCIAL_STATUSES,
+  type ESocialStatus,
+} from '../constants/esocialStatuses';
 
 const FormRow = styled.div`
   display: grid;
@@ -41,18 +44,16 @@ const SectionTitle = styled.h3<{ $theme?: any }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 1rem;
   font-weight: 600;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
-    'inherit'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
   margin: 0 0 1rem 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid
-    ${props => 
-      props.$theme?.colors?.navigation?.primary || 
+    ${props =>
+      props.$theme?.colors?.navigation?.primary ||
       props.$theme?.colors?.primary ||
       props.$theme?.accent ||
       'transparent'};
@@ -60,10 +61,8 @@ const SectionTitle = styled.h3<{ $theme?: any }>`
 
 const Label = styled.label<{ $theme?: any }>`
   font-weight: 600;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
-    'inherit'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
   font-size: 0.85rem;
   margin-bottom: 0.4rem;
   display: block;
@@ -84,32 +83,37 @@ const InputStyled = styled(Input)<{ $hasError?: boolean; $theme?: any }>`
   border-radius: 8px;
   font-size: 0.9rem;
   transition: all 0.3s ease;
-  background: ${props => 
-    props.$theme?.colors?.background?.primary || 
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
     props.$theme?.background?.primary ||
     'transparent'};
 
   &:focus {
     outline: none;
-    border-color: ${props => 
-      props.$theme?.colors?.navigation?.primary || 
+    border-color: ${props =>
+      props.$theme?.colors?.navigation?.primary ||
       props.$theme?.colors?.primary ||
       props.$theme?.accent ||
       'transparent'};
-    box-shadow: 0 0 0 3px ${props => {
-      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
-      if (primaryColor && primaryColor.startsWith('#')) {
-        const r = parseInt(primaryColor.slice(1, 3), 16);
-        const g = parseInt(primaryColor.slice(3, 5), 16);
-        const b = parseInt(primaryColor.slice(5, 7), 16);
-        return `rgba(${r}, ${g}, ${b}, 0.1)`;
-      }
-      return 'transparent';
-    }};
+    box-shadow: 0 0 0 3px
+      ${props => {
+        const primaryColor =
+          props.$theme?.colors?.primary || props.$theme?.accent;
+        if (primaryColor && primaryColor.startsWith('#')) {
+          const r = parseInt(primaryColor.slice(1, 3), 16);
+          const g = parseInt(primaryColor.slice(3, 5), 16);
+          const b = parseInt(primaryColor.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, 0.1)`;
+        }
+        return 'transparent';
+      }};
   }
 `;
 
-const SelectStyled = styled(Select).attrs<{ $hasError?: boolean; $theme?: any }>(() => ({
+const SelectStyled = styled(Select).attrs<{
+  $hasError?: boolean;
+  $theme?: any;
+}>(() => ({
   'aria-label': 'Selecionar opção',
   title: 'Selecionar opção',
 }))<{ $hasError?: boolean; $theme?: any }>`
@@ -127,34 +131,36 @@ const SelectStyled = styled(Select).attrs<{ $hasError?: boolean; $theme?: any }>
   border-radius: 8px;
   font-size: 0.9rem;
   transition: all 0.3s ease;
-  background: ${props => 
-    props.$theme?.colors?.background?.primary || 
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
     props.$theme?.background?.primary ||
     'transparent'};
   cursor: pointer;
 
   &:focus {
     outline: none;
-    border-color: ${props => 
-      props.$theme?.colors?.navigation?.primary || 
+    border-color: ${props =>
+      props.$theme?.colors?.navigation?.primary ||
       props.$theme?.colors?.primary ||
       props.$theme?.accent ||
       'transparent'};
-    box-shadow: 0 0 0 3px ${props => {
-      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
-      if (primaryColor && primaryColor.startsWith('#')) {
-        const r = parseInt(primaryColor.slice(1, 3), 16);
-        const g = parseInt(primaryColor.slice(3, 5), 16);
-        const b = parseInt(primaryColor.slice(5, 7), 16);
-        return `rgba(${r}, ${g}, ${b}, 0.1)`;
-      }
-      return 'transparent';
-    }};
+    box-shadow: 0 0 0 3px
+      ${props => {
+        const primaryColor =
+          props.$theme?.colors?.primary || props.$theme?.accent;
+        if (primaryColor && primaryColor.startsWith('#')) {
+          const r = parseInt(primaryColor.slice(1, 3), 16);
+          const g = parseInt(primaryColor.slice(3, 5), 16);
+          const b = parseInt(primaryColor.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, 0.1)`;
+        }
+        return 'transparent';
+      }};
   }
 `;
 
 const ErrorMessage = styled.div<{ $theme?: any }>`
-  color: ${props => 
+  color: ${props =>
     props.$theme?.colors?.status?.error?.text ||
     props.$theme?.status?.error?.text ||
     'inherit'};
@@ -164,8 +170,8 @@ const ErrorMessage = styled.div<{ $theme?: any }>`
 `;
 
 const HelpText = styled.div<{ $theme?: any }>`
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
     'inherit'};
   font-size: 0.7rem;
@@ -180,22 +186,26 @@ const CheckboxContainer = styled.div<{ $theme?: any }>`
   margin: 0.75rem 0;
   max-height: 120px;
   overflow-y: auto;
-  border: 1px solid ${props => {
-    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
-    if (primaryColor && primaryColor.startsWith('#')) {
-      const r = parseInt(primaryColor.slice(1, 3), 16);
-      const g = parseInt(primaryColor.slice(3, 5), 16);
-      const b = parseInt(primaryColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.2)`;
-    }
-    return props.$theme?.colors?.border?.light || 
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      return (
+        props.$theme?.colors?.border?.light ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   border-radius: 8px;
   padding: 0.75rem;
-  background: ${props => 
-    props.$theme?.colors?.background?.secondary || 
+  background: ${props =>
+    props.$theme?.colors?.background?.secondary ||
     props.$theme?.background?.secondary ||
     'transparent'};
 
@@ -219,7 +229,8 @@ const CheckboxContainer = styled.div<{ $theme?: any }>`
 
   &::-webkit-scrollbar-thumb {
     background: ${props => {
-      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -244,7 +255,8 @@ const CheckboxItem = styled.label<{ $theme?: any }>`
 
   &:hover {
     background: ${props => {
-      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -262,20 +274,16 @@ const CheckboxItem = styled.label<{ $theme?: any }>`
 
 const CheckboxLabel = styled.span<{ $theme?: any }>`
   font-weight: 500;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
-    'inherit'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
   font-size: 0.8rem;
 `;
 
 const SelectAllButton = styled.button<{ $theme?: any }>`
-  background: ${props => 
-    props.$theme?.colors?.primary || 
-    props.$theme?.accent ||
-    'transparent'};
-  color: ${props => 
-    props.$theme?.colors?.text?.primary || 
+  background: ${props =>
+    props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
     props.$theme?.text?.primary ||
     'inherit'};
   border: none;
@@ -322,8 +330,8 @@ const SummaryCard = styled.div<{ $theme?: any }>`
     }
     return 'transparent';
   }};
-  color: ${props => 
-    props.$theme?.colors?.text?.primary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
     props.$theme?.text?.primary ||
     'inherit'};
   border-radius: 12px;

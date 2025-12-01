@@ -5,7 +5,12 @@ import styled from 'styled-components';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { useTheme } from '../hooks/useTheme';
 import type { Theme } from '../types/theme';
-import { getTextPrimary, getTextSecondary, getBackgroundSecondary, getBorderPrimary } from '../utils/themeTypeGuards';
+import {
+  getTextPrimary,
+  getTextSecondary,
+  getBackgroundSecondary,
+  getBorderPrimary,
+} from '../utils/themeTypeGuards';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { getThemeColor } from '../utils/themeHelpers';
 
@@ -24,7 +29,10 @@ const Title = styled.h1`
 
 const Button = styled.button`
   background: ${props => getThemeColor(props.theme, 'primary', 'transparent')};
-  color: ${props => props.theme?.colors?.text?.onPrimary || props.theme?.colors?.surface || 'inherit'};
+  color: ${props =>
+    props.theme?.colors?.text?.onPrimary ||
+    props.theme?.colors?.surface ||
+    'inherit'};
   border: none;
   padding: 12px 24px;
   border-radius: 6px;
@@ -64,34 +72,60 @@ const ResultBox = styled.div`
 `;
 
 const ErrorBox = styled.div`
-  background: ${props => props.theme?.status?.error?.background || props.theme?.colors?.status?.error?.background || 'transparent'};
-  border: 1px solid ${props => props.theme?.status?.error?.border || props.theme?.colors?.status?.error?.border || 'transparent'};
+  background: ${props =>
+    props.theme?.status?.error?.background ||
+    props.theme?.colors?.status?.error?.background ||
+    'transparent'};
+  border: 1px solid
+    ${props =>
+      props.theme?.status?.error?.border ||
+      props.theme?.colors?.status?.error?.border ||
+      'transparent'};
   border-radius: 6px;
   padding: 15px;
   margin: 10px 0;
-  color: ${props => props.theme?.status?.error?.text || props.theme?.colors?.status?.error?.text || 'inherit'};
+  color: ${props =>
+    props.theme?.status?.error?.text ||
+    props.theme?.colors?.status?.error?.text ||
+    'inherit'};
 `;
 
 const SuccessBox = styled.div`
-  background: ${props => props.theme?.status?.success?.background || props.theme?.colors?.status?.success?.background || 'transparent'};
-  border: 1px solid ${props => props.theme?.status?.success?.border || props.theme?.colors?.status?.success?.border || 'transparent'};
+  background: ${props =>
+    props.theme?.status?.success?.background ||
+    props.theme?.colors?.status?.success?.background ||
+    'transparent'};
+  border: 1px solid
+    ${props =>
+      props.theme?.status?.success?.border ||
+      props.theme?.colors?.status?.success?.border ||
+      'transparent'};
   border-radius: 6px;
   padding: 15px;
   margin: 10px 0;
-  color: ${props => props.theme?.status?.success?.text || props.theme?.colors?.status?.success?.text || 'inherit'};
+  color: ${props =>
+    props.theme?.status?.success?.text ||
+    props.theme?.colors?.status?.success?.text ||
+    'inherit'};
 `;
 
 const InfoBox = styled.div`
   margin-top: 30px;
   padding: 15px;
-  background-color: ${props => props.theme?.colors?.background?.secondary || props.theme?.background?.secondary || 'transparent'};
+  background-color: ${props =>
+    props.theme?.colors?.background?.secondary ||
+    props.theme?.background?.secondary ||
+    'transparent'};
   border-radius: 6px;
 `;
 
 const YellowBox = styled.div`
   margin-top: 15px;
   padding: 10px;
-  background: ${props => props.theme?.status?.warning?.background || props.theme?.colors?.status?.warning?.background || 'transparent'};
+  background: ${props =>
+    props.theme?.status?.warning?.background ||
+    props.theme?.colors?.status?.warning?.background ||
+    'transparent'};
   border-radius: 4px;
 `;
 
@@ -106,27 +140,50 @@ const SmallNote = styled.p`
 `;
 
 const SuccessAltBox = styled.div`
-  background: ${props => props.theme?.status?.success?.background || props.theme?.colors?.status?.success?.background || 'transparent'};
-  border: 1px solid ${props => props.theme?.status?.success?.border || props.theme?.colors?.status?.success?.border || 'transparent'};
+  background: ${props =>
+    props.theme?.status?.success?.background ||
+    props.theme?.colors?.status?.success?.background ||
+    'transparent'};
+  border: 1px solid
+    ${props =>
+      props.theme?.status?.success?.border ||
+      props.theme?.colors?.status?.success?.border ||
+      'transparent'};
   border-radius: 6px;
   padding: 15px;
   margin: 10px 0;
-  color: ${props => props.theme?.status?.success?.text || props.theme?.colors?.status?.success?.text || 'inherit'};
+  color: ${props =>
+    props.theme?.status?.success?.text ||
+    props.theme?.colors?.status?.success?.text ||
+    'inherit'};
 `;
 
 const WarnAltBox = styled.div`
-  background: ${props => props.theme?.status?.warning?.background || props.theme?.colors?.status?.warning?.background || 'transparent'};
-  border: 1px solid ${props => props.theme?.status?.warning?.border || props.theme?.colors?.status?.warning?.border || 'transparent'};
+  background: ${props =>
+    props.theme?.status?.warning?.background ||
+    props.theme?.colors?.status?.warning?.background ||
+    'transparent'};
+  border: 1px solid
+    ${props =>
+      props.theme?.status?.warning?.border ||
+      props.theme?.colors?.status?.warning?.border ||
+      'transparent'};
   border-radius: 6px;
   padding: 15px;
   margin: 10px 0;
-  color: ${props => props.theme?.status?.warning?.text || props.theme?.colors?.status?.warning?.text || 'inherit'};
+  color: ${props =>
+    props.theme?.status?.warning?.text ||
+    props.theme?.colors?.status?.warning?.text ||
+    'inherit'};
 `;
 
 const BlueBox = styled.div`
   margin-top: 15px;
   padding: 10px;
-  background: ${props => props.theme?.status?.info?.background || props.theme?.colors?.status?.info?.background || 'transparent'};
+  background: ${props =>
+    props.theme?.status?.info?.background ||
+    props.theme?.colors?.status?.info?.background ||
+    'transparent'};
   border-radius: 4px;
 `;
 

@@ -14,6 +14,7 @@
 **Causa:** Dependências não instaladas ou cache corrompido
 
 **Solução:**
+
 ```bash
 rm -rf node_modules .next
 npm ci
@@ -25,6 +26,7 @@ npm run build
 **Causa:** Erros de tipo no código
 
 **Solução:**
+
 ```bash
 npm run type-check
 # Corrigir erros reportados
@@ -39,6 +41,7 @@ npm run type-check
 **Causa:** URL de conexão incorreta ou servidor inacessível
 
 **Solução:**
+
 1. Verificar `DATABASE_URL` no `.env`
 2. Testar conexão: `npx prisma db pull`
 3. Verificar firewall/rede
@@ -48,6 +51,7 @@ npm run type-check
 **Causa:** Migrations desatualizadas ou conflitos
 
 **Solução:**
+
 ```bash
 # Verificar status
 npx prisma migrate status
@@ -68,6 +72,7 @@ npx prisma migrate reset
 **Causa:** Variáveis de ambiente faltando
 
 **Solução:**
+
 1. Verificar `NEXTAUTH_URL` e `NEXTAUTH_SECRET`
 2. Gerar novo secret: `openssl rand -base64 32`
 
@@ -80,6 +85,7 @@ npx prisma migrate reset
 **Causa:** Certificado não configurado ou caminho incorreto
 
 **Solução:**
+
 1. Verificar `ESOCIAL_CERTIFICATE_PATH`
 2. Verificar se arquivo existe
 3. Verificar permissões de leitura
@@ -89,6 +95,7 @@ npx prisma migrate reset
 **Causa:** Problema de rede ou WSDL inacessível
 
 **Solução:**
+
 1. Verificar conectividade
 2. Verificar URLs dos WSDLs
 3. Verificar certificado válido
@@ -100,6 +107,7 @@ npx prisma migrate reset
 #### Aplicação lenta
 
 **Solução:**
+
 1. Verificar queries do banco (usar `EXPLAIN ANALYZE`)
 2. Verificar índices faltando
 3. Verificar cache configurado
@@ -118,4 +126,3 @@ Para problemas não listados:
 ---
 
 **Última atualização:** Janeiro 2025
-

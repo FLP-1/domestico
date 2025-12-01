@@ -16,19 +16,19 @@ export default async function handler(
       const { categoria, esocialEvento, esocialRequerido, ativo } = req.query;
 
       const where: any = {};
-      
+
       if (categoria) {
         where.categoria = categoria;
       }
-      
+
       if (esocialEvento) {
         where.esocialEvento = esocialEvento;
       }
-      
+
       if (esocialRequerido !== undefined) {
         where.esocialRequerido = esocialRequerido === 'true';
       }
-      
+
       if (ativo !== undefined) {
         where.ativo = ativo === 'true';
       } else {
@@ -38,10 +38,7 @@ export default async function handler(
 
       const templates = await prisma.templateDocumento.findMany({
         where,
-        orderBy: [
-          { esocialRequerido: 'desc' },
-          { nome: 'asc' },
-        ],
+        orderBy: [{ esocialRequerido: 'desc' }, { nome: 'asc' }],
       });
 
       return res.status(200).json(templates);
@@ -56,4 +53,3 @@ export default async function handler(
   res.setHeader('Allow', ['GET']);
   return res.status(405).end(`Method ${req.method} Not Allowed`);
 }
-

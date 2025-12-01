@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-
+/* eslint-disable no-console */
 /**
  * Script de validação para detectar cores hardcoded no código
- * 
+ *
  * Busca por:
  * - Cores hex (#...)
  * - Cores rgb/rgba hardcoded
  * - Cores hsl hardcoded
  * - Nomes de cores hardcoded (white, black, etc.)
  * - Fallbacks com cores hardcoded (|| '#...')
- * 
+ *
  * Uso: node scripts/validate-hardcoded-colors.js
  */
 
@@ -50,10 +50,7 @@ const PATTERNS = [
   {
     name: 'HSL Hardcoded',
     pattern: /hsla?\([0-9]+,\s*[0-9]+%?,\s*[0-9]+%?(,\s*[0-1]?\.?[0-9]+)?\)/g,
-    exclude: [
-      /\/\/.*hsla?\(/,
-      /\/\*[\s\S]*?\*\/.*hsla?\(/,
-    ],
+    exclude: [/\/\/.*hsla?\(/, /\/\*[\s\S]*?\*\/.*hsla?\(/],
   },
   {
     name: 'Fallback com Cores Hardcoded',
@@ -62,12 +59,14 @@ const PATTERNS = [
   },
   {
     name: 'Fallback com RGB Hardcoded',
-    pattern: /\|\|\s*['"`]?rgba?\([0-9]+,\s*[0-9]+,\s*[0-9]+(,\s*[0-1]?\.?[0-9]+)?\)['"`]?/g,
+    pattern:
+      /\|\|\s*['"`]?rgba?\([0-9]+,\s*[0-9]+,\s*[0-9]+(,\s*[0-1]?\.?[0-9]+)?\)['"`]?/g,
     exclude: [],
   },
   {
     name: 'Nomes de Cores Hardcoded',
-    pattern: /\b(white|black|red|blue|green|yellow|orange|purple|pink|gray|grey)\b/gi,
+    pattern:
+      /\b(white|black|red|blue|green|yellow|orange|purple|pink|gray|grey)\b/gi,
     exclude: [
       /\/\/.*\b(white|black|red|blue|green|yellow|orange|purple|pink|gray|grey)\b/i,
       /\/\*[\s\S]*?\*\/.*\b(white|black|red|blue|green|yellow|orange|purple|pink|gray|grey)\b/i,
@@ -128,7 +127,7 @@ function shouldIgnoreFile(filePath) {
 function shouldIgnoreLine(line, pattern) {
   // Verificar se está em comentário
   if (line.trim().startsWith('//')) return true;
-  
+
   // Verificar se está em comentário multi-linha
   if (line.includes('/*') && line.includes('*/')) {
     const commentStart = line.indexOf('/*');
@@ -138,7 +137,7 @@ function shouldIgnoreLine(line, pattern) {
       return true;
     }
   }
-  
+
   // Verificar padrões de exclusão específicos
   return pattern.exclude.some(excludePattern => excludePattern.test(line));
 }
@@ -150,25 +149,26 @@ function checkFile(filePath) {
   try {
     const content = fs.readFileSync(filePath, 'utf8');
     const lines = content.split('\n');
-    
+
     PATTERNS.forEach(({ name, pattern, exclude }) => {
       lines.forEach((line, index) => {
         if (shouldIgnoreLine(line, { pattern, exclude })) return;
-        
+
         const matches = line.match(pattern);
         if (matches) {
           matches.forEach(match => {
             // Verificar se o match não está em comentário ou string
             const matchIndex = line.indexOf(match);
             const beforeMatch = line.substring(0, matchIndex);
-            
+
             // Ignorar se está em comentário
             if (beforeMatch.includes('//')) return;
-            if (beforeMatch.includes('/*') && !beforeMatch.includes('*/')) return;
-            
+            if (beforeMatch.includes('/*') && !beforeMatch.includes('*/'))
+              return;
+
             // Ignorar se está em string de documentação
             if (beforeMatch.match(/['"`].*['"`]$/)) return;
-            
+
             errors.push({
               file: filePath,
               line: index + 1,
@@ -180,7 +180,7 @@ function checkFile(filePath) {
         }
       });
     });
-    
+
     filesChecked++;
   } catch (error) {
     warnings.push(`Erro ao ler arquivo ${filePath}: ${error.message}`);
@@ -192,11 +192,11 @@ function checkFile(filePath) {
  */
 function walkDirectory(dir) {
   const files = fs.readdirSync(dir);
-  
+
   files.forEach(file => {
     const filePath = path.join(dir, file);
     const stat = fs.statSync(filePath);
-    
+
     if (stat.isDirectory()) {
       if (!shouldIgnoreFile(filePath)) {
         walkDirectory(filePath);
@@ -214,26 +214,32 @@ function walkDirectory(dir) {
  * Main
  */
 function main() {
-  console.log(`${BOLD}${BLUE}🔍 Validando cores hardcoded no código...${RESET}\n`);
-  
+  console.log(
+    `${BOLD}${BLUE}🔍 Validando cores hardcoded no código...${RESET}\n`
+  );
+
   const srcDir = path.join(process.cwd(), 'src');
-  
+
   if (!fs.existsSync(srcDir)) {
     console.error(`${RED}❌ Diretório src/ não encontrado!${RESET}`);
     process.exit(1);
   }
-  
+
   walkDirectory(srcDir);
-  
+
   console.log(`${GREEN}✓${RESET} Arquivos verificados: ${filesChecked}\n`);
-  
+
   if (errors.length === 0) {
-    console.log(`${GREEN}${BOLD}✅ Nenhuma cor hardcoded encontrada!${RESET}\n`);
+    console.log(
+      `${GREEN}${BOLD}✅ Nenhuma cor hardcoded encontrada!${RESET}\n`
+    );
     process.exit(0);
   }
-  
-  console.log(`${RED}${BOLD}❌ ${errors.length} ocorrência(s) de cores hardcoded encontrada(s):${RESET}\n`);
-  
+
+  console.log(
+    `${RED}${BOLD}❌ ${errors.length} ocorrência(s) de cores hardcoded encontrada(s):${RESET}\n`
+  );
+
   // Agrupar por arquivo
   const errorsByFile = {};
   errors.forEach(error => {
@@ -242,7 +248,7 @@ function main() {
     }
     errorsByFile[error.file].push(error);
   });
-  
+
   // Exibir erros
   Object.keys(errorsByFile).forEach(file => {
     console.log(`${BOLD}${file}${RESET}`);
@@ -253,18 +259,21 @@ function main() {
       console.log('');
     });
   });
-  
+
   if (warnings.length > 0) {
     console.log(`${YELLOW}⚠️  Avisos:${RESET}`);
     warnings.forEach(warning => console.log(`  ${warning}`));
     console.log('');
   }
-  
-  console.log(`${RED}${BOLD}❌ Validação falhou! Corrija os erros acima antes de fazer commit.${RESET}\n`);
-  console.log(`${BLUE}📚 Consulte PROIBICAO_CORES_HARDCODED.md para mais informações.${RESET}\n`);
-  
+
+  console.log(
+    `${RED}${BOLD}❌ Validação falhou! Corrija os erros acima antes de fazer commit.${RESET}\n`
+  );
+  console.log(
+    `${BLUE}📚 Consulte PROIBICAO_CORES_HARDCODED.md para mais informações.${RESET}\n`
+  );
+
   process.exit(1);
 }
 
 main();
-

@@ -43,19 +43,18 @@ export const validationMixin = (hasError: boolean, theme: any) => css`
         'transparent'
       : (() => {
           const border = theme?.colors?.border;
-          return (typeof border === 'object' && border?.light) ||
-                 theme?.border?.light ||
-                 'transparent';
+          return (
+            (typeof border === 'object' && border?.light) ||
+            theme?.border?.light ||
+            'transparent'
+          );
         })()};
 
   &:focus {
-    border-color: ${theme?.colors?.primary ||
-                   theme?.accent ||
-                   'transparent'};
+    border-color: ${theme?.colors?.primary || theme?.accent || 'transparent'};
     box-shadow: ${(() => {
-      const primaryColor = theme?.colors?.primary ||
-                           theme?.accent ||
-                           theme?.colors?.primaryLight;
+      const primaryColor =
+        theme?.colors?.primary || theme?.accent || theme?.colors?.primaryLight;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -80,9 +79,8 @@ export const transitionMixin = css`
 export const hoverMixin = (theme: any) => css`
   &:hover {
     background: ${(() => {
-      const hoverColor = theme?.colors?.hover ||
-                         theme?.colors?.primary ||
-                         theme?.accent;
+      const hoverColor =
+        theme?.colors?.hover || theme?.colors?.primary || theme?.accent;
       if (hoverColor && hoverColor.startsWith('#')) {
         const r = parseInt(hoverColor.slice(1, 3), 16);
         const g = parseInt(hoverColor.slice(3, 5), 16);
@@ -101,13 +99,10 @@ export const hoverMixin = (theme: any) => css`
 export const focusMixin = (theme: any) => css`
   &:focus {
     outline: none;
-    border-color: ${theme?.colors?.primary ||
-                   theme?.accent ||
-                   'transparent'};
+    border-color: ${theme?.colors?.primary || theme?.accent || 'transparent'};
     box-shadow: ${(() => {
-      const primaryColor = theme?.colors?.primary ||
-                           theme?.accent ||
-                           theme?.colors?.primaryLight;
+      const primaryColor =
+        theme?.colors?.primary || theme?.accent || theme?.colors?.primaryLight;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -125,14 +120,14 @@ export const focusMixin = (theme: any) => css`
 export const disabledMixin = (theme: any) => css`
   &:disabled {
     background: ${theme?.colors?.disabled ||
-                 theme?.colors?.background?.secondary ||
-                 theme?.background?.secondary ||
-                 'transparent'};
+    theme?.colors?.background?.secondary ||
+    theme?.background?.secondary ||
+    'transparent'};
     color: ${theme?.colors?.textDisabled ||
-             theme?.colors?.text?.disabled ||
-             theme?.colors?.text?.secondary ||
-             theme?.text?.secondary ||
-             'inherit'};
+    theme?.colors?.text?.disabled ||
+    theme?.colors?.text?.secondary ||
+    theme?.text?.secondary ||
+    'inherit'};
     cursor: not-allowed;
     opacity: 0.6;
   }
@@ -185,22 +180,23 @@ export const statusColorMixin = (
   theme: any
 ) => css`
   background: ${(() => {
-    const statusColor = status === 'success'
-      ? theme?.colors?.status?.success?.background ||
-        theme?.colors?.successLight ||
-        theme?.colors?.success
-      : status === 'warning'
-        ? theme?.colors?.status?.warning?.background ||
-          theme?.colors?.warningLight ||
-          theme?.colors?.warning
-        : status === 'error'
-          ? theme?.colors?.status?.error?.background ||
-            theme?.colors?.errorLight ||
-            theme?.colors?.error
-          : theme?.colors?.status?.info?.background ||
-            theme?.colors?.infoLight ||
-            theme?.colors?.info;
-    
+    const statusColor =
+      status === 'success'
+        ? theme?.colors?.status?.success?.background ||
+          theme?.colors?.successLight ||
+          theme?.colors?.success
+        : status === 'warning'
+          ? theme?.colors?.status?.warning?.background ||
+            theme?.colors?.warningLight ||
+            theme?.colors?.warning
+          : status === 'error'
+            ? theme?.colors?.status?.error?.background ||
+              theme?.colors?.errorLight ||
+              theme?.colors?.error
+            : theme?.colors?.status?.info?.background ||
+              theme?.colors?.infoLight ||
+              theme?.colors?.info;
+
     if (statusColor && statusColor.startsWith('#')) {
       const r = parseInt(statusColor.slice(1, 3), 16);
       const g = parseInt(statusColor.slice(3, 5), 16);
@@ -226,21 +222,22 @@ export const statusColorMixin = (
           theme?.colors?.info ||
           'inherit'};
 
-  border: 1px solid ${status === 'success'
-    ? theme?.colors?.status?.success?.background ||
-      theme?.colors?.success ||
-      'transparent'
-    : status === 'warning'
-      ? theme?.colors?.status?.warning?.background ||
-        theme?.colors?.warning ||
+  border: 1px solid
+    ${status === 'success'
+      ? theme?.colors?.status?.success?.background ||
+        theme?.colors?.success ||
         'transparent'
-      : status === 'error'
-        ? theme?.colors?.status?.error?.background ||
-          theme?.colors?.error ||
+      : status === 'warning'
+        ? theme?.colors?.status?.warning?.background ||
+          theme?.colors?.warning ||
           'transparent'
-        : theme?.colors?.status?.info?.background ||
-          theme?.colors?.info ||
-          'transparent'};
+        : status === 'error'
+          ? theme?.colors?.status?.error?.background ||
+            theme?.colors?.error ||
+            'transparent'
+          : theme?.colors?.status?.info?.background ||
+            theme?.colors?.info ||
+            'transparent'};
 `;
 
 /**
@@ -260,9 +257,8 @@ export const touchTargetMixin = css`
  */
 export const accessibilityMixin = (theme?: any) => css`
   &:focus-visible {
-    outline: 2px solid ${theme?.colors?.primary ||
-                        theme?.accent ||
-                        'currentColor'};
+    outline: 2px solid
+      ${theme?.colors?.primary || theme?.accent || 'currentColor'};
     outline-offset: 2px;
   }
 
@@ -290,12 +286,14 @@ export const animationMixin = css`
 /**
  * Mixin para sombras
  */
-export const shadowMixin = (level: 'sm' | 'md' | 'lg' = 'md', theme?: any) => css`
+export const shadowMixin = (
+  level: 'sm' | 'md' | 'lg' = 'md',
+  theme?: any
+) => css`
   box-shadow: ${(() => {
-    const shadowColor = theme?.colors?.shadow ||
-                       theme?.shadow?.color;
+    const shadowColor = theme?.colors?.shadow || theme?.shadow?.color;
     const opacity = level === 'sm' ? 0.1 : level === 'lg' ? 0.15 : 0.1;
-    
+
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -349,24 +347,21 @@ export const customScrollbarMixin = (theme: any) => css`
 
   &::-webkit-scrollbar-track {
     background: ${theme?.colors?.surface ||
-                 theme?.colors?.background?.secondary ||
-                 theme?.background?.secondary ||
-                 'transparent'};
+    theme?.colors?.background?.secondary ||
+    theme?.background?.secondary ||
+    'transparent'};
     border-radius: 4px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: ${theme?.colors?.primary ||
-                 theme?.accent ||
-                 'transparent'};
+    background: ${theme?.colors?.primary || theme?.accent || 'transparent'};
     border-radius: 4px;
   }
 
   &::-webkit-scrollbar-thumb:hover {
     background: ${(() => {
-      const primaryColor = theme?.colors?.primaryDark ||
-                           theme?.colors?.primary ||
-                           theme?.accent;
+      const primaryColor =
+        theme?.colors?.primaryDark || theme?.colors?.primary || theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);

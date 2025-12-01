@@ -32,12 +32,14 @@ Error: An error occurred. See https://git.io/JUIaE#12 for more information. Args
 ## 🛠️ Scripts Criados para Ajudar:
 
 ### 1. `scripts/capture-build-error.ps1`
+
 - Executa build completo
 - Captura output detalhado
 - Extrai informações de arquivo/linha
 - Salva em log timestampado
 
 ### 2. `scripts/analyze-build-error.ps1`
+
 - Analisa logs existentes
 - Extrai stack traces
 - Identifica padrões de erro
@@ -51,11 +53,13 @@ npm run build 2>&1 | Tee-Object -FilePath build-error-completo.log
 ```
 
 Ou use o script:
+
 ```powershell
 .\scripts\capture-build-error.ps1
 ```
 
 Depois, analise o log para identificar:
+
 - Qual página está falhando
 - Qual arquivo específico
 - Qual linha e componente
@@ -63,4 +67,3 @@ Depois, analise o log para identificar:
 ## 💡 Conclusão
 
 O log do build **sempre** mostra essas informações quando há erro. Basta executar o build e analisar o output para identificar exatamente onde está o problema.
-

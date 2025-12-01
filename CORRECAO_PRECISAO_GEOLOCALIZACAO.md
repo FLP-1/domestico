@@ -3,6 +3,7 @@
 ## 🎯 Problema Identificado
 
 A localização estava sendo capturada com **imprecisão de ~500m** do local correto, causando:
+
 - Endereço incorreto no geocoding reverso
 - Coordenadas imprecisas
 - Marcador "Imprecisa" sendo exibido
@@ -12,11 +13,13 @@ A localização estava sendo capturada com **imprecisão de ~500m** do local cor
 ### 1. **Configurações de Captura GPS**
 
 #### Antes:
+
 - `timeout: 10000` (10 segundos) - muito curto para GPS de alta precisão
 - `maximumAge: 300000` (5 minutos) - usando cache antigo
 - `accuracyThreshold: 100m` - aceitando precisão muito baixa
 
 #### Depois:
+
 - `timeout: 30000` (30 segundos) - mais tempo para GPS conseguir alta precisão
 - `maximumAge: 0` - **sem cache**, sempre capturar nova posição
 - `accuracyThreshold: 50m` - precisão mais rigorosa
@@ -24,6 +27,7 @@ A localização estava sendo capturada com **imprecisão de ~500m** do local cor
 ### 2. **Arquivos Modificados**
 
 #### `src/hooks/useGeolocation.ts`
+
 ```typescript
 // ANTES
 timeout: 10000,
@@ -35,6 +39,7 @@ maximumAge: 0, // Sem cache - sempre capturar nova posição
 ```
 
 #### `src/hooks/useAutoGeolocation.ts`
+
 ```typescript
 // ANTES
 timeout: 10000,
@@ -46,6 +51,7 @@ maximumAge: 0, // Sem cache
 ```
 
 #### `src/config/geolocation-config.ts`
+
 ```typescript
 // ANTES
 defaultMinAccuracy: 100,
@@ -63,6 +69,7 @@ maxAge: 0, // Sem cache
 ```
 
 #### `src/config/system-config.ts`
+
 ```typescript
 // ANTES
 MAX_ACCURACY: 100, // metros
@@ -76,17 +83,19 @@ TIMEOUT: 30000, // 30 segundos
 ```
 
 #### `src/config/centralized-config.ts`
+
 ```typescript
 // ANTES
-accuracyThreshold: 100
-timeout: 10000
+accuracyThreshold: 100;
+timeout: 10000;
 
 // DEPOIS
-accuracyThreshold: 50
-timeout: 30000
+accuracyThreshold: 50;
+timeout: 30000;
 ```
 
 #### `src/hooks/useSystemConfig.ts`
+
 ```typescript
 // ANTES
 accuracyThreshold: 100,
@@ -109,10 +118,12 @@ Com essas alterações, o sistema agora:
 ## 📊 Impacto
 
 ### Precisão Esperada:
+
 - **Antes**: ~500m de erro (precisão > 100m aceita)
 - **Depois**: ~30-50m de erro (precisão < 50m exigida)
 
 ### Tempo de Captura:
+
 - **Antes**: 10 segundos (pode não conseguir precisão suficiente)
 - **Depois**: Até 30 segundos (mais tempo para GPS conseguir alta precisão)
 
@@ -140,4 +151,3 @@ Se ainda houver imprecisão após essas alterações:
 2. Testar em ambiente aberto (melhor recepção de satélites)
 3. Verificar se há interferência de edifícios ou estruturas
 4. Considerar usar WiFi positioning como complemento (já implementado)
-

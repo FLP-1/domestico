@@ -43,8 +43,10 @@ export class DadosReaisService {
 
       // MÉTODO 2: Dados confirmados do portal eSocial
       const configService = await import('../lib/configService');
-      const empresaConfig = await configService.default.getEmpresaConfig() as any;
-      const cpfEmpresa = empresaConfig?.cpf || empresaConfig?.empresa_cpf_principal;
+      const empresaConfig =
+        (await configService.default.getEmpresaConfig()) as any;
+      const cpfEmpresa =
+        empresaConfig?.cpf || empresaConfig?.empresa_cpf_principal;
       if (cpf === cpfEmpresa) {
         const dadosPortal: DadosReaisEmpregador = {
           cpf: cpf,
@@ -166,7 +168,8 @@ export class DadosReaisService {
       const { ESocialSoapClientService } = await import('./esocialSoapClient');
 
       const configServiceModule = await import('../lib/configService');
-      const empresaConfig = await configServiceModule.default.getEmpresaConfig() as any;
+      const empresaConfig =
+        (await configServiceModule.default.getEmpresaConfig()) as any;
       const soapService = new ESocialSoapClientService({
         environment: 'producao',
         companyId: empresaConfig.cpf, // CPF do empregador dinâmico

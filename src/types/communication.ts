@@ -38,4 +38,3 @@ export interface ContextoComunicacao {
   mensagensNaoLidas: number;
   icon: string;
 }
-

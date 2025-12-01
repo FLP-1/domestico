@@ -1,6 +1,6 @@
 /**
  * 📋 Tipos de Alertas Centralizados
- * 
+ *
  * Centraliza todos os tipos de alertas disponíveis no sistema.
  */
 
@@ -22,7 +22,7 @@ export const ALERT_TYPES: AlertType[] = [
   {
     id: '1',
     name: 'Vencimento de Documento',
-    icon: <AccessibleEmoji emoji="📄" label="Documento" />,
+    icon: <AccessibleEmoji emoji='📄' label='Documento' />,
     color: '#e74c3c',
     category: 'Documentos',
   },
@@ -97,4 +97,3 @@ export function getAlertTypesByCategory(category: string): AlertType[] {
 export function getAlertCategories(): string[] {
   return Array.from(new Set(ALERT_TYPES.map(type => type.category)));
 }
-

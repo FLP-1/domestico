@@ -1,12 +1,13 @@
+/* eslint-disable no-console */
 /**
  * SEED COMPLETO PARA TESTES
- * 
+ *
  * Este seed popula TODAS as tabelas do banco de dados com dados realistas
  * para permitir testes completos de todas as funcionalidades, telas e páginas.
- * 
+ *
  * Execução:
  *   npx ts-node prisma/seeds/seed-completo-testes.ts
- * 
+ *
  * OU via npm:
  *   npm run db:seed:completo
  */
@@ -21,7 +22,8 @@ const prisma = new PrismaClient();
 // ============================================
 
 const now = new Date();
-const daysAgo = (qty: number) => new Date(Date.now() - qty * 24 * 60 * 60 * 1000);
+const daysAgo = (qty: number) =>
+  new Date(Date.now() - qty * 24 * 60 * 60 * 1000);
 const hoursAgo = (qty: number) => new Date(Date.now() - qty * 60 * 60 * 1000);
 const monthsAgo = (qty: number) => {
   const date = new Date();
@@ -85,7 +87,7 @@ type CreatedData = {
 
 async function limparBanco() {
   console.log('🧹 Limpando banco de dados...');
-  
+
   // Ordem de deleção respeitando foreign keys
   await prisma.mensagemHistorico.deleteMany();
   await prisma.alertaHistorico.deleteMany();
@@ -136,13 +138,13 @@ async function limparBanco() {
   await prisma.termo.deleteMany();
   await prisma.configuracaoSistema.deleteMany();
   await prisma.configuracao.deleteMany();
-  
+
   console.log('✅ Banco limpo');
 }
 
 async function criarPerfis(): Promise<CreatedData['perfis']> {
   console.log('👔 Criando perfis...');
-  
+
   const empregador = await prisma.perfil.create({
     data: {
       codigo: 'EMPREGADOR',
@@ -191,9 +193,11 @@ async function criarPerfis(): Promise<CreatedData['perfis']> {
   return { empregador, empregado, familia, admin };
 }
 
-async function criarUsuarios(perfis: CreatedData['perfis']): Promise<CreatedData['usuarios']> {
+async function criarUsuarios(
+  perfis: CreatedData['perfis']
+): Promise<CreatedData['usuarios']> {
   console.log('👥 Criando usuários...');
-  
+
   const empregador1 = await prisma.usuario.create({
     data: {
       cpf: gerarCpfValido(598769137),
@@ -379,23 +383,68 @@ async function criarUsuarios(perfis: CreatedData['perfis']): Promise<CreatedData
   // Associar perfis aos usuários
   await prisma.usuarioPerfil.createMany({
     data: [
-      { usuarioId: empregador1.id, perfilId: perfis.empregador.id, principal: true, ativo: true },
-      { usuarioId: empregador2.id, perfilId: perfis.empregador.id, principal: true, ativo: true },
-      { usuarioId: empregado1.id, perfilId: perfis.empregado.id, principal: true, ativo: true },
-      { usuarioId: empregado2.id, perfilId: perfis.empregado.id, principal: true, ativo: true },
-      { usuarioId: empregado3.id, perfilId: perfis.empregado.id, principal: true, ativo: true },
-      { usuarioId: familia1.id, perfilId: perfis.familia.id, principal: true, ativo: true },
-      { usuarioId: admin1.id, perfilId: perfis.admin.id, principal: true, ativo: true },
+      {
+        usuarioId: empregador1.id,
+        perfilId: perfis.empregador.id,
+        principal: true,
+        ativo: true,
+      },
+      {
+        usuarioId: empregador2.id,
+        perfilId: perfis.empregador.id,
+        principal: true,
+        ativo: true,
+      },
+      {
+        usuarioId: empregado1.id,
+        perfilId: perfis.empregado.id,
+        principal: true,
+        ativo: true,
+      },
+      {
+        usuarioId: empregado2.id,
+        perfilId: perfis.empregado.id,
+        principal: true,
+        ativo: true,
+      },
+      {
+        usuarioId: empregado3.id,
+        perfilId: perfis.empregado.id,
+        principal: true,
+        ativo: true,
+      },
+      {
+        usuarioId: familia1.id,
+        perfilId: perfis.familia.id,
+        principal: true,
+        ativo: true,
+      },
+      {
+        usuarioId: admin1.id,
+        perfilId: perfis.admin.id,
+        principal: true,
+        ativo: true,
+      },
     ],
   });
 
   console.log('✅ Usuários criados');
-  return { empregador1, empregador2, empregado1, empregado2, empregado3, familia1, admin1 };
+  return {
+    empregador1,
+    empregador2,
+    empregado1,
+    empregado2,
+    empregado3,
+    familia1,
+    admin1,
+  };
 }
 
-async function criarGrupos(usuarios: CreatedData['usuarios']): Promise<CreatedData['grupos']> {
+async function criarGrupos(
+  usuarios: CreatedData['usuarios']
+): Promise<CreatedData['grupos']> {
   console.log('👥 Criando grupos...');
-  
+
   const grupo1 = await prisma.grupo.create({
     data: {
       nome: 'Casa Principal',
@@ -427,23 +476,63 @@ async function criarGrupos(usuarios: CreatedData['usuarios']): Promise<CreatedDa
   await prisma.usuarioGrupo.createMany({
     data: [
       // Grupo 1: Casa Principal
-      { usuarioId: usuarios.empregador1.id, grupoId: grupo1.id, papel: 'ADMIN', ativo: true },
-      { usuarioId: usuarios.empregado1.id, grupoId: grupo1.id, papel: 'MEMBRO', ativo: true },
-      { usuarioId: usuarios.empregado2.id, grupoId: grupo1.id, papel: 'MEMBRO', ativo: true },
-      { usuarioId: usuarios.familia1.id, grupoId: grupo1.id, papel: 'MEMBRO', ativo: true },
-      
+      {
+        usuarioId: usuarios.empregador1.id,
+        grupoId: grupo1.id,
+        papel: 'ADMIN',
+        ativo: true,
+      },
+      {
+        usuarioId: usuarios.empregado1.id,
+        grupoId: grupo1.id,
+        papel: 'MEMBRO',
+        ativo: true,
+      },
+      {
+        usuarioId: usuarios.empregado2.id,
+        grupoId: grupo1.id,
+        papel: 'MEMBRO',
+        ativo: true,
+      },
+      {
+        usuarioId: usuarios.familia1.id,
+        grupoId: grupo1.id,
+        papel: 'MEMBRO',
+        ativo: true,
+      },
+
       // Grupo 2: Casa de Verão
-      { usuarioId: usuarios.empregador2.id, grupoId: grupo2.id, papel: 'ADMIN', ativo: true },
-      { usuarioId: usuarios.empregado3.id, grupoId: grupo2.id, papel: 'MEMBRO', ativo: true },
-      
+      {
+        usuarioId: usuarios.empregador2.id,
+        grupoId: grupo2.id,
+        papel: 'ADMIN',
+        ativo: true,
+      },
+      {
+        usuarioId: usuarios.empregado3.id,
+        grupoId: grupo2.id,
+        papel: 'MEMBRO',
+        ativo: true,
+      },
+
       // CENÁRIO 1: Empregado em múltiplos grupos (mesmo perfil EMPREGADO)
       // Ana Costa (empregado1) também trabalha na Casa de Verão
-      { usuarioId: usuarios.empregado1.id, grupoId: grupo2.id, papel: 'MEMBRO', ativo: true },
-      
+      {
+        usuarioId: usuarios.empregado1.id,
+        grupoId: grupo2.id,
+        papel: 'MEMBRO',
+        ativo: true,
+      },
+
       // CENÁRIO 2: Mesmo CPF em grupos diferentes com perfis diferentes
       // Francisco Silva (empregador1) é EMPREGADOR na Casa Principal
       // e também é FAMILIA na Casa de Verão (perfil secundário)
-      { usuarioId: usuarios.empregador1.id, grupoId: grupo2.id, papel: 'MEMBRO', ativo: true },
+      {
+        usuarioId: usuarios.empregador1.id,
+        grupoId: grupo2.id,
+        papel: 'MEMBRO',
+        ativo: true,
+      },
     ],
   });
 
@@ -456,7 +545,7 @@ async function criarLocaisTrabalho(
   grupos: CreatedData['grupos']
 ): Promise<CreatedData['locaisTrabalho']> {
   console.log('📍 Criando locais de trabalho...');
-  
+
   const local1 = await prisma.localTrabalho.create({
     data: {
       nome: 'Casa Principal - Entrada',
@@ -489,9 +578,11 @@ async function criarLocaisTrabalho(
   return { local1, local2 };
 }
 
-async function criarDispositivos(usuarios: CreatedData['usuarios']): Promise<CreatedData['dispositivos']> {
+async function criarDispositivos(
+  usuarios: CreatedData['usuarios']
+): Promise<CreatedData['dispositivos']> {
   console.log('📱 Criando dispositivos...');
-  
+
   const device1 = await prisma.dispositivo.create({
     data: {
       usuarioId: usuarios.empregado1.id,
@@ -557,18 +648,25 @@ async function criarRegistrosPonto(
   locais: CreatedData['locaisTrabalho']
 ) {
   console.log('⏰ Criando registros de ponto...');
-  
+
   const hoje = new Date();
   const ontem = daysAgo(1);
   const semanaPassada = daysAgo(7);
-  
+
   // Registros de hoje
   await prisma.registroPonto.createMany({
     data: [
       {
         usuarioId: usuarios.empregado1.id,
         dispositivoId: dispositivos.device1.id,
-        dataHora: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 8, 0, 0),
+        dataHora: new Date(
+          hoje.getFullYear(),
+          hoje.getMonth(),
+          hoje.getDate(),
+          8,
+          0,
+          0
+        ),
         tipo: 'ENTRADA',
         latitude: -23.5505,
         longitude: -46.6333,
@@ -578,7 +676,14 @@ async function criarRegistrosPonto(
         nomeRedeWiFi: 'Casa_WiFi',
         aprovado: true,
         aprovadoPor: usuarios.empregador1.id,
-        aprovadoEm: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 8, 5, 0),
+        aprovadoEm: new Date(
+          hoje.getFullYear(),
+          hoje.getMonth(),
+          hoje.getDate(),
+          8,
+          5,
+          0
+        ),
         hashIntegridade: 'hash-' + Date.now(),
         grupoId: grupos.grupo1.id,
         endereco: 'Rua das Flores, 123',
@@ -586,7 +691,14 @@ async function criarRegistrosPonto(
       {
         usuarioId: usuarios.empregado1.id,
         dispositivoId: dispositivos.device1.id,
-        dataHora: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 12, 0, 0),
+        dataHora: new Date(
+          hoje.getFullYear(),
+          hoje.getMonth(),
+          hoje.getDate(),
+          12,
+          0,
+          0
+        ),
         tipo: 'SAIDA_ALMOCO',
         latitude: -23.5505,
         longitude: -46.6333,
@@ -602,7 +714,14 @@ async function criarRegistrosPonto(
       {
         usuarioId: usuarios.empregado1.id,
         dispositivoId: dispositivos.device1.id,
-        dataHora: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 13, 0, 0),
+        dataHora: new Date(
+          hoje.getFullYear(),
+          hoje.getMonth(),
+          hoje.getDate(),
+          13,
+          0,
+          0
+        ),
         tipo: 'RETORNO_ALMOCO',
         latitude: -23.5505,
         longitude: -46.6333,
@@ -618,7 +737,14 @@ async function criarRegistrosPonto(
       {
         usuarioId: usuarios.empregado1.id,
         dispositivoId: dispositivos.device1.id,
-        dataHora: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 18, 0, 0),
+        dataHora: new Date(
+          hoje.getFullYear(),
+          hoje.getMonth(),
+          hoje.getDate(),
+          18,
+          0,
+          0
+        ),
         tipo: 'SAIDA',
         latitude: -23.5505,
         longitude: -46.6333,
@@ -640,7 +766,14 @@ async function criarRegistrosPonto(
       {
         usuarioId: usuarios.empregado2.id,
         dispositivoId: dispositivos.device2.id,
-        dataHora: new Date(ontem.getFullYear(), ontem.getMonth(), ontem.getDate(), 7, 30, 0),
+        dataHora: new Date(
+          ontem.getFullYear(),
+          ontem.getMonth(),
+          ontem.getDate(),
+          7,
+          30,
+          0
+        ),
         tipo: 'ENTRADA',
         latitude: -23.5505,
         longitude: -46.6333,
@@ -656,7 +789,14 @@ async function criarRegistrosPonto(
       {
         usuarioId: usuarios.empregado2.id,
         dispositivoId: dispositivos.device2.id,
-        dataHora: new Date(ontem.getFullYear(), ontem.getMonth(), ontem.getDate(), 17, 30, 0),
+        dataHora: new Date(
+          ontem.getFullYear(),
+          ontem.getMonth(),
+          ontem.getDate(),
+          17,
+          30,
+          0
+        ),
         tipo: 'SAIDA',
         latitude: -23.5505,
         longitude: -46.6333,
@@ -679,7 +819,14 @@ async function criarRegistrosPonto(
       {
         usuarioId: usuarios.empregado1.id,
         dispositivoId: dispositivos.device1.id,
-        dataHora: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() - 3, 9, 0, 0),
+        dataHora: new Date(
+          hoje.getFullYear(),
+          hoje.getMonth(),
+          hoje.getDate() - 3,
+          9,
+          0,
+          0
+        ),
         tipo: 'ENTRADA',
         latitude: -23.9931,
         longitude: -46.2562,
@@ -689,7 +836,14 @@ async function criarRegistrosPonto(
         nomeRedeWiFi: 'Casa_Verao_WiFi',
         aprovado: true,
         aprovadoPor: usuarios.empregador2.id,
-        aprovadoEm: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() - 3, 9, 5, 0),
+        aprovadoEm: new Date(
+          hoje.getFullYear(),
+          hoje.getMonth(),
+          hoje.getDate() - 3,
+          9,
+          5,
+          0
+        ),
         hashIntegridade: 'hash-grupo2-' + Date.now() + 10,
         grupoId: grupos.grupo2.id,
         endereco: 'Avenida Beira Mar, 456',
@@ -697,7 +851,14 @@ async function criarRegistrosPonto(
       {
         usuarioId: usuarios.empregado1.id,
         dispositivoId: dispositivos.device1.id,
-        dataHora: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() - 3, 12, 30, 0),
+        dataHora: new Date(
+          hoje.getFullYear(),
+          hoje.getMonth(),
+          hoje.getDate() - 3,
+          12,
+          30,
+          0
+        ),
         tipo: 'SAIDA_ALMOCO',
         latitude: -23.9931,
         longitude: -46.2562,
@@ -713,7 +874,14 @@ async function criarRegistrosPonto(
       {
         usuarioId: usuarios.empregado1.id,
         dispositivoId: dispositivos.device1.id,
-        dataHora: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() - 3, 13, 30, 0),
+        dataHora: new Date(
+          hoje.getFullYear(),
+          hoje.getMonth(),
+          hoje.getDate() - 3,
+          13,
+          30,
+          0
+        ),
         tipo: 'RETORNO_ALMOCO',
         latitude: -23.9931,
         longitude: -46.2562,
@@ -729,7 +897,14 @@ async function criarRegistrosPonto(
       {
         usuarioId: usuarios.empregado1.id,
         dispositivoId: dispositivos.device1.id,
-        dataHora: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() - 3, 17, 0, 0),
+        dataHora: new Date(
+          hoje.getFullYear(),
+          hoje.getMonth(),
+          hoje.getDate() - 3,
+          17,
+          0,
+          0
+        ),
         tipo: 'SAIDA',
         latitude: -23.9931,
         longitude: -46.2562,
@@ -753,7 +928,7 @@ async function criarSolicitacoesHoraExtra(
   grupos: CreatedData['grupos']
 ) {
   console.log('⏱️ Criando solicitações de hora extra...');
-  
+
   await prisma.solicitacaoHoraExtra.createMany({
     data: [
       {
@@ -809,7 +984,7 @@ async function criarSolicitacoesHoraExtra(
 
 async function criarTarefas(usuarios: CreatedData['usuarios']) {
   console.log('📋 Criando tarefas...');
-  
+
   const tarefa1 = await prisma.tarefa.create({
     data: {
       titulo: 'Limpeza da casa',
@@ -906,7 +1081,7 @@ async function criarTarefas(usuarios: CreatedData['usuarios']) {
 
 async function criarDocumentos(usuarios: CreatedData['usuarios']) {
   console.log('📄 Criando documentos...');
-  
+
   await prisma.documento.createMany({
     data: [
       {
@@ -968,18 +1143,18 @@ async function criarDocumentos(usuarios: CreatedData['usuarios']) {
 
 async function criarEmprestimos(usuarios: CreatedData['usuarios']) {
   console.log('💰 Criando empréstimos...');
-  
+
   await prisma.emprestimo.createMany({
     data: [
       {
         usuarioId: usuarios.empregador1.id,
         empregadoId: usuarios.empregado1.id,
         tipo: 'ANTECIPACAO',
-        valor: new Prisma.Decimal(1000.00),
-        valorParcela: new Prisma.Decimal(500.00),
+        valor: new Prisma.Decimal(1000.0),
+        valorParcela: new Prisma.Decimal(500.0),
         quantidadeParcelas: 2,
         parcelasPagas: 0,
-        taxaJuros: new Prisma.Decimal(0.00),
+        taxaJuros: new Prisma.Decimal(0.0),
         dataConcessao: daysAgo(5),
         dataVencimento: daysAgo(-25),
         dataSolicitacao: daysAgo(7),
@@ -992,11 +1167,11 @@ async function criarEmprestimos(usuarios: CreatedData['usuarios']) {
         usuarioId: usuarios.empregador1.id,
         empregadoId: usuarios.empregado2.id,
         tipo: 'EMPRESTIMO',
-        valor: new Prisma.Decimal(2000.00),
-        valorParcela: new Prisma.Decimal(500.00),
+        valor: new Prisma.Decimal(2000.0),
+        valorParcela: new Prisma.Decimal(500.0),
         quantidadeParcelas: 4,
         parcelasPagas: 2,
-        taxaJuros: new Prisma.Decimal(2.50),
+        taxaJuros: new Prisma.Decimal(2.5),
         dataConcessao: daysAgo(60),
         dataVencimento: daysAgo(-30),
         dataSolicitacao: daysAgo(65),
@@ -1009,11 +1184,11 @@ async function criarEmprestimos(usuarios: CreatedData['usuarios']) {
         usuarioId: usuarios.empregador2.id,
         empregadoId: usuarios.empregado3.id,
         tipo: 'ANTECIPACAO',
-        valor: new Prisma.Decimal(500.00),
-        valorParcela: new Prisma.Decimal(500.00),
+        valor: new Prisma.Decimal(500.0),
+        valorParcela: new Prisma.Decimal(500.0),
         quantidadeParcelas: 1,
         parcelasPagas: 1,
-        taxaJuros: new Prisma.Decimal(0.00),
+        taxaJuros: new Prisma.Decimal(0.0),
         dataConcessao: daysAgo(30),
         dataVencimento: daysAgo(0),
         dataSolicitacao: daysAgo(32),
@@ -1030,10 +1205,10 @@ async function criarEmprestimos(usuarios: CreatedData['usuarios']) {
 
 async function criarFolhaPagamento(usuarios: CreatedData['usuarios']) {
   console.log('💵 Criando folha de pagamento...');
-  
+
   const mesAtual = new Date().getMonth() + 1;
   const anoAtual = new Date().getFullYear();
-  
+
   await prisma.folhaPagamento.createMany({
     data: [
       {
@@ -1041,14 +1216,14 @@ async function criarFolhaPagamento(usuarios: CreatedData['usuarios']) {
         empregadoId: usuarios.empregado1.id,
         mes: mesAtual,
         ano: anoAtual,
-        salarioBase: new Prisma.Decimal(1500.00),
+        salarioBase: new Prisma.Decimal(1500.0),
         horasTrabalhadas: 220,
         horasExtras: 10,
         faltas: 0,
         atestados: 0,
-        descontos: new Prisma.Decimal(150.00),
-        adicionais: new Prisma.Decimal(100.00),
-        salarioLiquido: new Prisma.Decimal(1450.00),
+        descontos: new Prisma.Decimal(150.0),
+        adicionais: new Prisma.Decimal(100.0),
+        salarioLiquido: new Prisma.Decimal(1450.0),
         status: 'PROCESSADO',
         observacoes: 'Folha processada com sucesso',
       },
@@ -1057,14 +1232,14 @@ async function criarFolhaPagamento(usuarios: CreatedData['usuarios']) {
         empregadoId: usuarios.empregado2.id,
         mes: mesAtual,
         ano: anoAtual,
-        salarioBase: new Prisma.Decimal(1200.00),
+        salarioBase: new Prisma.Decimal(1200.0),
         horasTrabalhadas: 220,
         horasExtras: 0,
         faltas: 2,
         atestados: 0,
-        descontos: new Prisma.Decimal(120.00),
-        adicionais: new Prisma.Decimal(0.00),
-        salarioLiquido: new Prisma.Decimal(1080.00),
+        descontos: new Prisma.Decimal(120.0),
+        adicionais: new Prisma.Decimal(0.0),
+        salarioLiquido: new Prisma.Decimal(1080.0),
         status: 'PROCESSADO',
         observacoes: 'Desconto por faltas',
       },
@@ -1073,14 +1248,14 @@ async function criarFolhaPagamento(usuarios: CreatedData['usuarios']) {
         empregadoId: usuarios.empregado3.id,
         mes: mesAtual - 1,
         ano: anoAtual,
-        salarioBase: new Prisma.Decimal(1300.00),
+        salarioBase: new Prisma.Decimal(1300.0),
         horasTrabalhadas: 220,
         horasExtras: 5,
         faltas: 0,
         atestados: 0,
-        descontos: new Prisma.Decimal(130.00),
-        adicionais: new Prisma.Decimal(50.00),
-        salarioLiquido: new Prisma.Decimal(1220.00),
+        descontos: new Prisma.Decimal(130.0),
+        adicionais: new Prisma.Decimal(50.0),
+        salarioLiquido: new Prisma.Decimal(1220.0),
         status: 'PAGO',
         observacoes: 'Folha paga',
       },
@@ -1092,10 +1267,10 @@ async function criarFolhaPagamento(usuarios: CreatedData['usuarios']) {
 
 async function criarGuiasImpostos(usuarios: CreatedData['usuarios']) {
   console.log('📊 Criando guias de impostos...');
-  
+
   const mesAtual = new Date().getMonth() + 1;
   const anoAtual = new Date().getFullYear();
-  
+
   await prisma.guiaImposto.createMany({
     data: [
       {
@@ -1103,7 +1278,7 @@ async function criarGuiasImpostos(usuarios: CreatedData['usuarios']) {
         tipo: 'INSS',
         mes: mesAtual,
         ano: anoAtual,
-        valor: new Prisma.Decimal(150.00),
+        valor: new Prisma.Decimal(150.0),
         vencimento: daysAgo(-15),
         status: 'PAGO',
         observacoes: 'INSS pago',
@@ -1113,7 +1288,7 @@ async function criarGuiasImpostos(usuarios: CreatedData['usuarios']) {
         tipo: 'FGTS',
         mes: mesAtual,
         ano: anoAtual,
-        valor: new Prisma.Decimal(120.00),
+        valor: new Prisma.Decimal(120.0),
         vencimento: daysAgo(-7),
         status: 'PAGO',
         observacoes: 'FGTS pago',
@@ -1123,7 +1298,7 @@ async function criarGuiasImpostos(usuarios: CreatedData['usuarios']) {
         tipo: 'INSS',
         mes: mesAtual + 1,
         ano: anoAtual,
-        valor: new Prisma.Decimal(150.00),
+        valor: new Prisma.Decimal(150.0),
         vencimento: daysAgo(-45),
         status: 'PENDENTE',
         observacoes: 'INSS pendente',
@@ -1133,7 +1308,7 @@ async function criarGuiasImpostos(usuarios: CreatedData['usuarios']) {
         tipo: 'FGTS',
         mes: mesAtual,
         ano: anoAtual,
-        valor: new Prisma.Decimal(130.00),
+        valor: new Prisma.Decimal(130.0),
         vencimento: daysAgo(-7),
         status: 'PENDENTE',
         observacoes: 'FGTS pendente',
@@ -1146,7 +1321,7 @@ async function criarGuiasImpostos(usuarios: CreatedData['usuarios']) {
 
 async function criarAlertas(usuarios: CreatedData['usuarios']) {
   console.log('🔔 Criando alertas...');
-  
+
   await prisma.alerta.createMany({
     data: [
       {
@@ -1206,7 +1381,7 @@ async function criarAlertas(usuarios: CreatedData['usuarios']) {
 
 async function criarListasCompras(usuarios: CreatedData['usuarios']) {
   console.log('🛒 Criando listas de compras...');
-  
+
   const lista1 = await prisma.listaCompras.create({
     data: {
       usuarioId: usuarios.empregador1.id,
@@ -1215,7 +1390,7 @@ async function criarListasCompras(usuarios: CreatedData['usuarios']) {
       descricao: 'Compras semanais de supermercado',
       totalItens: 5,
       itensComprados: 2,
-      valorEstimado: new Prisma.Decimal(150.00),
+      valorEstimado: new Prisma.Decimal(150.0),
       ativa: true,
       concluida: false,
     },
@@ -1229,7 +1404,7 @@ async function criarListasCompras(usuarios: CreatedData['usuarios']) {
       descricao: 'Medicamentos e produtos de farmácia',
       totalItens: 3,
       itensComprados: 0,
-      valorEstimado: new Prisma.Decimal(80.00),
+      valorEstimado: new Prisma.Decimal(80.0),
       ativa: true,
       concluida: false,
     },
@@ -1242,7 +1417,7 @@ async function criarListasCompras(usuarios: CreatedData['usuarios']) {
         listaId: lista1.id,
         nome: 'Arroz',
         quantidade: '2kg',
-        preco: new Prisma.Decimal(8.50),
+        preco: new Prisma.Decimal(8.5),
         categoria: 'Alimentos',
         comprado: false,
         ordem: 1,
@@ -1251,7 +1426,7 @@ async function criarListasCompras(usuarios: CreatedData['usuarios']) {
         listaId: lista1.id,
         nome: 'Feijão',
         quantidade: '1kg',
-        preco: new Prisma.Decimal(6.00),
+        preco: new Prisma.Decimal(6.0),
         categoria: 'Alimentos',
         comprado: true,
         compradoEm: daysAgo(1),
@@ -1262,7 +1437,7 @@ async function criarListasCompras(usuarios: CreatedData['usuarios']) {
         listaId: lista1.id,
         nome: 'Leite',
         quantidade: '4L',
-        preco: new Prisma.Decimal(12.00),
+        preco: new Prisma.Decimal(12.0),
         categoria: 'Laticínios',
         comprado: true,
         compradoEm: daysAgo(1),
@@ -1273,7 +1448,7 @@ async function criarListasCompras(usuarios: CreatedData['usuarios']) {
         listaId: lista1.id,
         nome: 'Açúcar',
         quantidade: '1kg',
-        preco: new Prisma.Decimal(5.50),
+        preco: new Prisma.Decimal(5.5),
         categoria: 'Alimentos',
         comprado: false,
         ordem: 4,
@@ -1282,7 +1457,7 @@ async function criarListasCompras(usuarios: CreatedData['usuarios']) {
         listaId: lista1.id,
         nome: 'Óleo',
         quantidade: '900ml',
-        preco: new Prisma.Decimal(7.00),
+        preco: new Prisma.Decimal(7.0),
         categoria: 'Alimentos',
         comprado: false,
         ordem: 5,
@@ -1291,7 +1466,7 @@ async function criarListasCompras(usuarios: CreatedData['usuarios']) {
         listaId: lista2.id,
         nome: 'Paracetamol',
         quantidade: '1 cx',
-        preco: new Prisma.Decimal(15.00),
+        preco: new Prisma.Decimal(15.0),
         categoria: 'Medicamentos',
         comprado: false,
         ordem: 1,
@@ -1300,7 +1475,7 @@ async function criarListasCompras(usuarios: CreatedData['usuarios']) {
         listaId: lista2.id,
         nome: 'Vitamina C',
         quantidade: '1 fr',
-        preco: new Prisma.Decimal(25.00),
+        preco: new Prisma.Decimal(25.0),
         categoria: 'Suplementos',
         comprado: false,
         ordem: 2,
@@ -1309,7 +1484,7 @@ async function criarListasCompras(usuarios: CreatedData['usuarios']) {
         listaId: lista2.id,
         nome: 'Curativo',
         quantidade: '1 cx',
-        preco: new Prisma.Decimal(12.00),
+        preco: new Prisma.Decimal(12.0),
         categoria: 'Primeiros Socorros',
         comprado: false,
         ordem: 3,
@@ -1322,7 +1497,7 @@ async function criarListasCompras(usuarios: CreatedData['usuarios']) {
 
 async function criarConversasEMensagens(usuarios: CreatedData['usuarios']) {
   console.log('💬 Criando conversas e mensagens...');
-  
+
   const conversa1 = await prisma.conversa.create({
     data: {
       tipo: 'GRUPO',
@@ -1355,21 +1530,71 @@ async function criarConversasEMensagens(usuarios: CreatedData['usuarios']) {
   await prisma.conversaParticipante.createMany({
     data: [
       // Conversa grupo1: Casa Principal
-      { conversaId: conversa1.id, usuarioId: usuarios.empregador1.id, papel: 'ADMIN', ativo: true },
-      { conversaId: conversa1.id, usuarioId: usuarios.empregado1.id, papel: 'MEMBRO', ativo: true },
-      { conversaId: conversa1.id, usuarioId: usuarios.empregado2.id, papel: 'MEMBRO', ativo: true },
-      { conversaId: conversa1.id, usuarioId: usuarios.familia1.id, papel: 'MEMBRO', ativo: true },
-      
+      {
+        conversaId: conversa1.id,
+        usuarioId: usuarios.empregador1.id,
+        papel: 'ADMIN',
+        ativo: true,
+      },
+      {
+        conversaId: conversa1.id,
+        usuarioId: usuarios.empregado1.id,
+        papel: 'MEMBRO',
+        ativo: true,
+      },
+      {
+        conversaId: conversa1.id,
+        usuarioId: usuarios.empregado2.id,
+        papel: 'MEMBRO',
+        ativo: true,
+      },
+      {
+        conversaId: conversa1.id,
+        usuarioId: usuarios.familia1.id,
+        papel: 'MEMBRO',
+        ativo: true,
+      },
+
       // Conversa grupo2: Casa de Verão
       // CENÁRIO: Incluir Ana Costa (empregado1) e Francisco Silva (empregador1 como FAMILIA)
-      { conversaId: conversa2.id, usuarioId: usuarios.empregador2.id, papel: 'ADMIN', ativo: true },
-      { conversaId: conversa2.id, usuarioId: usuarios.empregado3.id, papel: 'MEMBRO', ativo: true },
-      { conversaId: conversa2.id, usuarioId: usuarios.empregado1.id, papel: 'MEMBRO', ativo: true }, // Ana Costa
-      { conversaId: conversa2.id, usuarioId: usuarios.empregador1.id, papel: 'MEMBRO', ativo: true }, // Francisco como FAMILIA
-      
+      {
+        conversaId: conversa2.id,
+        usuarioId: usuarios.empregador2.id,
+        papel: 'ADMIN',
+        ativo: true,
+      },
+      {
+        conversaId: conversa2.id,
+        usuarioId: usuarios.empregado3.id,
+        papel: 'MEMBRO',
+        ativo: true,
+      },
+      {
+        conversaId: conversa2.id,
+        usuarioId: usuarios.empregado1.id,
+        papel: 'MEMBRO',
+        ativo: true,
+      }, // Ana Costa
+      {
+        conversaId: conversa2.id,
+        usuarioId: usuarios.empregador1.id,
+        papel: 'MEMBRO',
+        ativo: true,
+      }, // Francisco como FAMILIA
+
       // Conversa privada
-      { conversaId: conversa3.id, usuarioId: usuarios.empregador1.id, papel: 'MEMBRO', ativo: true },
-      { conversaId: conversa3.id, usuarioId: usuarios.empregado1.id, papel: 'MEMBRO', ativo: true },
+      {
+        conversaId: conversa3.id,
+        usuarioId: usuarios.empregador1.id,
+        papel: 'MEMBRO',
+        ativo: true,
+      },
+      {
+        conversaId: conversa3.id,
+        usuarioId: usuarios.empregado1.id,
+        papel: 'MEMBRO',
+        ativo: true,
+      },
     ],
   });
 
@@ -1408,7 +1633,8 @@ async function criarConversasEMensagens(usuarios: CreatedData['usuarios']) {
       {
         conversaId: conversa2.id,
         remetenteId: usuarios.empregador2.id,
-        conteudo: 'Bem-vindos à casa de verão! Vamos organizar tudo para a temporada.',
+        conteudo:
+          'Bem-vindos à casa de verão! Vamos organizar tudo para a temporada.',
         tipo: 'TEXTO',
         lida: false,
       },
@@ -1434,7 +1660,7 @@ async function criarConversasEMensagens(usuarios: CreatedData['usuarios']) {
 
 async function criarMembrosFamilia(usuarios: CreatedData['usuarios']) {
   console.log('👨‍👩‍👧‍👦 Criando membros da família...');
-  
+
   await prisma.membroFamilia.createMany({
     data: [
       {
@@ -1484,7 +1710,7 @@ async function criarMembrosFamilia(usuarios: CreatedData['usuarios']) {
 
 async function criarNotificacoes(usuarios: CreatedData['usuarios']) {
   console.log('🔔 Criando notificações...');
-  
+
   await prisma.notificacao.createMany({
     data: [
       {
@@ -1529,7 +1755,7 @@ async function criarNotificacoes(usuarios: CreatedData['usuarios']) {
 
 async function criarMetricasEAtividades(usuarios: CreatedData['usuarios']) {
   console.log('📊 Criando métricas e atividades...');
-  
+
   await prisma.metricaSistema.createMany({
     data: [
       {
@@ -1537,21 +1763,30 @@ async function criarMetricasEAtividades(usuarios: CreatedData['usuarios']) {
         valor: 150,
         descricao: 'Total de eventos eSocial enviados',
         categoria: 'esocial',
-        dadosExtras: { mes: new Date().getMonth() + 1, ano: new Date().getFullYear() },
+        dadosExtras: {
+          mes: new Date().getMonth() + 1,
+          ano: new Date().getFullYear(),
+        },
       },
       {
         chave: 'eventos_processados',
         valor: 145,
         descricao: 'Total de eventos eSocial processados',
         categoria: 'esocial',
-        dadosExtras: { mes: new Date().getMonth() + 1, ano: new Date().getFullYear() },
+        dadosExtras: {
+          mes: new Date().getMonth() + 1,
+          ano: new Date().getFullYear(),
+        },
       },
       {
         chave: 'eventos_com_erro',
         valor: 5,
         descricao: 'Total de eventos eSocial com erro',
         categoria: 'esocial',
-        dadosExtras: { mes: new Date().getMonth() + 1, ano: new Date().getFullYear() },
+        dadosExtras: {
+          mes: new Date().getMonth() + 1,
+          ano: new Date().getFullYear(),
+        },
       },
       {
         chave: 'webhooks_ativos',
@@ -1605,14 +1840,15 @@ async function criarMetricasEAtividades(usuarios: CreatedData['usuarios']) {
 
 async function criarPlanosAssinatura() {
   console.log('💳 Criando planos de assinatura...');
-  
+
   await prisma.planoAssinatura.createMany({
     data: [
       {
         codigo: 'free',
         nome: 'Plano Free',
         tagline: 'Deguste o DOM sem compromisso',
-        descricao: '15 dias gratuitos para experimentar a gestão que organiza até seus sonhos mais bagunçados!',
+        descricao:
+          '15 dias gratuitos para experimentar a gestão que organiza até seus sonhos mais bagunçados!',
         precoMensal: new Prisma.Decimal(0),
         precoAnual: new Prisma.Decimal(0),
         recursos: [
@@ -1630,9 +1866,10 @@ async function criarPlanosAssinatura() {
         codigo: 'lar-doce-lar',
         nome: 'Lar Doce Lar',
         tagline: 'Cansado de ser o CEO da sua casa?',
-        descricao: 'Com este plano, você terceiriza a bagunça e foca no que realmente importa: maratonar séries!',
-        precoMensal: new Prisma.Decimal(29.90),
-        precoAnual: new Prisma.Decimal(299.00),
+        descricao:
+          'Com este plano, você terceiriza a bagunça e foca no que realmente importa: maratonar séries!',
+        precoMensal: new Prisma.Decimal(29.9),
+        precoAnual: new Prisma.Decimal(299.0),
         descontoAnual: '2 meses grátis',
         recursos: [
           'Dashboard personalizado',
@@ -1650,8 +1887,8 @@ async function criarPlanosAssinatura() {
         nome: 'Super Doméstica',
         tagline: 'Transforme sua casa em um paraíso da organização!',
         descricao: 'Com este plano, até Marie Kondo sentiria inveja.',
-        precoMensal: new Prisma.Decimal(49.90),
-        precoAnual: new Prisma.Decimal(499.00),
+        precoMensal: new Prisma.Decimal(49.9),
+        precoAnual: new Prisma.Decimal(499.0),
         descontoAnual: '2 meses grátis',
         recursos: [
           'Tudo do Lar Doce Lar',
@@ -1671,8 +1908,8 @@ async function criarPlanosAssinatura() {
         nome: 'Ultra Pro',
         tagline: 'O plano que vai te dar superpoderes domésticos!',
         descricao: 'Organize, planeje e execute com a eficiência de um ninja.',
-        precoMensal: new Prisma.Decimal(79.90),
-        precoAnual: new Prisma.Decimal(799.00),
+        precoMensal: new Prisma.Decimal(79.9),
+        precoAnual: new Prisma.Decimal(799.0),
         descontoAnual: '2 meses grátis',
         recursos: [
           'Tudo do Super Doméstica',
@@ -1699,7 +1936,7 @@ async function criarGeofencingLogs(
   locais: CreatedData['locaisTrabalho']
 ) {
   console.log('📍 Criando logs de geofencing...');
-  
+
   await prisma.geofencingLog.createMany({
     data: [
       {
@@ -1763,7 +2000,7 @@ async function criarGeofencingLogs(
 
 async function criarEventosESocial() {
   console.log('📋 Criando eventos eSocial...');
-  
+
   await prisma.eventoESocial.createMany({
     data: [
       {
@@ -1777,7 +2014,8 @@ async function criarEventosESocial() {
       },
       {
         tipoEvento: 'S2200',
-        descricao: 'Cadastramento Inicial do Vínculo e Admissão/Ingresso de Trabalhador',
+        descricao:
+          'Cadastramento Inicial do Vínculo e Admissão/Ingresso de Trabalhador',
         status: 'PROCESSADO',
         dataEnvio: daysAgo(25),
         dataProcessamento: daysAgo(24),
@@ -1786,7 +2024,8 @@ async function criarEventosESocial() {
       },
       {
         tipoEvento: 'S1200',
-        descricao: 'Remuneração de Trabalhador Vinculado ao Regime Geral de Previdência Social',
+        descricao:
+          'Remuneração de Trabalhador Vinculado ao Regime Geral de Previdência Social',
         status: 'PENDENTE',
         dataEnvio: daysAgo(2),
         versao: '2.5.0',
@@ -1797,9 +2036,11 @@ async function criarEventosESocial() {
   console.log('✅ Eventos eSocial criados');
 }
 
-async function criarEmpregadoresECertificados(usuarios: CreatedData['usuarios']) {
+async function criarEmpregadoresECertificados(
+  usuarios: CreatedData['usuarios']
+) {
   console.log('🏢 Criando empregadores e certificados...');
-  
+
   const empregador1 = await prisma.empregador.create({
     data: {
       cpfCnpj: '12345678000199',
@@ -1858,7 +2099,7 @@ async function criarEmpregadoresECertificados(usuarios: CreatedData['usuarios'])
 
 async function criarMensagensHistorico(usuarios: CreatedData['usuarios']) {
   console.log('📝 Criando histórico de mensagens...');
-  
+
   await prisma.mensagemHistorico.createMany({
     data: [
       {
@@ -2012,4 +2253,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-

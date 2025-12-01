@@ -30,7 +30,12 @@ export default async function handler(
     if (req.method === 'POST') {
       const { nome, tipoServico, descricao, itensPadrao } = req.body;
 
-      if (!nome || !tipoServico || !itensPadrao || !Array.isArray(itensPadrao)) {
+      if (
+        !nome ||
+        !tipoServico ||
+        !itensPadrao ||
+        !Array.isArray(itensPadrao)
+      ) {
         return res.status(400).json({
           success: false,
           error: 'Campos obrigatórios: nome, tipoServico, itensPadrao (array)',
@@ -55,9 +60,9 @@ export default async function handler(
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   } catch (error) {
     return handleApiError(res, error, {
-      defaultMessage: 'Erro ao processar requisição de templates de suprimentos',
+      defaultMessage:
+        'Erro ao processar requisição de templates de suprimentos',
       context: { scope: 'suprimentos.templates', method: req.method },
     });
   }
 }
-

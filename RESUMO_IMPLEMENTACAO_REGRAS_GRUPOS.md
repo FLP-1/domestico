@@ -10,10 +10,12 @@
 ### ✅ **1. Empregado pode participar de múltiplos grupos**
 
 **Regra Implementada:**
+
 - Um empregado pode participar de **múltiplos grupos** com o **mesmo perfil EMPREGADO**
 - Exemplo: Ana Costa trabalha na Casa Principal E na Casa de Verão
 
 **Validação:**
+
 - `validateUserGroupAssignment()` permite empregados em múltiplos grupos
 - Não bloqueia se o usuário já está em outro grupo com perfil EMPREGADO
 
@@ -22,10 +24,12 @@
 ### ✅ **2. Mesmo CPF pode participar de múltiplos grupos com perfis diferentes**
 
 **Regra Implementada:**
+
 - Um CPF pode participar de múltiplos grupos desde que **não seja o mesmo perfil** (exceto empregado)
 - Exemplo: Francisco Silva é **EMPREGADOR** na Casa Principal e **FAMILIA** na Casa de Verão
 
 **Validação:**
+
 - Verifica se o usuário já tem o mesmo perfil em outro grupo
 - Se sim (exceto EMPREGADO): bloqueia
 - Se não: permite
@@ -107,7 +111,9 @@ if (membership && membership.ativo) {
   if (perfilCodigo !== 'EMPREGADO') {
     // Verificar se já tem o mesmo perfil em outro grupo
     if (temMesmoPerfil && usuarioGrupos.length > 0) {
-      errors.push('Não é permitido ter o mesmo perfil em múltiplos grupos (exceto EMPREGADO)');
+      errors.push(
+        'Não é permitido ter o mesmo perfil em múltiplos grupos (exceto EMPREGADO)'
+      );
     }
   }
   // Se perfilCodigo === 'EMPREGADO', permitir participar de múltiplos grupos
@@ -141,4 +147,3 @@ Todas as regras solicitadas foram implementadas e testadas:
 ---
 
 **Status:** ✅ **PRONTO PARA TESTES**
-

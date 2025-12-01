@@ -22,10 +22,18 @@ import PageHeader from '../components/PageHeader';
 import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
 import WelcomeSection from '../components/WelcomeSection';
-import { UnifiedButton, UnifiedModal, UnifiedCard } from '../components/unified';
+import {
+  UnifiedButton,
+  UnifiedModal,
+  UnifiedCard,
+} from '../components/unified';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
-import { getThemeColor, getStatusColor, addOpacity } from '../utils/themeHelpers';
+import {
+  getThemeColor,
+  getStatusColor,
+  addOpacity,
+} from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
 import {
   OptimizedFormRow,
@@ -126,7 +134,13 @@ const StatCard = styled.div<{
 }>`
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    const surfaceColor = typeof surface === 'string' ? surface : (surface && typeof surface === 'object' && (surface as any).primary) || 'transparent';
+    const surfaceColor =
+      typeof surface === 'string'
+        ? surface
+        : (surface &&
+            typeof surface === 'object' &&
+            (surface as any).primary) ||
+          'transparent';
     return addOpacity(surfaceColor, 0.95);
   }};
   backdrop-filter: blur(20px);
@@ -206,7 +220,10 @@ const AlertTypeBadge = styled.div<{ $color: string }>`
   font-weight: 600;
 `;
 
-const AlertStatus = styled.span<{ $status: 'active' | 'inactive'; $theme?: Theme }>`
+const AlertStatus = styled.span<{
+  $status: 'active' | 'inactive';
+  $theme?: Theme;
+}>`
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
   font-size: 0.75rem;
@@ -216,7 +233,9 @@ const AlertStatus = styled.span<{ $status: 'active' | 'inactive'; $theme?: Theme
       return props.$theme?.colors?.success || 'transparent';
     }
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || 'transparent';
+    return (
+      (text && typeof text === 'object' && text.secondary) || 'transparent'
+    );
   }};
   color: ${props => {
     const surface = props.$theme?.colors?.surface;
@@ -295,10 +314,16 @@ const ConditionsSection = styled.div<{ $theme?: Theme }>`
     return props.$theme?.colors?.background || 'transparent';
   }};
   border-radius: 8px;
-  border: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'string' ? border : (border && typeof border === 'object' && (border as any).primary)) || 'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'string'
+          ? border
+          : border && typeof border === 'object' && (border as any).primary) ||
+        'transparent'
+      );
+    }};
 `;
 
 const ConditionRow = styled.div`
@@ -349,7 +374,11 @@ const RemoveConditionButton = styled.button<{ $theme?: Theme }>`
   border: none;
   background: ${props => {
     const statusError = props.$theme?.colors?.status?.error;
-    if (typeof statusError === 'object' && statusError && 'background' in statusError) {
+    if (
+      typeof statusError === 'object' &&
+      statusError &&
+      'background' in statusError
+    ) {
       return String((statusError as any).background);
     }
     const error = props.$theme?.colors?.error;
@@ -372,7 +401,11 @@ const RemoveConditionButton = styled.button<{ $theme?: Theme }>`
   &:hover {
     background: ${props => {
       const statusError = props.$theme?.colors?.status?.error;
-      if (typeof statusError === 'object' && statusError && 'background' in statusError) {
+      if (
+        typeof statusError === 'object' &&
+        statusError &&
+        'background' in statusError
+      ) {
         return String((statusError as any).background);
       }
       const error = props.$theme?.colors?.error;
@@ -446,15 +479,20 @@ export default function AlertManagement() {
   const alertTypes = ALERT_TYPES;
 
   // Hook de data fetching para carregar alertas
-  const { data: alertsData, loading: loadingAlerts, refetch: reloadAlerts } = useDataFetch(
-    () => apiClient.alerts.getAll(),
-    {
-      mapper: (apiData: any[]) => apiData.map((alerta: any) => {
+  const {
+    data: alertsData,
+    loading: loadingAlerts,
+    refetch: reloadAlerts,
+  } = useDataFetch(() => apiClient.alerts.getAll(), {
+    mapper: (apiData: any[]) =>
+      apiData.map((alerta: any) => {
         // Encontrar o tipo de alerta correspondente
-        const alertType = alertTypes.find(
-          t => t.name.toLowerCase() === alerta.type?.toLowerCase() ||
-               t.category.toLowerCase() === alerta.category?.toLowerCase()
-        ) || alertTypes[0]!;
+        const alertType =
+          alertTypes.find(
+            t =>
+              t.name.toLowerCase() === alerta.type?.toLowerCase() ||
+              t.category.toLowerCase() === alerta.category?.toLowerCase()
+          ) || alertTypes[0]!;
 
         return {
           id: alerta.id,
@@ -464,24 +502,29 @@ export default function AlertManagement() {
           date: alerta.date,
           time: alerta.time || '09:00',
           frequency: alerta.frequency || 'once',
-          notificationType: (alerta.notifyEmail ? 'email' : 
-                            alerta.notifyPush ? 'push' : 
-                            alerta.notifySMS ? 'sms' : 'email') as NotificationType,
+          notificationType: (alerta.notifyEmail
+            ? 'email'
+            : alerta.notifyPush
+              ? 'push'
+              : alerta.notifySMS
+                ? 'sms'
+                : 'email') as NotificationType,
           notificationText: alerta.notificationText || alerta.description,
-          status: (alerta.status === 'ativo' || alerta.status === 'active' ? 'active' : 'inactive') as 'active' | 'inactive',
+          status: (alerta.status === 'ativo' || alerta.status === 'active'
+            ? 'active'
+            : 'inactive') as 'active' | 'inactive',
           createdAt: alerta.createdAt || new Date().toISOString().split('T')[0],
           lastTriggered: alerta.lastTrigger,
           triggerCount: alerta.triggerCount || 0,
           conditions: alerta.conditions,
         };
       }),
-      onError: () => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
-    }
-  );
+    onError: () => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
+  });
 
   // Converter dados do hook para estado local (compatibilidade temporária)
   const [alerts, setAlerts] = useState<Alert[]>(alertsData || []);
-  
+
   // Sincronizar dados do hook com estado local
   useEffect(() => {
     if (alertsData) {
@@ -545,8 +588,12 @@ export default function AlertManagement() {
         categoria: alertType.category,
         dataAlerta: newAlert.date,
         usuarioId: currentProfile?.id,
-        notificarEmail: newAlert.notificationType === 'email' || newAlert.notificationType === 'all',
-        notificarPush: newAlert.notificationType === 'push' || newAlert.notificationType === 'all',
+        notificarEmail:
+          newAlert.notificationType === 'email' ||
+          newAlert.notificationType === 'all',
+        notificarPush:
+          newAlert.notificationType === 'push' ||
+          newAlert.notificationType === 'all',
         horaAlerta: newAlert.time,
         frequencia: newAlert.frequency,
         textoNotificacao: newAlert.notificationText,
@@ -613,8 +660,12 @@ export default function AlertManagement() {
         horaAlerta: newAlert.time,
         frequencia: newAlert.frequency,
         textoNotificacao: newAlert.notificationText,
-        notificarEmail: newAlert.notificationType === 'email' || newAlert.notificationType === 'all',
-        notificarPush: newAlert.notificationType === 'push' || newAlert.notificationType === 'all',
+        notificarEmail:
+          newAlert.notificationType === 'email' ||
+          newAlert.notificationType === 'all',
+        notificarPush:
+          newAlert.notificationType === 'push' ||
+          newAlert.notificationType === 'all',
         condicoes: conditions.length > 0 ? conditions : null,
       });
     });
@@ -634,7 +685,7 @@ export default function AlertManagement() {
     if (!alert) return;
 
     const newStatus = alert.status === 'active' ? 'inactive' : 'active';
-    
+
     toggleStatus(async () => {
       await apiClient.alerts.toggleStatus(id, newStatus);
     });
@@ -923,8 +974,12 @@ export default function AlertManagement() {
 
           {newAlert.notificationText && (
             <NotificationPreview $theme={theme}>
-              <PreviewTitle $theme={theme}>Preview da Notificação:</PreviewTitle>
-              <PreviewText $theme={theme}>{generateNotificationPreview()}</PreviewText>
+              <PreviewTitle $theme={theme}>
+                Preview da Notificação:
+              </PreviewTitle>
+              <PreviewText $theme={theme}>
+                {generateNotificationPreview()}
+              </PreviewText>
             </NotificationPreview>
           )}
 
@@ -1084,12 +1139,13 @@ export default function AlertManagement() {
               </FlexContainer>
 
               <AlertTitle $theme={theme}>{alert.title}</AlertTitle>
-              <AlertDescription $theme={theme}>{alert.description}</AlertDescription>
+              <AlertDescription $theme={theme}>
+                {alert.description}
+              </AlertDescription>
 
               <AlertDateTime $theme={theme}>
                 <AccessibleEmoji emoji='📅' label='Calendário' />{' '}
-                {formatDate(alert.date)} às{' '}
-                {alert.time}
+                {formatDate(alert.date)} às {alert.time}
               </AlertDateTime>
 
               <AlertFrequency $theme={theme}>
@@ -1107,8 +1163,7 @@ export default function AlertManagement() {
 
               {alert.lastTriggered && (
                 <OptimizedHelpText>
-                  Último disparo:{' '}
-                  {formatDate(alert.lastTriggered)}
+                  Último disparo: {formatDate(alert.lastTriggered)}
                 </OptimizedHelpText>
               )}
 
@@ -1248,9 +1303,9 @@ export default function AlertManagement() {
                   required
                 />
               </FormGroupFlex>
-            <FormGroupFlex>
-              <OptimizedLabel>Frequência</OptimizedLabel>
-              <Select
+              <FormGroupFlex>
+                <OptimizedLabel>Frequência</OptimizedLabel>
+                <Select
                   $theme={theme}
                   value={newAlert.frequency}
                   onChange={e =>
@@ -1329,7 +1384,6 @@ export default function AlertManagement() {
           </Form>
         )}
       </UnifiedModal>
-
     </PageContainer>
   );
 }

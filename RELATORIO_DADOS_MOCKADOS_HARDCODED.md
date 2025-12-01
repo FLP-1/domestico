@@ -22,6 +22,7 @@ Foram identificados **dados mockados e hardcoded** em produção que devem ser s
 **Localização:** Linhas 746-764
 
 **Dados Hardcoded:**
+
 ```typescript
 const employees: Employee[] = [
   {
@@ -44,6 +45,7 @@ const employees: Employee[] = [
 ```
 
 **Solução:**
+
 - ✅ Substituir por chamada à API `/api/users` ou `/api/employees`
 - ✅ Carregar dados reais do banco de dados
 - ✅ Implementar loading state durante carregamento
@@ -61,6 +63,7 @@ const employees: Employee[] = [
 **Dados Hardcoded:**
 
 **a) Resumo de empréstimos (linhas 566-573):**
+
 ```typescript
 const [loanSummary] = useState({
   totalPending: 2500,
@@ -73,6 +76,7 @@ const [loanSummary] = useState({
 ```
 
 **b) Array de solicitações (linhas 575-625):**
+
 ```typescript
 const [requests, setRequests] = useState<LoanRequest[]>([
   {
@@ -88,6 +92,7 @@ const [requests, setRequests] = useState<LoanRequest[]>([
 ```
 
 **Solução:**
+
 - ✅ Criar API `/api/loans` para gerenciar empréstimos
 - ✅ Criar API `/api/loans/summary` para resumo
 - ✅ Substituir dados hardcoded por chamadas à API
@@ -104,6 +109,7 @@ const [requests, setRequests] = useState<LoanRequest[]>([
 **Localização:** Linhas 1070-1090
 
 **Dados Simulados:**
+
 ```typescript
 const eventosEnviados = [
   {
@@ -120,6 +126,7 @@ const eventosEnviados = [
 ```
 
 **Solução:**
+
 - ✅ Remover fallback de dados simulados
 - ✅ Implementar tratamento adequado quando API eSocial não estiver disponível
 - ✅ Mostrar mensagem clara ao usuário sobre indisponibilidade
@@ -137,6 +144,7 @@ const eventosEnviados = [
 **Localização:** Linhas 45-226
 
 **Dados Hardcoded:**
+
 ```typescript
 export const profileThemes: Record<string, ProfileTheme> = {
   empregado: {
@@ -152,6 +160,7 @@ export const profileThemes: Record<string, ProfileTheme> = {
 ```
 
 **Análise:**
+
 - ✅ **ACEITÁVEL** - Usado apenas como fallback quando não há dados no banco
 - ✅ Sistema já prioriza dados do banco de dados (`useCentralizedConfig: true`)
 - ✅ Fallback necessário para garantir que o sistema funcione mesmo sem banco
@@ -265,4 +274,3 @@ export const profileThemes: Record<string, ProfileTheme> = {
 
 **Relatório gerado em:** 08/01/2025  
 **Próxima revisão recomendada:** Após correção dos itens críticos
-

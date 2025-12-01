@@ -1,6 +1,6 @@
 /**
  * 📋 Tipos de Arquivos Permitidos Centralizados
- * 
+ *
  * Centraliza todas as validações de tipos de arquivo permitidos no sistema.
  */
 
@@ -9,21 +9,27 @@ export const ALLOWED_FILE_TYPES = {
    * Certificados digitais completos (todos os formatos suportados)
    */
   CERTIFICATES: ['.pfx', '.p12', '.cer', '.crt', '.pem'] as const,
-  
+
   /**
    * Certificados digitais mínimos (apenas PFX e P12)
    */
   CERTIFICATES_MINIMAL: ['.pfx', '.p12'] as const,
-  
+
   /**
    * Documentos diversos (PDF, XML, JSON)
    */
   DOCUMENTS: ['.pdf', '.xml', '.json'] as const,
-  
+
   /**
    * Tipos de registros de ponto
    */
-  TIME_CLOCK_RECORDS: ['entrada', 'saida_almoco', 'retorno_almoco', 'saida', 'inicio_extra'] as const,
+  TIME_CLOCK_RECORDS: [
+    'entrada',
+    'saida_almoco',
+    'retorno_almoco',
+    'saida',
+    'inicio_extra',
+  ] as const,
 } as const;
 
 /**
@@ -63,4 +69,3 @@ export function isValidTimeClockRecordType(recordType: string): boolean {
 export function getFileExtension(fileName: string): string {
   return fileName.toLowerCase().substring(fileName.lastIndexOf('.'));
 }
-

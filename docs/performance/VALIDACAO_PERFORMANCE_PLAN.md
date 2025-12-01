@@ -10,16 +10,19 @@
 ## 2. Métricas de Referência (Semana 1)
 
 ### 2.1 Frontend (Lighthouse)
+
 - [ ] Executar `npm run performance:lighthouse`
 - [ ] Registrar métricas (LCP, FID, CLS, TBT)
 - [ ] Identificar regressões > 5%
 
 ### 2.2 Backend (APIs)
+
 - [ ] Medir tempo de resposta médio (Postman/NewRelic)
 - [ ] Monitorar throughput (req/s)
 - [ ] Verificar erro 5xx < 1%
 
 ### 2.3 Banco de Dados
+
 - [ ] Executar `EXPLAIN ANALYZE` nas principais queries
 - [ ] Identificar queries > 200ms
 - [ ] Validar índices correspondentes
@@ -27,11 +30,13 @@
 ## 3. Testes de Carga (Semana 2)
 
 ### 3.1 Configuração
+
 - [ ] Configurar `scripts/performance/load-test.js`
 - [ ] Ajustar VUs conforme capacidade (50 → 200)
 - [ ] Definir cenário pico (5 min) e endurance (30 min)
 
 ### 3.2 Execução
+
 - [ ] Rodar `npm run performance:k6`
 - [ ] Coletar métricas (p95, p99, erros)
 - [ ] Registrar gargalos (API, DB, CPU, memória)

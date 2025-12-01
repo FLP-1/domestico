@@ -80,12 +80,15 @@ const ButtonContainer = styled.div<{ $theme?: any }>`
   justify-content: flex-end;
   margin-top: 2rem;
   padding-top: 1rem;
-  border-top: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border-top: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
 
   @media (max-width: 768px) {
     flex-direction: column;

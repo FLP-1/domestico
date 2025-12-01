@@ -19,10 +19,12 @@ export const OVERTIME_REQUEST_STATUSES = {
   REJECTED: 'REJEITADA',
 } as const;
 
-export type OvertimeRequestStatus = typeof OVERTIME_REQUEST_STATUSES[keyof typeof OVERTIME_REQUEST_STATUSES];
+export type OvertimeRequestStatus =
+  (typeof OVERTIME_REQUEST_STATUSES)[keyof typeof OVERTIME_REQUEST_STATUSES];
 ```
 
 **Funcionalidades incluídas:**
+
 - ✅ Constantes centralizadas
 - ✅ Type safety com TypeScript
 - ✅ Função `getOvertimeRequestStatusLabel()` para labels em português
@@ -35,6 +37,7 @@ export type OvertimeRequestStatus = typeof OVERTIME_REQUEST_STATUSES[keyof typeo
 **Arquivo:** `src/pages/time-clock.tsx`
 
 **Mudanças:**
+
 - ✅ Import adicionado: `OVERTIME_REQUEST_STATUSES` e `OvertimeRequestStatus`
 - ✅ Linha 677: `'PENDENTE'` → `OVERTIME_REQUEST_STATUSES.PENDING`
 - ✅ Linha 996: `'PENDENTE'` → `OVERTIME_REQUEST_STATUSES.PENDING`
@@ -44,6 +47,7 @@ export type OvertimeRequestStatus = typeof OVERTIME_REQUEST_STATUSES[keyof typeo
 **Arquivo:** `src/components/OvertimeApprovalModal/index.tsx`
 
 **Mudanças:**
+
 - ✅ Import adicionado: `OVERTIME_REQUEST_STATUSES` e `OvertimeRequestStatus`
 - ✅ Interface `OvertimeRequest` atualizada:
   - Antes: `status: 'pending' | 'approved' | 'rejected'`
@@ -89,6 +93,7 @@ export type OvertimeRequestStatus = typeof OVERTIME_REQUEST_STATUSES[keyof typeo
 ## 🎯 **PRÓXIMOS PASSOS**
 
 **Fase 2: Média Prioridade**
+
 1. Criar `esocialStatuses.ts`
 2. Criar `paymentStatuses.ts`
 3. Migrar `esocial-domestico-completo.tsx`
@@ -105,4 +110,3 @@ export type OvertimeRequestStatus = typeof OVERTIME_REQUEST_STATUSES[keyof typeo
 - A interface `OvertimeRequest` agora usa o tipo `OvertimeRequestStatus` para type safety
 
 **Fase 1 concluída com sucesso! ✅**
-

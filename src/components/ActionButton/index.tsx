@@ -18,21 +18,28 @@ const ButtonContainer = styled.button<{
 
     const getVariantStyles = () => {
       // Obter cores de texto do tema (fallback hierárquico)
-      const textColor = props.$theme?.colors?.text?.primary || 
-                       props.$theme?.text?.primary ||
-                       props.$theme?.colors?.text ||
-                       props.$theme?.colors?.surface ||
-                       'inherit';
-      
+      const textColor =
+        props.$theme?.colors?.text?.primary ||
+        props.$theme?.text?.primary ||
+        props.$theme?.colors?.text ||
+        props.$theme?.colors?.surface ||
+        'inherit';
+
       // Obter cores de background do tema
-      const surfaceColor = props.$theme?.colors?.surface ||
-                          props.$theme?.colors?.background?.primary ||
-                          props.$theme?.background?.primary ||
-                          'transparent';
-      
+      const surfaceColor =
+        props.$theme?.colors?.surface ||
+        props.$theme?.colors?.background?.primary ||
+        props.$theme?.background?.primary ||
+        'transparent';
+
       // Função para adicionar opacidade a uma cor
       const addOpacity = (color: string, opacity: number) => {
-        if (!color || color === 'transparent' || color === 'inherit' || color === 'currentColor') {
+        if (
+          !color ||
+          color === 'transparent' ||
+          color === 'inherit' ||
+          color === 'currentColor'
+        ) {
           return 'transparent';
         }
         if (color.startsWith('#')) {
@@ -61,30 +68,33 @@ const ButtonContainer = styled.button<{
             border: `2px solid ${themedStyles.border || 'transparent'}`,
           };
         case 'success':
-          const successDark = props.$theme?.colors?.status?.success?.dark ||
-                             props.$theme?.status?.success?.dark ||
-                             props.$theme?.colors?.success ||
-                             themedStyles.success;
+          const successDark =
+            props.$theme?.colors?.status?.success?.dark ||
+            props.$theme?.status?.success?.dark ||
+            props.$theme?.colors?.success ||
+            themedStyles.success;
           return {
             background: `linear-gradient(135deg, ${themedStyles.success}, ${successDark})`,
             color: textColor,
             border: 'none',
           };
         case 'warning':
-          const warningDark = props.$theme?.colors?.status?.warning?.dark ||
-                             props.$theme?.status?.warning?.dark ||
-                             props.$theme?.colors?.warning ||
-                             themedStyles.warning;
+          const warningDark =
+            props.$theme?.colors?.status?.warning?.dark ||
+            props.$theme?.status?.warning?.dark ||
+            props.$theme?.colors?.warning ||
+            themedStyles.warning;
           return {
             background: `linear-gradient(135deg, ${themedStyles.warning}, ${warningDark})`,
             color: textColor,
             border: 'none',
           };
         case 'danger':
-          const errorDark = props.$theme?.colors?.status?.error?.dark ||
-                           props.$theme?.status?.error?.dark ||
-                           props.$theme?.colors?.error ||
-                           themedStyles.error;
+          const errorDark =
+            props.$theme?.colors?.status?.error?.dark ||
+            props.$theme?.status?.error?.dark ||
+            props.$theme?.colors?.error ||
+            themedStyles.error;
           return {
             background: `linear-gradient(135deg, ${themedStyles.error}, ${errorDark})`,
             color: textColor,
@@ -213,24 +223,26 @@ const ButtonContainer = styled.button<{
 const LoadingSpinner = styled.div<{ $theme?: any }>`
   width: 16px;
   height: 16px;
-  border: 2px solid ${props => {
-    const textColor = props.$theme?.colors?.text?.primary || 
-                     props.$theme?.text?.primary ||
-                     props.$theme?.colors?.text ||
-                     props.$theme?.colors?.surface ||
-                     'currentColor';
-    // Adiciona opacidade à cor
-    if (textColor && textColor.startsWith('#')) {
-      const r = parseInt(textColor.slice(1, 3), 16);
-      const g = parseInt(textColor.slice(3, 5), 16);
-      const b = parseInt(textColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.3)`;
-    }
-    if (textColor && textColor.startsWith('rgb')) {
-      return textColor.replace(')', ', 0.3)').replace('rgb', 'rgba');
-    }
-    return 'transparent';
-  }};
+  border: 2px solid
+    ${props => {
+      const textColor =
+        props.$theme?.colors?.text?.primary ||
+        props.$theme?.text?.primary ||
+        props.$theme?.colors?.text ||
+        props.$theme?.colors?.surface ||
+        'currentColor';
+      // Adiciona opacidade à cor
+      if (textColor && textColor.startsWith('#')) {
+        const r = parseInt(textColor.slice(1, 3), 16);
+        const g = parseInt(textColor.slice(3, 5), 16);
+        const b = parseInt(textColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.3)`;
+      }
+      if (textColor && textColor.startsWith('rgb')) {
+        return textColor.replace(')', ', 0.3)').replace('rgb', 'rgba');
+      }
+      return 'transparent';
+    }};
   border-top: 2px solid currentColor;
   border-radius: 50%;
   animation: spin 1s linear infinite;

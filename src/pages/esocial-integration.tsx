@@ -2,7 +2,11 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import AccessibleEmoji from '../components/AccessibleEmoji';
-import { UnifiedButton, UnifiedBadge, UnifiedProgressBar } from '../components/unified';
+import {
+  UnifiedButton,
+  UnifiedBadge,
+  UnifiedProgressBar,
+} from '../components/unified';
 import type { Theme } from '../types/theme';
 import CertificateUploadModal from '../components/CertificateUploadModal';
 import { Form, FormGroup, Input, Select } from '../components/FormComponents';
@@ -47,9 +51,17 @@ const CenterText = styled.div`
 `;
 
 const ErrorText = styled.div<{ $theme?: any }>`
-  color: ${props => 
-    (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'text' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).text) : null) ||
-    (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'text' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).text) : null) ||
+  color: ${props =>
+    (typeof props.$theme?.colors?.status?.error === 'object' &&
+    props.$theme?.colors?.status?.error &&
+    'text' in props.$theme.colors.status.error
+      ? String((props.$theme.colors.status.error as any).text)
+      : null) ||
+    (typeof (props.$theme as any)?.status?.error === 'object' &&
+    (props.$theme as any)?.status?.error &&
+    'text' in (props.$theme as any).status.error
+      ? String(((props.$theme as any).status.error as any).text)
+      : null) ||
     'inherit'};
   font-weight: 600;
   margin-bottom: 0.5rem;
@@ -63,28 +75,32 @@ const SmallText = styled.div`
 const ApiStatusIndicator = styled.span<{ $isReal: boolean; $theme?: any }>`
   color: ${props => {
     if (props.$isReal) {
-      const successText = typeof props.$theme?.colors?.status?.success === 'object' && 
-        props.$theme?.colors?.status?.success && 
-        'text' in props.$theme.colors.status.success 
-        ? String((props.$theme.colors.status.success as any).text) 
-        : null;
-      const altSuccessText = typeof (props.$theme as any)?.status?.success === 'object' && 
-        (props.$theme as any)?.status?.success && 
-        'text' in (props.$theme as any).status.success 
-        ? String(((props.$theme as any).status.success as any).text) 
-        : null;
+      const successText =
+        typeof props.$theme?.colors?.status?.success === 'object' &&
+        props.$theme?.colors?.status?.success &&
+        'text' in props.$theme.colors.status.success
+          ? String((props.$theme.colors.status.success as any).text)
+          : null;
+      const altSuccessText =
+        typeof (props.$theme as any)?.status?.success === 'object' &&
+        (props.$theme as any)?.status?.success &&
+        'text' in (props.$theme as any).status.success
+          ? String(((props.$theme as any).status.success as any).text)
+          : null;
       return successText || altSuccessText || 'inherit';
     } else {
-      const warningText = typeof props.$theme?.colors?.status?.warning === 'object' && 
-        props.$theme?.colors?.status?.warning && 
-        'text' in props.$theme.colors.status.warning 
-        ? String((props.$theme.colors.status.warning as any).text) 
-        : null;
-      const altWarningText = typeof (props.$theme as any)?.status?.warning === 'object' && 
-        (props.$theme as any)?.status?.warning && 
-        'text' in (props.$theme as any).status.warning 
-        ? String(((props.$theme as any).status.warning as any).text) 
-        : null;
+      const warningText =
+        typeof props.$theme?.colors?.status?.warning === 'object' &&
+        props.$theme?.colors?.status?.warning &&
+        'text' in props.$theme.colors.status.warning
+          ? String((props.$theme.colors.status.warning as any).text)
+          : null;
+      const altWarningText =
+        typeof (props.$theme as any)?.status?.warning === 'object' &&
+        (props.$theme as any)?.status?.warning &&
+        'text' in (props.$theme as any).status.warning
+          ? String(((props.$theme as any).status.warning as any).text)
+          : null;
       return warningText || altWarningText || 'inherit';
     }
   }};
@@ -98,9 +114,17 @@ const FlexContainer = styled.div`
 `;
 
 const SSLWarningText = styled.div<{ $theme?: any }>`
-  color: ${props => 
-    (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'text' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).text) : null) ||
-    (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'text' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).text) : null) ||
+  color: ${props =>
+    (typeof props.$theme?.colors?.status?.warning === 'object' &&
+    props.$theme?.colors?.status?.warning &&
+    'text' in props.$theme.colors.status.warning
+      ? String((props.$theme.colors.status.warning as any).text)
+      : null) ||
+    (typeof (props.$theme as any)?.status?.warning === 'object' &&
+    (props.$theme as any)?.status?.warning &&
+    'text' in (props.$theme as any).status.warning
+      ? String(((props.$theme as any).status.warning as any).text)
+      : null) ||
     'inherit'};
   font-weight: bold;
 `;
@@ -114,28 +138,60 @@ const DataSourceIndicator = styled.span<{ $isReal: boolean; $theme?: any }>`
   font-size: 0.8rem;
   color: ${props =>
     props.$isReal
-      ? (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'text' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).text) : null) ||
-        (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'text' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).text) : null) ||
+      ? (typeof props.$theme?.colors?.status?.success === 'object' &&
+        props.$theme?.colors?.status?.success &&
+        'text' in props.$theme.colors.status.success
+          ? String((props.$theme.colors.status.success as any).text)
+          : null) ||
+        (typeof (props.$theme as any)?.status?.success === 'object' &&
+        (props.$theme as any)?.status?.success &&
+        'text' in (props.$theme as any).status.success
+          ? String(((props.$theme as any).status.success as any).text)
+          : null) ||
         'inherit'
-      : (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'text' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).text) : null) ||
-        (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'text' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).text) : null) ||
+      : (typeof props.$theme?.colors?.status?.warning === 'object' &&
+        props.$theme?.colors?.status?.warning &&
+        'text' in props.$theme.colors.status.warning
+          ? String((props.$theme.colors.status.warning as any).text)
+          : null) ||
+        (typeof (props.$theme as any)?.status?.warning === 'object' &&
+        (props.$theme as any)?.status?.warning &&
+        'text' in (props.$theme as any).status.warning
+          ? String(((props.$theme as any).status.warning as any).text)
+          : null) ||
         'inherit'};
   margin-left: 10px;
   font-weight: bold;
 `;
 
 const SuccessText = styled.span<{ $theme?: any }>`
-  color: ${props => 
-    (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'text' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).text) : null) ||
-    (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'text' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).text) : null) ||
+  color: ${props =>
+    (typeof props.$theme?.colors?.status?.success === 'object' &&
+    props.$theme?.colors?.status?.success &&
+    'text' in props.$theme.colors.status.success
+      ? String((props.$theme.colors.status.success as any).text)
+      : null) ||
+    (typeof (props.$theme as any)?.status?.success === 'object' &&
+    (props.$theme as any)?.status?.success &&
+    'text' in (props.$theme as any).status.success
+      ? String(((props.$theme as any).status.success as any).text)
+      : null) ||
     'inherit'};
   font-weight: 600;
 `;
 
 const ErrorSpan = styled.span<{ $theme?: any }>`
-  color: ${props => 
-    (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'text' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).text) : null) ||
-    (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'text' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).text) : null) ||
+  color: ${props =>
+    (typeof props.$theme?.colors?.status?.error === 'object' &&
+    props.$theme?.colors?.status?.error &&
+    'text' in props.$theme.colors.status.error
+      ? String((props.$theme.colors.status.error as any).text)
+      : null) ||
+    (typeof (props.$theme as any)?.status?.error === 'object' &&
+    (props.$theme as any)?.status?.error &&
+    'text' in (props.$theme as any).status.error
+      ? String(((props.$theme as any).status.error as any).text)
+      : null) ||
     'inherit'};
 `;
 
@@ -160,21 +216,42 @@ const ContentGrid = styled.div`
 
 const Section = styled.div<{ $theme?: any }>`
   background: ${props => {
-    const bgColor = (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) || (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null);
+    const bgColor =
+      (typeof props.$theme?.colors?.background === 'object' &&
+      props.$theme?.colors?.background &&
+      'primary' in props.$theme.colors.background
+        ? String((props.$theme.colors.background as any).primary)
+        : null) ||
+      (typeof (props.$theme as any)?.background === 'object' &&
+      (props.$theme as any)?.background &&
+      'primary' in (props.$theme as any).background
+        ? String(((props.$theme as any).background as any).primary)
+        : null);
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
       const b = parseInt(bgColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.95)`;
     }
-    return     (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
-    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
-           'transparent';
+    return (
+      (typeof props.$theme?.colors?.background === 'object' &&
+      props.$theme?.colors?.background &&
+      'primary' in props.$theme.colors.background
+        ? String((props.$theme.colors.background as any).primary)
+        : null) ||
+      (typeof (props.$theme as any)?.background === 'object' &&
+      (props.$theme as any)?.background &&
+      'primary' in (props.$theme as any).background
+        ? String(((props.$theme as any).background as any).primary)
+        : null) ||
+      'transparent'
+    );
   }};
   border-radius: 16px;
   padding: 2rem;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
+    const shadowColor =
+      props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -190,8 +267,8 @@ const SectionTitle = styled.h2<{ $theme?: any }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 1.5rem;
   font-weight: 700;
-  color: ${props => 
-    props.$theme?.colors?.primary || 
+  color: ${props =>
+    props.$theme?.colors?.primary ||
     (props.$theme as any)?.accent ||
     'inherit'};
   margin: 0 0 1.5rem 0;
@@ -217,10 +294,8 @@ const FormGroupStyled = styled(FormGroup)`
 
 const Label = styled.label<{ $theme?: any }>`
   font-weight: 600;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
-    'inherit'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
   display: block;
@@ -229,84 +304,114 @@ const Label = styled.label<{ $theme?: any }>`
 const InputStyled = styled(Input)<{ $theme?: Theme; $hasError?: boolean }>`
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid ${props => 
-    props.$hasError
-      ? props.$theme?.colors?.status?.error?.border ||
-        props.$theme?.status?.error?.border ||
-        'transparent'
-      : props.$theme?.colors?.border?.light ||
-        props.$theme?.border?.light ||
-        'transparent'};
+  border: 2px solid
+    ${props =>
+      props.$hasError
+        ? props.$theme?.colors?.status?.error?.border ||
+          props.$theme?.status?.error?.border ||
+          'transparent'
+        : props.$theme?.colors?.border?.light ||
+          props.$theme?.border?.light ||
+          'transparent'};
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: ${props => 
-    (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
-    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
+  background: ${props =>
+    (typeof props.$theme?.colors?.background === 'object' &&
+    props.$theme?.colors?.background &&
+    'primary' in props.$theme.colors.background
+      ? String((props.$theme.colors.background as any).primary)
+      : null) ||
+    (typeof (props.$theme as any)?.background === 'object' &&
+    (props.$theme as any)?.background &&
+    'primary' in (props.$theme as any).background
+      ? String(((props.$theme as any).background as any).primary)
+      : null) ||
     'transparent'};
 
   &:focus {
     outline: none;
-    border-color: ${props => 
-      props.$theme?.colors?.primary || 
+    border-color: ${props =>
+      props.$theme?.colors?.primary ||
       (props.$theme as any)?.accent ||
       'transparent'};
-    box-shadow: 0 0 0 3px ${props => {
-      const primaryColor = props.$theme?.colors?.primary || (props.$theme as any)?.accent;
-      if (primaryColor && primaryColor.startsWith('#')) {
-        const r = parseInt(primaryColor.slice(1, 3), 16);
-        const g = parseInt(primaryColor.slice(3, 5), 16);
-        const b = parseInt(primaryColor.slice(5, 7), 16);
-        return `rgba(${r}, ${g}, ${b}, 0.1)`;
-      }
-      return 'transparent';
-    }};
+    box-shadow: 0 0 0 3px
+      ${props => {
+        const primaryColor =
+          props.$theme?.colors?.primary || (props.$theme as any)?.accent;
+        if (primaryColor && primaryColor.startsWith('#')) {
+          const r = parseInt(primaryColor.slice(1, 3), 16);
+          const g = parseInt(primaryColor.slice(3, 5), 16);
+          const b = parseInt(primaryColor.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, 0.1)`;
+        }
+        return 'transparent';
+      }};
   }
 `;
 
 const SelectStyled = styled(Select)<{ $theme?: Theme; $hasError?: boolean }>`
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid ${props => 
-    props.$hasError
-      ? props.$theme?.colors?.status?.error?.border ||
-        props.$theme?.status?.error?.border ||
-        'transparent'
-      : props.$theme?.colors?.border?.light ||
-        props.$theme?.border?.light ||
-        'transparent'};
+  border: 2px solid
+    ${props =>
+      props.$hasError
+        ? props.$theme?.colors?.status?.error?.border ||
+          props.$theme?.status?.error?.border ||
+          'transparent'
+        : props.$theme?.colors?.border?.light ||
+          props.$theme?.border?.light ||
+          'transparent'};
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: ${props => 
-    (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
-    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
+  background: ${props =>
+    (typeof props.$theme?.colors?.background === 'object' &&
+    props.$theme?.colors?.background &&
+    'primary' in props.$theme.colors.background
+      ? String((props.$theme.colors.background as any).primary)
+      : null) ||
+    (typeof (props.$theme as any)?.background === 'object' &&
+    (props.$theme as any)?.background &&
+    'primary' in (props.$theme as any).background
+      ? String(((props.$theme as any).background as any).primary)
+      : null) ||
     'transparent'};
   cursor: pointer;
 
   &:focus {
     outline: none;
-    border-color: ${props => 
-      props.$theme?.colors?.primary || 
+    border-color: ${props =>
+      props.$theme?.colors?.primary ||
       (props.$theme as any)?.accent ||
       'transparent'};
-    box-shadow: 0 0 0 3px ${props => {
-      const primaryColor = props.$theme?.colors?.primary || (props.$theme as any)?.accent;
-      if (primaryColor && primaryColor.startsWith('#')) {
-        const r = parseInt(primaryColor.slice(1, 3), 16);
-        const g = parseInt(primaryColor.slice(3, 5), 16);
-        const b = parseInt(primaryColor.slice(5, 7), 16);
-        return `rgba(${r}, ${g}, ${b}, 0.1)`;
-      }
-      return 'transparent';
-    }};
+    box-shadow: 0 0 0 3px
+      ${props => {
+        const primaryColor =
+          props.$theme?.colors?.primary || (props.$theme as any)?.accent;
+        if (primaryColor && primaryColor.startsWith('#')) {
+          const r = parseInt(primaryColor.slice(1, 3), 16);
+          const g = parseInt(primaryColor.slice(3, 5), 16);
+          const b = parseInt(primaryColor.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, 0.1)`;
+        }
+        return 'transparent';
+      }};
   }
 `;
 
 const ErrorMessage = styled.div<{ $theme?: any }>`
-  color: ${props => 
-    (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'text' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).text) : null) ||
-    (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'text' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).text) : null) ||
+  color: ${props =>
+    (typeof props.$theme?.colors?.status?.error === 'object' &&
+    props.$theme?.colors?.status?.error &&
+    'text' in props.$theme.colors.status.error
+      ? String((props.$theme.colors.status.error as any).text)
+      : null) ||
+    (typeof (props.$theme as any)?.status?.error === 'object' &&
+    (props.$theme as any)?.status?.error &&
+    'text' in (props.$theme as any).status.error
+      ? String(((props.$theme as any).status.error as any).text)
+      : null) ||
     'inherit'};
   font-size: 0.8rem;
   margin-top: 0.25rem;
@@ -333,31 +438,72 @@ const EventCard = styled.div<{ $status: string; $theme?: Theme }>`
     ${props => {
       switch (props.$status) {
         case 'pending':
-          return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'border' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).border) : null) ||
-                 (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'border' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).border) : null) ||
-                 'transparent';
+          return (
+            (typeof props.$theme?.colors?.status?.warning === 'object' &&
+            props.$theme?.colors?.status?.warning &&
+            'border' in props.$theme.colors.status.warning
+              ? String((props.$theme.colors.status.warning as any).border)
+              : null) ||
+            (typeof (props.$theme as any)?.status?.warning === 'object' &&
+            (props.$theme as any)?.status?.warning &&
+            'border' in (props.$theme as any).status.warning
+              ? String(((props.$theme as any).status.warning as any).border)
+              : null) ||
+            'transparent'
+          );
         case 'sent':
-          return props.$theme?.colors?.primary || 
-                 (props.$theme as any)?.accent ||
-                 'transparent';
+          return (
+            props.$theme?.colors?.primary ||
+            (props.$theme as any)?.accent ||
+            'transparent'
+          );
         case 'processed':
-          return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'border' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).border) : null) ||
-                 (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'border' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).border) : null) ||
-                 'transparent';
+          return (
+            (typeof props.$theme?.colors?.status?.success === 'object' &&
+            props.$theme?.colors?.status?.success &&
+            'border' in props.$theme.colors.status.success
+              ? String((props.$theme.colors.status.success as any).border)
+              : null) ||
+            (typeof (props.$theme as any)?.status?.success === 'object' &&
+            (props.$theme as any)?.status?.success &&
+            'border' in (props.$theme as any).status.success
+              ? String(((props.$theme as any).status.success as any).border)
+              : null) ||
+            'transparent'
+          );
         case 'error':
-          return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'border' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).border) : null) ||
-                 (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'border' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).border) : null) ||
-                 'transparent';
+          return (
+            (typeof props.$theme?.colors?.status?.error === 'object' &&
+            props.$theme?.colors?.status?.error &&
+            'border' in props.$theme.colors.status.error
+              ? String((props.$theme.colors.status.error as any).border)
+              : null) ||
+            (typeof (props.$theme as any)?.status?.error === 'object' &&
+            (props.$theme as any)?.status?.error &&
+            'border' in (props.$theme as any).status.error
+              ? String(((props.$theme as any).status.error as any).border)
+              : null) ||
+            'transparent'
+          );
         default:
           return 'transparent';
       }
     }};
-  background: ${props => 
-    (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
-    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
+  background: ${props =>
+    (typeof props.$theme?.colors?.background === 'object' &&
+    props.$theme?.colors?.background &&
+    'primary' in props.$theme.colors.background
+      ? String((props.$theme.colors.background as any).primary)
+      : null) ||
+    (typeof (props.$theme as any)?.background === 'object' &&
+    (props.$theme as any)?.background &&
+    'primary' in (props.$theme as any).background
+      ? String(((props.$theme as any).background as any).primary)
+      : null) ||
     'transparent'};
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
+    const shadowColor =
+      props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -371,7 +517,8 @@ const EventCard = styled.div<{ $status: string; $theme?: Theme }>`
   &:hover {
     transform: translateY(-2px);
     box-shadow: ${props => {
-      const shadowColor = props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
+      const shadowColor =
+        props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
       if (shadowColor && shadowColor.startsWith('rgba')) {
         const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
         if (match) {
@@ -393,10 +540,8 @@ const EventHeader = styled.div`
 const EventTitle = styled.h3<{ $theme?: any }>`
   font-size: 1.1rem;
   font-weight: 600;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
-    'inherit'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
   margin: 0;
 `;
 
@@ -408,21 +553,53 @@ const EventStatus = styled.span<{ $status: string; $theme?: Theme }>`
   background: ${props => {
     switch (props.$status) {
       case 'pending':
-        return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'background' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).background) : null) ||
-               (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'background' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).background) : null) ||
-               'transparent';
+        return (
+          (typeof props.$theme?.colors?.status?.warning === 'object' &&
+          props.$theme?.colors?.status?.warning &&
+          'background' in props.$theme.colors.status.warning
+            ? String((props.$theme.colors.status.warning as any).background)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.warning === 'object' &&
+          (props.$theme as any)?.status?.warning &&
+          'background' in (props.$theme as any).status.warning
+            ? String(((props.$theme as any).status.warning as any).background)
+            : null) ||
+          'transparent'
+        );
       case 'sent':
-        return props.$theme?.colors?.primary || 
-               (props.$theme as any)?.accent ||
-               'transparent';
+        return (
+          props.$theme?.colors?.primary ||
+          (props.$theme as any)?.accent ||
+          'transparent'
+        );
       case 'processed':
-        return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'background' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).background) : null) ||
-               (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'background' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).background) : null) ||
-               'transparent';
+        return (
+          (typeof props.$theme?.colors?.status?.success === 'object' &&
+          props.$theme?.colors?.status?.success &&
+          'background' in props.$theme.colors.status.success
+            ? String((props.$theme.colors.status.success as any).background)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.success === 'object' &&
+          (props.$theme as any)?.status?.success &&
+          'background' in (props.$theme as any).status.success
+            ? String(((props.$theme as any).status.success as any).background)
+            : null) ||
+          'transparent'
+        );
       case 'error':
-        return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'background' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).background) : null) ||
-               (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'background' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).background) : null) ||
-               'transparent';
+        return (
+          (typeof props.$theme?.colors?.status?.error === 'object' &&
+          props.$theme?.colors?.status?.error &&
+          'background' in props.$theme.colors.status.error
+            ? String((props.$theme.colors.status.error as any).background)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.error === 'object' &&
+          (props.$theme as any)?.status?.error &&
+          'background' in (props.$theme as any).status.error
+            ? String(((props.$theme as any).status.error as any).background)
+            : null) ||
+          'transparent'
+        );
       default:
         return 'transparent';
     }
@@ -430,21 +607,61 @@ const EventStatus = styled.span<{ $status: string; $theme?: Theme }>`
   color: ${props => {
     switch (props.$status) {
       case 'pending':
-        return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'text' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).text) : null) ||
-               (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'text' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).text) : null) ||
-               'inherit';
+        return (
+          (typeof props.$theme?.colors?.status?.warning === 'object' &&
+          props.$theme?.colors?.status?.warning &&
+          'text' in props.$theme.colors.status.warning
+            ? String((props.$theme.colors.status.warning as any).text)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.warning === 'object' &&
+          (props.$theme as any)?.status?.warning &&
+          'text' in (props.$theme as any).status.warning
+            ? String(((props.$theme as any).status.warning as any).text)
+            : null) ||
+          'inherit'
+        );
       case 'sent':
-        return (typeof props.$theme?.colors?.text === 'object' && props.$theme?.colors?.text && 'primary' in props.$theme.colors.text ? String((props.$theme.colors.text as any).primary) : null) || 
-               (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'primary' in (props.$theme as any).text ? String(((props.$theme as any).text as any).primary) : null) ||
-               'inherit';
+        return (
+          (typeof props.$theme?.colors?.text === 'object' &&
+          props.$theme?.colors?.text &&
+          'primary' in props.$theme.colors.text
+            ? String((props.$theme.colors.text as any).primary)
+            : null) ||
+          (typeof (props.$theme as any)?.text === 'object' &&
+          (props.$theme as any)?.text &&
+          'primary' in (props.$theme as any).text
+            ? String(((props.$theme as any).text as any).primary)
+            : null) ||
+          'inherit'
+        );
       case 'processed':
-        return     (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'text' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).text) : null) ||
-               (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'text' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).text) : null) ||
-               'inherit';
+        return (
+          (typeof props.$theme?.colors?.status?.success === 'object' &&
+          props.$theme?.colors?.status?.success &&
+          'text' in props.$theme.colors.status.success
+            ? String((props.$theme.colors.status.success as any).text)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.success === 'object' &&
+          (props.$theme as any)?.status?.success &&
+          'text' in (props.$theme as any).status.success
+            ? String(((props.$theme as any).status.success as any).text)
+            : null) ||
+          'inherit'
+        );
       case 'error':
-        return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'text' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).text) : null) ||
-               (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'text' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).text) : null) ||
-               'inherit';
+        return (
+          (typeof props.$theme?.colors?.status?.error === 'object' &&
+          props.$theme?.colors?.status?.error &&
+          'text' in props.$theme.colors.status.error
+            ? String((props.$theme.colors.status.error as any).text)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.error === 'object' &&
+          (props.$theme as any)?.status?.error &&
+          'text' in (props.$theme as any).status.error
+            ? String(((props.$theme as any).status.error as any).text)
+            : null) ||
+          'inherit'
+        );
       default:
         return 'inherit';
     }
@@ -476,21 +693,61 @@ const AlertBanner = styled.div<{ $type: string; $theme?: Theme }>`
   background: ${props => {
     switch (props.$type) {
       case 'warning':
-        return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'background' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).background) : null) ||
-               (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'background' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).background) : null) ||
-               'transparent';
+        return (
+          (typeof props.$theme?.colors?.status?.warning === 'object' &&
+          props.$theme?.colors?.status?.warning &&
+          'background' in props.$theme.colors.status.warning
+            ? String((props.$theme.colors.status.warning as any).background)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.warning === 'object' &&
+          (props.$theme as any)?.status?.warning &&
+          'background' in (props.$theme as any).status.warning
+            ? String(((props.$theme as any).status.warning as any).background)
+            : null) ||
+          'transparent'
+        );
       case 'error':
-        return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'background' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).background) : null) ||
-               (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'background' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).background) : null) ||
-               'transparent';
+        return (
+          (typeof props.$theme?.colors?.status?.error === 'object' &&
+          props.$theme?.colors?.status?.error &&
+          'background' in props.$theme.colors.status.error
+            ? String((props.$theme.colors.status.error as any).background)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.error === 'object' &&
+          (props.$theme as any)?.status?.error &&
+          'background' in (props.$theme as any).status.error
+            ? String(((props.$theme as any).status.error as any).background)
+            : null) ||
+          'transparent'
+        );
       case 'success':
-        return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'background' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).background) : null) ||
-               (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'background' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).background) : null) ||
-               'transparent';
+        return (
+          (typeof props.$theme?.colors?.status?.success === 'object' &&
+          props.$theme?.colors?.status?.success &&
+          'background' in props.$theme.colors.status.success
+            ? String((props.$theme.colors.status.success as any).background)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.success === 'object' &&
+          (props.$theme as any)?.status?.success &&
+          'background' in (props.$theme as any).status.success
+            ? String(((props.$theme as any).status.success as any).background)
+            : null) ||
+          'transparent'
+        );
       case 'info':
-        return (typeof props.$theme?.colors?.status?.info === 'object' && props.$theme?.colors?.status?.info && 'background' in props.$theme.colors.status.info ? String((props.$theme.colors.status.info as any).background) : null) ||
-               (typeof (props.$theme as any)?.status?.info === 'object' && (props.$theme as any)?.status?.info && 'background' in (props.$theme as any).status.info ? String(((props.$theme as any).status.info as any).background) : null) ||
-               'transparent';
+        return (
+          (typeof props.$theme?.colors?.status?.info === 'object' &&
+          props.$theme?.colors?.status?.info &&
+          'background' in props.$theme.colors.status.info
+            ? String((props.$theme.colors.status.info as any).background)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.info === 'object' &&
+          (props.$theme as any)?.status?.info &&
+          'background' in (props.$theme as any).status.info
+            ? String(((props.$theme as any).status.info as any).background)
+            : null) ||
+          'transparent'
+        );
       default:
         return 'transparent';
     }
@@ -499,21 +756,61 @@ const AlertBanner = styled.div<{ $type: string; $theme?: Theme }>`
     ${props => {
       switch (props.$type) {
         case 'warning':
-          return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'border' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).border) : null) ||
-                 (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'border' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).border) : null) ||
-                 'transparent';
+          return (
+            (typeof props.$theme?.colors?.status?.warning === 'object' &&
+            props.$theme?.colors?.status?.warning &&
+            'border' in props.$theme.colors.status.warning
+              ? String((props.$theme.colors.status.warning as any).border)
+              : null) ||
+            (typeof (props.$theme as any)?.status?.warning === 'object' &&
+            (props.$theme as any)?.status?.warning &&
+            'border' in (props.$theme as any).status.warning
+              ? String(((props.$theme as any).status.warning as any).border)
+              : null) ||
+            'transparent'
+          );
         case 'error':
-          return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'border' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).border) : null) ||
-                 (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'border' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).border) : null) ||
-                 'transparent';
+          return (
+            (typeof props.$theme?.colors?.status?.error === 'object' &&
+            props.$theme?.colors?.status?.error &&
+            'border' in props.$theme.colors.status.error
+              ? String((props.$theme.colors.status.error as any).border)
+              : null) ||
+            (typeof (props.$theme as any)?.status?.error === 'object' &&
+            (props.$theme as any)?.status?.error &&
+            'border' in (props.$theme as any).status.error
+              ? String(((props.$theme as any).status.error as any).border)
+              : null) ||
+            'transparent'
+          );
         case 'success':
-          return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'border' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).border) : null) ||
-                 (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'border' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).border) : null) ||
-                 'transparent';
+          return (
+            (typeof props.$theme?.colors?.status?.success === 'object' &&
+            props.$theme?.colors?.status?.success &&
+            'border' in props.$theme.colors.status.success
+              ? String((props.$theme.colors.status.success as any).border)
+              : null) ||
+            (typeof (props.$theme as any)?.status?.success === 'object' &&
+            (props.$theme as any)?.status?.success &&
+            'border' in (props.$theme as any).status.success
+              ? String(((props.$theme as any).status.success as any).border)
+              : null) ||
+            'transparent'
+          );
         case 'info':
-          return (typeof props.$theme?.colors?.status?.info === 'object' && props.$theme?.colors?.status?.info && 'border' in props.$theme.colors.status.info ? String((props.$theme.colors.status.info as any).border) : null) ||
-                 (typeof (props.$theme as any)?.status?.info === 'object' && (props.$theme as any)?.status?.info && 'border' in (props.$theme as any).status.info ? String(((props.$theme as any).status.info as any).border) : null) ||
-                 'transparent';
+          return (
+            (typeof props.$theme?.colors?.status?.info === 'object' &&
+            props.$theme?.colors?.status?.info &&
+            'border' in props.$theme.colors.status.info
+              ? String((props.$theme.colors.status.info as any).border)
+              : null) ||
+            (typeof (props.$theme as any)?.status?.info === 'object' &&
+            (props.$theme as any)?.status?.info &&
+            'border' in (props.$theme as any).status.info
+              ? String(((props.$theme as any).status.info as any).border)
+              : null) ||
+            'transparent'
+          );
         default:
           return 'transparent';
       }
@@ -526,10 +823,8 @@ const AlertIcon = styled.span`
 
 const AlertText = styled.div<{ $theme?: any }>`
   flex: 1;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
-    'inherit'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
   font-weight: 500;
 `;
 
@@ -542,22 +837,43 @@ const StatsGrid = styled.div`
 
 const StatCard = styled.div<{ $theme?: Theme }>`
   background: ${props => {
-    const bgColor = (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) || (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null);
+    const bgColor =
+      (typeof props.$theme?.colors?.background === 'object' &&
+      props.$theme?.colors?.background &&
+      'primary' in props.$theme.colors.background
+        ? String((props.$theme.colors.background as any).primary)
+        : null) ||
+      (typeof (props.$theme as any)?.background === 'object' &&
+      (props.$theme as any)?.background &&
+      'primary' in (props.$theme as any).background
+        ? String(((props.$theme as any).background as any).primary)
+        : null);
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
       const b = parseInt(bgColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.95)`;
     }
-    return     (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
-    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
-           'transparent';
+    return (
+      (typeof props.$theme?.colors?.background === 'object' &&
+      props.$theme?.colors?.background &&
+      'primary' in props.$theme.colors.background
+        ? String((props.$theme.colors.background as any).primary)
+        : null) ||
+      (typeof (props.$theme as any)?.background === 'object' &&
+      (props.$theme as any)?.background &&
+      'primary' in (props.$theme as any).background
+        ? String(((props.$theme as any).background as any).primary)
+        : null) ||
+      'transparent'
+    );
   }};
   border-radius: 12px;
   padding: 1.5rem;
   text-align: center;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
+    const shadowColor =
+      props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -567,25 +883,26 @@ const StatCard = styled.div<{ $theme?: Theme }>`
     return 'none';
   }};
   backdrop-filter: blur(10px);
-  border-left: 4px solid ${props => 
-    props.$theme?.colors?.primary || 
-    (props.$theme as any)?.accent ||
-    'transparent'};
+  border-left: 4px solid
+    ${props =>
+      props.$theme?.colors?.primary ||
+      (props.$theme as any)?.accent ||
+      'transparent'};
 `;
 
 const StatNumber = styled.div<{ $theme?: Theme }>`
   font-size: 2rem;
   font-weight: 700;
-  color: ${props => 
-    props.$theme?.colors?.primary || 
+  color: ${props =>
+    props.$theme?.colors?.primary ||
     (props.$theme as any)?.accent ||
     'inherit'};
   margin-bottom: 0.5rem;
 `;
 
 const StatLabel = styled.div<{ $theme?: any }>`
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
     props.$theme?.colors?.text ||
     'inherit'};
@@ -595,21 +912,42 @@ const StatLabel = styled.div<{ $theme?: any }>`
 
 const ConfigSection = styled.div<{ $theme?: any }>`
   background: ${props => {
-    const bgColor = (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) || (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null);
+    const bgColor =
+      (typeof props.$theme?.colors?.background === 'object' &&
+      props.$theme?.colors?.background &&
+      'primary' in props.$theme.colors.background
+        ? String((props.$theme.colors.background as any).primary)
+        : null) ||
+      (typeof (props.$theme as any)?.background === 'object' &&
+      (props.$theme as any)?.background &&
+      'primary' in (props.$theme as any).background
+        ? String(((props.$theme as any).background as any).primary)
+        : null);
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
       const b = parseInt(bgColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.95)`;
     }
-    return     (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
-    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
-           'transparent';
+    return (
+      (typeof props.$theme?.colors?.background === 'object' &&
+      props.$theme?.colors?.background &&
+      'primary' in props.$theme.colors.background
+        ? String((props.$theme.colors.background as any).primary)
+        : null) ||
+      (typeof (props.$theme as any)?.background === 'object' &&
+      (props.$theme as any)?.background &&
+      'primary' in (props.$theme as any).background
+        ? String(((props.$theme as any).background as any).primary)
+        : null) ||
+      'transparent'
+    );
   }};
   border-radius: 16px;
   padding: 2rem;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
+    const shadowColor =
+      props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -627,10 +965,11 @@ const ConfigItem = styled.div<{ $theme?: any }>`
   justify-content: space-between;
   align-items: center;
   padding: 1rem 0;
-  border-bottom: 1px solid ${props => 
-    props.$theme?.colors?.border?.light || 
-    props.$theme?.border?.light ||
-    'transparent'};
+  border-bottom: 1px solid
+    ${props =>
+      props.$theme?.colors?.border?.light ||
+      props.$theme?.border?.light ||
+      'transparent'};
 
   &:last-child {
     border-bottom: none;
@@ -639,10 +978,8 @@ const ConfigItem = styled.div<{ $theme?: any }>`
 
 const ConfigLabel = styled.div<{ $theme?: any }>`
   font-weight: 600;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
-    'inherit'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
 `;
 
 const ConfigValue = styled.div`
@@ -671,9 +1008,15 @@ const ToggleSwitch = styled.label<{ $theme?: Theme }>`
     bottom: 0;
     background-color: ${props => {
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) ||
-             (typeof (props.$theme as any)?.border === 'object' && (props.$theme as any)?.border && 'light' in (props.$theme as any).border ? String(((props.$theme as any).border as any).light) : null) ||
-             'transparent';
+      return (
+        (typeof border === 'object' && border?.light) ||
+        (typeof (props.$theme as any)?.border === 'object' &&
+        (props.$theme as any)?.border &&
+        'light' in (props.$theme as any).border
+          ? String(((props.$theme as any).border as any).light)
+          : null) ||
+        'transparent'
+      );
     }};
     transition: 0.4s;
     border-radius: 34px;
@@ -686,8 +1029,16 @@ const ToggleSwitch = styled.label<{ $theme?: Theme }>`
       left: 4px;
       bottom: 4px;
       background-color: ${props =>
-    (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
-    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
+        (typeof props.$theme?.colors?.background === 'object' &&
+        props.$theme?.colors?.background &&
+        'primary' in props.$theme.colors.background
+          ? String((props.$theme.colors.background as any).primary)
+          : null) ||
+        (typeof (props.$theme as any)?.background === 'object' &&
+        (props.$theme as any)?.background &&
+        'primary' in (props.$theme as any).background
+          ? String(((props.$theme as any).background as any).primary)
+          : null) ||
         props.$theme?.colors?.surface ||
         'transparent'};
       transition: 0.4s;
@@ -1176,9 +1527,9 @@ const ESocialIntegration: React.FC = () => {
       // Não usar dados simulados - mostrar mensagem clara ao usuário
       alertManager.showWarning(
         'A integração com eSocial está temporariamente indisponível. ' +
-        'Os dados do empregador serão carregados automaticamente quando o serviço estiver disponível.'
+          'Os dados do empregador serão carregados automaticamente quando o serviço estiver disponível.'
       );
-      
+
       // Não preencher com dados simulados - manter dados existentes ou vazios
     } catch (error) {
       alertManager.showError(
@@ -1225,10 +1576,10 @@ const ESocialIntegration: React.FC = () => {
       // API eSocial temporariamente indisponível
       // Não usar dados simulados - mostrar mensagem clara ao usuário
       setLoadedEventsData([]);
-      
+
       alertManager.showWarning(
         'A integração com eSocial está temporariamente indisponível. ' +
-        'Os eventos serão carregados automaticamente quando o serviço estiver disponível.'
+          'Os eventos serão carregados automaticamente quando o serviço estiver disponível.'
       );
     } catch (error) {
       alertManager.showError(
@@ -1277,8 +1628,8 @@ const ESocialIntegration: React.FC = () => {
     <PageContainer
       $theme={theme}
       sidebarCollapsed={collapsed}
-      variant="dashboard"
-      background="solid"
+      variant='dashboard'
+      background='solid'
       animation={true}
     >
       <Sidebar
@@ -1301,877 +1652,872 @@ const ESocialIntegration: React.FC = () => {
         $theme={theme}
         title={
           <>
-            <AccessibleEmoji emoji='🏛' label='Governo' /> Ferramentas Auxiliares eSocial
-            Doméstico
+            <AccessibleEmoji emoji='🏛' label='Governo' /> Ferramentas
+            Auxiliares eSocial Doméstico
           </>
         }
-        subtitle="Ferramentas auxiliares para facilitar o processo eSocial. Templates, cálculos e validações para empregados domésticos."
-        variant="default"
+        subtitle='Ferramentas auxiliares para facilitar o processo eSocial. Templates, cálculos e validações para empregados domésticos.'
+        variant='default'
         animation={true}
       />
-      <UnifiedBadge variant="success" size="md" theme={theme} icon={<AccessibleEmoji emoji='🟢' label='Conectado' />}>
+      <UnifiedBadge
+        variant='success'
+        size='md'
+        theme={theme}
+        icon={<AccessibleEmoji emoji='🟢' label='Conectado' />}
+      >
         Conectado
       </UnifiedBadge>
 
-        {/* Alertas */}
-        {errorEvents > 0 && (
-          <AlertBanner $type='error' $theme={theme}>
-            <AlertIcon>
-              <AccessibleEmoji emoji='⚠' label='Aviso' />
-            </AlertIcon>
-            <AlertText $theme={theme}>
-              {errorEvents} evento(s) com erro. Verifique os detalhes e corrija
-              os problemas.
-            </AlertText>
-          </AlertBanner>
-        )}
+      {/* Alertas */}
+      {errorEvents > 0 && (
+        <AlertBanner $type='error' $theme={theme}>
+          <AlertIcon>
+            <AccessibleEmoji emoji='⚠' label='Aviso' />
+          </AlertIcon>
+          <AlertText $theme={theme}>
+            {errorEvents} evento(s) com erro. Verifique os detalhes e corrija os
+            problemas.
+          </AlertText>
+        </AlertBanner>
+      )}
 
-        {pendingEvents > 0 && (
-          <AlertBanner $type='warning' $theme={theme}>
-            <AlertIcon>
-              <AccessibleEmoji emoji='⏳' label='Carregando' />
-            </AlertIcon>
-            <AlertText $theme={theme}>
-              {pendingEvents} evento(s) pendente(s) de envio para o eSocial.
-            </AlertText>
-          </AlertBanner>
-        )}
+      {pendingEvents > 0 && (
+        <AlertBanner $type='warning' $theme={theme}>
+          <AlertIcon>
+            <AccessibleEmoji emoji='⏳' label='Carregando' />
+          </AlertIcon>
+          <AlertText $theme={theme}>
+            {pendingEvents} evento(s) pendente(s) de envio para o eSocial.
+          </AlertText>
+        </AlertBanner>
+      )}
 
-        {/* Estatísticas */}
-        <StatsGrid>
-          <StatCard $theme={theme}>
-            <StatNumber $theme={theme}>{events.length}</StatNumber>
-            <StatLabel $theme={theme}>Total de Eventos</StatLabel>
-          </StatCard>
-          <StatCard $theme={theme}>
-            <StatNumber $theme={theme}>{processedEvents}</StatNumber>
-            <StatLabel $theme={theme}>Processados</StatLabel>
-          </StatCard>
-          <StatCard $theme={theme}>
-            <StatNumber $theme={theme}>{pendingEvents}</StatNumber>
-            <StatLabel $theme={theme}>Pendentes</StatLabel>
-          </StatCard>
-          <StatCard $theme={theme}>
-            <StatNumber $theme={theme}>{errorEvents}</StatNumber>
-            <StatLabel>Com Erro</StatLabel>
-          </StatCard>
-        </StatsGrid>
+      {/* Estatísticas */}
+      <StatsGrid>
+        <StatCard $theme={theme}>
+          <StatNumber $theme={theme}>{events.length}</StatNumber>
+          <StatLabel $theme={theme}>Total de Eventos</StatLabel>
+        </StatCard>
+        <StatCard $theme={theme}>
+          <StatNumber $theme={theme}>{processedEvents}</StatNumber>
+          <StatLabel $theme={theme}>Processados</StatLabel>
+        </StatCard>
+        <StatCard $theme={theme}>
+          <StatNumber $theme={theme}>{pendingEvents}</StatNumber>
+          <StatLabel $theme={theme}>Pendentes</StatLabel>
+        </StatCard>
+        <StatCard $theme={theme}>
+          <StatNumber $theme={theme}>{errorEvents}</StatNumber>
+          <StatLabel>Com Erro</StatLabel>
+        </StatCard>
+      </StatsGrid>
 
-        {/* Barra de Progresso */}
-        {isLoading && (
-          <Section>
-            <OptimizedSectionTitle>
-              <AccessibleEmoji emoji='📤' label='Exportar' /> Enviando para
-              eSocial...
-            </OptimizedSectionTitle>
-            <UnifiedProgressBar 
-              value={progress} 
-              variant="primary" 
-              theme={theme}
-              showLabel
-              label={`${progress}% concluído`}
-              animated
-            />
-          </Section>
-        )}
+      {/* Barra de Progresso */}
+      {isLoading && (
+        <Section>
+          <OptimizedSectionTitle>
+            <AccessibleEmoji emoji='📤' label='Exportar' /> Enviando para
+            eSocial...
+          </OptimizedSectionTitle>
+          <UnifiedProgressBar
+            value={progress}
+            variant='primary'
+            theme={theme}
+            showLabel
+            label={`${progress}% concluído`}
+            animated
+          />
+        </Section>
+      )}
 
-        <ContentGrid>
-          {/* Dados do Empregador */}
-          <Section>
-            <OptimizedSectionTitle>
-              <AccessibleEmoji emoji='👔' label='Empregador' /> Dados do
-              Empregador
-            </OptimizedSectionTitle>
-            <Form onSubmit={e => e.preventDefault()}>
-              <OptimizedFormRow>
-                <FormGroupStyled>
-                  <OptimizedLabel htmlFor='employer-cpf'>CPF *</OptimizedLabel>
-                  <OptimizedInputStyled
-                    id='employer-cpf'
-                    type='text'
-                    value={employerData.cpf}
-                    onChange={e =>
-                      handleEmployerDataChange('cpf', e.target.value)
-                    }
-                    placeholder='000.000.000-00'
-                    maxLength={14}
-                    $theme={theme}
-                    $hasError={!!errors['cpf']}
-                  />
-                  {errors['cpf'] && (
-                    <OptimizedErrorMessage>
-                      {errors['cpf']}
-                    </OptimizedErrorMessage>
-                  )}
-                  <OptimizedHelpText>
-                    CPF do empregador responsável
-                  </OptimizedHelpText>
-                </FormGroupStyled>
-
-                <FormGroupStyled>
-                  <OptimizedLabel htmlFor='employer-nome'>
-                    Nome Completo *
-                  </OptimizedLabel>
-                  <OptimizedInputStyled
-                    id='employer-nome'
-                    type='text'
-                    value={employerData.nome}
-                    onChange={e =>
-                      handleEmployerDataChange('nome', e.target.value)
-                    }
-                    placeholder='Nome completo do empregador'
-                    $theme={theme}
-                    $hasError={!!errors['nome']}
-                  />
-                  {errors['nome'] && (
-                    <OptimizedErrorMessage>
-                      {errors['nome']}
-                    </OptimizedErrorMessage>
-                  )}
-                </FormGroupStyled>
-              </OptimizedFormRow>
-
-              <OptimizedFormRow>
-                <FormGroupStyled>
-                  <OptimizedLabel htmlFor='employer-nascimento'>
-                    Data de Nascimento *
-                  </OptimizedLabel>
-                  <OptimizedInputStyled
-                    id='employer-nascimento'
-                    type='date'
-                    value={employerData.dataNascimento}
-                    onChange={e =>
-                      handleEmployerDataChange('dataNascimento', e.target.value)
-                    }
-                    $theme={theme}
-                    $hasError={!!errors['dataNascimento']}
-                  />
-                  {errors['dataNascimento'] && (
-                    <OptimizedErrorMessage>
-                      {errors['dataNascimento']}
-                    </OptimizedErrorMessage>
-                  )}
-                </FormGroupStyled>
-
-                <FormGroupStyled>
-                  <OptimizedLabel htmlFor='employer-telefone'>
-                    Telefone *
-                  </OptimizedLabel>
-                  <OptimizedInputStyled
-                    id='employer-telefone'
-                    type='text'
-                    value={employerData.contato.telefone}
-                    onChange={e =>
-                      handleEmployerDataChange(
-                        'contato.telefone',
-                        e.target.value
-                      )
-                    }
-                    placeholder='(00) 00000-0000'
-                    maxLength={15}
-                    $theme={theme}
-                    $hasError={!!errors['telefone']}
-                  />
-                  {errors['telefone'] && (
-                    <OptimizedErrorMessage>
-                      {errors['telefone']}
-                    </OptimizedErrorMessage>
-                  )}
-                </FormGroupStyled>
-              </OptimizedFormRow>
+      <ContentGrid>
+        {/* Dados do Empregador */}
+        <Section>
+          <OptimizedSectionTitle>
+            <AccessibleEmoji emoji='👔' label='Empregador' /> Dados do
+            Empregador
+          </OptimizedSectionTitle>
+          <Form onSubmit={e => e.preventDefault()}>
+            <OptimizedFormRow>
+              <FormGroupStyled>
+                <OptimizedLabel htmlFor='employer-cpf'>CPF *</OptimizedLabel>
+                <OptimizedInputStyled
+                  id='employer-cpf'
+                  type='text'
+                  value={employerData.cpf}
+                  onChange={e =>
+                    handleEmployerDataChange('cpf', e.target.value)
+                  }
+                  placeholder='000.000.000-00'
+                  maxLength={14}
+                  $theme={theme}
+                  $hasError={!!errors['cpf']}
+                />
+                {errors['cpf'] && (
+                  <OptimizedErrorMessage>{errors['cpf']}</OptimizedErrorMessage>
+                )}
+                <OptimizedHelpText>
+                  CPF do empregador responsável
+                </OptimizedHelpText>
+              </FormGroupStyled>
 
               <FormGroupStyled>
-                <OptimizedLabel htmlFor='employer-email'>
-                  Email *
+                <OptimizedLabel htmlFor='employer-nome'>
+                  Nome Completo *
                 </OptimizedLabel>
                 <OptimizedInputStyled
-                  id='employer-email'
-                  type='email'
-                  value={employerData.contato.email}
+                  id='employer-nome'
+                  type='text'
+                  value={employerData.nome}
                   onChange={e =>
-                    handleEmployerDataChange('contato.email', e.target.value)
+                    handleEmployerDataChange('nome', e.target.value)
                   }
-                  placeholder='empregador@email.com'
+                  placeholder='Nome completo do empregador'
                   $theme={theme}
-                  $hasError={!!errors['email']}
+                  $hasError={!!errors['nome']}
                 />
-                {errors['email'] && (
+                {errors['nome'] && (
                   <OptimizedErrorMessage>
-                    {errors['email']}
+                    {errors['nome']}
+                  </OptimizedErrorMessage>
+                )}
+              </FormGroupStyled>
+            </OptimizedFormRow>
+
+            <OptimizedFormRow>
+              <FormGroupStyled>
+                <OptimizedLabel htmlFor='employer-nascimento'>
+                  Data de Nascimento *
+                </OptimizedLabel>
+                <OptimizedInputStyled
+                  id='employer-nascimento'
+                  type='date'
+                  value={employerData.dataNascimento}
+                  onChange={e =>
+                    handleEmployerDataChange('dataNascimento', e.target.value)
+                  }
+                  $theme={theme}
+                  $hasError={!!errors['dataNascimento']}
+                />
+                {errors['dataNascimento'] && (
+                  <OptimizedErrorMessage>
+                    {errors['dataNascimento']}
                   </OptimizedErrorMessage>
                 )}
               </FormGroupStyled>
 
-              <OptimizedFormRow>
-                <FormGroupStyled>
-                  <OptimizedLabel htmlFor='employer-cep'>CEP *</OptimizedLabel>
-                  <OptimizedInputStyled
-                    id='employer-cep'
-                    type='text'
-                    value={employerData.endereco.cep}
-                    onChange={e =>
-                      handleEmployerDataChange('endereco.cep', e.target.value)
-                    }
-                    placeholder='00000-000'
-                    maxLength={9}
-                    $theme={theme}
-                    $hasError={!!errors['cep']}
-                  />
-                  {errors['cep'] && (
-                    <OptimizedErrorMessage>
-                      {errors['cep']}
-                    </OptimizedErrorMessage>
-                  )}
-                </FormGroupStyled>
-
-                <FormGroupStyled>
-                  <OptimizedLabel htmlFor='employer-uf'>UF *</OptimizedLabel>
-                  <OptimizedSelectStyled
-                    id='employer-uf'
-                    aria-label='Selecionar UF'
-                    value={employerData.endereco.uf}
-                    onChange={e =>
-                      handleEmployerDataChange('endereco.uf', e.target.value)
-                    }
-                    $theme={theme}
-                    $hasError={!!errors['uf']}
-                    title='Selecionar UF'
-                  >
-                    <option value=''>Selecione</option>
-                    <option value='AC'>AC</option>
-                    <option value='AL'>AL</option>
-                    <option value='AP'>AP</option>
-                    <option value='AM'>AM</option>
-                    <option value='BA'>BA</option>
-                    <option value='CE'>CE</option>
-                    <option value='DF'>DF</option>
-                    <option value='ES'>ES</option>
-                    <option value='GO'>GO</option>
-                    <option value='MA'>MA</option>
-                    <option value='MT'>MT</option>
-                    <option value='MS'>MS</option>
-                    <option value='MG'>MG</option>
-                    <option value='PA'>PA</option>
-                    <option value='PB'>PB</option>
-                    <option value='PR'>PR</option>
-                    <option value='PE'>PE</option>
-                    <option value='PI'>PI</option>
-                    <option value='RJ'>RJ</option>
-                    <option value='RN'>RN</option>
-                    <option value='RS'>RS</option>
-                    <option value='RO'>RO</option>
-                    <option value='RR'>RR</option>
-                    <option value='SC'>SC</option>
-                    <option value='SP'>SP</option>
-                    <option value='SE'>SE</option>
-                    <option value='TO'>TO</option>
-                  </OptimizedSelectStyled>
-                  {errors['uf'] && (
-                    <OptimizedErrorMessage>
-                      {errors['uf']}
-                    </OptimizedErrorMessage>
-                  )}
-                </FormGroupStyled>
-              </OptimizedFormRow>
-            </Form>
-          </Section>
-
-          {/* Dados do Empregado */}
-          <Section>
-            <OptimizedSectionTitle>
-              <AccessibleEmoji emoji='👤' label='Pessoa' /> Dados do Empregado
-            </OptimizedSectionTitle>
-            <Form onSubmit={e => e.preventDefault()}>
-              <OptimizedFormRow>
-                <FormGroupStyled>
-                  <OptimizedLabel htmlFor='employee-cpf'>CPF *</OptimizedLabel>
-                  <OptimizedInputStyled
-                    id='employee-cpf'
-                    type='text'
-                    value={employeeData.cpf}
-                    onChange={e =>
-                      handleEmployeeDataChange('cpf', e.target.value)
-                    }
-                    placeholder='000.000.000-00'
-                    maxLength={14}
-                    $theme={theme}
-                    $hasError={!!errors['employeeCpf']}
-                  />
-                  {errors['employeeCpf'] && (
-                    <OptimizedErrorMessage>
-                      {errors['employeeCpf']}
-                    </OptimizedErrorMessage>
-                  )}
-                </FormGroupStyled>
-
-                <FormGroupStyled>
-                  <OptimizedLabel htmlFor='employee-nome'>
-                    Nome Completo *
-                  </OptimizedLabel>
-                  <OptimizedInputStyled
-                    id='employee-nome'
-                    type='text'
-                    value={employeeData.nome}
-                    onChange={e =>
-                      handleEmployeeDataChange('nome', e.target.value)
-                    }
-                    placeholder='Nome completo do empregado'
-                    $theme={theme}
-                    $hasError={!!errors['employeeNome']}
-                  />
-                  {errors['employeeNome'] && (
-                    <OptimizedErrorMessage>
-                      {errors['employeeNome']}
-                    </OptimizedErrorMessage>
-                  )}
-                </FormGroupStyled>
-              </OptimizedFormRow>
-
-              <OptimizedFormRow>
-                <FormGroupStyled>
-                  <OptimizedLabel htmlFor='employee-pis'>PIS *</OptimizedLabel>
-                  <OptimizedInputStyled
-                    id='employee-pis'
-                    type='text'
-                    value={employeeData.pis}
-                    onChange={e =>
-                      handleEmployeeDataChange('pis', e.target.value)
-                    }
-                    placeholder='000.00000.00-0'
-                    $theme={theme}
-                    $hasError={!!errors['pis']}
-                  />
-                  {errors['pis'] && (
-                    <OptimizedErrorMessage>
-                      {errors['pis']}
-                    </OptimizedErrorMessage>
-                  )}
-                </FormGroupStyled>
-
-                <FormGroupStyled>
-                  <OptimizedLabel htmlFor='employee-salario'>
-                    Salário *
-                  </OptimizedLabel>
-                  <OptimizedInputStyled
-                    id='employee-salario'
-                    type='text'
-                    value={employeeData.salario}
-                    onChange={e =>
-                      handleEmployeeDataChange('salario', e.target.value)
-                    }
-                    placeholder='R$ 0,00'
-                    $theme={theme}
-                    $hasError={!!errors['salario']}
-                  />
-                  {errors['salario'] && (
-                    <OptimizedErrorMessage>
-                      {errors['salario']}
-                    </OptimizedErrorMessage>
-                  )}
-                </FormGroupStyled>
-              </OptimizedFormRow>
-
-              <OptimizedFormRow>
-                <FormGroupStyled>
-                  <OptimizedLabel htmlFor='employee-admissao'>
-                    Data de Admissão *
-                  </OptimizedLabel>
-                  <OptimizedInputStyled
-                    id='employee-admissao'
-                    type='date'
-                    value={employeeData.dataAdmissao}
-                    onChange={e =>
-                      handleEmployeeDataChange('dataAdmissao', e.target.value)
-                    }
-                    $theme={theme}
-                    $hasError={!!errors['dataAdmissao']}
-                  />
-                  {errors['dataAdmissao'] && (
-                    <OptimizedErrorMessage>
-                      {errors['dataAdmissao']}
-                    </OptimizedErrorMessage>
-                  )}
-                </FormGroupStyled>
-
-                <FormGroupStyled>
-                  <OptimizedLabel htmlFor='employee-cargo'>
-                    Cargo *
-                  </OptimizedLabel>
-                  <OptimizedInputStyled
-                    id='employee-cargo'
-                    type='text'
-                    value={employeeData.cargo}
-                    onChange={e =>
-                      handleEmployeeDataChange('cargo', e.target.value)
-                    }
-                    placeholder='Ex: Empregado Doméstico'
-                    $theme={theme}
-                    $hasError={!!errors['cargo']}
-                  />
-                  {errors['cargo'] && (
-                    <OptimizedErrorMessage>
-                      {errors['cargo']}
-                    </OptimizedErrorMessage>
-                  )}
-                </FormGroupStyled>
-              </OptimizedFormRow>
-            </Form>
-          </Section>
-        </ContentGrid>
-
-        {/* Lista de Eventos */}
-        <Section>
-          <OptimizedSectionTitle>
-            <AccessibleEmoji emoji='📋' label='Checklist' /> Eventos eSocial
-          </OptimizedSectionTitle>
-          <EventsList>
-            {events.map(event => (
-              <EventCard key={event.id} $status={event.status} $theme={theme}>
-                <EventHeader>
-                  <EventTitle>
-                    {getStatusIcon(event.status)} {event.tipo} -{' '}
-                    {event.descricao}
-                  </EventTitle>
-                  <EventStatus $status={event.status} $theme={theme}>
-                    {getStatusText(event.status)}
-                  </EventStatus>
-                </EventHeader>
-                <EventDescription>
-                  {event.status === 'error' && event.erro && (
-                    <ErrorText>Erro: {event.erro}</ErrorText>
-                  )}
-                  {event.dataEnvio && (
-                    <SmallText>
-                      Enviado em:{' '}
-                      {new Date(event.dataEnvio).toLocaleString('pt-BR')}
-                    </SmallText>
-                  )}
-                  {event.dataProcessamento && (
-                    <SmallText>
-                      Processado em:{' '}
-                      {new Date(event.dataProcessamento).toLocaleString(
-                        'pt-BR'
-                      )}
-                    </SmallText>
-                  )}
-                </EventDescription>
-                <EventActions>
-                  {event.status === 'pending' && (
-                    <UnifiedButton
-                      $variant='primary'
-                      $theme={theme}
-                      onClick={() => handleSendEvent(event)}
-                      $disabled={isLoading}
-                    >
-                      <AccessibleEmoji emoji='📤' label='Exportar' /> Enviar
-                    </UnifiedButton>
-                  )}
-                  <UnifiedButton
-                    $variant='secondary'
-                    $theme={theme}
-                    onClick={() => handleViewEvent(event)}
-                  >
-                    <AccessibleEmoji emoji='👁' label='Ver' /> Ver Detalhes
-                  </UnifiedButton>
-                  {event.xml && (
-                    <UnifiedButton
-                      $variant='success'
-                      $theme={theme}
-                      onClick={() => {
-                        if (!isClient) return;
-
-                        const blob = new Blob([event.xml!], {
-                          type: 'application/xml',
-                        });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `evento-${event.tipo}-${event.id}.xml`;
-                        a.click();
-                        URL.revokeObjectURL(url);
-                      }}
-                    >
-                      <AccessibleEmoji emoji='📄' label='Documento' /> Baixar
-                      XML
-                    </UnifiedButton>
-                  )}
-                </EventActions>
-              </EventCard>
-            ))}
-          </EventsList>
-        </Section>
-
-        {/* Configurações */}
-        <ConfigSection>
-          <OptimizedSectionTitle>
-            <AccessibleEmoji emoji='⚙' label='Configurações' /> Configurações
-          </OptimizedSectionTitle>
-          <ConfigItem $theme={theme}>
-            <ConfigLabel $theme={theme}>Certificado Digital</ConfigLabel>
-            <OptimizedFlexContainer>
-              <ConfigValue>
-                {certificateInfo ? (
-                  <SuccessText>
-                    <AccessibleEmoji emoji='✅' label='Sucesso' />{' '}
-                    {certificateInfo.subject}
-                  </SuccessText>
-                ) : (
-                  'Não configurado'
-                )}
-              </ConfigValue>
-              <UnifiedButton
-                $variant='primary'
-                $theme={theme}
-                onClick={() => setIsCertificateUnifiedModalOpen(true)}
-              >
-                {certificateInfo ? 'Alterar' : 'Configurar'}
-              </UnifiedButton>
-            </OptimizedFlexContainer>
-          </ConfigItem>
-          <ConfigItem $theme={theme}>
-            <ConfigLabel $theme={theme}>Procuração Eletrônica</ConfigLabel>
-            <OptimizedFlexContainer>
-              <ConfigValue>
-                {proxyInfo ? (
-                  <SuccessText>
-                    <AccessibleEmoji emoji='✅' label='Sucesso' />{' '}
-                    {proxyInfo.documentNumber}
-                  </SuccessText>
-                ) : (
-                  'Não configurada'
-                )}
-              </ConfigValue>
-              <UnifiedButton
-                $variant='primary'
-                $theme={theme}
-                onClick={() => setIsProxyUnifiedModalOpen(true)}
-              >
-                {proxyInfo ? 'Alterar' : 'Configurar'}
-              </UnifiedButton>
-            </OptimizedFlexContainer>
-          </ConfigItem>
-          <ConfigItem>
-            <ConfigLabel>Ambiente</ConfigLabel>
-            <OptimizedFlexContainer>
-              <ConfigValue>
-                {esocialConfig.environment === 'producao'
-                  ? 'Produção'
-                  : 'Homologação'}
-              </ConfigValue>
-              <SelectWrapper>
-                <OptimizedSelectStyled
-                  aria-label='Selecionar ambiente'
-                  value={esocialConfig.environment}
+              <FormGroupStyled>
+                <OptimizedLabel htmlFor='employer-telefone'>
+                  Telefone *
+                </OptimizedLabel>
+                <OptimizedInputStyled
+                  id='employer-telefone'
+                  type='text'
+                  value={employerData.contato.telefone}
                   onChange={e =>
-                    setEsocialConfig(prev => ({
-                      ...prev,
-                      environment: e.target.value as 'homologacao' | 'producao',
-                    }))
+                    handleEmployerDataChange('contato.telefone', e.target.value)
+                  }
+                  placeholder='(00) 00000-0000'
+                  maxLength={15}
+                  $theme={theme}
+                  $hasError={!!errors['telefone']}
+                />
+                {errors['telefone'] && (
+                  <OptimizedErrorMessage>
+                    {errors['telefone']}
+                  </OptimizedErrorMessage>
+                )}
+              </FormGroupStyled>
+            </OptimizedFormRow>
+
+            <FormGroupStyled>
+              <OptimizedLabel htmlFor='employer-email'>Email *</OptimizedLabel>
+              <OptimizedInputStyled
+                id='employer-email'
+                type='email'
+                value={employerData.contato.email}
+                onChange={e =>
+                  handleEmployerDataChange('contato.email', e.target.value)
+                }
+                placeholder='empregador@email.com'
+                $theme={theme}
+                $hasError={!!errors['email']}
+              />
+              {errors['email'] && (
+                <OptimizedErrorMessage>{errors['email']}</OptimizedErrorMessage>
+              )}
+            </FormGroupStyled>
+
+            <OptimizedFormRow>
+              <FormGroupStyled>
+                <OptimizedLabel htmlFor='employer-cep'>CEP *</OptimizedLabel>
+                <OptimizedInputStyled
+                  id='employer-cep'
+                  type='text'
+                  value={employerData.endereco.cep}
+                  onChange={e =>
+                    handleEmployerDataChange('endereco.cep', e.target.value)
+                  }
+                  placeholder='00000-000'
+                  maxLength={9}
+                  $theme={theme}
+                  $hasError={!!errors['cep']}
+                />
+                {errors['cep'] && (
+                  <OptimizedErrorMessage>{errors['cep']}</OptimizedErrorMessage>
+                )}
+              </FormGroupStyled>
+
+              <FormGroupStyled>
+                <OptimizedLabel htmlFor='employer-uf'>UF *</OptimizedLabel>
+                <OptimizedSelectStyled
+                  id='employer-uf'
+                  aria-label='Selecionar UF'
+                  value={employerData.endereco.uf}
+                  onChange={e =>
+                    handleEmployerDataChange('endereco.uf', e.target.value)
                   }
                   $theme={theme}
-                  title='Selecionar ambiente'
+                  $hasError={!!errors['uf']}
+                  title='Selecionar UF'
                 >
-                  <option value='homologacao'>Homologação</option>
-                  <option value='producao'>Produção</option>
+                  <option value=''>Selecione</option>
+                  <option value='AC'>AC</option>
+                  <option value='AL'>AL</option>
+                  <option value='AP'>AP</option>
+                  <option value='AM'>AM</option>
+                  <option value='BA'>BA</option>
+                  <option value='CE'>CE</option>
+                  <option value='DF'>DF</option>
+                  <option value='ES'>ES</option>
+                  <option value='GO'>GO</option>
+                  <option value='MA'>MA</option>
+                  <option value='MT'>MT</option>
+                  <option value='MS'>MS</option>
+                  <option value='MG'>MG</option>
+                  <option value='PA'>PA</option>
+                  <option value='PB'>PB</option>
+                  <option value='PR'>PR</option>
+                  <option value='PE'>PE</option>
+                  <option value='PI'>PI</option>
+                  <option value='RJ'>RJ</option>
+                  <option value='RN'>RN</option>
+                  <option value='RS'>RS</option>
+                  <option value='RO'>RO</option>
+                  <option value='RR'>RR</option>
+                  <option value='SC'>SC</option>
+                  <option value='SP'>SP</option>
+                  <option value='SE'>SE</option>
+                  <option value='TO'>TO</option>
                 </OptimizedSelectStyled>
-              </SelectWrapper>
-            </OptimizedFlexContainer>
-          </ConfigItem>
-          {/* Modo de operação removido - usando apenas gov.br */}
-          <ConfigItem>
-            <ConfigLabel>Preparação de Dados</ConfigLabel>
-            <ToggleSwitch $theme={theme}>
-              <input
-                type='checkbox'
-                aria-label='Preparar dados para envio manual de eventos'
-                title='Preparar dados para envio manual de eventos'
-              />
-              <span className='slider'></span>
-            </ToggleSwitch>
-          </ConfigItem>
-        </ConfigSection>
+                {errors['uf'] && (
+                  <OptimizedErrorMessage>{errors['uf']}</OptimizedErrorMessage>
+                )}
+              </FormGroupStyled>
+            </OptimizedFormRow>
+          </Form>
+        </Section>
 
-        {/* Seção de Dados do eSocial */}
+        {/* Dados do Empregado */}
+        <Section>
+          <OptimizedSectionTitle>
+            <AccessibleEmoji emoji='👤' label='Pessoa' /> Dados do Empregado
+          </OptimizedSectionTitle>
+          <Form onSubmit={e => e.preventDefault()}>
+            <OptimizedFormRow>
+              <FormGroupStyled>
+                <OptimizedLabel htmlFor='employee-cpf'>CPF *</OptimizedLabel>
+                <OptimizedInputStyled
+                  id='employee-cpf'
+                  type='text'
+                  value={employeeData.cpf}
+                  onChange={e =>
+                    handleEmployeeDataChange('cpf', e.target.value)
+                  }
+                  placeholder='000.000.000-00'
+                  maxLength={14}
+                  $theme={theme}
+                  $hasError={!!errors['employeeCpf']}
+                />
+                {errors['employeeCpf'] && (
+                  <OptimizedErrorMessage>
+                    {errors['employeeCpf']}
+                  </OptimizedErrorMessage>
+                )}
+              </FormGroupStyled>
+
+              <FormGroupStyled>
+                <OptimizedLabel htmlFor='employee-nome'>
+                  Nome Completo *
+                </OptimizedLabel>
+                <OptimizedInputStyled
+                  id='employee-nome'
+                  type='text'
+                  value={employeeData.nome}
+                  onChange={e =>
+                    handleEmployeeDataChange('nome', e.target.value)
+                  }
+                  placeholder='Nome completo do empregado'
+                  $theme={theme}
+                  $hasError={!!errors['employeeNome']}
+                />
+                {errors['employeeNome'] && (
+                  <OptimizedErrorMessage>
+                    {errors['employeeNome']}
+                  </OptimizedErrorMessage>
+                )}
+              </FormGroupStyled>
+            </OptimizedFormRow>
+
+            <OptimizedFormRow>
+              <FormGroupStyled>
+                <OptimizedLabel htmlFor='employee-pis'>PIS *</OptimizedLabel>
+                <OptimizedInputStyled
+                  id='employee-pis'
+                  type='text'
+                  value={employeeData.pis}
+                  onChange={e =>
+                    handleEmployeeDataChange('pis', e.target.value)
+                  }
+                  placeholder='000.00000.00-0'
+                  $theme={theme}
+                  $hasError={!!errors['pis']}
+                />
+                {errors['pis'] && (
+                  <OptimizedErrorMessage>{errors['pis']}</OptimizedErrorMessage>
+                )}
+              </FormGroupStyled>
+
+              <FormGroupStyled>
+                <OptimizedLabel htmlFor='employee-salario'>
+                  Salário *
+                </OptimizedLabel>
+                <OptimizedInputStyled
+                  id='employee-salario'
+                  type='text'
+                  value={employeeData.salario}
+                  onChange={e =>
+                    handleEmployeeDataChange('salario', e.target.value)
+                  }
+                  placeholder='R$ 0,00'
+                  $theme={theme}
+                  $hasError={!!errors['salario']}
+                />
+                {errors['salario'] && (
+                  <OptimizedErrorMessage>
+                    {errors['salario']}
+                  </OptimizedErrorMessage>
+                )}
+              </FormGroupStyled>
+            </OptimizedFormRow>
+
+            <OptimizedFormRow>
+              <FormGroupStyled>
+                <OptimizedLabel htmlFor='employee-admissao'>
+                  Data de Admissão *
+                </OptimizedLabel>
+                <OptimizedInputStyled
+                  id='employee-admissao'
+                  type='date'
+                  value={employeeData.dataAdmissao}
+                  onChange={e =>
+                    handleEmployeeDataChange('dataAdmissao', e.target.value)
+                  }
+                  $theme={theme}
+                  $hasError={!!errors['dataAdmissao']}
+                />
+                {errors['dataAdmissao'] && (
+                  <OptimizedErrorMessage>
+                    {errors['dataAdmissao']}
+                  </OptimizedErrorMessage>
+                )}
+              </FormGroupStyled>
+
+              <FormGroupStyled>
+                <OptimizedLabel htmlFor='employee-cargo'>
+                  Cargo *
+                </OptimizedLabel>
+                <OptimizedInputStyled
+                  id='employee-cargo'
+                  type='text'
+                  value={employeeData.cargo}
+                  onChange={e =>
+                    handleEmployeeDataChange('cargo', e.target.value)
+                  }
+                  placeholder='Ex: Empregado Doméstico'
+                  $theme={theme}
+                  $hasError={!!errors['cargo']}
+                />
+                {errors['cargo'] && (
+                  <OptimizedErrorMessage>
+                    {errors['cargo']}
+                  </OptimizedErrorMessage>
+                )}
+              </FormGroupStyled>
+            </OptimizedFormRow>
+          </Form>
+        </Section>
+      </ContentGrid>
+
+      {/* Lista de Eventos */}
+      <Section>
+        <OptimizedSectionTitle>
+          <AccessibleEmoji emoji='📋' label='Checklist' /> Eventos eSocial
+        </OptimizedSectionTitle>
+        <EventsList>
+          {events.map(event => (
+            <EventCard key={event.id} $status={event.status} $theme={theme}>
+              <EventHeader>
+                <EventTitle>
+                  {getStatusIcon(event.status)} {event.tipo} - {event.descricao}
+                </EventTitle>
+                <EventStatus $status={event.status} $theme={theme}>
+                  {getStatusText(event.status)}
+                </EventStatus>
+              </EventHeader>
+              <EventDescription>
+                {event.status === 'error' && event.erro && (
+                  <ErrorText>Erro: {event.erro}</ErrorText>
+                )}
+                {event.dataEnvio && (
+                  <SmallText>
+                    Enviado em:{' '}
+                    {new Date(event.dataEnvio).toLocaleString('pt-BR')}
+                  </SmallText>
+                )}
+                {event.dataProcessamento && (
+                  <SmallText>
+                    Processado em:{' '}
+                    {new Date(event.dataProcessamento).toLocaleString('pt-BR')}
+                  </SmallText>
+                )}
+              </EventDescription>
+              <EventActions>
+                {event.status === 'pending' && (
+                  <UnifiedButton
+                    $variant='primary'
+                    $theme={theme}
+                    onClick={() => handleSendEvent(event)}
+                    $disabled={isLoading}
+                  >
+                    <AccessibleEmoji emoji='📤' label='Exportar' /> Enviar
+                  </UnifiedButton>
+                )}
+                <UnifiedButton
+                  $variant='secondary'
+                  $theme={theme}
+                  onClick={() => handleViewEvent(event)}
+                >
+                  <AccessibleEmoji emoji='👁' label='Ver' /> Ver Detalhes
+                </UnifiedButton>
+                {event.xml && (
+                  <UnifiedButton
+                    $variant='success'
+                    $theme={theme}
+                    onClick={() => {
+                      if (!isClient) return;
+
+                      const blob = new Blob([event.xml!], {
+                        type: 'application/xml',
+                      });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `evento-${event.tipo}-${event.id}.xml`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                  >
+                    <AccessibleEmoji emoji='📄' label='Documento' /> Baixar XML
+                  </UnifiedButton>
+                )}
+              </EventActions>
+            </EventCard>
+          ))}
+        </EventsList>
+      </Section>
+
+      {/* Configurações */}
+      <ConfigSection>
+        <OptimizedSectionTitle>
+          <AccessibleEmoji emoji='⚙' label='Configurações' /> Configurações
+        </OptimizedSectionTitle>
+        <ConfigItem $theme={theme}>
+          <ConfigLabel $theme={theme}>Certificado Digital</ConfigLabel>
+          <OptimizedFlexContainer>
+            <ConfigValue>
+              {certificateInfo ? (
+                <SuccessText>
+                  <AccessibleEmoji emoji='✅' label='Sucesso' />{' '}
+                  {certificateInfo.subject}
+                </SuccessText>
+              ) : (
+                'Não configurado'
+              )}
+            </ConfigValue>
+            <UnifiedButton
+              $variant='primary'
+              $theme={theme}
+              onClick={() => setIsCertificateUnifiedModalOpen(true)}
+            >
+              {certificateInfo ? 'Alterar' : 'Configurar'}
+            </UnifiedButton>
+          </OptimizedFlexContainer>
+        </ConfigItem>
+        <ConfigItem $theme={theme}>
+          <ConfigLabel $theme={theme}>Procuração Eletrônica</ConfigLabel>
+          <OptimizedFlexContainer>
+            <ConfigValue>
+              {proxyInfo ? (
+                <SuccessText>
+                  <AccessibleEmoji emoji='✅' label='Sucesso' />{' '}
+                  {proxyInfo.documentNumber}
+                </SuccessText>
+              ) : (
+                'Não configurada'
+              )}
+            </ConfigValue>
+            <UnifiedButton
+              $variant='primary'
+              $theme={theme}
+              onClick={() => setIsProxyUnifiedModalOpen(true)}
+            >
+              {proxyInfo ? 'Alterar' : 'Configurar'}
+            </UnifiedButton>
+          </OptimizedFlexContainer>
+        </ConfigItem>
+        <ConfigItem>
+          <ConfigLabel>Ambiente</ConfigLabel>
+          <OptimizedFlexContainer>
+            <ConfigValue>
+              {esocialConfig.environment === 'producao'
+                ? 'Produção'
+                : 'Homologação'}
+            </ConfigValue>
+            <SelectWrapper>
+              <OptimizedSelectStyled
+                aria-label='Selecionar ambiente'
+                value={esocialConfig.environment}
+                onChange={e =>
+                  setEsocialConfig(prev => ({
+                    ...prev,
+                    environment: e.target.value as 'homologacao' | 'producao',
+                  }))
+                }
+                $theme={theme}
+                title='Selecionar ambiente'
+              >
+                <option value='homologacao'>Homologação</option>
+                <option value='producao'>Produção</option>
+              </OptimizedSelectStyled>
+            </SelectWrapper>
+          </OptimizedFlexContainer>
+        </ConfigItem>
+        {/* Modo de operação removido - usando apenas gov.br */}
+        <ConfigItem>
+          <ConfigLabel>Preparação de Dados</ConfigLabel>
+          <ToggleSwitch $theme={theme}>
+            <input
+              type='checkbox'
+              aria-label='Preparar dados para envio manual de eventos'
+              title='Preparar dados para envio manual de eventos'
+            />
+            <span className='slider'></span>
+          </ToggleSwitch>
+        </ConfigItem>
+      </ConfigSection>
+
+      {/* Seção de Dados do eSocial */}
+      <ConfigSection>
+        <OptimizedSectionTitle>
+          <AccessibleEmoji emoji='📊' label='Dados' /> Dados do eSocial
+        </OptimizedSectionTitle>
+
+        {/* Aviso sobre certificado SSL */}
+        <ConfigItem>
+          <ConfigLabel>Status da Conexão</ConfigLabel>
+          <ConfigValue>
+            <SSLWarningText>
+              <AccessibleEmoji emoji='⚠️' label='Aviso' /> Problema de
+              Certificado SSL Detectado
+            </SSLWarningText>
+            <SSLWarningDescription>
+              O servidor eSocial está retornando um certificado SSL inválido.
+              <br />
+              <strong>Soluções:</strong>
+              <br />
+              • Use o ambiente de teste (Produção Restrita)
+              <br />
+              • Configure o navegador para aceitar certificados inválidos
+              <br /> • Entre em contato com o suporte do eSocial
+            </SSLWarningDescription>
+          </ConfigValue>
+        </ConfigItem>
+
+        <ConfigItem>
+          <ConfigLabel>Dados do Empregador</ConfigLabel>
+          <OptimizedFlexContainer>
+            <ConfigValue>
+              Carregar informações cadastrais do empregador
+            </ConfigValue>
+            <UnifiedButton
+              $variant='primary'
+              $theme={theme}
+              onClick={() => {
+                //
+                handleLoadEmpregadorData();
+              }}
+              $disabled={isLoading}
+            >
+              <AccessibleEmoji emoji='🏢' label='Empregador' /> Carregar Dados
+            </UnifiedButton>
+          </OptimizedFlexContainer>
+        </ConfigItem>
+        <ConfigItem>
+          <ConfigLabel>Dados dos Empregados</ConfigLabel>
+          <OptimizedFlexContainer>
+            <ConfigValue>
+              Carregar lista de empregados e vínculos ativos
+            </ConfigValue>
+            <UnifiedButton
+              $variant='primary'
+              $theme={theme}
+              onClick={() => {
+                //
+                handleLoadEmpregadosData();
+              }}
+              $disabled={isLoading}
+            >
+              <AccessibleEmoji emoji='👥' label='Empregados' /> Carregar Lista
+            </UnifiedButton>
+          </OptimizedFlexContainer>
+        </ConfigItem>
+        <ConfigItem>
+          <ConfigLabel>Eventos Enviados</ConfigLabel>
+          <OptimizedFlexContainer>
+            <ConfigValue>
+              Consultar histórico de eventos enviados ao eSocial
+            </ConfigValue>
+            <UnifiedButton
+              $variant='primary'
+              $theme={theme}
+              onClick={() => {
+                //
+                handleLoadEventosData();
+              }}
+              $disabled={isLoading}
+            >
+              <AccessibleEmoji emoji='📋' label='Eventos' /> Consultar Histórico
+            </UnifiedButton>
+          </OptimizedFlexContainer>
+        </ConfigItem>
+      </ConfigSection>
+
+      {/* Seção de Dados Carregados do Empregador */}
+      {loadedEmployerData && (
         <ConfigSection>
           <OptimizedSectionTitle>
-            <AccessibleEmoji emoji='📊' label='Dados' /> Dados do eSocial
+            <AccessibleEmoji emoji='🏢' label='Empregador' /> Dados Carregados
+            do Empregador
+            {loadedEmployerData.fonte &&
+              loadedEmployerData.fonte === 'SOAP_REAL' && (
+                <DataSourceIndicator $isReal={true} $theme={theme}>
+                  (
+                  <span role='img' aria-label='Dados Reais'>
+                    ✅
+                  </span>{' '}
+                  Dados Reais)
+                </DataSourceIndicator>
+              )}
           </OptimizedSectionTitle>
-
-          {/* Aviso sobre certificado SSL */}
           <ConfigItem>
-            <ConfigLabel>Status da Conexão</ConfigLabel>
+            <ConfigLabel>Nome</ConfigLabel>
+            <ConfigValue>{loadedEmployerData.nome}</ConfigValue>
+          </ConfigItem>
+          <ConfigItem $theme={theme}>
+            <ConfigLabel $theme={theme}>CPF</ConfigLabel>
+            <ConfigValue>{loadedEmployerData.cpf}</ConfigValue>
+          </ConfigItem>
+          <ConfigItem>
+            <ConfigLabel>Razão Social</ConfigLabel>
+            <ConfigValue>{loadedEmployerData.razaoSocial}</ConfigValue>
+          </ConfigItem>
+          <ConfigItem>
+            <ConfigLabel>Endereço</ConfigLabel>
             <ConfigValue>
-              <SSLWarningText>
-                <AccessibleEmoji emoji='⚠️' label='Aviso' /> Problema de
-                Certificado SSL Detectado
-              </SSLWarningText>
-              <SSLWarningDescription>
-                O servidor eSocial está retornando um certificado SSL inválido.
-                <br />
-                <strong>Soluções:</strong>
-                <br />
-                • Use o ambiente de teste (Produção Restrita)
-                <br />
-                • Configure o navegador para aceitar certificados inválidos
-                <br /> • Entre em contato com o suporte do eSocial
-              </SSLWarningDescription>
+              {loadedEmployerData.endereco?.logradouro},{' '}
+              {loadedEmployerData.endereco?.numero || 'S/N'}
+              <br />
+              {loadedEmployerData.endereco?.bairro} -{' '}
+              {loadedEmployerData.endereco?.cidade}/
+              {loadedEmployerData.endereco?.uf}
+              <br />
+              CEP: {loadedEmployerData.endereco?.cep}
             </ConfigValue>
           </ConfigItem>
-
           <ConfigItem>
-            <ConfigLabel>Dados do Empregador</ConfigLabel>
-            <OptimizedFlexContainer>
-              <ConfigValue>
-                Carregar informações cadastrais do empregador
-              </ConfigValue>
-              <UnifiedButton
-                $variant='primary'
-                $theme={theme}
-                onClick={() => {
-                  //
-                  handleLoadEmpregadorData();
-                }}
-                $disabled={isLoading}
-              >
-                <AccessibleEmoji emoji='🏢' label='Empregador' /> Carregar Dados
-              </UnifiedButton>
-            </OptimizedFlexContainer>
+            <ConfigLabel>Contato</ConfigLabel>
+            <ConfigValue>
+              Telefone: {loadedEmployerData.contato?.telefone}
+              <br />
+              Email: {loadedEmployerData.contato?.email}
+            </ConfigValue>
           </ConfigItem>
           <ConfigItem>
-            <ConfigLabel>Dados dos Empregados</ConfigLabel>
-            <OptimizedFlexContainer>
-              <ConfigValue>
-                Carregar lista de empregados e vínculos ativos
-              </ConfigValue>
-              <UnifiedButton
-                $variant='primary'
-                $theme={theme}
-                onClick={() => {
-                  //
-                  handleLoadEmpregadosData();
-                }}
-                $disabled={isLoading}
-              >
-                <AccessibleEmoji emoji='👥' label='Empregados' /> Carregar Lista
-              </UnifiedButton>
-            </OptimizedFlexContainer>
-          </ConfigItem>
-          <ConfigItem>
-            <ConfigLabel>Eventos Enviados</ConfigLabel>
-            <OptimizedFlexContainer>
-              <ConfigValue>
-                Consultar histórico de eventos enviados ao eSocial
-              </ConfigValue>
-              <UnifiedButton
-                $variant='primary'
-                $theme={theme}
-                onClick={() => {
-                  //
-                  handleLoadEventosData();
-                }}
-                $disabled={isLoading}
-              >
-                <AccessibleEmoji emoji='📋' label='Eventos' /> Consultar
-                Histórico
-              </UnifiedButton>
-            </OptimizedFlexContainer>
+            <ConfigLabel>Situação</ConfigLabel>
+            <ConfigValue>{loadedEmployerData.situacao}</ConfigValue>
           </ConfigItem>
         </ConfigSection>
+      )}
 
-        {/* Seção de Dados Carregados do Empregador */}
-        {loadedEmployerData && (
-          <ConfigSection>
-            <OptimizedSectionTitle>
-              <AccessibleEmoji emoji='🏢' label='Empregador' /> Dados Carregados
-              do Empregador
-              {loadedEmployerData.fonte && loadedEmployerData.fonte === 'SOAP_REAL' && (
-                <DataSourceIndicator $isReal={true} $theme={theme}>
-                  (<span role="img" aria-label="Dados Reais">✅</span> Dados Reais)
-                </DataSourceIndicator>
-              )}
-            </OptimizedSectionTitle>
-            <ConfigItem>
-              <ConfigLabel>Nome</ConfigLabel>
-              <ConfigValue>{loadedEmployerData.nome}</ConfigValue>
-            </ConfigItem>
-            <ConfigItem $theme={theme}>
-              <ConfigLabel $theme={theme}>CPF</ConfigLabel>
-              <ConfigValue>{loadedEmployerData.cpf}</ConfigValue>
-            </ConfigItem>
-            <ConfigItem>
-              <ConfigLabel>Razão Social</ConfigLabel>
-              <ConfigValue>{loadedEmployerData.razaoSocial}</ConfigValue>
-            </ConfigItem>
-            <ConfigItem>
-              <ConfigLabel>Endereço</ConfigLabel>
+      {/* Seção de Lista de Empregados Carregados */}
+      {loadedEmployeesData.length > 0 && (
+        <ConfigSection $theme={theme}>
+          <OptimizedSectionTitle>
+            <AccessibleEmoji emoji='👥' label='Empregados' /> Lista de
+            Empregados Carregados
+            {loadedEmployeesData[0]?.fonte === 'SOAP_REAL' && (
+              <DataSourceIndicator $isReal={true} $theme={theme}>
+                (
+                <span role='img' aria-label='Dados Reais'>
+                  ✅
+                </span>{' '}
+                Dados Reais)
+              </DataSourceIndicator>
+            )}
+          </OptimizedSectionTitle>
+          {loadedEmployeesData.map((empregado: any, index: any) => (
+            <ConfigItem key={index} $theme={theme}>
+              <ConfigLabel $theme={theme}>Empregado {index + 1}</ConfigLabel>
               <ConfigValue>
-                {loadedEmployerData.endereco?.logradouro},{' '}
-                {loadedEmployerData.endereco?.numero || 'S/N'}
+                <strong>Nome:</strong> {empregado.nome}
                 <br />
-                {loadedEmployerData.endereco?.bairro} -{' '}
-                {loadedEmployerData.endereco?.cidade}/
-                {loadedEmployerData.endereco?.uf}
+                <strong>CPF:</strong> {empregado.cpf}
                 <br />
-                CEP: {loadedEmployerData.endereco?.cep}
+                <strong>Cargo:</strong> {empregado.cargo}
+                <br />
+                <strong>Salário:</strong> {empregado.salario}
+                <br />
+                <strong>Data de Admissão:</strong> {empregado.dataAdmissao}
+                <br />
+                <strong>Situação:</strong> {empregado.situacao}
               </ConfigValue>
             </ConfigItem>
-            <ConfigItem>
-              <ConfigLabel>Contato</ConfigLabel>
+          ))}
+        </ConfigSection>
+      )}
+
+      {/* Seção de Histórico de Eventos Carregados */}
+      {loadedEventsData.length > 0 && (
+        <ConfigSection>
+          <OptimizedSectionTitle>
+            <AccessibleEmoji emoji='📋' label='Eventos' /> Histórico de Eventos
+            Carregados
+            {loadedEventsData[0]?.fonte === 'SOAP_REAL' && (
+              <DataSourceIndicator $isReal={true} $theme={theme}>
+                (
+                <span role='img' aria-label='Dados Reais'>
+                  ✅
+                </span>{' '}
+                Dados Reais)
+              </DataSourceIndicator>
+            )}
+          </OptimizedSectionTitle>
+          {loadedEventsData.map((evento: any, index: any) => (
+            <ConfigItem key={index}>
+              <ConfigLabel>Evento {index + 1}</ConfigLabel>
               <ConfigValue>
-                Telefone: {loadedEmployerData.contato?.telefone}
+                <strong>Tipo:</strong> {evento.tipo}
                 <br />
-                Email: {loadedEmployerData.contato?.email}
+                <strong>ID:</strong> {evento.id}
+                <br />
+                <strong>Data de Envio:</strong> {evento.dataEnvio}
+                <br />
+                <strong>Status:</strong> {evento.status}
+                <br />
+                <strong>Protocolo:</strong> {evento.protocolo}
+                <br />
+                <strong>Descrição:</strong> {evento.descricao}
               </ConfigValue>
             </ConfigItem>
-            <ConfigItem>
-              <ConfigLabel>Situação</ConfigLabel>
-              <ConfigValue>{loadedEmployerData.situacao}</ConfigValue>
-            </ConfigItem>
-          </ConfigSection>
-        )}
+          ))}
+        </ConfigSection>
+      )}
 
-        {/* Seção de Lista de Empregados Carregados */}
-        {loadedEmployeesData.length > 0 && (
-          <ConfigSection $theme={theme}>
-            <OptimizedSectionTitle>
-              <AccessibleEmoji emoji='👥' label='Empregados' /> Lista de
-              Empregados Carregados
-              {loadedEmployeesData[0]?.fonte === 'SOAP_REAL' && (
-                <DataSourceIndicator $isReal={true} $theme={theme}>
-                  (<span role="img" aria-label="Dados Reais">✅</span> Dados Reais)
-                </DataSourceIndicator>
-              )}
-            </OptimizedSectionTitle>
-            {loadedEmployeesData.map((empregado: any, index: any) => (
-              <ConfigItem key={index} $theme={theme}>
-                <ConfigLabel $theme={theme}>Empregado {index + 1}</ConfigLabel>
-                <ConfigValue>
-                  <strong>Nome:</strong> {empregado.nome}
-                  <br />
-                  <strong>CPF:</strong> {empregado.cpf}
-                  <br />
-                  <strong>Cargo:</strong> {empregado.cargo}
-                  <br />
-                  <strong>Salário:</strong> {empregado.salario}
-                  <br />
-                  <strong>Data de Admissão:</strong> {empregado.dataAdmissao}
-                  <br />
-                  <strong>Situação:</strong> {empregado.situacao}
-                </ConfigValue>
-              </ConfigItem>
-            ))}
-          </ConfigSection>
-        )}
-
-        {/* Seção de Histórico de Eventos Carregados */}
-        {loadedEventsData.length > 0 && (
-          <ConfigSection>
-            <OptimizedSectionTitle>
-              <AccessibleEmoji emoji='📋' label='Eventos' /> Histórico de
-              Eventos Carregados
-              {loadedEventsData[0]?.fonte === 'SOAP_REAL' && (
-                <DataSourceIndicator $isReal={true} $theme={theme}>
-                  (<span role="img" aria-label="Dados Reais">✅</span> Dados Reais)
-                </DataSourceIndicator>
-              )}
-            </OptimizedSectionTitle>
-            {loadedEventsData.map((evento: any, index: any) => (
-              <ConfigItem key={index}>
-                <ConfigLabel>Evento {index + 1}</ConfigLabel>
-                <ConfigValue>
-                  <strong>Tipo:</strong> {evento.tipo}
-                  <br />
-                  <strong>ID:</strong> {evento.id}
-                  <br />
-                  <strong>Data de Envio:</strong> {evento.dataEnvio}
-                  <br />
-                  <strong>Status:</strong> {evento.status}
-                  <br />
-                  <strong>Protocolo:</strong> {evento.protocolo}
-                  <br />
-                  <strong>Descrição:</strong> {evento.descricao}
-                </ConfigValue>
-              </ConfigItem>
-            ))}
-          </ConfigSection>
-        )}
-
-        {/* UnifiedModal de Detalhes do Evento */}
-        <UnifiedModal
-          isOpen={isEventUnifiedModalOpen}
-          onClose={() => setIsEventUnifiedModalOpen(false)}
-        >
+      {/* UnifiedModal de Detalhes do Evento */}
+      <UnifiedModal
+        isOpen={isEventUnifiedModalOpen}
+        onClose={() => setIsEventUnifiedModalOpen(false)}
+      >
+        <div>
           <div>
-            <div>
-              <h2>Detalhes do Evento {selectedEvent?.tipo}</h2>
-            </div>
-            <div>
-              {selectedEvent && (
-                <div>
-                  <p>
-                    <strong>Descrição:</strong> {selectedEvent.descricao}
-                  </p>
-                  <p>
-                    <strong>Status:</strong>{' '}
-                    {getStatusText(selectedEvent.status)}
-                  </p>
-                  {selectedEvent.dataEnvio && (
-                    <p>
-                      <strong>Data de Envio:</strong>{' '}
-                      {new Date(selectedEvent.dataEnvio).toLocaleString(
-                        'pt-BR'
-                      )}
-                    </p>
-                  )}
-                  {selectedEvent.dataProcessamento && (
-                    <p>
-                      <strong>Data de Processamento:</strong>{' '}
-                      {new Date(selectedEvent.dataProcessamento).toLocaleString(
-                        'pt-BR'
-                      )}
-                    </p>
-                  )}
-                  {selectedEvent.erro && (
-                    <p>
-                      <strong>Erro:</strong>{' '}
-                      <ErrorSpan>{selectedEvent.erro}</ErrorSpan>
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-            <div>
-              <UnifiedButton
-                $variant='secondary'
-                $theme={theme}
-                onClick={() => setIsEventUnifiedModalOpen(false)}
-              >
-                Fechar
-              </UnifiedButton>
-            </div>
+            <h2>Detalhes do Evento {selectedEvent?.tipo}</h2>
           </div>
-        </UnifiedModal>
+          <div>
+            {selectedEvent && (
+              <div>
+                <p>
+                  <strong>Descrição:</strong> {selectedEvent.descricao}
+                </p>
+                <p>
+                  <strong>Status:</strong> {getStatusText(selectedEvent.status)}
+                </p>
+                {selectedEvent.dataEnvio && (
+                  <p>
+                    <strong>Data de Envio:</strong>{' '}
+                    {new Date(selectedEvent.dataEnvio).toLocaleString('pt-BR')}
+                  </p>
+                )}
+                {selectedEvent.dataProcessamento && (
+                  <p>
+                    <strong>Data de Processamento:</strong>{' '}
+                    {new Date(selectedEvent.dataProcessamento).toLocaleString(
+                      'pt-BR'
+                    )}
+                  </p>
+                )}
+                {selectedEvent.erro && (
+                  <p>
+                    <strong>Erro:</strong>{' '}
+                    <ErrorSpan>{selectedEvent.erro}</ErrorSpan>
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+          <div>
+            <UnifiedButton
+              $variant='secondary'
+              $theme={theme}
+              onClick={() => setIsEventUnifiedModalOpen(false)}
+            >
+              Fechar
+            </UnifiedButton>
+          </div>
+        </div>
+      </UnifiedModal>
 
-        {/* UnifiedModal de Certificado Digital */}
-        <CertificateUploadModal
-          isOpen={isCertificateUnifiedModalOpen}
-          onClose={() => setIsCertificateUnifiedModalOpen(false)}
-          onSuccess={handleCertificateSuccess}
-          $theme={theme}
-          esocialConfig={esocialConfig}
-        />
+      {/* UnifiedModal de Certificado Digital */}
+      <CertificateUploadModal
+        isOpen={isCertificateUnifiedModalOpen}
+        onClose={() => setIsCertificateUnifiedModalOpen(false)}
+        onSuccess={handleCertificateSuccess}
+        $theme={theme}
+        esocialConfig={esocialConfig}
+      />
 
-        {/* UnifiedModal de Procuração Eletrônica */}
-        <ProxyUploadModal
-          isOpen={isProxyUnifiedModalOpen}
-          onClose={() => setIsProxyUnifiedModalOpen(false)}
-          onSuccess={handleProxySuccess}
-          $theme={theme}
-          esocialConfig={esocialConfig}
-        />
+      {/* UnifiedModal de Procuração Eletrônica */}
+      <ProxyUploadModal
+        isOpen={isProxyUnifiedModalOpen}
+        onClose={() => setIsProxyUnifiedModalOpen(false)}
+        onSuccess={handleProxySuccess}
+        $theme={theme}
+        esocialConfig={esocialConfig}
+      />
 
-        {/* Toast Container */}
-      </PageContainer>
+      {/* Toast Container */}
+    </PageContainer>
   );
 };
 
@@ -2187,4 +2533,3 @@ export const getServerSideProps: GetServerSideProps = async () => {
 };
 
 export default ESocialIntegration;
-

@@ -1,4 +1,5 @@
 # 📋 DETALHAMENTO TÉCNICO: REFORMULAÇÃO DE FUNCIONALIDADES
+
 ## Sistema DOM - Especificações de Implementação
 
 **Data:** Janeiro 2025  
@@ -22,24 +23,24 @@ model MensagemContextual {
   remetenteId     String   // 'SISTEMA' ou ID do usuário
   destinatarioId  String?
   conteudo        String   @db.Text
-  
+
   // ✅ Origem da mensagem (opcional)
   origem          String   @db.VarChar(50) // 'ALERTA', 'ACAO', 'SISTEMA', 'USUARIO'
   alertaId        String?  // Se veio de um alerta
-  
+
   // ✅ Status
   tipo            String   @db.VarChar(20) // 'TEXTO', 'ALERTA', 'NOTIFICACAO', 'SISTEMA'
   templateId      String?
   lida            Boolean  @default(false)
   exibidaToast    Boolean  @default(false) // Se já foi exibida como Toast
   criadoEm        DateTime @default(now())
-  
+
   usuario         Usuario  @relation(fields: [usuarioId], references: [id])
   remetente       Usuario  @relation("MensagensEnviadas", fields: [remetenteId], references: [id])
   destinatario    Usuario? @relation("MensagensRecebidas", fields: [destinatarioId], references: [id])
   template        TemplateMensagem? @relation(fields: [templateId], references: [id])
   alerta          Alerta?  @relation(fields: [alertaId], references: [id])
-  
+
   @@index([usuarioId])
   @@index([contextoTipo, contextoId])
   @@index([remetenteId])
@@ -52,42 +53,44 @@ model MensagemContextual {
 ```
 
 **Princípio:**
+
 - ✅ **Uma mensagem contextual** serve para tudo
 - ✅ **Toast é apenas visualização** (não armazena)
 - ✅ **Alertas criam mensagens contextuais** (não duplicam)
 - ✅ **Histórico único** (sem redundância)
 
 model TemplateMensagem {
-  id              String   @id @default(uuid())
-  nome            String   @db.VarChar(255)
-  categoria       String   @db.VarChar(50) // 'PONTO', 'TAREFA', 'DOCUMENTO', 'FOLHA', 'GERAL'
-  conteudo        String   @db.Text
-  variaveis       Json?    // Variáveis disponíveis no template
-  ativo           Boolean  @default(true)
-  criadoEm        DateTime @default(now())
-  atualizadoEm    DateTime @updatedAt
-  
-  mensagens       MensagemContextual[]
-  
-  @@index([categoria])
-  @@index([ativo])
-  @@map("templates_mensagem")
+id String @id @default(uuid())
+nome String @db.VarChar(255)
+categoria String @db.VarChar(50) // 'PONTO', 'TAREFA', 'DOCUMENTO', 'FOLHA', 'GERAL'
+conteudo String @db.Text
+variaveis Json? // Variáveis disponíveis no template
+ativo Boolean @default(true)
+criadoEm DateTime @default(now())
+atualizadoEm DateTime @updatedAt
+
+mensagens MensagemContextual[]
+
+@@index([categoria])
+@@index([ativo])
+@@map("templates_mensagem")
 }
 
 model HistoricoComunicacao {
-  id              String   @id @default(uuid())
-  contextoTipo    String   @db.VarChar(50)
-  contextoId      String
-  totalMensagens  Int      @default(0)
-  primeiraMensagem DateTime?
-  ultimaMensagem  DateTime?
-  participantes   String[] // IDs dos participantes
-  
-  @@unique([contextoTipo, contextoId])
-  @@index([contextoTipo])
-  @@map("historico_comunicacao")
+id String @id @default(uuid())
+contextoTipo String @db.VarChar(50)
+contextoId String
+totalMensagens Int @default(0)
+primeiraMensagem DateTime?
+ultimaMensagem DateTime?
+participantes String[] // IDs dos participantes
+
+@@unique([contextoTipo, contextoId])
+@@index([contextoTipo])
+@@map("historico_comunicacao")
 }
-```
+
+````
 
 ---
 
@@ -198,7 +201,7 @@ const ContextualChat: React.FC<ContextualChatProps> = ({
   // Permitir envio de mensagens
   // Sugerir templates quando relevante
 };
-```
+````
 
 ---
 
@@ -219,11 +222,11 @@ model ListaSuprimentos {
   orcamento       Decimal? @db.Decimal(10, 2)
   criadoEm        DateTime @default(now())
   atualizadoEm    DateTime @updatedAt
-  
+
   usuario         Usuario  @relation(fields: [usuarioId], references: [id])
   template        TemplateLista? @relation(fields: [templateId], references: [id])
   itens           ItemSuprimento[]
-  
+
   @@index([usuarioId])
   @@index([tipoServico])
   @@index([vinculadaTarefa])
@@ -245,9 +248,9 @@ model ItemSuprimento {
   estoqueAtual    Decimal? @db.Decimal(10, 2)
   estoqueMinimo   Decimal? @db.Decimal(10, 2)
   ordem           Int
-  
+
   lista           ListaSuprimentos @relation(fields: [listaId], references: [id], onDelete: Cascade)
-  
+
   @@index([listaId])
   @@index([categoria])
   @@index([comprado])
@@ -262,9 +265,9 @@ model TemplateLista {
   itensPadrao     Json     // Array de itens padrão
   ativo           Boolean  @default(true)
   criadoEm        DateTime @default(now())
-  
+
   listas          ListaSuprimentos[]
-  
+
   @@index([tipoServico])
   @@index([ativo])
   @@map("templates_lista")
@@ -282,9 +285,9 @@ model EstoqueDomestico {
   ultimoUso       DateTime?
   fornecedorPreferido String? @db.VarChar(255)
   precoMedio      Decimal? @db.Decimal(10, 2)
-  
+
   usuario         Usuario  @relation(fields: [usuarioId], references: [id])
-  
+
   @@unique([usuarioId, itemNome])
   @@index([usuarioId])
   @@index([categoria])
@@ -302,6 +305,7 @@ model EstoqueDomestico {
 **Templates por Tipo de Serviço:**
 
 **Limpeza Geral:**
+
 - Detergente
 - Esponja
 - Panos de limpeza
@@ -310,16 +314,19 @@ model EstoqueDomestico {
 - Sacos de lixo
 
 **Limpeza Profunda:**
+
 - Produtos específicos para cada ambiente
 - Equipamentos especiais
 - Produtos de limpeza pesada
 
 **Cozinha:**
+
 - Alimentos básicos
 - Produtos de limpeza específicos
 - Utensílios necessários
 
 **Organização:**
+
 - Caixas organizadoras
 - Etiquetas
 - Materiais de embalagem
@@ -329,12 +336,14 @@ model EstoqueDomestico {
 #### **2. Gestão de Estoque**
 
 **Funcionalidades:**
+
 - Controle de estoque por item
 - Alertas quando estoque abaixo do mínimo
 - Histórico de consumo
 - Previsão de reposição
 
 **Alertas Automáticos:**
+
 - "Estoque de {item} abaixo do mínimo"
 - "Tempo de reposição: {dias} dias"
 - "Sugestão de compra: {quantidade} {unidade}"
@@ -344,6 +353,7 @@ model EstoqueDomestico {
 #### **3. Orçamento Vinculado**
 
 **Integração com Gestão Financeira:**
+
 - Orçamento mensal de suprimentos
 - Controle de gastos por categoria
 - Relatórios de custos
@@ -375,10 +385,10 @@ model DocumentoTrabalhista {
   assinaturaHash  String?  @db.VarChar(255)
   criadoEm        DateTime @default(now())
   atualizadoEm    DateTime @updatedAt
-  
+
   usuario         Usuario  @relation(fields: [usuarioId], references: [id])
   vinculacoes     DocumentoVinculacao[]
-  
+
   @@index([usuarioId])
   @@index([tipo])
   @@index([esocialPronto])
@@ -392,9 +402,9 @@ model DocumentoVinculacao {
   vinculacaoTipo String   @db.VarChar(50) // 'ESOCIAL', 'FOLHA', 'TAREFA'
   vinculacaoId    String
   criadoEm        DateTime @default(now())
-  
+
   documento       DocumentoTrabalhista @relation(fields: [documentoId], references: [id], onDelete: Cascade)
-  
+
   @@unique([documentoId, vinculacaoTipo, vinculacaoId])
   @@index([documentoId])
   @@index([vinculacaoTipo, vinculacaoId])
@@ -411,9 +421,9 @@ model ChecklistDocumentos {
   completoEm      DateTime?
   criadoEm        DateTime @default(now())
   atualizadoEm    DateTime @updatedAt
-  
+
   usuario         Usuario  @relation(fields: [usuarioId], references: [id])
-  
+
   @@unique([usuarioId, perfilId])
   @@index([usuarioId])
   @@index([completo])
@@ -430,6 +440,7 @@ model ChecklistDocumentos {
 **Tipos de Documentos:**
 
 **Obrigatórios:**
+
 - CTPS (Carteira de Trabalho)
 - RG (Registro Geral)
 - CPF (Cadastro de Pessoa Física)
@@ -438,15 +449,18 @@ model ChecklistDocumentos {
 - Título de Eleitor
 
 **Médicos:**
+
 - ASO (Atestado de Saúde Ocupacional)
 - Atestados médicos
 - Exames médicos
 
 **Bancários:**
+
 - Comprovante de conta bancária
 - Extrato bancário
 
 **Trabalhistas:**
+
 - Contrato de trabalho
 - Termos de admissão
 - Documentos de rescisão
@@ -458,16 +472,19 @@ model ChecklistDocumentos {
 **Templates Disponíveis:**
 
 **Para S-1000 (Empregador):**
+
 - Lista de documentos necessários
 - Guia passo a passo
 - Validação automática
 
 **Para S-2200 (Empregado):**
+
 - Lista de documentos necessários
 - Guia passo a passo
 - Validação automática
 
 **Validação Automática:**
+
 - Verificar se documento está completo
 - Verificar se documento está válido
 - Verificar se documento está no formato correto
@@ -480,16 +497,19 @@ model ChecklistDocumentos {
 **Alertas Automáticos:**
 
 **Vencimento:**
+
 - "CTPS vence em {dias} dias"
 - "Documento {nome} próximo ao vencimento"
 - "Renovação necessária: {nome}"
 
 **eSocial:**
+
 - "Documento necessário para eSocial: {nome}"
 - "Faltam {quantidade} documentos para completar cadastro eSocial"
 - "Todos os documentos estão prontos para eSocial"
 
 **Folha:**
+
 - "Documento necessário para folha: {nome}"
 - "Comprovante necessário: {periodo}"
 
@@ -500,16 +520,19 @@ model ChecklistDocumentos {
 **Funcionalidades:**
 
 **Preparação:**
+
 - Marcar documentos como "pronto para eSocial"
 - Validar documentos antes do envio
 - Gerar pacote de documentos para eSocial
 
 **Rastreamento:**
+
 - Histórico de documentos enviados
 - Status de cada documento no processo
 - Notificações de atualizações
 
 **Validação:**
+
 - Verificar se todos os documentos necessários estão presentes
 - Validar formato e qualidade
 - Alertar sobre documentos faltantes
@@ -539,4 +562,3 @@ model ChecklistDocumentos {
 
 **Última atualização:** Janeiro 2025  
 **Status:** 📋 **ESPECIFICAÇÕES TÉCNICAS - PRONTAS PARA IMPLEMENTAÇÃO**
-

@@ -7,18 +7,22 @@ A permissão de geolocalização estava sendo solicitada automaticamente ao entr
 ## 🔍 Causas Identificadas
 
 ### 1. `useGeolocation` Hook na Página de Login
+
 - O hook estava sendo inicializado mesmo sem uso direto
 - Poderia estar causando verificação automática de permissões
 
 ### 2. `useGeolocation` Hook no `GeolocationContext`
+
 - O hook estava sendo usado no contexto global
 - Poderia estar causando verificação automática quando o contexto é montado
 
 ### 3. `useEffect` de Detecção de Primeira Interação
+
 - Quando o usuário clicava em qualquer lugar na página de login, isso contava como primeira interação
 - Isso poderia disparar captura automática mesmo com verificações
 
 ### 4. Captura Automática Após Primeira Interação
+
 - O `useEffect` que captura após primeira interação poderia estar sendo executado mesmo na página de login
 
 ## ✅ Correções Aplicadas
@@ -28,18 +32,21 @@ A permissão de geolocalização estava sendo solicitada automaticamente ao entr
 **Arquivo:** `src/pages/login.tsx`
 
 **Antes:**
+
 ```typescript
 import { useGeolocation } from '../hooks/useGeolocation';
 const { getCurrentPosition } = useGeolocation();
 ```
 
 **Depois:**
+
 ```typescript
 // ❌ REMOVIDO: useGeolocation não é necessário aqui - pode estar causando solicitação automática
 // import { useGeolocation } from '../hooks/useGeolocation';
 ```
 
 **Função `requestGeolocationPermission`:**
+
 - Agora usa `navigator.geolocation.getCurrentPosition` diretamente
 - Não depende mais do hook `useGeolocation`
 
@@ -48,12 +55,14 @@ const { getCurrentPosition } = useGeolocation();
 **Arquivo:** `src/contexts/GeolocationContext.tsx`
 
 **Antes:**
+
 ```typescript
 import { useGeolocation } from '../hooks/useGeolocation';
 const { getCurrentPosition, location: currentLocation } = useGeolocation();
 ```
 
 **Depois:**
+
 ```typescript
 // ❌ REMOVIDO: useGeolocation não é necessário aqui - pode estar causando solicitação automática
 // import { useGeolocation } from '../hooks/useGeolocation';
@@ -61,6 +70,7 @@ const { getCurrentPosition, location: currentLocation } = useGeolocation();
 ```
 
 **Removido também:**
+
 - `useEffect` que atualizava `lastLocation` quando `currentLocation` mudava
 
 ### 3. Bloqueio de Detecção de Primeira Interação na Página de Login
@@ -68,6 +78,7 @@ const { getCurrentPosition, location: currentLocation } = useGeolocation();
 **Arquivo:** `src/contexts/GeolocationContext.tsx`
 
 **Adicionado:**
+
 ```typescript
 useEffect(() => {
   // ❌ Não detectar primeira interação na página de login - permissão será solicitada no checkbox
@@ -81,6 +92,7 @@ useEffect(() => {
 **Arquivo:** `src/pages/_app.tsx`
 
 **Adicionado:**
+
 ```typescript
 useEffect(() => {
   // ❌ Não detectar primeira interação na página de login - permissão será solicitada no checkbox
@@ -96,6 +108,7 @@ useEffect(() => {
 **Arquivo:** `src/contexts/GeolocationContext.tsx`
 
 **Adicionado em `captureLocationSafely`:**
+
 ```typescript
 const captureLocationSafely = useCallback(async () => {
   if (!hasUserInteracted) {
@@ -111,6 +124,7 @@ const captureLocationSafely = useCallback(async () => {
 ```
 
 **Adicionado em `useEffect` de atualização periódica:**
+
 ```typescript
 useEffect(() => {
   if (!hasUserInteracted) {
@@ -128,6 +142,7 @@ useEffect(() => {
 **Arquivo:** `src/pages/_app.tsx`
 
 **Adicionado em `captureLocationBeforePage`:**
+
 ```typescript
 const captureLocationBeforePage = useCallback(async () => {
   if (!hasUserInteracted) {
@@ -143,6 +158,7 @@ const captureLocationBeforePage = useCallback(async () => {
 ```
 
 **Adicionado em `useEffect` de mudança de rota:**
+
 ```typescript
 useEffect(() => {
   // ❌ Não fazer nada na página de login - permissão será solicitada no checkbox
@@ -199,4 +215,3 @@ useEffect(() => {
 1. ✅ Testar que permissão só aparece quando checkbox de termos é marcado
 2. ✅ Verificar que não há solicitação automática ao entrar na página de login
 3. ✅ Confirmar que localização é capturada após marcar checkbox e conceder permissão
-

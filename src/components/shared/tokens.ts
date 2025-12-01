@@ -168,11 +168,15 @@ export const getBorderRadius = (size: keyof typeof tokens.borderRadius) => {
   return tokens.borderRadius[size];
 };
 
-export const getAnimationDuration = (duration: keyof typeof tokens.animationDurations) => {
+export const getAnimationDuration = (
+  duration: keyof typeof tokens.animationDurations
+) => {
   return tokens.animationDurations[duration];
 };
 
-export const getAnimationTiming = (timing: keyof typeof tokens.animationTimings) => {
+export const getAnimationTiming = (
+  timing: keyof typeof tokens.animationTimings
+) => {
   return tokens.animationTimings[timing];
 };
 

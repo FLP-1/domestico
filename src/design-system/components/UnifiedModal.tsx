@@ -42,8 +42,8 @@ const ModalOverlay = styled.div<{
   right: 0;
   bottom: 0;
   background: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -167,8 +167,7 @@ const ModalTitle = styled.h2<{ $variant: ModalVariant }>`
 
 const CloseButton = styled.button<{ $theme?: any; $variant: ModalVariant }>`
   background: ${props => {
-    const bgColor = props.$theme?.colors?.surface ||
-                    props.$theme?.surface;
+    const bgColor = props.$theme?.colors?.surface || props.$theme?.surface;
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
@@ -178,9 +177,10 @@ const CloseButton = styled.button<{ $theme?: any; $variant: ModalVariant }>`
     return 'transparent';
   }};
   border: none;
-  color: ${props => props.$theme?.colors?.text?.onPrimary ||
-                    props.$theme?.colors?.text?.primary ||
-                    'inherit'};
+  color: ${props =>
+    props.$theme?.colors?.text?.onPrimary ||
+    props.$theme?.colors?.text?.primary ||
+    'inherit'};
   cursor: pointer;
   font-size: 1.5rem;
   padding: 0.5rem;
@@ -194,8 +194,7 @@ const CloseButton = styled.button<{ $theme?: any; $variant: ModalVariant }>`
 
   &:hover {
     background: ${props => {
-      const bgColor = props.$theme?.colors?.surface ||
-                      props.$theme?.surface;
+      const bgColor = props.$theme?.colors?.surface || props.$theme?.surface;
       if (bgColor && bgColor.startsWith('#')) {
         const r = parseInt(bgColor.slice(1, 3), 16);
         const g = parseInt(bgColor.slice(3, 5), 16);
@@ -241,22 +240,25 @@ export const ModalBody = styled.div<{ $variant: ModalVariant; $theme?: any }>`
   }
 
   &::-webkit-scrollbar-track {
-    background: ${props => props.$theme?.colors?.background?.secondary ||
-                           props.$theme?.background?.secondary ||
-                           'transparent'};
+    background: ${props =>
+      props.$theme?.colors?.background?.secondary ||
+      props.$theme?.background?.secondary ||
+      'transparent'};
     border-radius: 3px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: ${props => props.$theme?.colors?.border?.light ||
-                           props.$theme?.border?.light ||
-                           'transparent'};
+    background: ${props =>
+      props.$theme?.colors?.border?.light ||
+      props.$theme?.border?.light ||
+      'transparent'};
     border-radius: 3px;
 
     &:hover {
-      background: ${props => props.$theme?.colors?.border?.main ||
-                             props.$theme?.border?.main ||
-                             'transparent'};
+      background: ${props =>
+        props.$theme?.colors?.border?.main ||
+        props.$theme?.border?.main ||
+        'transparent'};
     }
   }
 
@@ -270,12 +272,15 @@ export const ModalFooter = styled.div<{ $variant: ModalVariant; $theme?: any }>`
   gap: 1rem;
   justify-content: flex-end;
   padding: 1rem 2rem 1.5rem 2rem;
-  background: ${props => props.$theme?.colors?.surface ||
-                         props.$theme?.background?.secondary ||
-                         'transparent'};
-  border-top: 1px solid ${props => props.$theme?.colors?.border?.main ||
-                                   props.$theme?.border?.main ||
-                                   'transparent'};
+  background: ${props =>
+    props.$theme?.colors?.surface ||
+    props.$theme?.background?.secondary ||
+    'transparent'};
+  border-top: 1px solid
+    ${props =>
+      props.$theme?.colors?.border?.main ||
+      props.$theme?.border?.main ||
+      'transparent'};
   flex-shrink: 0;
 
   /* Variante drawer para mobile */

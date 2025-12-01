@@ -1,7 +1,7 @@
 /**
  * Serviço de Documentos Trabalhistas Especializados
  * Sistema DOM - Documentação Específica para Trabalho Doméstico
- * 
+ *
  * Funcionalidades:
  * - Gestão de documentos trabalhistas específicos
  * - Templates e guias para eSocial
@@ -96,7 +96,8 @@ class DocumentTrabalhistaService {
       logger.info(`✅ Documento trabalhista criado: ${documento.id}`);
       return { success: true, documentoId: documento.id };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -134,7 +135,8 @@ class DocumentTrabalhistaService {
 
       return { success: true, documentos };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -165,7 +167,8 @@ class DocumentTrabalhistaService {
       logger.info(`✅ Documento trabalhista atualizado: ${documentoId}`);
       return { success: true, documento };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -190,10 +193,13 @@ class DocumentTrabalhistaService {
         data: { esocialPronto: true },
       });
 
-      logger.info(`✅ Documento marcado como pronto para eSocial: ${documentoId}`);
+      logger.info(
+        `✅ Documento marcado como pronto para eSocial: ${documentoId}`
+      );
       return { success: true, documento };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -225,7 +231,8 @@ class DocumentTrabalhistaService {
       logger.info(`✅ Documento validado: ${documentoId}`);
       return { success: true };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -262,7 +269,8 @@ class DocumentTrabalhistaService {
       );
       return { success: true, vinculacao };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -321,7 +329,8 @@ class DocumentTrabalhistaService {
       logger.info(`✅ Checklist criado/atualizado: ${checklist.id}`);
       return { success: true, checklistId: checklist.id };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -347,19 +356,19 @@ class DocumentTrabalhistaService {
   }): Promise<{ success: boolean; templates?: any[]; error?: string }> {
     try {
       const where: any = {};
-      
+
       if (filtros?.categoria) {
         where.categoria = filtros.categoria;
       }
-      
+
       if (filtros?.esocialEvento) {
         where.esocialEvento = filtros.esocialEvento;
       }
-      
+
       if (filtros?.esocialRequerido !== undefined) {
         where.esocialRequerido = filtros.esocialRequerido;
       }
-      
+
       if (filtros?.ativo !== undefined) {
         where.ativo = filtros.ativo;
       } else {
@@ -368,15 +377,13 @@ class DocumentTrabalhistaService {
 
       const templates = await prisma.templateDocumento.findMany({
         where,
-        orderBy: [
-          { esocialRequerido: 'desc' },
-          { nome: 'asc' },
-        ],
+        orderBy: [{ esocialRequerido: 'desc' }, { nome: 'asc' }],
       });
 
       return { success: true, templates };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -410,7 +417,8 @@ class DocumentTrabalhistaService {
 
       return { success: true, checklist };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -446,7 +454,8 @@ class DocumentTrabalhistaService {
 
       return { success: true, documentos };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -476,7 +485,8 @@ class DocumentTrabalhistaService {
 
       return { success: true, documentos };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -490,7 +500,8 @@ class DocumentTrabalhistaService {
 }
 
 // Instância singleton
-let documentTrabalhistaServiceInstance: DocumentTrabalhistaService | null = null;
+let documentTrabalhistaServiceInstance: DocumentTrabalhistaService | null =
+  null;
 
 export const getDocumentTrabalhistaService = (): DocumentTrabalhistaService => {
   if (!documentTrabalhistaServiceInstance) {
@@ -500,4 +511,3 @@ export const getDocumentTrabalhistaService = (): DocumentTrabalhistaService => {
 };
 
 export default DocumentTrabalhistaService;
-

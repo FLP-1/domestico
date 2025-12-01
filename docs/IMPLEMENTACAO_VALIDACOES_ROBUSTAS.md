@@ -11,10 +11,12 @@
 ## 🎯 COMPONENTES IMPLEMENTADOS
 
 ### 1. ✅ Validação de DAE
+
 **Arquivo:** `src/services/validationService.ts`  
 **Classe:** `DAEValidationService`
 
 **Validações Implementadas:**
+
 - ✅ Formato do arquivo (deve ser PDF)
 - ✅ Tamanho do arquivo (máximo 5MB, mínimo 1KB)
 - ✅ Campos obrigatórios (valores, vencimento, mês/ano)
@@ -24,6 +26,7 @@
 - ✅ Soma dos valores confere com total
 
 **Uso:**
+
 ```typescript
 import { getDAEValidationService } from '../services/validationService';
 
@@ -41,10 +44,12 @@ if (!result.valid) {
 ---
 
 ### 2. ✅ Validação Preventiva de Certificado
+
 **Arquivo:** `src/services/validationService.ts`  
 **Classe:** `CertificatePreventiveValidationService`
 
 **Validações Implementadas:**
+
 - ✅ Certificado existe no banco
 - ✅ Certificado está ativo
 - ✅ Certificado não foi revogado
@@ -53,6 +58,7 @@ if (!result.valid) {
 - ✅ Criação de alertas no sistema
 
 **Uso:**
+
 ```typescript
 import { getCertificatePreventiveValidationService } from '../services/validationService';
 
@@ -70,6 +76,7 @@ if (!result.valid) {
 ```
 
 **Integração:**
+
 - ✅ Cria alertas automáticos no sistema
 - ✅ Atualiza alertas existentes
 - ✅ Notificações por email e push
@@ -77,10 +84,12 @@ if (!result.valid) {
 ---
 
 ### 3. ✅ Gerenciamento de Token Gov.br
+
 **Arquivo:** `src/services/validationService.ts`  
 **Classe:** `GovBRTokenManager`
 
 **Funcionalidades Implementadas:**
+
 - ✅ Carrega tokens do banco de dados
 - ✅ Renovação automática com refresh token
 - ✅ Validação antes de operações eSocial
@@ -88,6 +97,7 @@ if (!result.valid) {
 - ✅ Persistência no banco de dados
 
 **Uso:**
+
 ```typescript
 import { getGovBRTokenManager } from '../services/validationService';
 
@@ -105,6 +115,7 @@ if (!validation.valid) {
 ```
 
 **Fluxo:**
+
 1. Tenta usar token atual (se válido)
 2. Se expirado, renova com refresh token
 3. Se refresh falhar, pede novo login
@@ -117,10 +128,11 @@ if (!validation.valid) {
 ### Schema Prisma Necessário
 
 **Campos no Usuario (se não existirem):**
+
 ```prisma
 model Usuario {
   // ... campos existentes ...
-  
+
   // Tokens gov.br
   govbrToken        String?   @db.Text
   govbrRefreshToken String?   @db.Text
@@ -140,18 +152,21 @@ model Usuario {
 ## 📋 CHECKLIST DE INTEGRAÇÃO
 
 ### DAE
+
 - [x] Serviço de validação criado
 - [ ] Integrar com componente de upload de DAE
 - [ ] Implementar extração real de PDF (biblioteca pdf-parse)
 - [ ] Testar com PDFs reais de DAE
 
 ### Certificado
+
 - [x] Serviço de validação preventiva criado
 - [ ] Integrar com `esocialRealApi.ts` antes de usar certificado
 - [ ] Testar criação de alertas
 - [ ] Validar com certificados reais
 
 ### Token Gov.br
+
 - [x] Gerenciador de token criado
 - [ ] Adicionar campos no schema Prisma (se necessário)
 - [ ] Criar API route `/api/auth/govbr/refresh`
@@ -187,4 +202,3 @@ model Usuario {
 - ✅ **Zero hardcoded** - tudo busca do banco/env
 
 **Status Geral:** ✅ 4/7 tarefas concluídas (57%)
-

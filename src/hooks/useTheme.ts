@@ -257,57 +257,89 @@ export const useTheme = (
   useEffect(() => {
     const loadTheme = async () => {
       if (!profileId) return;
-      
+
       // Evitar chamadas duplicadas para o mesmo profileId
       if (lastProfileIdRef.current === profileId || isLoadingRef.current) {
         return;
       }
-      
+
       lastProfileIdRef.current = profileId;
       isLoadingRef.current = true;
 
       // 1. Tentar buscar do banco de dados (se useCentralizedConfig)
       if (useCentralizedConfig) {
         try {
-          const response = await fetch(`/api/theme/get?profileCode=${profileId}`);
+          const response = await fetch(
+            `/api/theme/get?profileCode=${profileId}`
+          );
           if (response.ok) {
             const result = await response.json();
             if (result.success && result.data) {
               const dbTheme = result.data as Theme;
-              
+
               // Validar se tema tem cores válidas
               if (!dbTheme.colors || !dbTheme.colors.primary) {
                 throw new Error('Tema do banco inválido');
               }
-              
+
               // Converter Theme do banco para ProfileTheme
               const profileTheme: ProfileTheme = {
                 id: profileId,
                 name: profileThemes[profileId]?.name || profileId,
                 colors: {
-                  primary: dbTheme.colors.primary || profileThemes[profileId]?.colors.primary || 'transparent',
-                  secondary: dbTheme.colors.secondary || profileThemes[profileId]?.colors.secondary || 'transparent',
-                  accent: dbTheme.colors.accent || profileThemes[profileId]?.colors.accent || 'transparent',
-                  background: dbTheme.colors.background || profileThemes[profileId]?.colors.background || 'transparent',
-                  surface: dbTheme.colors.surface || profileThemes[profileId]?.colors.surface || 'transparent',
-                  text: dbTheme.colors.text || profileThemes[profileId]?.colors.text || 'inherit',
-                  textSecondary: dbTheme.colors.textSecondary || profileThemes[profileId]?.colors.textSecondary || 'inherit',
-                  border: dbTheme.colors.border || profileThemes[profileId]?.colors.border || 'transparent',
-                  shadow: dbTheme.colors.shadow || profileThemes[profileId]?.colors.shadow || 'transparent',
+                  primary:
+                    dbTheme.colors.primary ||
+                    profileThemes[profileId]?.colors.primary ||
+                    'transparent',
+                  secondary:
+                    dbTheme.colors.secondary ||
+                    profileThemes[profileId]?.colors.secondary ||
+                    'transparent',
+                  accent:
+                    dbTheme.colors.accent ||
+                    profileThemes[profileId]?.colors.accent ||
+                    'transparent',
+                  background:
+                    dbTheme.colors.background ||
+                    profileThemes[profileId]?.colors.background ||
+                    'transparent',
+                  surface:
+                    dbTheme.colors.surface ||
+                    profileThemes[profileId]?.colors.surface ||
+                    'transparent',
+                  text:
+                    dbTheme.colors.text ||
+                    profileThemes[profileId]?.colors.text ||
+                    'inherit',
+                  textSecondary:
+                    dbTheme.colors.textSecondary ||
+                    profileThemes[profileId]?.colors.textSecondary ||
+                    'inherit',
+                  border:
+                    dbTheme.colors.border ||
+                    profileThemes[profileId]?.colors.border ||
+                    'transparent',
+                  shadow:
+                    dbTheme.colors.shadow ||
+                    profileThemes[profileId]?.colors.shadow ||
+                    'transparent',
                   success: dbTheme.colors.success,
                   warning: dbTheme.colors.warning,
                   error: dbTheme.colors.error,
                   info: dbTheme.colors.info,
-                }
+                },
               };
-              
+
               setCurrentTheme(profileTheme);
               isLoadingRef.current = false;
               return; // Tema do banco carregado, não precisa continuar
             }
           }
         } catch (error) {
-          console.warn('Erro ao carregar tema do banco, usando fallback:', error);
+          console.warn(
+            'Erro ao carregar tema do banco, usando fallback:',
+            error
+          );
           // Continuar com fallback
         } finally {
           // Garantir que o flag seja resetado mesmo em caso de erro
@@ -350,7 +382,7 @@ export const useTheme = (
           setCurrentTheme(baseTheme);
         }
       }
-      
+
       isLoadingRef.current = false;
     };
 

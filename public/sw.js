@@ -15,9 +15,9 @@ const STATIC_ASSETS = [
 ];
 
 // Instalar Service Worker
-self.addEventListener('install', function(event) {
+self.addEventListener('install', function (event) {
   event.waitUntil(
-    caches.open(STATIC_CACHE_NAME).then(function(cache) {
+    caches.open(STATIC_CACHE_NAME).then(function (cache) {
       return cache.addAll(STATIC_ASSETS);
     })
   );
@@ -25,17 +25,15 @@ self.addEventListener('install', function(event) {
 });
 
 // Ativar Service Worker
-self.addEventListener('activate', function(event) {
+self.addEventListener('activate', function (event) {
   event.waitUntil(
-    caches.keys().then(function(cacheNames) {
+    caches.keys().then(function (cacheNames) {
       return Promise.all(
         cacheNames
-          .filter(function(name) {
-            return (
-              name !== CACHE_NAME && name !== STATIC_CACHE_NAME
-            );
+          .filter(function (name) {
+            return name !== CACHE_NAME && name !== STATIC_CACHE_NAME;
           })
-          .map(function(name) {
+          .map(function (name) {
             return caches.delete(name);
           })
       );
@@ -45,7 +43,7 @@ self.addEventListener('activate', function(event) {
 });
 
 // Interceptar requisições
-self.addEventListener('fetch', function(event) {
+self.addEventListener('fetch', function (event) {
   var request = event.request;
   var url = new URL(request.url);
 
@@ -70,50 +68,53 @@ self.addEventListener('fetch', function(event) {
 
 // Cache First strategy
 function cacheFirst(request) {
-  return caches.open(STATIC_CACHE_NAME).then(function(cache) {
-    return cache.match(request).then(function(cached) {
+  return caches.open(STATIC_CACHE_NAME).then(function (cache) {
+    return cache.match(request).then(function (cached) {
       if (cached) {
         return cached;
       }
 
-      return fetch(request).then(function(response) {
-        if (response.status === 200) {
-          cache.put(request, response.clone());
-        }
-        return response;
-      }).catch(function() {
-        // Se falhar, retornar resposta offline básica
-        return new Response('Offline', {
-          status: 503,
-          statusText: 'Service Unavailable',
+      return fetch(request)
+        .then(function (response) {
+          if (response.status === 200) {
+            cache.put(request, response.clone());
+          }
+          return response;
+        })
+        .catch(function () {
+          // Se falhar, retornar resposta offline básica
+          return new Response('Offline', {
+            status: 503,
+            statusText: 'Service Unavailable',
+          });
         });
-      });
     });
   });
 }
 
 // Network First strategy
 function networkFirst(request) {
-  return caches.open(CACHE_NAME).then(function(cache) {
-    return fetch(request).then(function(response) {
-      if (response.status === 200) {
-        cache.put(request, response.clone());
-      }
-      return response;
-    }).catch(function() {
-      return cache.match(request).then(function(cached) {
-        if (cached) {
-          return cached;
+  return caches.open(CACHE_NAME).then(function (cache) {
+    return fetch(request)
+      .then(function (response) {
+        if (response.status === 200) {
+          cache.put(request, response.clone());
         }
-        // Retornar página offline básica
-        return new Response(
-          '<!DOCTYPE html><html><head><title>Offline - Sistema DOM</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><h1>Você está offline</h1><p>Verifique sua conexão com a internet.</p></body></html>',
-          {
-            headers: { 'Content-Type': 'text/html' },
+        return response;
+      })
+      .catch(function () {
+        return cache.match(request).then(function (cached) {
+          if (cached) {
+            return cached;
           }
-        );
+          // Retornar página offline básica
+          return new Response(
+            '<!DOCTYPE html><html><head><title>Offline - Sistema DOM</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><h1>Você está offline</h1><p>Verifique sua conexão com a internet.</p></body></html>',
+            {
+              headers: { 'Content-Type': 'text/html' },
+            }
+          );
+        });
       });
-    });
   });
 }
-

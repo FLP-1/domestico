@@ -3,11 +3,13 @@
 ## 📊 **SITUAÇÃO ATUAL**
 
 ### **Progresso Alcançado:**
+
 - ✅ Build compilou: `✓ Compiled successfully in 12.2s`
 - ✅ Erro de duplicação `dynamic` - **CORRIGIDO**
 - ❌ Erro no prerendering: `f.div.withConfig.withConfig.b`
 
 ### **Erro Atual:**
+
 - **Página:** `/esocial-domestico-completo`
 - **Tipo:** Duplicação de `withConfig` no prerendering
 - **Fase:** SSR/Prerendering (não é mais compilação!)
@@ -88,6 +90,7 @@
 3. Depois continuar Auto-Fix + Refatoração
 
 **Vantagens:**
+
 - ✅ Resolve bloqueio rapidamente
 - ✅ Valida solução antes de continuar
 - ✅ Evita retrabalho
@@ -101,6 +104,7 @@
 2. Pode demorar mais mas garante qualidade
 
 **Desvantagens:**
+
 - ⚠️ Pode não resolver erro estrutural
 - ⚠️ Mais lenta
 - ⚠️ Pode precisar voltar depois
@@ -112,9 +116,9 @@
 **Minha recomendação:** Opção A (Híbrida Focada)
 
 Por quê?
+
 - Este erro é estrutural, não de código
 - Auto-Fix + Refatoração funciona para código, não para configuração
 - É mais eficiente resolver estrutura primeiro, depois código
 
 Qual faz mais sentido para você?
-

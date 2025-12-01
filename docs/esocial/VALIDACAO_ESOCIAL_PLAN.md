@@ -11,11 +11,13 @@
 ## 2. Testes Automatizados (Semana 1)
 
 ### 2.1 Validação Sintática
+
 - [ ] Executar testes unitários dos serviços (`validationService`, `esocialRealApi`)
 - [ ] Validar geração de XMLs com schema S-1.3
 - [ ] Rodar linter específico de eSocial (scripts/validar-esocial.ts)
 
 ### 2.2 Testes de Integração (Mocks Seguros)
+
 - [ ] Configurar `axios-mock-adapter` para simular respostas SOAP
 - [ ] Testar envio de lote (S-1000, S-2200, S-2299)
 - [ ] Testar consultas de status e eventos
@@ -24,11 +26,13 @@
 ## 3. Testes em Homologação (Semana 2)
 
 ### 3.1 Preparação
+
 - [ ] Atualizar `.env` com credenciais de homologação
 - [ ] Executar deploy em ambiente isolado (staging)
 - [ ] Verificar logs e conexões SSL
 
 ### 3.2 Testes Manuais
+
 - [ ] Enviar lote S-1000 (Cadastro Empregador)
 - [ ] Enviar lote S-2200 (Cadastro Trabalhador)
 - [ ] Enviar S-1200/S-1210 (Folha/Remuneração)
@@ -36,6 +40,7 @@
 - [ ] Testar consultas (identificador, status, trabalhador)
 
 ### 3.3 Testes Automatizados (Ambiente)
+
 - [ ] Executar `npm run esocial:hml -- --acao consultar`
 - [ ] Registrar resultados e logs
 

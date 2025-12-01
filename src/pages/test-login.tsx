@@ -18,8 +18,11 @@ const Title = styled.h1`
 const Button = styled.button`
   padding: 10px 20px;
   font-size: 16px;
-  background: ${props => getStatusColor(props.theme, 'success', 'background') || 'transparent'};
-  color: ${props => getThemeColor(props.theme, 'text.onPrimary', 'inherit') || getThemeColor(props.theme, 'surface', 'inherit')};
+  background: ${props =>
+    getStatusColor(props.theme, 'success', 'background') || 'transparent'};
+  color: ${props =>
+    getThemeColor(props.theme, 'text.onPrimary', 'inherit') ||
+    getThemeColor(props.theme, 'surface', 'inherit')};
   border: none;
   border-radius: 4px;
   cursor: pointer;

@@ -22,7 +22,11 @@ import TopBar from '../components/TopBar';
 import WelcomeSection from '../components/WelcomeSection';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
-import { getThemeColor, getStatusColor, addOpacity } from '../utils/themeHelpers';
+import {
+  getThemeColor,
+  getStatusColor,
+  addOpacity,
+} from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
 import {
   UnifiedButton,
@@ -62,8 +66,17 @@ const StatItem = styled.div<{ $theme?: Theme }>`
   text-align: center;
   padding: 1rem;
   background: ${props => {
-    const bgColor = (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
-                    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null);
+    const bgColor =
+      (typeof props.$theme?.colors?.background === 'object' &&
+      props.$theme?.colors?.background &&
+      'primary' in props.$theme.colors.background
+        ? String((props.$theme.colors.background as any).primary)
+        : null) ||
+      (typeof (props.$theme as any)?.background === 'object' &&
+      (props.$theme as any)?.background &&
+      'primary' in (props.$theme as any).background
+        ? String(((props.$theme as any).background as any).primary)
+        : null);
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
@@ -162,12 +175,20 @@ interface Employee {
 const SummarySection = styled.section<{ $theme: Theme }>`
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    const surfaceColor = typeof surface === 'string' 
-      ? surface 
-      : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
-    return surfaceColor 
+    const surfaceColor =
+      typeof surface === 'string'
+        ? surface
+        : typeof surface === 'object' &&
+            surface !== null &&
+            'primary' in surface
+          ? surface.primary
+          : null;
+    return surfaceColor
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
+      : addOpacity(
+          getThemeColor(props.$theme, 'surface.primary', 'transparent'),
+          0.95
+        );
   }};
   backdrop-filter: blur(20px);
   border-radius: 20px;
@@ -211,23 +232,43 @@ const SummaryCard = styled.div<{
       case 'success':
         return props.$theme?.colors?.success
           ? addOpacity(props.$theme.colors.success, 0.1)
-          : addOpacity(getStatusColor(props.$theme, 'success', 'background') || 'transparent', 0.1);
+          : addOpacity(
+              getStatusColor(props.$theme, 'success', 'background') ||
+                'transparent',
+              0.1
+            );
       case 'warning':
         return props.$theme?.colors?.warning
           ? addOpacity(props.$theme.colors.warning, 0.1)
-          : addOpacity(getStatusColor(props.$theme, 'warning', 'background') || 'transparent', 0.1);
+          : addOpacity(
+              getStatusColor(props.$theme, 'warning', 'background') ||
+                'transparent',
+              0.1
+            );
       case 'info':
         return props.$theme?.colors?.info
           ? addOpacity(props.$theme.colors.info, 0.1)
-          : addOpacity(getStatusColor(props.$theme, 'info', 'background') || 'transparent', 0.1);
+          : addOpacity(
+              getStatusColor(props.$theme, 'info', 'background') ||
+                'transparent',
+              0.1
+            );
       default: {
         const surface = props.$theme?.colors?.surface;
-        const surfaceColor = typeof surface === 'string' 
-          ? surface 
-          : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
-        return surfaceColor 
+        const surfaceColor =
+          typeof surface === 'string'
+            ? surface
+            : typeof surface === 'object' &&
+                surface !== null &&
+                'primary' in surface
+              ? surface.primary
+              : null;
+        return surfaceColor
           ? addOpacity(surfaceColor, 0.8)
-          : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.8);
+          : addOpacity(
+              getThemeColor(props.$theme, 'surface.primary', 'transparent'),
+              0.8
+            );
       }
     }
   }};
@@ -239,15 +280,27 @@ const SummaryCard = styled.div<{
         case 'success':
           return props.$theme?.colors?.success
             ? addOpacity(props.$theme.colors.success, 0.3)
-            : addOpacity(getStatusColor(props.$theme, 'success', 'background') || 'transparent', 0.3);
+            : addOpacity(
+                getStatusColor(props.$theme, 'success', 'background') ||
+                  'transparent',
+                0.3
+              );
         case 'warning':
           return props.$theme?.colors?.warning
             ? addOpacity(props.$theme.colors.warning, 0.3)
-            : addOpacity(getStatusColor(props.$theme, 'warning', 'background') || 'transparent', 0.3);
+            : addOpacity(
+                getStatusColor(props.$theme, 'warning', 'background') ||
+                  'transparent',
+                0.3
+              );
         case 'info':
           return props.$theme?.colors?.info
             ? addOpacity(props.$theme.colors.info, 0.3)
-            : addOpacity(getStatusColor(props.$theme, 'info', 'background') || 'transparent', 0.3);
+            : addOpacity(
+                getStatusColor(props.$theme, 'info', 'background') ||
+                  'transparent',
+                0.3
+              );
         default:
           return getThemeColor(props.$theme, 'border.primary', 'transparent');
       }
@@ -305,12 +358,20 @@ const SummaryDetails = styled.div<{ $theme?: Theme }>`
 const ChartSection = styled.div<{ $theme: Theme }>`
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    const surfaceColor = typeof surface === 'string' 
-      ? surface 
-      : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
-    return surfaceColor 
+    const surfaceColor =
+      typeof surface === 'string'
+        ? surface
+        : typeof surface === 'object' &&
+            surface !== null &&
+            'primary' in surface
+          ? surface.primary
+          : null;
+    return surfaceColor
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
+      : addOpacity(
+          getThemeColor(props.$theme, 'surface.primary', 'transparent'),
+          0.95
+        );
   }};
   backdrop-filter: blur(20px);
   border-radius: 20px;
@@ -349,7 +410,11 @@ const PieChart = styled.div<{ $theme?: Theme }>`
   height: 200px;
   border-radius: 50%;
   background: conic-gradient(
-    ${props => props.$theme?.colors?.info || props.$theme?.colors?.primary || 'transparent'} 0deg 120deg,
+    ${props =>
+        props.$theme?.colors?.info ||
+        props.$theme?.colors?.primary ||
+        'transparent'}
+      0deg 120deg,
     ${props => props.$theme?.colors?.success || 'transparent'} 120deg 180deg,
     ${props => props.$theme?.colors?.error || 'transparent'} 180deg 240deg,
     ${props => props.$theme?.colors?.warning || 'transparent'} 240deg 360deg
@@ -365,8 +430,16 @@ const PieChart = styled.div<{ $theme?: Theme }>`
     width: 80px;
     height: 80px;
     background: ${props =>
-      (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) ||
-      (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
+      (typeof props.$theme?.colors?.background === 'object' &&
+      props.$theme?.colors?.background &&
+      'primary' in props.$theme.colors.background
+        ? String((props.$theme.colors.background as any).primary)
+        : null) ||
+      (typeof (props.$theme as any)?.background === 'object' &&
+      (props.$theme as any)?.background &&
+      'primary' in (props.$theme as any).background
+        ? String(((props.$theme as any).background as any).primary)
+        : null) ||
       props.$theme?.colors?.surface ||
       'transparent'};
     border-radius: 50%;
@@ -404,12 +477,20 @@ const LegendColor = styled.div<{ $color: string; $theme?: Theme }>`
 const DocumentsSection = styled.section<{ $theme: Theme }>`
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    const surfaceColor = typeof surface === 'string' 
-      ? surface 
-      : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
-    return surfaceColor 
+    const surfaceColor =
+      typeof surface === 'string'
+        ? surface
+        : typeof surface === 'object' &&
+            surface !== null &&
+            'primary' in surface
+          ? surface.primary
+          : null;
+    return surfaceColor
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
+      : addOpacity(
+          getThemeColor(props.$theme, 'surface.primary', 'transparent'),
+          0.95
+        );
   }};
   backdrop-filter: blur(20px);
   border-radius: 20px;
@@ -454,9 +535,11 @@ const DocumentType = styled.div<{ $type: string; $theme?: Theme }>`
       props.$type === 'holerite'
         ? getStatusColor(props.$theme, 'info', 'background') || 'transparent'
         : props.$type === 'recibo'
-          ? getStatusColor(props.$theme, 'success', 'background') || 'transparent'
+          ? getStatusColor(props.$theme, 'success', 'background') ||
+            'transparent'
           : props.$type === 'vale_transporte'
-            ? getStatusColor(props.$theme, 'warning', 'background') || 'transparent'
+            ? getStatusColor(props.$theme, 'warning', 'background') ||
+              'transparent'
             : getThemeColor(props.$theme, 'secondary', 'transparent');
     return addOpacity(color, 0.2);
   }};
@@ -466,7 +549,8 @@ const DocumentType = styled.div<{ $type: string; $theme?: Theme }>`
       : props.$type === 'recibo'
         ? getStatusColor(props.$theme, 'success', 'background') || 'transparent'
         : props.$type === 'vale_transporte'
-          ? getStatusColor(props.$theme, 'warning', 'background') || 'transparent'
+          ? getStatusColor(props.$theme, 'warning', 'background') ||
+            'transparent'
           : getThemeColor(props.$theme, 'secondary', 'transparent');
   }};
   font-size: 0.8rem;
@@ -484,11 +568,17 @@ const DocumentStatus = styled.span<{
   background: ${props => {
     switch (props.$status) {
       case 'available':
-        return getStatusColor(props.$theme, 'success', 'background') || 'transparent';
+        return (
+          getStatusColor(props.$theme, 'success', 'background') || 'transparent'
+        );
       case 'processing':
-        return getStatusColor(props.$theme, 'warning', 'background') || 'transparent';
+        return (
+          getStatusColor(props.$theme, 'warning', 'background') || 'transparent'
+        );
       case 'error':
-        return getStatusColor(props.$theme, 'error', 'background') || 'transparent';
+        return (
+          getStatusColor(props.$theme, 'error', 'background') || 'transparent'
+        );
       default: {
         const text = props.$theme?.colors?.text;
         if (typeof text === 'object' && text !== null && 'secondary' in text) {
@@ -570,8 +660,10 @@ const DocumentUnifiedButton = styled.button<{
         return getThemeColor(props.$theme, 'text.secondary', 'inherit');
       }
       case 'success':
-        return getStatusColor(props.$theme, 'success', 'background') || 'transparent';
-        default:
+        return (
+          getStatusColor(props.$theme, 'success', 'background') || 'transparent'
+        );
+      default:
         return getThemeColor(props.$theme, 'primary', 'transparent');
     }
   }};
@@ -582,13 +674,20 @@ const DocumentUnifiedButton = styled.button<{
       switch (props.$variant) {
         case 'secondary': {
           const text = props.$theme?.colors?.text;
-          if (typeof text === 'object' && text !== null && 'secondary' in text) {
+          if (
+            typeof text === 'object' &&
+            text !== null &&
+            'secondary' in text
+          ) {
             return text.secondary;
           }
           return getThemeColor(props.$theme, 'text.secondary', 'inherit');
         }
         case 'success':
-          return getStatusColor(props.$theme, 'success', 'background') || 'transparent';
+          return (
+            getStatusColor(props.$theme, 'success', 'background') ||
+            'transparent'
+          );
         default:
           return getThemeColor(props.$theme, 'primary', 'transparent');
       }
@@ -606,12 +705,20 @@ const DocumentUnifiedButton = styled.button<{
 const PaymentSection = styled.section<{ $theme: Theme }>`
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    const surfaceColor = typeof surface === 'string' 
-      ? surface 
-      : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
-    return surfaceColor 
+    const surfaceColor =
+      typeof surface === 'string'
+        ? surface
+        : typeof surface === 'object' &&
+            surface !== null &&
+            'primary' in surface
+          ? surface.primary
+          : null;
+    return surfaceColor
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
+      : addOpacity(
+          getThemeColor(props.$theme, 'surface.primary', 'transparent'),
+          0.95
+        );
   }};
   backdrop-filter: blur(20px);
   border-radius: 20px;
@@ -654,13 +761,24 @@ const EmployeeCard = styled.div<{ $theme?: Theme; $selected: boolean }>`
     if (props.$selected) {
       return props.$theme?.colors?.primary
         ? addOpacity(props.$theme.colors.primary, 0.1)
-        : addOpacity(getThemeColor(props.$theme, 'primary', 'transparent'), 0.1);
+        : addOpacity(
+            getThemeColor(props.$theme, 'primary', 'transparent'),
+            0.1
+          );
     }
     const surface = props.$theme?.colors?.surface;
-    const surfaceColor = typeof surface === 'string' 
-      ? surface 
-      : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
-    return surfaceColor || getThemeColor(props.$theme, 'surface.primary', 'transparent');
+    const surfaceColor =
+      typeof surface === 'string'
+        ? surface
+        : typeof surface === 'object' &&
+            surface !== null &&
+            'primary' in surface
+          ? surface.primary
+          : null;
+    return (
+      surfaceColor ||
+      getThemeColor(props.$theme, 'surface.primary', 'transparent')
+    );
   }};
   cursor: pointer;
   transition: all 0.3s ease;
@@ -671,7 +789,10 @@ const EmployeeCard = styled.div<{ $theme?: Theme; $selected: boolean }>`
     background: ${props =>
       props.$theme?.colors?.primary
         ? addOpacity(props.$theme.colors.primary, 0.05)
-        : addOpacity(getThemeColor(props.$theme, 'primary', 'transparent'), 0.05)};
+        : addOpacity(
+            getThemeColor(props.$theme, 'primary', 'transparent'),
+            0.05
+          )};
   }
 `;
 
@@ -684,10 +805,26 @@ const EmployeeAvatar = styled.div<{ $color: string; $theme?: Theme }>`
   align-items: center;
   justify-content: center;
   color: ${props =>
-    (typeof props.$theme?.colors?.text === 'object' && props.$theme?.colors?.text && 'primary' in props.$theme.colors.text ? String((props.$theme.colors.text as any).primary) : null) ||
-    (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'primary' in (props.$theme as any).text ? String(((props.$theme as any).text as any).primary) : null) ||
-    (typeof props.$theme?.colors?.text === 'string' ? props.$theme.colors.text : null) ||
-    (typeof props.$theme?.colors?.surface === 'string' ? props.$theme.colors.surface : (typeof props.$theme?.colors?.surface === 'object' && props.$theme?.colors?.surface && 'primary' in props.$theme.colors.surface ? String((props.$theme.colors.surface as any).primary) : null)) ||
+    (typeof props.$theme?.colors?.text === 'object' &&
+    props.$theme?.colors?.text &&
+    'primary' in props.$theme.colors.text
+      ? String((props.$theme.colors.text as any).primary)
+      : null) ||
+    (typeof (props.$theme as any)?.text === 'object' &&
+    (props.$theme as any)?.text &&
+    'primary' in (props.$theme as any).text
+      ? String(((props.$theme as any).text as any).primary)
+      : null) ||
+    (typeof props.$theme?.colors?.text === 'string'
+      ? props.$theme.colors.text
+      : null) ||
+    (typeof props.$theme?.colors?.surface === 'string'
+      ? props.$theme.colors.surface
+      : typeof props.$theme?.colors?.surface === 'object' &&
+          props.$theme?.colors?.surface &&
+          'primary' in props.$theme.colors.surface
+        ? String((props.$theme.colors.surface as any).primary)
+        : null) ||
     'inherit'};
   font-weight: 700;
   font-size: 1.2rem;
@@ -728,26 +865,39 @@ const EmployeeDetails = styled.div<{ $theme?: Theme }>`
 const PDFViewer = styled.div<{ $theme?: Theme }>`
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    const surfaceColor = typeof surface === 'string' 
-      ? surface 
-      : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
-    return surfaceColor 
+    const surfaceColor =
+      typeof surface === 'string'
+        ? surface
+        : typeof surface === 'object' &&
+            surface !== null &&
+            'primary' in surface
+          ? surface.primary
+          : null;
+    return surfaceColor
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
+      : addOpacity(
+          getThemeColor(props.$theme, 'surface.primary', 'transparent'),
+          0.95
+        );
   }};
   backdrop-filter: blur(20px);
   border-radius: 12px;
   padding: 1rem;
   margin-top: 1rem;
-  border: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    if (typeof border === 'string') {
-      return border;
-    } else if (typeof border === 'object' && border !== null && 'primary' in border) {
-      return border.primary;
-    }
-    return getThemeColor(props.$theme, 'border.primary', 'transparent');
-  }};
+  border: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      if (typeof border === 'string') {
+        return border;
+      } else if (
+        typeof border === 'object' &&
+        border !== null &&
+        'primary' in border
+      ) {
+        return border.primary;
+      }
+      return getThemeColor(props.$theme, 'border.primary', 'transparent');
+    }};
   min-height: 400px;
   display: flex;
   align-items: center;
@@ -773,7 +923,9 @@ export default function PayrollManagement() {
   const [modalOpen, setUnifiedModalOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] =
     useState<PayrollDocument | null>(null);
-  const [selectedPayrollIdForChat, setSelectedPayrollIdForChat] = useState<string | null>(null); // ✅ NOVO: Para comunicação contextual
+  const [selectedPayrollIdForChat, setSelectedPayrollIdForChat] = useState<
+    string | null
+  >(null); // ✅ NOVO: Para comunicação contextual
   const [selectedEmployee, setSelectedEmployee] = useState<string>('');
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -789,9 +941,11 @@ export default function PayrollManagement() {
         if (response.success && response.data) {
           // Filtrar apenas usuários com perfil EMPREGADO
           const employeesData = response.data
-            .filter((user: any) => 
-              user.perfis?.some((p: any) => 
-                p.perfil?.codigo === 'EMPREGADO' || p.perfil?.codigo === 'EMPREGADO'
+            .filter((user: any) =>
+              user.perfis?.some(
+                (p: any) =>
+                  p.perfil?.codigo === 'EMPREGADO' ||
+                  p.perfil?.codigo === 'EMPREGADO'
               )
             )
             .map((user: any) => ({
@@ -808,7 +962,7 @@ export default function PayrollManagement() {
               hireDate: new Date().toISOString().split('T')[0], // Será carregado se houver campo
               status: 'active',
             }));
-          
+
           setEmployees(employeesData);
         }
       } catch (error) {
@@ -902,12 +1056,16 @@ export default function PayrollManagement() {
   };
 
   const handleDownloadDocument = (document: PayrollDocument) => {
-      showSuccess('success.baixando_documento', { tipo: getDocumentTypeName(document.type) });
+    showSuccess('success.baixando_documento', {
+      tipo: getDocumentTypeName(document.type),
+    });
     // Aqui seria implementada a lógica de download
   };
 
   const handlePrintDocument = (document: PayrollDocument) => {
-      showSuccess('success.imprimindo_documento', { tipo: getDocumentTypeName(document.type) });
+    showSuccess('success.imprimindo_documento', {
+      tipo: getDocumentTypeName(document.type),
+    });
     // Aqui seria implementada a lógica de impressão
   };
 
@@ -957,7 +1115,6 @@ export default function PayrollManagement() {
       return matchesPeriod && matchesType && matchesStatus;
     });
   };
-
 
   return (
     <PageContainer $theme={theme} sidebarCollapsed={sidebarCollapsed}>
@@ -1051,8 +1208,7 @@ export default function PayrollManagement() {
               {payrollSummary.paymentDate && (
                 <>
                   <br />
-                  Pago em:{' '}
-                  {formatDate(payrollSummary.paymentDate)}
+                  Pago em: {formatDate(payrollSummary.paymentDate)}
                 </>
               )}
             </SummaryDetails>
@@ -1067,25 +1223,39 @@ export default function PayrollManagement() {
           <PieChart $theme={theme} />
           <ChartLegend>
             <LegendItem $theme={theme}>
-              <LegendColor $color={theme?.colors?.info || theme?.colors?.primary || 'transparent'} $theme={theme} />
+              <LegendColor
+                $color={
+                  theme?.colors?.info || theme?.colors?.primary || 'transparent'
+                }
+                $theme={theme}
+              />
               <span>
                 Salário Base: {formatCurrency(payrollSummary.baseSalary)}
               </span>
             </LegendItem>
             <LegendItem $theme={theme}>
-              <LegendColor $color={theme?.colors?.success || 'transparent'} $theme={theme} />
+              <LegendColor
+                $color={theme?.colors?.success || 'transparent'}
+                $theme={theme}
+              />
               <span>
                 Adicionais: {formatCurrency(payrollSummary.additions.total)}
               </span>
             </LegendItem>
             <LegendItem $theme={theme}>
-              <LegendColor $color={theme?.colors?.error || 'transparent'} $theme={theme} />
+              <LegendColor
+                $color={theme?.colors?.error || 'transparent'}
+                $theme={theme}
+              />
               <span>
                 Descontos: {formatCurrency(payrollSummary.deductions.total)}
               </span>
             </LegendItem>
             <LegendItem $theme={theme}>
-              <LegendColor $color={theme?.colors?.warning || 'transparent'} $theme={theme} />
+              <LegendColor
+                $color={theme?.colors?.warning || 'transparent'}
+                $theme={theme}
+              />
               <span>Líquido: {formatCurrency(payrollSummary.netSalary)}</span>
             </LegendItem>
           </ChartLegend>
@@ -1101,47 +1271,64 @@ export default function PayrollManagement() {
             <OptimizedLabel>Selecionar Funcionário</OptimizedLabel>
             {loadingEmployees ? (
               <EmptyState
-                icon="⏳"
-                title="Carregando funcionários..."
-                description="Aguarde enquanto carregamos os dados"
+                icon='⏳'
+                title='Carregando funcionários...'
+                description='Aguarde enquanto carregamos os dados'
               />
             ) : employees.length === 0 ? (
               <EmptyState
-                icon="👥"
-                title="Nenhum funcionário encontrado"
-                description="Adicione funcionários para começar a gerenciar a folha de pagamento"
+                icon='👥'
+                title='Nenhum funcionário encontrado'
+                description='Adicione funcionários para começar a gerenciar a folha de pagamento'
               />
             ) : (
               employees.map(employee => (
-              <EmployeeCard
-                key={employee.id}
-                $theme={theme}
-                $selected={selectedEmployee === employee.id}
-                onClick={() => setSelectedEmployee(employee.id)}
-              >
-                <EmployeeAvatar
-                  $color={
-                    employee.avatar === 'MS'
-                      ? (typeof theme?.colors?.status?.success === 'object' && theme?.colors?.status?.success && 'background' in theme.colors.status.success ? String((theme.colors.status.success as any).background) : null) ||
-                        (typeof (theme as any)?.status?.success === 'object' && (theme as any)?.status?.success && 'background' in (theme as any).status.success ? String(((theme as any).status.success as any).background) : null) ||
-                        (typeof theme?.colors?.success === 'string' ? theme.colors.success : null) ||
-                        'inherit'
-                      : theme?.colors?.primary ||
-                        (theme as any)?.accent ||
-                        'inherit'
-                  }
+                <EmployeeCard
+                  key={employee.id}
+                  $theme={theme}
+                  $selected={selectedEmployee === employee.id}
+                  onClick={() => setSelectedEmployee(employee.id)}
                 >
-                  {employee.avatar}
-                </EmployeeAvatar>
-                <EmployeeInfo>
-                  <EmployeeName>{employee.name}</EmployeeName>
-                  <EmployeeDetails>
-                    {employee.position} • {formatCurrency(employee.baseSalary)}
-                    /mês
-                  </EmployeeDetails>
-                </EmployeeInfo>
-              </EmployeeCard>
-            ))
+                  <EmployeeAvatar
+                    $color={
+                      employee.avatar === 'MS'
+                        ? (typeof theme?.colors?.status?.success === 'object' &&
+                          theme?.colors?.status?.success &&
+                          'background' in theme.colors.status.success
+                            ? String(
+                                (theme.colors.status.success as any).background
+                              )
+                            : null) ||
+                          (typeof (theme as any)?.status?.success ===
+                            'object' &&
+                          (theme as any)?.status?.success &&
+                          'background' in (theme as any).status.success
+                            ? String(
+                                ((theme as any).status.success as any)
+                                  .background
+                              )
+                            : null) ||
+                          (typeof theme?.colors?.success === 'string'
+                            ? theme.colors.success
+                            : null) ||
+                          'inherit'
+                        : theme?.colors?.primary ||
+                          (theme as any)?.accent ||
+                          'inherit'
+                    }
+                  >
+                    {employee.avatar}
+                  </EmployeeAvatar>
+                  <EmployeeInfo>
+                    <EmployeeName>{employee.name}</EmployeeName>
+                    <EmployeeDetails>
+                      {employee.position} •{' '}
+                      {formatCurrency(employee.baseSalary)}
+                      /mês
+                    </EmployeeDetails>
+                  </EmployeeInfo>
+                </EmployeeCard>
+              ))
             )}
           </EmployeeSelector>
 
@@ -1257,11 +1444,14 @@ export default function PayrollManagement() {
                 </FlexRowBetween>
 
                 <DocumentInfo>
-                  <DocumentTitle $theme={theme}>{document.employeeName}</DocumentTitle>
-                  <DocumentPeriod $theme={theme}>Período: {document.period}</DocumentPeriod>
+                  <DocumentTitle $theme={theme}>
+                    {document.employeeName}
+                  </DocumentTitle>
                   <DocumentPeriod $theme={theme}>
-                    Emissão:{' '}
-                    {formatDate(document.issueDate)}
+                    Período: {document.period}
+                  </DocumentPeriod>
+                  <DocumentPeriod $theme={theme}>
+                    Emissão: {formatDate(document.issueDate)}
                   </DocumentPeriod>
                   <DocumentAmount $theme={theme}>
                     {formatCurrency(document.amount)}
@@ -1324,7 +1514,9 @@ export default function PayrollManagement() {
               <OptimizedSectionTitle $theme={theme}>
                 {selectedDocument.employeeName}
               </OptimizedSectionTitle>
-              <SectionText $theme={theme}>Período: {selectedDocument.period}</SectionText>
+              <SectionText $theme={theme}>
+                Período: {selectedDocument.period}
+              </SectionText>
               <SectionText $theme={theme}>
                 Valor: {formatCurrency(selectedDocument.amount)}
               </SectionText>
@@ -1441,10 +1633,10 @@ export default function PayrollManagement() {
           $theme={theme}
         >
           <ContextualChat
-            contextoTipo="FOLHA"
+            contextoTipo='FOLHA'
             contextoId={selectedPayrollIdForChat}
             titulo={`Comunicação sobre esta Folha de Pagamento`}
-            altura="500px"
+            altura='500px'
             onMensagemEnviada={() => {
               // Recarregar folhas ou atualizar UI se necessário
               // loadPayrolls(); // Se houver função de reload

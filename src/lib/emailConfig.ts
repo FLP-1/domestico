@@ -56,11 +56,15 @@ export const createValidationEmailTemplate = (
 ) => {
   // Usar variáveis de ambiente quando disponíveis, fallback para cores padrão
   const primaryColor = process.env.NEXT_PUBLIC_EMAIL_PRIMARY_COLOR || '#29abe2';
-  const primaryDarkColor = process.env.NEXT_PUBLIC_EMAIL_PRIMARY_DARK_COLOR || '#1e8bc3';
-  const backgroundColor = process.env.NEXT_PUBLIC_EMAIL_BACKGROUND_COLOR || '#f8f9fa';
+  const primaryDarkColor =
+    process.env.NEXT_PUBLIC_EMAIL_PRIMARY_DARK_COLOR || '#1e8bc3';
+  const backgroundColor =
+    process.env.NEXT_PUBLIC_EMAIL_BACKGROUND_COLOR || '#f8f9fa';
   const textColor = process.env.NEXT_PUBLIC_EMAIL_TEXT_COLOR || '#333';
-  const textSecondaryColor = process.env.NEXT_PUBLIC_EMAIL_TEXT_SECONDARY_COLOR || '#666';
-  const textTertiaryColor = process.env.NEXT_PUBLIC_EMAIL_TEXT_TERTIARY_COLOR || '#999';
+  const textSecondaryColor =
+    process.env.NEXT_PUBLIC_EMAIL_TEXT_SECONDARY_COLOR || '#666';
+  const textTertiaryColor =
+    process.env.NEXT_PUBLIC_EMAIL_TEXT_TERTIARY_COLOR || '#999';
 
   return {
     subject: `Código de Validação - ${tipo === 'email' ? 'Email' : 'Telefone'}`,

@@ -3,6 +3,7 @@
 ## 🔍 **ANÁLISE DO ERRO ATUAL**
 
 ### **Status do Build:**
+
 - ✅ **Compilação:** `✓ Compiled successfully in 12.2s`
 - ✅ **Erro anterior corrigido:** Duplicação `dynamic`
 - ❌ **Erro atual:** Prerendering `/esocial-domestico-completo`
@@ -20,6 +21,7 @@
 4. ⚠️ **Pode se repetir** - Se for estrutural, vai aparecer em outros arquivos
 
 ### **Auto-Fix + Refatoração é:**
+
 - ✅ Ótima para correções sistemáticas de código
 - ✅ Garante qualidade
 - ⚠️ MAS é lenta (5-7 horas)
@@ -34,6 +36,7 @@
 **Objetivo:** Resolver o erro estrutural que está bloqueando o build
 
 **Análise do Erro:**
+
 - Erro: `f.div.withConfig.withConfig.b`
 - Indica: Duplicação de `withConfig` em um componente `styled.div`
 - Contexto: Prerendering da página `/esocial-domestico-completo`
@@ -41,15 +44,18 @@
 **Soluções Possíveis (em ordem de prioridade):**
 
 #### **Solução 1: Verificar ServerStyleSheet** ⭐ (Mais Provável)
+
 - Verificar se `_document.tsx` tem `ServerStyleSheet` configurado
 - Se não tiver, adicionar
 - Isso resolve problemas de SSR/prerendering
 
 #### **Solução 2: Adicionar getServerSideProps**
+
 - Adicionar `export const getServerSideProps` na página
 - Força SSR dinâmico, evitando prerendering
 
 #### **Solução 3: Identificar Componente com Duplicação**
+
 - Usar script para encontrar componente exato
 - Corrigir duplicação de `withConfig`
 
@@ -62,6 +68,7 @@
 **Objetivo:** Garantir qualidade completa do código
 
 **Passos:**
+
 1. Após build passar, continuar refatoração
 2. Corrigir problemas sistemáticos
 3. Arquivo por arquivo para qualidade
@@ -82,6 +89,7 @@
 4. ✅ **Mais eficiente** - 30-60 min vs. 5-7 horas de refatoração que pode não resolver
 
 **Plano:**
+
 1. **Agora:** Verificar/corrigir `ServerStyleSheet` + `getServerSideProps` (30-60 min)
 2. **Validar:** Executar build para confirmar
 3. **Depois:** Continuar Auto-Fix + Refatoração sistemática
@@ -91,6 +99,7 @@
 ### **Opção ALTERNATIVA: Auto-Fix + Refatoração Direta**
 
 **Por quê?**
+
 - ✅ Abordagem sistemática
 - ✅ Garante qualidade completa
 - ⚠️ Mas pode levar mais tempo se o erro for estrutural
@@ -103,10 +112,10 @@
 2. **Auto-Fix + Refatoração:** Continuar refatoração sistemática agora
 
 **Minha recomendação:** Opção 1 (Híbrida Focada) porque:
+
 - É mais eficiente
 - Resolve o bloqueio atual
 - Valida antes de continuar
 - Evita retrabalho
 
 Qual faz mais sentido para você?
-

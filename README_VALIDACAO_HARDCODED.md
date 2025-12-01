@@ -19,7 +19,7 @@ npm run validate:all
 1. **Cores Hex** (`#29ABE2`, `#ffffff`, etc.)
 2. **RGB/RGBA Hardcoded** (`rgba(41, 171, 226, 0.5)`, etc.)
 3. **Fallbacks com Cores Hardcoded** (`|| '#29ABE2'`)
-4. **Nomes de Cores Hardcoded** (`white`, `black`, etc.) - *Alguns são falsos positivos*
+4. **Nomes de Cores Hardcoded** (`white`, `black`, etc.) - _Alguns são falsos positivos_
 
 ## ⚠️ Importante
 
@@ -36,4 +36,3 @@ npm run validate:all
 ---
 
 **Para mais informações:** Consulte `PROIBICAO_CORES_HARDCODED.md`
-

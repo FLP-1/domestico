@@ -4,6 +4,7 @@
  * que causam erro: f.div.withConfig.withConfig.b
  */
 
+/* eslint-disable no-console */
 import * as fs from 'fs';
 import * as path from 'path';
 import { glob } from 'glob';
@@ -63,8 +64,7 @@ function analyzeFile(filePath: string): void {
   const directDuplicatePattern = /\.withConfig\s*\([^)]*\)\s*\.withConfig/g;
   let match;
   while ((match = directDuplicatePattern.exec(content)) !== null) {
-    const lineNumber =
-      content.substring(0, match.index).split('\n').length;
+    const lineNumber = content.substring(0, match.index).split('\n').length;
     const lineContent = lines[lineNumber - 1] || '';
 
     // Tentar identificar o componente
@@ -73,7 +73,9 @@ function analyzeFile(filePath: string): void {
       match.index
     );
     const componentMatch = beforeMatch.match(/const\s+(\w+)\s*=\s*styled/);
-    const component = componentMatch ? componentMatch[1] : 'Componente desconhecido';
+    const component = componentMatch
+      ? componentMatch[1]
+      : 'Componente desconhecido';
 
     issues.push({
       file: relativePath,
@@ -92,8 +94,7 @@ function analyzeFile(filePath: string): void {
       'g'
     );
     while ((match = pattern.exec(content)) !== null) {
-      const lineNumber =
-        content.substring(0, match.index).split('\n').length;
+      const lineNumber = content.substring(0, match.index).split('\n').length;
       const lineContent = lines[lineNumber - 1] || '';
 
       // Buscar nome do componente atual
@@ -102,7 +103,9 @@ function analyzeFile(filePath: string): void {
         match.index
       );
       const componentMatch = beforeMatch.match(/const\s+(\w+)\s*=\s*styled/);
-      const component = componentMatch ? componentMatch[1] : 'Componente desconhecido';
+      const component = componentMatch
+        ? componentMatch[1]
+        : 'Componente desconhecido';
 
       issues.push({
         file: relativePath,
@@ -117,11 +120,11 @@ function analyzeFile(filePath: string): void {
   }
 
   // Padrão 3: Componentes que estendem outros componentes styled e adicionam withConfig
-  const styledWithConfigPattern = /styled\s*\(\s*([^)]+)\s*\)\s*\.\s*withConfig/g;
+  const styledWithConfigPattern =
+    /styled\s*\(\s*([^)]+)\s*\)\s*\.\s*withConfig/g;
   while ((match = styledWithConfigPattern.exec(content)) !== null) {
     const extendedComponent = match[1].trim();
-    const lineNumber =
-      content.substring(0, match.index).split('\n').length;
+    const lineNumber = content.substring(0, match.index).split('\n').length;
 
     // Verificar se o componente estendido tem withConfig definido no mesmo arquivo ou importado
     // Buscar definição do componente estendido
@@ -138,7 +141,9 @@ function analyzeFile(filePath: string): void {
           Math.max(0, match.index - 300),
           match.index
         );
-        const currentComponentMatch = beforeMatch.match(/const\s+(\w+)\s*=\s*styled/);
+        const currentComponentMatch = beforeMatch.match(
+          /const\s+(\w+)\s*=\s*styled/
+        );
         const currentComponent = currentComponentMatch
           ? currentComponentMatch[1]
           : 'Componente desconhecido';
@@ -178,13 +183,16 @@ if (issues.length > 0) {
   );
 
   // Agrupar por tipo
-  const grouped = issues.reduce((acc, issue) => {
-    if (!acc[issue.type]) {
-      acc[issue.type] = [];
-    }
-    acc[issue.type].push(issue);
-    return acc;
-  }, {} as Record<string, Issue[]>);
+  const grouped = issues.reduce(
+    (acc, issue) => {
+      if (!acc[issue.type]) {
+        acc[issue.type] = [];
+      }
+      acc[issue.type].push(issue);
+      return acc;
+    },
+    {} as Record<string, Issue[]>
+  );
 
   for (const [type, typeIssues] of Object.entries(grouped)) {
     console.log(`\n=== TIPO: ${type} ===`);
@@ -214,4 +222,3 @@ if (issues.length > 0) {
   console.log('✅ Nenhum problema de duplicação de withConfig encontrado!\n');
   process.exit(0);
 }
-

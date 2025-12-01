@@ -3,10 +3,12 @@
 ## 🎯 Dados Informados
 
 **Coordenadas Reais (Momento Atual):**
+
 - Latitude: `-23.614097`
 - Longitude: `-46.633300`
 
 **Coordenadas Capturadas (Anteriormente):**
+
 - Latitude: `-23.615898`
 - Longitude: `-46.638694`
 
@@ -15,6 +17,7 @@
 **Distância Calculada:** ~585 metros
 
 **Decomposição:**
+
 - Diferença em Latitude: ~200 metros
 - Diferença em Longitude: ~549 metros
 
@@ -22,7 +25,7 @@
 
 ### ✅ O que está CORRETO:
 
-1. **Precisão de Armazenamento:** 
+1. **Precisão de Armazenamento:**
    - Banco de dados usa `DOUBLE PRECISION` (até 15 dígitos significativos)
    - Coordenadas não estão sendo arredondadas antes de salvar
 
@@ -56,6 +59,7 @@
 ### 1. **Verificar Permissões do Navegador**
 
 No Chrome/Edge:
+
 1. Ir em `chrome://settings/content/location`
 2. Verificar se o site tem permissão de "Precisão alta"
 3. Limpar cache e permissões antigas
@@ -70,6 +74,7 @@ No Chrome/Edge:
 ### 3. **Verificar Logs de Precisão**
 
 Os logs agora mostram:
+
 ```
 📍 Coordenadas capturadas: {
   latitude: -23.615898,
@@ -81,6 +86,7 @@ Os logs agora mostram:
 ```
 
 **Se `accuracy` estiver > 100m:**
+
 - GPS não está conseguindo precisão suficiente
 - Pode estar usando localização aproximada (IP/WiFi)
 
@@ -100,16 +106,18 @@ console.log('GPS Info:', {
   altitudeAccuracy: position.coords.altitudeAccuracy,
   heading: position.coords.heading,
   speed: position.coords.speed,
-  timestamp: position.timestamp
+  timestamp: position.timestamp,
 });
 ```
 
 **Indicadores de GPS Real:**
+
 - `altitude` presente (não null)
 - `heading` ou `speed` presentes (movimento)
 - `accuracy` < 50m
 
 **Indicadores de Localização Aproximada:**
+
 - `altitude` null
 - `accuracy` > 100m
 - `heading` e `speed` null
@@ -125,13 +133,15 @@ console.log('GPS Info:', {
 ## 🎯 Expectativa Realista
 
 **GPS em ambiente ideal:**
+
 - Precisão: 5-20 metros ✅
 
 **GPS em ambiente fechado/urbano:**
+
 - Precisão: 50-200 metros ⚠️
 
 **Localização baseada em IP/WiFi:**
+
 - Precisão: 500-5000 metros ❌
 
 Se o `accuracy` reportado pelo GPS estiver > 100m, o problema é a **limitação do GPS do dispositivo/ambiente**, não do código.
-

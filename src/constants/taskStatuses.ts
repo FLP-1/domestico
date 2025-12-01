@@ -1,6 +1,6 @@
 /**
  * 📋 Status de Tarefas Centralizados
- * 
+ *
  * Centraliza todos os status possíveis para tarefas.
  */
 
@@ -10,7 +10,7 @@ export const TASK_STATUSES = {
   COMPLETED: 'completed',
 } as const;
 
-export type TaskStatus = typeof TASK_STATUSES[keyof typeof TASK_STATUSES];
+export type TaskStatus = (typeof TASK_STATUSES)[keyof typeof TASK_STATUSES];
 
 /**
  * Obter label em português para um status
@@ -45,4 +45,3 @@ export function toTaskStatus(status: string): TaskStatus {
   }
   return TASK_STATUSES.TODO;
 }
-

@@ -172,10 +172,10 @@ export const BaseButton = styled.button<{
     return getColor(
       'surface.primary',
       props.$theme?.colors?.text?.primary ||
-      props.$theme?.text?.primary ||
-      props.$theme?.colors?.text ||
-      props.$theme?.colors?.surface ||
-      'inherit'
+        props.$theme?.text?.primary ||
+        props.$theme?.colors?.text ||
+        props.$theme?.colors?.surface ||
+        'inherit'
     );
   }};
 
@@ -369,8 +369,8 @@ export const BaseOverlay = styled.div<{
   bottom: 0;
   background: ${props => {
     if (props.$background) return props.$background;
-    const overlayColor = props.$theme?.colors?.overlay ||
-                        props.$theme?.overlay?.background;
+    const overlayColor =
+      props.$theme?.colors?.overlay || props.$theme?.overlay?.background;
     if (overlayColor && overlayColor.startsWith('#')) {
       const r = parseInt(overlayColor.slice(1, 3), 16);
       const g = parseInt(overlayColor.slice(3, 5), 16);

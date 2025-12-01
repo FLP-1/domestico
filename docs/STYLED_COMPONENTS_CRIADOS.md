@@ -21,17 +21,17 @@ Esta documentação lista todos os styled components criados durante a refatora�
 1. **`FlexContainer`**
    - **Uso:** Container flex com gap
    - **Props:** Nenhuma
+
    ```tsx
-   <FlexContainer>
-     {/* conteúdo */}
-   </FlexContainer>
+   <FlexContainer>{/* conteúdo */}</FlexContainer>
    ```
 
 2. **`StatusSpan`**
    - **Uso:** Span com cor de status dinâmica
    - **Props:** `$statusType`, `$theme`
+
    ```tsx
-   <StatusSpan $statusType="success" $theme={theme}>
+   <StatusSpan $statusType='success' $theme={theme}>
      Texto
    </StatusSpan>
    ```
@@ -39,8 +39,9 @@ Esta documentação lista todos os styled components criados durante a refatora�
 3. **`LinkWithMargin`**
    - **Uso:** Link com margin-top
    - **Props:** `$theme`
+
    ```tsx
-   <LinkWithMargin $theme={theme} href="...">
+   <LinkWithMargin $theme={theme} href='...'>
      Link
    </LinkWithMargin>
    ```
@@ -48,33 +49,31 @@ Esta documentação lista todos os styled components criados durante a refatora�
 4. **`BoxWithMargin`**
    - **Uso:** Box genérico com margin
    - **Props:** `$theme`
+
    ```tsx
-   <BoxWithMargin $theme={theme}>
-     Conteúdo
-   </BoxWithMargin>
+   <BoxWithMargin $theme={theme}>Conteúdo</BoxWithMargin>
    ```
 
 5. **`WarningBoxWithMargin`**
    - **Uso:** WarningBox estendido com margin
    - **Props:** `$theme`
+
    ```tsx
-   <WarningBoxWithMargin $theme={theme}>
-     Aviso
-   </WarningBoxWithMargin>
+   <WarningBoxWithMargin $theme={theme}>Aviso</WarningBoxWithMargin>
    ```
 
 6. **`ErrorBoxWithMargin`**
    - **Uso:** ErrorBox estendido com margin
    - **Props:** `$theme`
+
    ```tsx
-   <ErrorBoxWithMargin $theme={theme}>
-     Erro
-   </ErrorBoxWithMargin>
+   <ErrorBoxWithMargin $theme={theme}>Erro</ErrorBoxWithMargin>
    ```
 
 7. **`List`**
    - **Uso:** Lista `<ul>` com margin e padding
    - **Props:** `$theme`
+
    ```tsx
    <List $theme={theme}>
      <li>Item</li>
@@ -84,6 +83,7 @@ Esta documentação lista todos os styled components criados durante a refatora�
 8. **`SubList`**
    - **Uso:** Sublista com font-size menor
    - **Props:** `$theme`
+
    ```tsx
    <SubList $theme={theme}>
      <li>Subitem</li>
@@ -93,6 +93,7 @@ Esta documentação lista todos os styled components criados durante a refatora�
 9. **`OrderedList`**
    - **Uso:** Lista `<ol>` com margin e padding
    - **Props:** `$theme`
+
    ```tsx
    <OrderedList $theme={theme}>
      <li>Item</li>
@@ -103,9 +104,7 @@ Esta documentação lista todos os styled components criados durante a refatora�
     - **Uso:** Parágrafo com margin e font-size
     - **Props:** `$theme`
     ```tsx
-    <Paragraph $theme={theme}>
-      Texto do parágrafo
-    </Paragraph>
+    <Paragraph $theme={theme}>Texto do parágrafo</Paragraph>
     ```
 
 ---
@@ -117,6 +116,7 @@ Esta documentação lista todos os styled components criados durante a refatora�
 1. **`DocumentNameBold`**
    - **Uso:** Nome do documento em negrito
    - **Props:** Nenhuma
+
    ```tsx
    <DocumentNameBold>Nome do Documento</DocumentNameBold>
    ```
@@ -124,15 +124,15 @@ Esta documentação lista todos os styled components criados durante a refatora�
 2. **`DocumentNumberText`**
    - **Uso:** Texto do número do documento
    - **Props:** `$theme`
+
    ```tsx
-   <DocumentNumberText $theme={theme}>
-     Nº 12345
-   </DocumentNumberText>
+   <DocumentNumberText $theme={theme}>Nº 12345</DocumentNumberText>
    ```
 
 3. **`NoValidityText`**
    - **Uso:** Texto para "Sem validade"
    - **Props:** `$theme`
+
    ```tsx
    <NoValidityText $theme={theme}>Sem validade</NoValidityText>
    ```
@@ -140,8 +140,9 @@ Esta documentação lista todos os styled components criados durante a refatora�
 4. **`BadgeWithMargin`**
    - **Uso:** Badge com margin-left
    - **Props:** Herda props do `UnifiedBadge`
+
    ```tsx
-   <BadgeWithMargin variant="success" theme={theme}>
+   <BadgeWithMargin variant='success' theme={theme}>
      Completo
    </BadgeWithMargin>
    ```
@@ -149,15 +150,15 @@ Esta documentação lista todos os styled components criados durante a refatora�
 5. **`FlexContainer`**
    - **Uso:** Container flex com flex: 1
    - **Props:** Nenhuma
+
    ```tsx
-   <FlexContainer>
-     Conteúdo
-   </FlexContainer>
+   <FlexContainer>Conteúdo</FlexContainer>
    ```
 
 6. **`ChecklistItemName`**
    - **Uso:** Nome do item do checklist
    - **Props:** Nenhuma
+
    ```tsx
    <ChecklistItemName>Nome do Item</ChecklistItemName>
    ```
@@ -180,26 +181,23 @@ Esta documentação lista todos os styled components criados durante a refatora�
 1. **`ProgressBarWithWidth`**
    - **Uso:** ProgressBar com largura fixa
    - **Props:** Herda props do `UnifiedProgressBar`
+
    ```tsx
-   <ProgressBarWithWidth 
-     value={progress} 
-     variant="primary" 
-     theme={theme}
-   />
+   <ProgressBarWithWidth value={progress} variant='primary' theme={theme} />
    ```
 
 2. **`StatCardContent`**
    - **Uso:** Conteúdo centralizado do card de estatística
    - **Props:** Nenhuma
+
    ```tsx
-   <StatCardContent>
-     {/* conteúdo */}
-   </StatCardContent>
+   <StatCardContent>{/* conteúdo */}</StatCardContent>
    ```
 
 3. **`StatNumber`**
    - **Uso:** Número da estatística
    - **Props:** Nenhuma
+
    ```tsx
    <StatNumber>7</StatNumber>
    ```
@@ -220,6 +218,7 @@ Esta documentação lista todos os styled components criados durante a refatora�
 1. **`FormGroupFlex`**
    - **Uso:** FormGroup com flex: 1
    - **Props:** Herda props do `FormGroup`
+
    ```tsx
    <FormGroupFlex>
      <Label>Campo</Label>
@@ -230,17 +229,15 @@ Esta documentação lista todos os styled components criados durante a refatora�
 2. **`InputNumberStyled`**
    - **Uso:** Input com estilos para números (remove setas)
    - **Props:** Herda props do `Input`
+
    ```tsx
-   <InputNumberStyled 
-     $theme={theme}
-     type="text"
-     value={value}
-   />
+   <InputNumberStyled $theme={theme} type='text' value={value} />
    ```
 
 3. **`FlexRowBetween`**
    - **Uso:** Linha flex com espaço entre elementos
    - **Props:** Nenhuma
+
    ```tsx
    <FlexRowBetween>
      <Elemento1 />
@@ -252,9 +249,7 @@ Esta documentação lista todos os styled components criados durante a refatora�
    - **Uso:** Seção com margin-bottom
    - **Props:** Nenhuma
    ```tsx
-   <SectionWithMargin>
-     Conteúdo da seção
-   </SectionWithMargin>
+   <SectionWithMargin>Conteúdo da seção</SectionWithMargin>
    ```
 
 ---
@@ -266,15 +261,15 @@ Esta documentação lista todos os styled components criados durante a refatora�
 1. **`HiddenLabel`**
    - **Uso:** Label oculto para acessibilidade
    - **Props:** Herda props do `label`
+
    ```tsx
-   <HiddenLabel htmlFor="input-id">
-     Label oculto
-   </HiddenLabel>
+   <HiddenLabel htmlFor='input-id'>Label oculto</HiddenLabel>
    ```
 
 2. **`TimestampContainer`**
    - **Uso:** Container para timestamp alinhado à direita
    - **Props:** Nenhuma
+
    ```tsx
    <TimestampContainer>
      <Timestamp $theme={theme}>Data</Timestamp>
@@ -284,6 +279,7 @@ Esta documentação lista todos os styled components criados durante a refatora�
 3. **`TimestampContainerBetween`**
    - **Uso:** Container para timestamp com espaço entre elementos
    - **Props:** Nenhuma
+
    ```tsx
    <TimestampContainerBetween>
      <Timestamp $theme={theme}>Data</Timestamp>
@@ -294,9 +290,7 @@ Esta documentação lista todos os styled components criados durante a refatora�
    - **Uso:** Título da seção JSON
    - **Props:** `$theme`
    ```tsx
-   <JsonSectionTitle $theme={theme}>
-     Dados Anteriores:
-   </JsonSectionTitle>
+   <JsonSectionTitle $theme={theme}>Dados Anteriores:</JsonSectionTitle>
    ```
 
 ---
@@ -304,27 +298,34 @@ Esta documentação lista todos os styled components criados durante a refatora�
 ### **6. Outros Arquivos**
 
 #### **`time-clock.tsx`**
+
 - **`ButtonContainerRight`** - Container de botão alinhado à direita
 
 #### **`payroll-management.tsx`**
+
 - **`FlexRowBetween`** - Linha flex com espaço entre elementos
 
 #### **`index.tsx`**
+
 - **`FooterTextWithMargin`** - Texto do footer com margin-top
 
 #### **`geofencing/locais.tsx`**
+
 - **`FooterActions`** - Ações do footer com gap e margin
 
 #### **`subscription-plans.tsx`**
+
 - **`SectionWithMargin`** - Seção com margin-bottom
 
 #### **`shopping-management-backup.tsx`**
+
 - **`FormGroupFlex`** - FormGroup com flex: 1
 - **`FlexRowBetween`** - Linha flex com espaço entre elementos
 - **`SectionWithMargin`** - Seção com margin-bottom
 - **`InputFlex`** - Input com flex: 1
 
 #### **`document-management-backup-old.tsx`**
+
 - **`DocumentInfoContainer`** - Container de informações do documento
 - **`DocumentInfoTitle`** - Título das informações do documento
 
@@ -373,7 +374,7 @@ const Component = styled.div<{ theme?: Theme }>`
 
 ```tsx
 const Component = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -425,4 +426,3 @@ const BadgeWithMargin = styled.div`
 
 **Última atualização:** 08/01/2025  
 **Mantido por:** Equipe de Desenvolvimento DOM
-

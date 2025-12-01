@@ -12,22 +12,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Instalar dependências
         run: npm ci
-      
+
       - name: Executar ESLint
         run: npm run lint:check
-      
+
       - name: Verificar tipos TypeScript
         run: npm run type-check
-      
+
       - name: Verificar formatação
         run: npm run format:check
 
@@ -36,19 +36,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Instalar dependências
         run: npm ci
-      
+
       - name: Executar testes unitários
         run: npm run test:unit
-      
+
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         if: always()
@@ -72,25 +72,25 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-    
+
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dom_test
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Instalar dependências
         run: npm ci
-      
+
       - name: Executar migrations
         run: npx prisma migrate deploy
-      
+
       - name: Executar testes de integração
         run: npm run test:integration
 
@@ -99,25 +99,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Instalar dependências
         run: npm ci
-      
+
       - name: Instalar Playwright
         run: npx playwright install --with-deps
-      
+
       - name: Build da aplicação
         run: npm run build
-      
+
       - name: Executar testes E2E
         run: npm run test:e2e
-      
+
       - name: Upload resultados
         uses: actions/upload-artifact@v3
         if: always()
@@ -132,19 +132,19 @@ jobs:
     needs: [lint, test-unit]
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Instalar dependências
         run: npm ci
-      
+
       - name: Build
         run: npm run build
-      
+
       - name: Verificar build
         run: |
           if [ ! -d ".next" ]; then
@@ -157,23 +157,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Instalar dependências
         run: npm ci
-      
+
       - name: Executar testes com cobertura
         run: npm run test:coverage
-      
+
       - name: Upload coverage para Codecov
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage/lcov.info
           fail_ci_if_error: false
           flags: unittests
-

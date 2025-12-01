@@ -272,14 +272,20 @@ const ComparisonTitle = styled.h2`
 const ComparisonTable = styled.div`
   overflow-x: auto;
   border-radius: 12px;
-  border: 1px solid ${typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border};
+  border: 1px solid
+    ${typeof publicColors.border === 'object'
+      ? publicColors.border.light
+      : publicColors.border};
 `;
 
 const TableHeader = styled.div`
   display: grid;
   grid-template-columns: 2fr repeat(5, 1fr);
   background: ${publicColors.background};
-  border-bottom: 2px solid ${typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border};
+  border-bottom: 2px solid
+    ${typeof publicColors.border === 'object'
+      ? publicColors.border.light
+      : publicColors.border};
 `;
 
 const TableHeaderCell = styled.div`
@@ -287,7 +293,10 @@ const TableHeaderCell = styled.div`
   font-weight: 600;
   color: ${publicColors.text.primary};
   text-align: center;
-  border-right: 1px solid ${typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border};
+  border-right: 1px solid
+    ${typeof publicColors.border === 'object'
+      ? publicColors.border.light
+      : publicColors.border};
   font-size: 0.9rem;
 
   &:last-child {
@@ -298,7 +307,10 @@ const TableHeaderCell = styled.div`
 const TableRow = styled.div`
   display: grid;
   grid-template-columns: 2fr repeat(5, 1fr);
-  border-bottom: 1px solid ${typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border};
+  border-bottom: 1px solid
+    ${typeof publicColors.border === 'object'
+      ? publicColors.border.light
+      : publicColors.border};
 
   &:last-child {
     border-bottom: none;
@@ -308,7 +320,10 @@ const TableRow = styled.div`
 const TableCell = styled.div`
   padding: 1rem;
   text-align: center;
-  border-right: 1px solid ${typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border};
+  border-right: 1px solid
+    ${typeof publicColors.border === 'object'
+      ? publicColors.border.light
+      : publicColors.border};
   font-size: 0.9rem;
   color: ${publicColors.text.primary};
 
@@ -458,7 +473,11 @@ const Rating = styled.div`
 
 const Star = styled.span<{ $filled: boolean }>`
   color: ${props =>
-    props.$filled ? publicColors.warning : (typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border)};
+    props.$filled
+      ? publicColors.warning
+      : typeof publicColors.border === 'object'
+        ? publicColors.border.light
+        : publicColors.border};
   font-size: 1rem;
 `;
 

@@ -68,7 +68,7 @@ export function useFeatureFlags(keys: string[]): Record<string, boolean> {
 
         // Filtrar apenas as keys solicitadas
         const filteredFlags: Record<string, boolean> = {};
-        keys.forEach((key) => {
+        keys.forEach(key => {
           filteredFlags[key] = allFlags[key] ?? false;
         });
 
@@ -112,4 +112,3 @@ export function useFeatureFlagLoading(): boolean {
 
   return loading;
 }
-

@@ -11,6 +11,7 @@ Todas as funções foram migradas para usar o API Client centralizado.
 ### **1. Carregamento de Alertas** ✅
 
 **ANTES:**
+
 ```typescript
 const [alerts, setAlerts] = useState<Alert[]>([]);
 const [loadingAlerts, setLoadingAlerts] = useState(true);
@@ -30,17 +31,20 @@ useEffect(() => {
 ```
 
 **DEPOIS:**
+
 ```typescript
-const { data: alertsData, loading: loadingAlerts, refetch: reloadAlerts } = useDataFetch(
-  () => apiClient.alerts.getAll(),
-  {
-    mapper: (apiData) => apiData.map(/* transformação */),
-    onError: () => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
-  }
-);
+const {
+  data: alertsData,
+  loading: loadingAlerts,
+  refetch: reloadAlerts,
+} = useDataFetch(() => apiClient.alerts.getAll(), {
+  mapper: apiData => apiData.map(/* transformação */),
+  onError: () => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
+});
 ```
 
 **Benefícios:**
+
 - ✅ Redução de ~50 linhas de código
 - ✅ Tratamento de erro automático
 - ✅ Loading state gerenciado automaticamente
@@ -51,6 +55,7 @@ const { data: alertsData, loading: loadingAlerts, refetch: reloadAlerts } = useD
 ### **2. Criar Alerta** ✅
 
 **ANTES:**
+
 ```typescript
 const handleCreateAlert = async (e: React.FormEvent) => {
   try {
@@ -71,6 +76,7 @@ const handleCreateAlert = async (e: React.FormEvent) => {
 ```
 
 **DEPOIS:**
+
 ```typescript
 const { execute: createAlert } = useAsyncOperation({
   onSuccess: () => {
@@ -91,6 +97,7 @@ const handleCreateAlert = (e: React.FormEvent) => {
 ```
 
 **Benefícios:**
+
 - ✅ Redução de ~30 linhas de código
 - ✅ Tratamento de erro centralizado
 - ✅ Loading state automático
@@ -101,6 +108,7 @@ const handleCreateAlert = (e: React.FormEvent) => {
 ### **3. Atualizar Alerta** ✅
 
 **ANTES:**
+
 ```typescript
 const handleUpdateAlert = async (e: React.FormEvent) => {
   try {
@@ -116,6 +124,7 @@ const handleUpdateAlert = async (e: React.FormEvent) => {
 ```
 
 **DEPOIS:**
+
 ```typescript
 const { execute: updateAlert } = useAsyncOperation({
   onSuccess: () => {
@@ -136,6 +145,7 @@ const handleUpdateAlert = (e: React.FormEvent) => {
 ```
 
 **Benefícios:**
+
 - ✅ Redução de ~35 linhas de código
 - ✅ Consistência com outras operações
 - ✅ Tratamento de erro padronizado
@@ -145,6 +155,7 @@ const handleUpdateAlert = (e: React.FormEvent) => {
 ### **4. Alternar Status** ✅
 
 **ANTES:**
+
 ```typescript
 const handleToggleAlertStatus = async (id: string) => {
   try {
@@ -160,6 +171,7 @@ const handleToggleAlertStatus = async (id: string) => {
 ```
 
 **DEPOIS:**
+
 ```typescript
 const { execute: toggleStatus } = useAsyncOperation({
   onSuccess: () => {
@@ -180,6 +192,7 @@ const handleToggleAlertStatus = (id: string) => {
 ```
 
 **Benefícios:**
+
 - ✅ Redução de ~25 linhas de código
 - ✅ Código mais funcional e limpo
 - ✅ Reutilização do hook
@@ -189,6 +202,7 @@ const handleToggleAlertStatus = (id: string) => {
 ### **5. Excluir Alerta** ✅
 
 **ANTES:**
+
 ```typescript
 const handleDeleteAlert = async (id: string) => {
   try {
@@ -203,6 +217,7 @@ const handleDeleteAlert = async (id: string) => {
 ```
 
 **DEPOIS:**
+
 ```typescript
 const { execute: deleteAlert } = useAsyncOperation({
   onSuccess: () => {
@@ -220,6 +235,7 @@ const handleDeleteAlert = (id: string) => {
 ```
 
 **Benefícios:**
+
 - ✅ Redução de ~20 linhas de código
 - ✅ Consistência total com outras operações
 
@@ -276,4 +292,3 @@ const handleDeleteAlert = (id: string) => {
 - O método `update` no API Client usa `PATCH` em vez de `PUT` (padrão REST)
 - A função `reloadAlerts` agora vem do hook `useDataFetch` como `refetch`
 - Todos os imports não utilizados foram removidos (`useCallback`)
-

@@ -8,7 +8,8 @@ export default async function handler(
   try {
     // POST: Registrar nova mensagem no histórico
     if (req.method === 'POST') {
-      const { usuarioId, tipo, titulo, mensagem, origem, alertaId, duracao } = req.body;
+      const { usuarioId, tipo, titulo, mensagem, origem, alertaId, duracao } =
+        req.body;
 
       if (!mensagem || !tipo || !origem) {
         return res.status(400).json({
@@ -49,7 +50,9 @@ export default async function handler(
 
         if (!validUsuarioId) {
           // Se usuarioId não existe, usar null (mensagem sem usuário específico)
-          console.warn(`UsuarioId/PerfilId ${usuarioId} não encontrado, criando mensagem sem usuário`);
+          console.warn(
+            `UsuarioId/PerfilId ${usuarioId} não encontrado, criando mensagem sem usuário`
+          );
         }
       }
 
@@ -63,7 +66,9 @@ export default async function handler(
           validAlertaId = alertaId;
         } else {
           // Se alertaId não existe, usar null
-          console.warn(`AlertaId ${alertaId} não encontrado, criando mensagem sem alerta`);
+          console.warn(
+            `AlertaId ${alertaId} não encontrado, criando mensagem sem alerta`
+          );
         }
       }
 

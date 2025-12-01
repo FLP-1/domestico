@@ -46,13 +46,13 @@ function AppContent({ Component, pageProps }: AppProps) {
     ) {
       navigator.serviceWorker
         .register('/sw.js')
-        .then((registration) => {
+        .then(registration => {
           if (process.env.NODE_ENV === 'development') {
             // eslint-disable-next-line no-console
             console.log('Service Worker registrado:', registration);
           }
         })
-        .catch((error) => {
+        .catch(error => {
           if (process.env.NODE_ENV === 'development') {
             // eslint-disable-next-line no-console
             console.warn('Falha ao registrar Service Worker:', error);
@@ -64,14 +64,16 @@ function AppContent({ Component, pageProps }: AppProps) {
   // Inicializar feature flags padrão (apenas no servidor)
   useEffect(() => {
     if (typeof window === 'undefined') {
-      import('../lib/featureFlags').then(({ initializeDefaultFeatureFlags }) => {
-        initializeDefaultFeatureFlags().catch((error) => {
-          if (process.env.NODE_ENV === 'development') {
-            // eslint-disable-next-line no-console
-            console.warn('Erro ao inicializar feature flags:', error);
-          }
-        });
-      });
+      import('../lib/featureFlags').then(
+        ({ initializeDefaultFeatureFlags }) => {
+          initializeDefaultFeatureFlags().catch(error => {
+            if (process.env.NODE_ENV === 'development') {
+              // eslint-disable-next-line no-console
+              console.warn('Erro ao inicializar feature flags:', error);
+            }
+          });
+        }
+      );
     }
   }, []);
 
@@ -93,7 +95,9 @@ function AppContent({ Component, pageProps }: AppProps) {
 
     // Adicionar listeners para detectar primeira interação
     window.addEventListener('click', handleFirstInteraction, { once: true });
-    window.addEventListener('touchstart', handleFirstInteraction, { once: true });
+    window.addEventListener('touchstart', handleFirstInteraction, {
+      once: true,
+    });
     window.addEventListener('keydown', handleFirstInteraction, { once: true });
 
     return () => {
@@ -125,77 +129,82 @@ function AppContent({ Component, pageProps }: AppProps) {
 
     try {
       // ✅ Usar watchPosition para forçar GPS real (não IP/WiFi aproximado)
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        let watchId: number | null = null;
-        let bestPos: GeolocationPosition | null = null;
-        let bestAccuracy = Infinity;
-        let positionsReceived = 0;
-        
-        const watchTimeout = setTimeout(() => {
-          if (watchId !== null) {
-            navigator.geolocation.clearWatch(watchId);
-            watchId = null;
-          }
-          if (bestPos) {
-            resolve(bestPos);
-          } else {
-            reject(new Error('Timeout na captura de geolocalização'));
-          }
-        }, 30000); // 30 segundos para GPS estabilizar
+      const position = await new Promise<GeolocationPosition>(
+        (resolve, reject) => {
+          let watchId: number | null = null;
+          let bestPos: GeolocationPosition | null = null;
+          let bestAccuracy = Infinity;
+          let positionsReceived = 0;
 
-        watchId = navigator.geolocation.watchPosition(
-          (pos) => {
-            positionsReceived++;
-            
-            // ✅ Aceitar apenas se accuracy for boa (< 200m) - ignorar coordenadas ruins (IP)
-            // Não atualizar bestPos se accuracy > 1000m (localização por IP)
-            if (pos.coords.accuracy < 1000 && pos.coords.accuracy < bestAccuracy) {
-              bestPos = pos;
-              bestAccuracy = pos.coords.accuracy;
-              
-              // Se accuracy muito boa (< 50m), aceitar imediatamente
-              if (pos.coords.accuracy < 50) {
+          const watchTimeout = setTimeout(() => {
+            if (watchId !== null) {
+              navigator.geolocation.clearWatch(watchId);
+              watchId = null;
+            }
+            if (bestPos) {
+              resolve(bestPos);
+            } else {
+              reject(new Error('Timeout na captura de geolocalização'));
+            }
+          }, 30000); // 30 segundos para GPS estabilizar
+
+          watchId = navigator.geolocation.watchPosition(
+            pos => {
+              positionsReceived++;
+
+              // ✅ Aceitar apenas se accuracy for boa (< 200m) - ignorar coordenadas ruins (IP)
+              // Não atualizar bestPos se accuracy > 1000m (localização por IP)
+              if (
+                pos.coords.accuracy < 1000 &&
+                pos.coords.accuracy < bestAccuracy
+              ) {
+                bestPos = pos;
+                bestAccuracy = pos.coords.accuracy;
+
+                // Se accuracy muito boa (< 50m), aceitar imediatamente
+                if (pos.coords.accuracy < 50) {
+                  clearTimeout(watchTimeout);
+                  if (watchId !== null) {
+                    navigator.geolocation.clearWatch(watchId);
+                    watchId = null;
+                  }
+                  resolve(pos);
+                  return;
+                }
+              }
+
+              // ✅ Após 2 posições recebidas (reduzido de 3), usar a melhor se accuracy < 200m
+              // Isso permite atualização mais rápida ao mudar de página
+              if (positionsReceived >= 2 && bestPos && bestAccuracy < 200) {
                 clearTimeout(watchTimeout);
                 if (watchId !== null) {
                   navigator.geolocation.clearWatch(watchId);
                   watchId = null;
                 }
-                resolve(pos);
-                return;
+                resolve(bestPos);
               }
-            }
-            
-            // ✅ Após 2 posições recebidas (reduzido de 3), usar a melhor se accuracy < 200m
-            // Isso permite atualização mais rápida ao mudar de página
-            if (positionsReceived >= 2 && bestPos && bestAccuracy < 200) {
+            },
+            error => {
               clearTimeout(watchTimeout);
               if (watchId !== null) {
                 navigator.geolocation.clearWatch(watchId);
                 watchId = null;
               }
-              resolve(bestPos);
+              reject(error);
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 30000,
+              maximumAge: 0, // Forçar nova captura sempre
             }
-          },
-          (error) => {
-            clearTimeout(watchTimeout);
-            if (watchId !== null) {
-              navigator.geolocation.clearWatch(watchId);
-              watchId = null;
-            }
-            reject(error);
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 30000,
-            maximumAge: 0, // Forçar nova captura sempre
-          }
-        );
-      });
-      
+          );
+        }
+      );
+
       // Obter endereço via geocoding
       let address = 'Endereço indisponível';
       let addressComponents = null;
-      
+
       try {
         const geocodingResponse = await fetch(
           `/api/geocoding/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&zoom=18`
@@ -203,14 +212,17 @@ function AppContent({ Component, pageProps }: AppProps) {
         if (geocodingResponse.ok) {
           const geocodingData = await geocodingResponse.json();
           if (geocodingData.success) {
-            address = geocodingData.formattedAddress || geocodingData.address || address;
+            address =
+              geocodingData.formattedAddress ||
+              geocodingData.address ||
+              address;
             addressComponents = geocodingData.components || null;
           }
         }
       } catch (geocodingError) {
         // Ignorar erros de geocoding
       }
-      
+
       if (position) {
         updateLastLocationIfBetter({
           latitude: position.coords.latitude,
@@ -226,7 +238,8 @@ function AppContent({ Component, pageProps }: AppProps) {
     } catch (error) {
       // Silenciosamente falhar - não bloquear navegação
       // Não logar timeouts ou violações de política (são esperados)
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       if (
         !errorMessage.includes('user gesture') &&
         !errorMessage.includes('Timeout')
@@ -281,13 +294,13 @@ function AppContent({ Component, pageProps }: AppProps) {
 
     const handleRouteChange = async () => {
       setKey(prev => prev + 1);
-      
+
       // ✅ 3. Capturar localização antes de mostrar qualquer página (exceto login)
       if (router.pathname !== '/login') {
         // Capturar localização antes de mostrar a página
         await captureLocationBeforePage();
       }
-      
+
       // Só hidratar dados se não estivermos na página de login
       if (router.pathname !== '/login') {
         // Hidratar "última captura usada no registro" do servidor
@@ -483,14 +496,16 @@ export default function App(props: AppProps) {
   // Inicializar Sentry quando disponível
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      import('../lib/sentry').then(({ initSentry }) => {
-        initSentry({
-          environment: process.env.NODE_ENV,
-          release: process.env.NEXT_PUBLIC_APP_VERSION,
+      import('../lib/sentry')
+        .then(({ initSentry }) => {
+          initSentry({
+            environment: process.env.NODE_ENV,
+            release: process.env.NEXT_PUBLIC_APP_VERSION,
+          });
+        })
+        .catch(() => {
+          // Sentry não disponível, continuar sem ele
         });
-      }).catch(() => {
-        // Sentry não disponível, continuar sem ele
-      });
     }
   }, []);
 

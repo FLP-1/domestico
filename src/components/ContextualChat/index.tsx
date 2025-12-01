@@ -1,7 +1,7 @@
 /**
  * Componente: ContextualChat
  * Sistema DOM - Comunicação Contextual Simplificada
- * 
+ *
  * Componente reutilizável para comunicação contextual vinculada a:
  * - Ponto (Registro de Ponto)
  * - Tarefa
@@ -50,16 +50,38 @@ const ChatContainer = styled.div<{ $theme?: any; $altura?: string }>`
   display: flex;
   flex-direction: column;
   height: ${props => props.$altura || '500px'};
-  background-color: ${props => getThemeColor(props.$theme, ['colors', 'background', 'primary'], 'transparent')};
-  border: 1px solid ${props => getThemeColor(props.$theme, ['colors', 'border', 'primary'], 'transparent')};
+  background-color: ${props =>
+    getThemeColor(
+      props.$theme,
+      ['colors', 'background', 'primary'],
+      'transparent'
+    )};
+  border: 1px solid
+    ${props =>
+      getThemeColor(
+        props.$theme,
+        ['colors', 'border', 'primary'],
+        'transparent'
+      )};
   border-radius: 8px;
   overflow: hidden;
 `;
 
 const ChatHeader = styled.div<{ $theme?: any }>`
   padding: 1rem;
-  background-color: ${props => getThemeColor(props.$theme, ['colors', 'background', 'secondary'], 'transparent')};
-  border-bottom: 1px solid ${props => getThemeColor(props.$theme, ['colors', 'border', 'primary'], 'transparent')};
+  background-color: ${props =>
+    getThemeColor(
+      props.$theme,
+      ['colors', 'background', 'secondary'],
+      'transparent'
+    )};
+  border-bottom: 1px solid
+    ${props =>
+      getThemeColor(
+        props.$theme,
+        ['colors', 'border', 'primary'],
+        'transparent'
+      )};
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -69,7 +91,8 @@ const ChatTitle = styled.h3<{ $theme?: any }>`
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: ${props => getThemeColor(props.$theme, ['colors', 'text', 'primary'], 'inherit')};
+  color: ${props =>
+    getThemeColor(props.$theme, ['colors', 'text', 'primary'], 'inherit')};
 `;
 
 const ChatMessages = styled.div`
@@ -81,26 +104,51 @@ const ChatMessages = styled.div`
   gap: 0.75rem;
 `;
 
-const MensagemItem = styled.div<{ $theme?: any; $isOwn?: boolean; $isAlerta?: boolean }>`
+const MensagemItem = styled.div<{
+  $theme?: any;
+  $isOwn?: boolean;
+  $isAlerta?: boolean;
+}>`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  align-self: ${props => props.$isOwn ? 'flex-end' : 'flex-start'};
+  align-self: ${props => (props.$isOwn ? 'flex-end' : 'flex-start')};
   max-width: 70%;
   padding: 0.75rem;
   background-color: ${props => {
     if (props.$isAlerta) {
-      return getThemeColor(props.$theme, ['colors', 'status', 'warning', 'background'], 'transparent') ||
-             getThemeColor(props.$theme, ['status', 'warning', 'background'], 'transparent');
+      return (
+        getThemeColor(
+          props.$theme,
+          ['colors', 'status', 'warning', 'background'],
+          'transparent'
+        ) ||
+        getThemeColor(
+          props.$theme,
+          ['status', 'warning', 'background'],
+          'transparent'
+        )
+      );
     }
     return props.$isOwn
       ? getThemeColor(props.$theme, ['colors', 'primary'], 'transparent') ||
-        getThemeColor(props.$theme, ['accent'], 'transparent')
-      : getThemeColor(props.$theme, ['colors', 'background', 'secondary'], 'transparent') ||
-        getThemeColor(props.$theme, ['background', 'secondary'], 'transparent');
+          getThemeColor(props.$theme, ['accent'], 'transparent')
+      : getThemeColor(
+          props.$theme,
+          ['colors', 'background', 'secondary'],
+          'transparent'
+        ) ||
+          getThemeColor(
+            props.$theme,
+            ['background', 'secondary'],
+            'transparent'
+          );
   }};
   border-radius: 8px;
-  border: ${props => props.$isAlerta ? `1px solid ${getThemeColor(props.$theme, ['colors', 'status', 'warning', 'border'], 'transparent') || getThemeColor(props.$theme, ['status', 'warning', 'border'], 'transparent')}` : 'none'};
+  border: ${props =>
+    props.$isAlerta
+      ? `1px solid ${getThemeColor(props.$theme, ['colors', 'status', 'warning', 'border'], 'transparent') || getThemeColor(props.$theme, ['status', 'warning', 'border'], 'transparent')}`
+      : 'none'};
 `;
 
 const MensagemHeader = styled.div<{ $theme?: any }>`
@@ -113,35 +161,52 @@ const MensagemHeader = styled.div<{ $theme?: any }>`
 const MensagemRemetente = styled.span<{ $theme?: any }>`
   font-weight: 600;
   font-size: 0.875rem;
-  color: ${props => getThemeColor(props.$theme, ['colors', 'text', 'primary'], 'inherit') ||
-                    getThemeColor(props.$theme, ['text', 'primary'], 'inherit') ||
-                    getThemeColor(props.$theme, ['colors', 'text'], 'inherit')};
+  color: ${props =>
+    getThemeColor(props.$theme, ['colors', 'text', 'primary'], 'inherit') ||
+    getThemeColor(props.$theme, ['text', 'primary'], 'inherit') ||
+    getThemeColor(props.$theme, ['colors', 'text'], 'inherit')};
 `;
 
 const MensagemData = styled.span<{ $theme?: any }>`
   font-size: 0.75rem;
-  color: ${props => getThemeColor(props.$theme, ['colors', 'text', 'secondary'], 'inherit') ||
-                    getThemeColor(props.$theme, ['text', 'secondary'], 'inherit') ||
-                    getThemeColor(props.$theme, ['colors', 'text'], 'inherit')};
+  color: ${props =>
+    getThemeColor(props.$theme, ['colors', 'text', 'secondary'], 'inherit') ||
+    getThemeColor(props.$theme, ['text', 'secondary'], 'inherit') ||
+    getThemeColor(props.$theme, ['colors', 'text'], 'inherit')};
 `;
 
 const MensagemConteudo = styled.div<{ $theme?: any; $isOwn?: boolean }>`
-  color: ${props => props.$isOwn 
-    ? getThemeColor(props.$theme, ['colors', 'text', 'onPrimary'], 'inherit') ||
-      getThemeColor(props.$theme, ['text', 'onPrimary'], 'inherit') ||
-      getThemeColor(props.$theme, ['colors', 'surface'], 'inherit')
-    : getThemeColor(props.$theme, ['colors', 'text', 'primary'], 'inherit') ||
-      getThemeColor(props.$theme, ['text', 'primary'], 'inherit') ||
-      getThemeColor(props.$theme, ['colors', 'text'], 'inherit')};
+  color: ${props =>
+    props.$isOwn
+      ? getThemeColor(
+          props.$theme,
+          ['colors', 'text', 'onPrimary'],
+          'inherit'
+        ) ||
+        getThemeColor(props.$theme, ['text', 'onPrimary'], 'inherit') ||
+        getThemeColor(props.$theme, ['colors', 'surface'], 'inherit')
+      : getThemeColor(props.$theme, ['colors', 'text', 'primary'], 'inherit') ||
+        getThemeColor(props.$theme, ['text', 'primary'], 'inherit') ||
+        getThemeColor(props.$theme, ['colors', 'text'], 'inherit')};
   word-wrap: break-word;
 `;
 
 const ChatInputContainer = styled.div<{ $theme?: any }>`
   padding: 1rem;
-  border-top: 1px solid ${props => getThemeColor(props.$theme, ['colors', 'border', 'primary'], 'transparent') ||
-                                   getThemeColor(props.$theme, ['border', 'primary'], 'transparent') ||
-                                   getThemeColor(props.$theme, ['colors', 'border', 'light'], 'transparent') ||
-                                   getThemeColor(props.$theme, ['border', 'light'], 'transparent')};
+  border-top: 1px solid
+    ${props =>
+      getThemeColor(
+        props.$theme,
+        ['colors', 'border', 'primary'],
+        'transparent'
+      ) ||
+      getThemeColor(props.$theme, ['border', 'primary'], 'transparent') ||
+      getThemeColor(
+        props.$theme,
+        ['colors', 'border', 'light'],
+        'transparent'
+      ) ||
+      getThemeColor(props.$theme, ['border', 'light'], 'transparent')};
   display: flex;
   gap: 0.5rem;
 `;
@@ -149,26 +214,42 @@ const ChatInputContainer = styled.div<{ $theme?: any }>`
 const ChatInput = styled.textarea<{ $theme?: any }>`
   flex: 1;
   padding: 0.75rem;
-  border: 1px solid ${props => getThemeColor(props.$theme, ['colors', 'border', 'primary'], 'transparent') ||
-                               getThemeColor(props.$theme, ['border', 'primary'], 'transparent') ||
-                               getThemeColor(props.$theme, ['colors', 'border', 'light'], 'transparent') ||
-                               getThemeColor(props.$theme, ['border', 'light'], 'transparent')};
+  border: 1px solid
+    ${props =>
+      getThemeColor(
+        props.$theme,
+        ['colors', 'border', 'primary'],
+        'transparent'
+      ) ||
+      getThemeColor(props.$theme, ['border', 'primary'], 'transparent') ||
+      getThemeColor(
+        props.$theme,
+        ['colors', 'border', 'light'],
+        'transparent'
+      ) ||
+      getThemeColor(props.$theme, ['border', 'light'], 'transparent')};
   border-radius: 8px;
   font-size: 0.875rem;
   font-family: inherit;
   resize: none;
   min-height: 60px;
   max-height: 120px;
-  background-color: ${props => getThemeColor(props.$theme, ['colors', 'background', 'primary'], 'transparent') ||
-                               getThemeColor(props.$theme, ['background', 'primary'], 'transparent')};
-  color: ${props => getThemeColor(props.$theme, ['colors', 'text', 'primary'], 'inherit') ||
-                    getThemeColor(props.$theme, ['text', 'primary'], 'inherit') ||
-                    getThemeColor(props.$theme, ['colors', 'text'], 'inherit')};
+  background-color: ${props =>
+    getThemeColor(
+      props.$theme,
+      ['colors', 'background', 'primary'],
+      'transparent'
+    ) || getThemeColor(props.$theme, ['background', 'primary'], 'transparent')};
+  color: ${props =>
+    getThemeColor(props.$theme, ['colors', 'text', 'primary'], 'inherit') ||
+    getThemeColor(props.$theme, ['text', 'primary'], 'inherit') ||
+    getThemeColor(props.$theme, ['colors', 'text'], 'inherit')};
 
   &:focus {
     outline: none;
-    border-color: ${props => getThemeColor(props.$theme, ['colors', 'primary'], 'transparent') ||
-                             getThemeColor(props.$theme, ['accent'], 'transparent')};
+    border-color: ${props =>
+      getThemeColor(props.$theme, ['colors', 'primary'], 'transparent') ||
+      getThemeColor(props.$theme, ['accent'], 'transparent')};
   }
 `;
 
@@ -178,9 +259,10 @@ const EmptyState = styled.div<{ $theme?: any }>`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: ${props => getThemeColor(props.$theme, ['colors', 'text', 'secondary'], 'inherit') ||
-                    getThemeColor(props.$theme, ['text', 'secondary'], 'inherit') ||
-                    getThemeColor(props.$theme, ['colors', 'text'], 'inherit')};
+  color: ${props =>
+    getThemeColor(props.$theme, ['colors', 'text', 'secondary'], 'inherit') ||
+    getThemeColor(props.$theme, ['text', 'secondary'], 'inherit') ||
+    getThemeColor(props.$theme, ['colors', 'text'], 'inherit')};
   padding: 2rem;
   text-align: center;
 `;
@@ -190,9 +272,10 @@ const LoadingState = styled.div<{ $theme?: any }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${props => getThemeColor(props.$theme, ['colors', 'text', 'secondary'], 'inherit') ||
-                    getThemeColor(props.$theme, ['text', 'secondary'], 'inherit') ||
-                    getThemeColor(props.$theme, ['colors', 'text'], 'inherit')};
+  color: ${props =>
+    getThemeColor(props.$theme, ['colors', 'text', 'secondary'], 'inherit') ||
+    getThemeColor(props.$theme, ['text', 'secondary'], 'inherit') ||
+    getThemeColor(props.$theme, ['colors', 'text'], 'inherit')};
 `;
 
 const ContextualChat: React.FC<ContextualChatProps> = ({
@@ -283,7 +366,10 @@ const ContextualChat: React.FC<ContextualChatProps> = ({
     ontem.setDate(ontem.getDate() - 1);
 
     if (date.toDateString() === hoje.toDateString()) {
-      return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
     } else if (date.toDateString() === ontem.toDateString()) {
       return `Ontem ${date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
     } else {
@@ -316,7 +402,7 @@ const ContextualChat: React.FC<ContextualChatProps> = ({
           </EmptyState>
         ) : (
           <>
-            {mensagens.map((mensagem) => {
+            {mensagens.map(mensagem => {
               const isOwn = mensagem.remetenteId === currentProfile?.id;
               const isAlerta = mensagem.origem === 'ALERTA';
 
@@ -329,8 +415,11 @@ const ContextualChat: React.FC<ContextualChatProps> = ({
                 >
                   <MensagemHeader $theme={theme}>
                     <MensagemRemetente $theme={theme}>
-                      {mensagem.remetente.apelido || mensagem.remetente.nomeCompleto}
-                      {isAlerta && mensagem.alerta && ` - ${mensagem.alerta.titulo}`}
+                      {mensagem.remetente.apelido ||
+                        mensagem.remetente.nomeCompleto}
+                      {isAlerta &&
+                        mensagem.alerta &&
+                        ` - ${mensagem.alerta.titulo}`}
                     </MensagemRemetente>
                     <MensagemData $theme={theme}>
                       {formatarData(mensagem.criadoEm)}
@@ -351,17 +440,17 @@ const ContextualChat: React.FC<ContextualChatProps> = ({
         <ChatInput
           $theme={theme}
           value={novaMensagem}
-          onChange={(e) => setNovaMensagem(e.target.value)}
+          onChange={e => setNovaMensagem(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="Digite sua mensagem..."
+          placeholder='Digite sua mensagem...'
           disabled={enviando}
         />
         <UnifiedButton
           onClick={enviarMensagem}
           $disabled={!novaMensagem.trim() || enviando}
           $theme={theme}
-          $variant="primary"
-          $size="medium"
+          $variant='primary'
+          $size='medium'
         >
           {enviando ? 'Enviando...' : 'Enviar'}
         </UnifiedButton>
@@ -371,4 +460,3 @@ const ContextualChat: React.FC<ContextualChatProps> = ({
 };
 
 export default ContextualChat;
-

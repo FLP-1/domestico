@@ -7,12 +7,13 @@
 
 ## 🎯 CATEGORIZAÇÃO DE ERROS
 
-### ✅ CATEGORIA 1: Cores Hardcoded (defaultColors.*, tokens.colors.*)
+### ✅ CATEGORIA 1: Cores Hardcoded (defaultColors._, tokens.colors._)
 
 **Padrão:** Uso de cores hardcoded como fallback em `getThemeColor()`  
 **Solução:** Substituir por `'transparent'`, `'inherit'` ou `'currentColor'`
 
 **Arquivos afetados:**
+
 - [x] `src/pages/communication.tsx` - Corrigido
 - [ ] `src/components/unified/UnifiedBadge/index.tsx`
 - [ ] `src/components/PageHeader/index.tsx`
@@ -29,6 +30,7 @@
 - [ ] `src/utils/themeTypeGuards.ts`
 
 **Comando de busca:**
+
 ```bash
 grep -r "defaultColors\." src/
 grep -r "tokens\.colors\." src/
@@ -42,10 +44,12 @@ grep -r "tokens\.colors\." src/
 **Solução:** Adicionar `$theme?: any` ao tipo do styled component
 
 **Arquivos afetados:**
+
 - [x] `src/pages/communication.tsx` - Corrigido
 - [ ] Verificar outros arquivos conforme erros aparecem
 
 **Padrão de correção:**
+
 ```typescript
 // ANTES
 const Component = styled.div`
@@ -66,6 +70,7 @@ const Component = styled.div<{ $theme?: any }>`
 **Solução:** Corrigir caminhos
 
 **Correções aplicadas:**
+
 - [x] `@/src/constants` → `@/constants`
 - [x] `../../constants` → `../../../constants` (quando necessário)
 
@@ -78,6 +83,7 @@ const Component = styled.div<{ $theme?: any }>`
 **Prioridade:** Baixa (corrigir após erros de tipo)
 
 **Arquivos com warnings:**
+
 - `src/components/ContextualChat/index.tsx:216`
 - `src/components/TimeRecordCard/index.tsx:482`
 - `src/hooks/useAsyncOperation.ts:115`
@@ -108,4 +114,3 @@ const Component = styled.div<{ $theme?: any }>`
 2. ⏳ Remover todas as referências a `defaultColors.*` e `tokens.colors.*` hardcoded
 3. ⏳ Validar build final
 4. ⏳ Corrigir warnings de hooks (opcional)
-

@@ -142,17 +142,21 @@ const translations: Record<Locale, Record<string, string>> = {
     'warning.precisao_baixa': 'Precisão da localização baixa',
     'warning.conexao_lenta': 'Conexão lenta detectada',
     'warning.dados_antigos': 'Dados podem estar desatualizados',
-    'warning.corrigir_erros_formulario': 'Por favor, corrija os erros no formulário',
+    'warning.corrigir_erros_formulario':
+      'Por favor, corrija os erros no formulário',
     'warning.duplicidade_ponto': 'Registro duplicado',
     'warning.ordem_invalida': 'Ordem de registro inválida',
 
     // Informações (extendido)
     'info.funcionalidade_desenvolvimento': 'Funcionalidade em desenvolvimento',
     'info.notificacoes_desenvolvimento': 'Notificações em desenvolvimento',
-    'info.compartilhamento_desenvolvimento': 'Compartilhamento em desenvolvimento',
+    'info.compartilhamento_desenvolvimento':
+      'Compartilhamento em desenvolvimento',
     'info.detalhes_desenvolvimento': 'Detalhes em desenvolvimento',
-    'info.edicao_desenvolvimento': 'Funcionalidade de edição em desenvolvimento',
-    'info.detalhes_registro_desenvolvimento': 'Detalhes do registro em desenvolvimento',
+    'info.edicao_desenvolvimento':
+      'Funcionalidade de edição em desenvolvimento',
+    'info.detalhes_registro_desenvolvimento':
+      'Detalhes do registro em desenvolvimento',
 
     // Placeholders
     'placeholders.shopping_list_name': 'Ex: Compras da semana',
@@ -337,7 +341,8 @@ const translations: Record<Locale, Record<string, string>> = {
  * Obtém a tradução para uma chave
  */
 export function t(key: string, locale: Locale = defaultLocale): string {
-  const localeTranslations = translations[locale] || translations[defaultLocale];
+  const localeTranslations =
+    translations[locale] || translations[defaultLocale];
   return localeTranslations[key] || key;
 }
 
@@ -350,7 +355,7 @@ export function tWithParams(
   locale: Locale = defaultLocale
 ): string {
   let translation = t(key, locale);
-  
+
   Object.entries(params).forEach(([paramKey, value]) => {
     translation = translation.replace(`{{${paramKey}}}`, String(value));
   });
@@ -432,4 +437,3 @@ export function useTranslation(locale?: Locale) {
     locale: currentLocale,
   };
 }
-

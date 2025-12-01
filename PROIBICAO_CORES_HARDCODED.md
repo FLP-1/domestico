@@ -9,7 +9,7 @@
 ```typescript
 // ❌ NUNCA FAÇA ISSO
 const Button = styled.button`
-  background-color: #29ABE2;
+  background-color: #29abe2;
   color: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.1);
 `;
@@ -31,21 +31,22 @@ const Card = styled.div`
 // ✅ SEMPRE USE TEMA COM FALLBACKS SEGUROS
 const Button = styled.button<{ $theme?: any }>`
   background-color: ${props =>
-    props.$theme?.colors?.primary ||
-    props.$theme?.accent ||
-    'transparent'};
+    props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'};
   color: ${props =>
     props.$theme?.colors?.text?.primary ||
     props.$theme?.text?.primary ||
     props.$theme?.colors?.text ||
     props.$theme?.colors?.surface ||
     'inherit'};
-  border: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
 `;
 
 // ✅ FALLBACKS SEGUROS (valores CSS válidos)
@@ -93,12 +94,12 @@ const Component = styled.div<{ $theme?: any }>`
   // 2. Propriedade alternativa do tema
   // 3. Propriedade genérica do tema
   // 4. Valor CSS seguro (inherit, transparent, currentColor)
-  
+
   color: ${props =>
-    props.$theme?.colors?.text?.secondary ||      // 1. Específico
-    props.$theme?.text?.secondary ||              // 2. Alternativo
-    props.$theme?.colors?.text ||                // 3. Genérico
-    'inherit'};                                   // 4. Seguro
+    props.$theme?.colors?.text?.secondary || // 1. Específico
+    props.$theme?.text?.secondary || // 2. Alternativo
+    props.$theme?.colors?.text || // 3. Genérico
+    'inherit'}; // 4. Seguro
 `;
 ```
 
@@ -121,17 +122,20 @@ const Card = styled.div<{ $theme?: any }>`
     'inherit'};
 
   // Borda
-  border: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
 
   // Sombra (usando rgba dinâmico do tema)
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -288,7 +292,7 @@ Apenas em casos extremamente específicos e documentados:
 ```typescript
 // ❌ ERRADO
 const Button = styled.button`
-  background: #29ABE2;
+  background: #29abe2;
   color: white;
   border: 1px solid #1e8bb8;
 `;
@@ -296,26 +300,24 @@ const Button = styled.button`
 // ✅ CORRETO
 const Button = styled.button<{ $theme?: any }>`
   background: ${props =>
-    props.$theme?.colors?.primary ||
-    props.$theme?.accent ||
-    'transparent'};
+    props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'};
   color: ${props =>
     props.$theme?.colors?.text?.primary ||
     props.$theme?.text?.primary ||
     props.$theme?.colors?.text ||
     props.$theme?.colors?.surface ||
     'inherit'};
-  border: 1px solid ${props => {
-    const primary = props.$theme?.colors?.primary ||
-                    props.$theme?.accent;
-    if (primary && primary.startsWith('#')) {
-      const r = parseInt(primary.slice(1, 3), 16);
-      const g = parseInt(primary.slice(3, 5), 16);
-      const b = parseInt(primary.slice(5, 7), 16);
-      return `rgb(${r}, ${g}, ${Math.max(0, b - 20)})`;
-    }
-    return 'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const primary = props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primary && primary.startsWith('#')) {
+        const r = parseInt(primary.slice(1, 3), 16);
+        const g = parseInt(primary.slice(3, 5), 16);
+        const b = parseInt(primary.slice(5, 7), 16);
+        return `rgb(${r}, ${g}, ${Math.max(0, b - 20)})`;
+      }
+      return 'transparent';
+    }};
 `;
 ```
 
@@ -326,10 +328,10 @@ const Button = styled.button<{ $theme?: any }>`
 const Card = styled.div`
   background: #ffffff;
   border: 1px solid #e0e0e0;
-  
+
   &:hover {
     background: #f5f5f5;
-    border-color: #29ABE2;
+    border-color: #29abe2;
   }
 `;
 
@@ -340,22 +342,23 @@ const Card = styled.div<{ $theme?: any }>`
     props.$theme?.background?.primary ||
     props.$theme?.colors?.surface ||
     'transparent'};
-  border: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
-  
+  border: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
+
   &:hover {
     background: ${props =>
       props.$theme?.colors?.background?.secondary ||
       props.$theme?.background?.secondary ||
       'transparent'};
     border-color: ${props =>
-      props.$theme?.colors?.primary ||
-      props.$theme?.accent ||
-      'transparent'};
+      props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'};
   }
 `;
 ```
@@ -392,4 +395,3 @@ Ao trabalhar neste projeto, você se compromete a:
 
 **Última atualização**: Dezembro 2024  
 **Status**: ✅ ATIVO E OBRIGATÓRIO
-

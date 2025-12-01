@@ -64,7 +64,7 @@ export const sortByMultiple = <T>(
     for (const criterion of criteria) {
       const valueA = criterion.getValue(a);
       const valueB = criterion.getValue(b);
-      
+
       let comparison: number;
       if (criterion.compare) {
         comparison = criterion.compare(valueA, valueB);
@@ -75,7 +75,7 @@ export const sortByMultiple = <T>(
       } else {
         comparison = String(valueA).localeCompare(String(valueB), 'pt-BR');
       }
-      
+
       if (comparison !== 0) {
         return criterion.order === 'desc' ? -comparison : comparison;
       }
@@ -83,4 +83,3 @@ export const sortByMultiple = <T>(
     return 0;
   });
 };
-

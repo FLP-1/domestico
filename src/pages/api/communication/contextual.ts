@@ -29,10 +29,17 @@ export default async function handler(
       } = req.body;
 
       // Validações
-      if (!usuarioId || !contextoTipo || !contextoId || !remetenteId || !conteudo) {
+      if (
+        !usuarioId ||
+        !contextoTipo ||
+        !contextoId ||
+        !remetenteId ||
+        !conteudo
+      ) {
         return res.status(400).json({
           success: false,
-          error: 'Campos obrigatórios: usuarioId, contextoTipo, contextoId, remetenteId, conteudo',
+          error:
+            'Campos obrigatórios: usuarioId, contextoTipo, contextoId, remetenteId, conteudo',
         });
       }
 
@@ -117,7 +124,8 @@ export default async function handler(
         if (!mensagemId || !resposta?.remetenteId || !resposta?.conteudo) {
           return res.status(400).json({
             success: false,
-            error: 'Campos obrigatórios: mensagemId, resposta.remetenteId, resposta.conteudo',
+            error:
+              'Campos obrigatórios: mensagemId, resposta.remetenteId, resposta.conteudo',
           });
         }
 
@@ -150,4 +158,3 @@ export default async function handler(
     });
   }
 }
-

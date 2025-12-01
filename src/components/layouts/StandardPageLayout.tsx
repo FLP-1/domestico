@@ -89,12 +89,16 @@ export default function StandardPageLayout({
 }: StandardPageLayoutProps) {
   const router = useRouter();
   const { currentProfile } = useUserProfile();
-  
+
   // Estado interno para sidebar se não controlado externamente
-  const [internalSidebarCollapsed, setInternalSidebarCollapsed] = useState(false);
-  
-  const sidebarCollapsed = controlledSidebarCollapsed ?? internalSidebarCollapsed;
-  const onSidebarToggle = controlledOnSidebarToggle ?? (() => setInternalSidebarCollapsed(prev => !prev));
+  const [internalSidebarCollapsed, setInternalSidebarCollapsed] =
+    useState(false);
+
+  const sidebarCollapsed =
+    controlledSidebarCollapsed ?? internalSidebarCollapsed;
+  const onSidebarToggle =
+    controlledOnSidebarToggle ??
+    (() => setInternalSidebarCollapsed(prev => !prev));
 
   // Dados do usuário para WelcomeSection
   const finalUserAvatar = userAvatar || currentProfile?.avatar || 'U';
@@ -118,7 +122,7 @@ export default function StandardPageLayout({
           currentPath={router.pathname}
         />
       )}
-      
+
       {showTopBar && showWelcomeSection && (
         <TopBar $theme={$theme}>
           <WelcomeSection
@@ -131,7 +135,7 @@ export default function StandardPageLayout({
           />
         </TopBar>
       )}
-      
+
       {title && (
         <PageHeader
           $theme={$theme}
@@ -144,9 +148,8 @@ export default function StandardPageLayout({
           animation={animation}
         />
       )}
-      
+
       {children}
     </PageContainer>
   );
 }
-

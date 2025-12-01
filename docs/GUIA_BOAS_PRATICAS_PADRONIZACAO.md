@@ -10,6 +10,7 @@
 ### **1. CORES - SEMPRE USAR TEMA**
 
 #### ❌ **NUNCA FAZER:**
+
 ```typescript
 // ❌ CORES HARDCODED
 color: '#2c3e50';
@@ -18,6 +19,7 @@ border: '1px solid #e0e0e0';
 ```
 
 #### ✅ **SEMPRE FAZER:**
+
 ```typescript
 // ✅ USAR TEMA
 color: ${props => props.$theme?.colors?.text?.primary || tokens.colors.text.primary};
@@ -28,11 +30,12 @@ border: 1px solid ${props => props.$theme?.colors?.border?.primary || tokens.col
 ### **2. DADOS - SEMPRE REAIS (NUNCA MOCK)**
 
 #### ❌ **NUNCA FAZER:**
+
 ```typescript
 // ❌ DADOS MOCKADOS
 const mockData = [
   { id: '1', name: 'Teste' },
-  { id: '2', name: 'Exemplo' }
+  { id: '2', name: 'Exemplo' },
 ];
 
 // ❌ VALORES HARDCODED
@@ -41,11 +44,14 @@ const testUser = 'usuario@teste.com';
 ```
 
 #### ✅ **SEMPRE FAZER:**
+
 ```typescript
 // ✅ DADOS REAIS (via API ou props)
 const [data, setData] = useState([]);
 useEffect(() => {
-  fetch('/api/data').then(res => res.json()).then(setData);
+  fetch('/api/data')
+    .then(res => res.json())
+    .then(setData);
 }, []);
 
 // ✅ VALORES DO TEMA/CONFIG
@@ -55,6 +61,7 @@ const defaultValue = theme?.defaultValue || config?.defaultValue;
 ### **3. COMPONENTES - SEMPRE USAR TEMA PROP**
 
 #### ❌ **NUNCA FAZER:**
+
 ```typescript
 // ❌ SEM TEMA
 <UnifiedButton onClick={handleClick}>
@@ -69,9 +76,10 @@ const CustomButton = styled.button`
 ```
 
 #### ✅ **SEMPRE FAZER:**
+
 ```typescript
 // ✅ COM TEMA
-<UnifiedButton 
+<UnifiedButton
   $theme={theme}
   $variant='primary'
   onClick={handleClick}
@@ -118,6 +126,7 @@ Antes de cada substituição, verificar:
 ### **Exemplo 1: Substituir Botão Customizado**
 
 #### ❌ **ANTES (Com hardcoded):**
+
 ```typescript
 const AlertUnifiedButton = styled.button<{
   $theme: any;
@@ -133,18 +142,19 @@ const AlertUnifiedButton = styled.button<{
   background: ${props => {
     switch (props.$variant) {
       case 'warning':
-        return '#f39c12';  // ❌ HARDCODED
+        return '#f39c12'; // ❌ HARDCODED
       case 'danger':
-        return '#e74c3c';  // ❌ HARDCODED
+        return '#e74c3c'; // ❌ HARDCODED
       default:
-        return props.$theme?.colors?.primary || '#29ABE2';  // ❌ HARDCODED FALLBACK
+        return props.$theme?.colors?.primary || '#29ABE2'; // ❌ HARDCODED FALLBACK
     }
   }};
-  color: white;  // ❌ HARDCODED
+  color: white; // ❌ HARDCODED
 `;
 ```
 
 #### ✅ **DEPOIS (Com tema):**
+
 ```typescript
 // Remover styled component completamente
 // Usar UnifiedButton diretamente
@@ -162,19 +172,21 @@ const AlertUnifiedButton = styled.button<{
 ### **Exemplo 2: Substituir FormRow**
 
 #### ❌ **ANTES (Com cores hardcoded):**
+
 ```typescript
 const FormRow = styled.div`
   display: flex;
   gap: 1rem;
   align-items: end;
   margin-bottom: 1rem;
-  background: #f8f9fa;  // ❌ HARDCODED
+  background: #f8f9fa; // ❌ HARDCODED
   padding: 1rem;
-  border: 1px solid #e0e0e0;  // ❌ HARDCODED
+  border: 1px solid #e0e0e0; // ❌ HARDCODED
 `;
 ```
 
 #### ✅ **DEPOIS (Com tema):**
+
 ```typescript
 // Remover styled component
 // Usar OptimizedFormRow
@@ -189,26 +201,30 @@ const FormRow = styled.div`
 ### **Exemplo 3: Substituir Input Customizado**
 
 #### ❌ **ANTES (Com cores hardcoded):**
+
 ```typescript
 const AddItemInput = styled.input<{ $theme: any }>`
   flex: 1;
   padding: 0.75rem;
-  border: 2px solid ${props => props.$theme?.colors?.border || '#e0e0e0'};  // ⚠️ FALLBACK HARDCODED
+  border: 2px solid ${props => props.$theme?.colors?.border || '#e0e0e0'}; // ⚠️ FALLBACK HARDCODED
   border-radius: 8px;
   font-size: 0.9rem;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);  // ❌ HARDCODED
-  color: #2c3e50;  // ❌ HARDCODED
+  background: rgba(255, 255, 255, 0.9); // ❌ HARDCODED
+  color: #2c3e50; // ❌ HARDCODED
 
   &:focus {
     outline: none;
-    border-color: ${props => props.$theme?.colors?.primary || '#29ABE2'};  // ❌ HARDCODED FALLBACK
-    box-shadow: 0 0 0 3px ${props => (props.$theme?.colors?.primary || '#29ABE2') + '20'};  // ❌ HARDCODED
+    border-color: ${props =>
+      props.$theme?.colors?.primary || '#29ABE2'}; // ❌ HARDCODED FALLBACK
+    box-shadow: 0 0 0 3px
+      ${props => (props.$theme?.colors?.primary || '#29ABE2') + '20'}; // ❌ HARDCODED
   }
 `;
 ```
 
 #### ✅ **DEPOIS (Com tema e tokens):**
+
 ```typescript
 // Remover styled component
 // Usar Input de FormComponents ou OptimizedInputStyled
@@ -239,16 +255,18 @@ import { OptimizedInputStyled } from '../components/shared/optimized-styles';
 ### **Exemplo 4: Substituir SectionTitle**
 
 #### ❌ **ANTES (Com cores hardcoded):**
+
 ```typescript
 const SectionTitle = styled.h3`
   margin: 0 0 1rem 0;
-  color: #2c3e50;  // ❌ HARDCODED
+  color: #2c3e50; // ❌ HARDCODED
   font-size: 1.1rem;
   font-weight: 600;
 `;
 ```
 
 #### ✅ **DEPOIS (Com tema):**
+
 ```typescript
 // Remover styled component
 // Usar OptimizedSectionTitle
@@ -266,6 +284,7 @@ const SectionTitle = styled.h3`
 ## 🎨 **CORES PERMITIDAS (APENAS COMO FALLBACK)**
 
 ### **Tokens (Aceitável como fallback):**
+
 ```typescript
 import { tokens } from '../components/shared/tokens';
 
@@ -274,6 +293,7 @@ color: ${props => props.$theme?.colors?.text?.primary || tokens.colors.text.prim
 ```
 
 ### **Cores Hardcoded (NUNCA):**
+
 ```typescript
 // ❌ NUNCA - cores hardcoded
 color: '#2c3e50';
@@ -306,6 +326,7 @@ color: ${props => props.$theme?.colors?.text || '#2c3e50'};
 ## 🔧 **FUNÇÕES HELPER PARA USAR**
 
 ### **1. getColor (tokens.ts):**
+
 ```typescript
 import { getColor } from '../components/shared/tokens';
 
@@ -315,6 +336,7 @@ background: ${props => getColor('surface.primary', props.$theme?.colors?.surface
 ```
 
 ### **2. getSpacing (tokens.ts):**
+
 ```typescript
 import { getSpacing } from '../components/shared/tokens';
 
@@ -325,6 +347,7 @@ gap: ${getSpacing('sm')};
 ```
 
 ### **3. createThemedStyles (design-system):**
+
 ```typescript
 import { createThemedStyles } from '../../design-system';
 
@@ -342,6 +365,7 @@ ${props => {
 ### **1. Cores de Status (Success, Warning, Error, Info)**
 
 **✅ CORRETO:**
+
 ```typescript
 // UnifiedCard já gerencia status colors via theme
 <UnifiedCard
@@ -363,6 +387,7 @@ ${props => {
 ### **2. Cores de Background Transparente**
 
 **✅ ACEITÁVEL (apenas para transparência):**
+
 ```typescript
 // ✅ Aceitável - transparência não é cor hardcoded
 background: rgba(255, 255, 255, 0.95);
@@ -375,6 +400,7 @@ background: ${props => props.$theme?.colors?.surface?.primary || 'rgba(255, 255,
 ### **3. Cores de Texto em Botões**
 
 **✅ CORRETO:**
+
 ```typescript
 // ✅ UnifiedButton gerencia automaticamente
 <UnifiedButton $theme={theme} $variant='primary'>
@@ -460,6 +486,7 @@ const maxItems = config?.maxItems || theme?.settings?.maxItems || 10;
 ## 📚 **REFERÊNCIAS**
 
 ### **Componentes Centralizados:**
+
 - `UnifiedButton` - `src/components/unified/`
 - `UnifiedCard` - `src/components/unified/`
 - `UnifiedModal` - `src/components/unified/`
@@ -467,16 +494,17 @@ const maxItems = config?.maxItems || theme?.settings?.maxItems || 10;
 - `OptimizedStyles` - `src/components/shared/optimized-styles.ts`
 
 ### **Helpers e Tokens:**
+
 - `tokens` - `src/components/shared/tokens.ts`
 - `getColor` - `src/components/shared/tokens.ts`
 - `getSpacing` - `src/components/shared/tokens.ts`
 - `createThemedStyles` - `src/design-system/`
 
 ### **Documentação:**
+
 - `CHECKLIST_PADRONIZACAO_COMPONENTES.md` - Checklist completo
 - `RELATORIO_CENTRALIZACAO_COMPONENTES.md` - Análise de duplicação
 
 ---
 
 **⚠️ LEMBRE-SE: Se não tiver certeza, use os componentes centralizados. Eles já estão configurados para usar tema corretamente!**
-

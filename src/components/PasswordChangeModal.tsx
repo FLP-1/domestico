@@ -46,8 +46,7 @@ const PasswordContent = styled.div<{ $theme?: any }>`
 
 const PasswordHeader = styled(ModalHeaderComponent)<{ $theme?: any }>`
   background: ${props => {
-    const primaryColor = props.$theme?.colors?.primary ||
-                         props.$theme?.accent;
+    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
     if (primaryColor && primaryColor.startsWith('#')) {
       const r = parseInt(primaryColor.slice(1, 3), 16);
       const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -75,8 +74,8 @@ const PasswordTitle = styled.h2<{ $theme?: any }>`
   font-weight: 700;
   margin: 0;
   text-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -133,8 +132,8 @@ const PasswordToggle = styled.button<{ $theme?: any }>`
 
   &:hover {
     background: ${props => {
-      const primaryColor = props.$theme?.colors?.primary ||
-                           props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -144,9 +143,7 @@ const PasswordToggle = styled.button<{ $theme?: any }>`
       return 'transparent';
     }};
     color: ${props =>
-      props.$theme?.colors?.primary ||
-      props.$theme?.accent ||
-      'inherit'};
+      props.$theme?.colors?.primary || props.$theme?.accent || 'inherit'};
   }
 `;
 
@@ -163,15 +160,19 @@ const StrengthBar = styled.div<{ $active: boolean; $theme?: any }>`
   border-radius: 2px;
   background: ${props => {
     if (props.$active) {
-      return props.$theme?.colors?.success ||
-             props.$theme?.colors?.status?.success?.background ||
-             props.$theme?.status?.success?.background ||
-             'transparent';
+      return (
+        props.$theme?.colors?.success ||
+        props.$theme?.colors?.status?.success?.background ||
+        props.$theme?.status?.success?.background ||
+        'transparent'
+      );
     }
     const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
+    return (
+      (typeof border === 'object' && border?.light) ||
+      props.$theme?.border?.light ||
+      'transparent'
+    );
   }};
   transition: all 0.3s ease;
 `;
@@ -181,21 +182,27 @@ const StrengthText = styled.span<{ $strength: number; $theme?: any }>`
   font-weight: 600;
   color: ${props => {
     if (props.$strength < 2) {
-      return props.$theme?.colors?.status?.error?.text ||
-             props.$theme?.status?.error?.text ||
-             props.$theme?.colors?.error ||
-             'inherit';
+      return (
+        props.$theme?.colors?.status?.error?.text ||
+        props.$theme?.status?.error?.text ||
+        props.$theme?.colors?.error ||
+        'inherit'
+      );
     }
     if (props.$strength < 4) {
-      return props.$theme?.colors?.status?.warning?.text ||
-             props.$theme?.status?.warning?.text ||
-             props.$theme?.colors?.warning ||
-             'inherit';
+      return (
+        props.$theme?.colors?.status?.warning?.text ||
+        props.$theme?.status?.warning?.text ||
+        props.$theme?.colors?.warning ||
+        'inherit'
+      );
     }
-    return props.$theme?.colors?.success ||
-           props.$theme?.colors?.status?.success?.text ||
-           props.$theme?.status?.success?.text ||
-           'inherit';
+    return (
+      props.$theme?.colors?.success ||
+      props.$theme?.colors?.status?.success?.text ||
+      props.$theme?.status?.success?.text ||
+      'inherit'
+    );
   }};
   margin-left: 0.5rem;
 `;
@@ -209,10 +216,9 @@ const PasswordRequirements = styled.div<{ $theme?: any }>`
     props.$theme?.colors?.background?.primary ||
     'transparent'};
   border-radius: 8px;
-  border-left: 4px solid ${props =>
-    props.$theme?.colors?.primary ||
-    props.$theme?.accent ||
-    'transparent'};
+  border-left: 4px solid
+    ${props =>
+      props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'};
 `;
 
 const RequirementsTitle = styled.h4<{ $theme?: any }>`
@@ -233,15 +239,19 @@ const RequirementItem = styled.div<{ $met: boolean; $theme?: any }>`
   font-size: 0.8rem;
   color: ${props => {
     if (props.$met) {
-      return props.$theme?.colors?.success ||
-             props.$theme?.colors?.status?.success?.text ||
-             props.$theme?.status?.success?.text ||
-             'inherit';
+      return (
+        props.$theme?.colors?.success ||
+        props.$theme?.colors?.status?.success?.text ||
+        props.$theme?.status?.success?.text ||
+        'inherit'
+      );
     }
-    return props.$theme?.colors?.text?.secondary ||
-           props.$theme?.text?.secondary ||
-           props.$theme?.colors?.text ||
-           'inherit';
+    return (
+      props.$theme?.colors?.text?.secondary ||
+      props.$theme?.text?.secondary ||
+      props.$theme?.colors?.text ||
+      'inherit'
+    );
   }};
   margin-bottom: 0.25rem;
 
@@ -250,15 +260,19 @@ const RequirementItem = styled.div<{ $met: boolean; $theme?: any }>`
     font-weight: bold;
     color: ${props => {
       if (props.$met) {
-        return props.$theme?.colors?.success ||
-               props.$theme?.colors?.status?.success?.text ||
-               props.$theme?.status?.success?.text ||
-               'inherit';
+        return (
+          props.$theme?.colors?.success ||
+          props.$theme?.colors?.status?.success?.text ||
+          props.$theme?.status?.success?.text ||
+          'inherit'
+        );
       }
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) ||
-             props.$theme?.border?.light ||
-             'inherit';
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'inherit'
+      );
     }};
   }
 `;
@@ -279,14 +293,16 @@ const PasswordFooter = styled(ModalFooterComponent)<{ $theme?: any }>`
 const SaveButton = styled(UnifiedButton)<{ $canSave?: boolean; $theme?: any }>`
   background: ${props => {
     if (props.$canSave) {
-      return props.$theme?.colors?.success ||
-             props.$theme?.colors?.status?.success?.background ||
-             props.$theme?.status?.success?.background ||
-             'transparent';
+      return (
+        props.$theme?.colors?.success ||
+        props.$theme?.colors?.status?.success?.background ||
+        props.$theme?.status?.success?.background ||
+        'transparent'
+      );
     }
-    return props.$theme?.colors?.primary ||
-           props.$theme?.accent ||
-           'transparent';
+    return (
+      props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'
+    );
   }};
   color: ${props =>
     props.$theme?.colors?.text?.onPrimary ||
@@ -302,9 +318,11 @@ const SaveButton = styled(UnifiedButton)<{ $canSave?: boolean; $theme?: any }>`
   &:disabled {
     background: ${props => {
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) ||
-             props.$theme?.border?.light ||
-             'transparent';
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
     }};
     cursor: not-allowed;
     animation: none;
@@ -313,8 +331,8 @@ const SaveButton = styled(UnifiedButton)<{ $canSave?: boolean; $theme?: any }>`
   &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: ${props => {
-      const shadowColor = props.$theme?.colors?.shadow ||
-                          props.$theme?.shadow?.color;
+      const shadowColor =
+        props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
       if (shadowColor && shadowColor.startsWith('#')) {
         const r = parseInt(shadowColor.slice(1, 3), 16);
         const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -344,9 +362,10 @@ const CancelButton = styled(UnifiedButton)<{ $theme?: any }>`
 
   &:hover {
     background: ${props => {
-      const textColor = props.$theme?.colors?.text?.secondary ||
-                        props.$theme?.text?.secondary ||
-                        props.$theme?.colors?.text;
+      const textColor =
+        props.$theme?.colors?.text?.secondary ||
+        props.$theme?.text?.secondary ||
+        props.$theme?.colors?.text;
       if (textColor && textColor.startsWith('#')) {
         const r = parseInt(textColor.slice(1, 3), 16);
         const g = parseInt(textColor.slice(3, 5), 16);
@@ -360,8 +379,8 @@ const CancelButton = styled(UnifiedButton)<{ $theme?: any }>`
     }};
     transform: translateY(-2px);
     box-shadow: ${props => {
-      const shadowColor = props.$theme?.colors?.shadow ||
-                          props.$theme?.shadow?.color;
+      const shadowColor =
+        props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
       if (shadowColor && shadowColor.startsWith('#')) {
         const r = parseInt(shadowColor.slice(1, 3), 16);
         const g = parseInt(shadowColor.slice(3, 5), 16);

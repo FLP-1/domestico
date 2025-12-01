@@ -24,9 +24,10 @@ useEffect(() => {
 
       if (result.success && result.data) {
         const mappedAlerts: Alert[] = result.data.map((alerta: any) => {
-          const alertType = alertTypes.find(
-            t => t.name.toLowerCase() === alerta.type?.toLowerCase()
-          ) || alertTypes[0]!;
+          const alertType =
+            alertTypes.find(
+              t => t.name.toLowerCase() === alerta.type?.toLowerCase()
+            ) || alertTypes[0]!;
 
           return {
             id: alerta.id,
@@ -85,13 +86,17 @@ import { ALERT_TYPES } from '@/constants/alertTypes';
 const alertTypes = ALERT_TYPES;
 
 // Hook de data fetching
-const { data: alerts, loading: loadingAlerts, refetch: reloadAlerts } = useDataFetch(
-  () => apiClient.alerts.getAll(),
-  {
-    mapper: (apiData) => apiData.map((alerta: any) => {
-      const alertType = alertTypes.find(
-        t => t.name.toLowerCase() === alerta.type?.toLowerCase()
-      ) || alertTypes[0]!;
+const {
+  data: alerts,
+  loading: loadingAlerts,
+  refetch: reloadAlerts,
+} = useDataFetch(() => apiClient.alerts.getAll(), {
+  mapper: apiData =>
+    apiData.map((alerta: any) => {
+      const alertType =
+        alertTypes.find(
+          t => t.name.toLowerCase() === alerta.type?.toLowerCase()
+        ) || alertTypes[0]!;
 
       return {
         id: alerta.id,
@@ -99,9 +104,8 @@ const { data: alerts, loading: loadingAlerts, refetch: reloadAlerts } = useDataF
         // ... mapeamento
       };
     }),
-    onError: () => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
-  }
-);
+  onError: () => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
+});
 
 // Hook de async operation
 const { execute: createAlert, loading: creatingAlert } = useAsyncOperation({
@@ -138,7 +142,7 @@ useEffect(() => {
     try {
       const headers = {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       };
       const response = await fetch('/api/time-clock/records', { headers });
       const result = await response.json();
@@ -178,8 +182,8 @@ import { useDataFetch } from '@/hooks/useDataFetch';
 import { useAsyncOperation } from '@/hooks/useAsyncOperation';
 
 // Hook de data fetching
-const { data: timeRecords, refetch: reloadRecords } = useDataFetch(
-  () => apiClient.timeClock.getRecords()
+const { data: timeRecords, refetch: reloadRecords } = useDataFetch(() =>
+  apiClient.timeClock.getRecords()
 );
 
 // Hook de async operation
@@ -188,7 +192,8 @@ const { execute: createOvertime } = useAsyncOperation({
     showSuccess(keys.SUCCESS.SOLICITACAO_ENVIADA);
     reloadRecords();
   },
-  onError: (err) => showError('error.erro_solicitar_hora_extra', undefined, err.message),
+  onError: err =>
+    showError('error.erro_solicitar_hora_extra', undefined, err.message),
 });
 
 const handleCreateOvertime = createOvertime(async () => {
@@ -278,4 +283,3 @@ const { data: employees, loading: loadingEmployees } = useDataFetch(
 2. Migrar `time-clock.tsx` para usar API Client
 3. Migrar `payroll-management.tsx` para usar API Client
 4. Migrar outras páginas gradualmente
-

@@ -25,23 +25,27 @@ import { useTheme } from '../hooks/useTheme';
 import ContextualChat from '../components/ContextualChat';
 import { getThemeColor, getStatusColor } from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
-import {
-  getTextPrimary,
-  getTextSecondary,
-} from '../utils/themeTypeGuards';
+import { getTextPrimary, getTextSecondary } from '../utils/themeTypeGuards';
 import {
   OptimizedSectionTitle,
   OptimizedLabel,
   OptimizedFormRow,
 } from '../components/shared/optimized-styles';
 import { TASK_STATUSES, type TaskStatus } from '../constants/taskStatuses';
-import { TASK_PRIORITIES, type TaskPriority } from '../constants/taskPriorities';
+import {
+  TASK_PRIORITIES,
+  type TaskPriority,
+} from '../constants/taskPriorities';
 import { formatDate, formatDateTime } from '../utils/formatters';
 
 // Styled Components
 const TaskCount = styled.span<{ $theme?: any }>`
   background: ${props => {
-    const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
+    const bgColor = getThemeColor(
+      props.$theme,
+      'background.primary',
+      'transparent'
+    );
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
@@ -50,9 +54,8 @@ const TaskCount = styled.span<{ $theme?: any }>`
     }
     return 'transparent';
   }};
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.primary', 'inherit') ||
-    'inherit'};
+  color: ${props =>
+    getThemeColor(props.$theme, 'text.primary', 'inherit') || 'inherit'};
   padding: 0.25rem 0.5rem;
   border-radius: 12px;
   font-size: 0.8rem;
@@ -61,18 +64,16 @@ const TaskCount = styled.span<{ $theme?: any }>`
 
 const TaskAssignee = styled.div<{ $theme?: any }>`
   font-size: 0.8rem;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.secondary', 'inherit') ||
-    'inherit'};
+  color: ${props =>
+    getThemeColor(props.$theme, 'text.secondary', 'inherit') || 'inherit'};
   margin-top: 0.5rem;
 `;
 
 const TaskDueDate = styled.div<{ $isOverdue: boolean; $theme?: any }>`
   font-size: 0.8rem;
-  color: ${props => 
+  color: ${props =>
     props.$isOverdue
-      ? getStatusColor(props.$theme, 'error', 'text') ||
-        'inherit'
+      ? getStatusColor(props.$theme, 'error', 'text') || 'inherit'
       : getThemeColor(props.$theme, 'text.secondary', 'inherit')};
   margin-top: 0.5rem;
   font-weight: ${props => (props.$isOverdue ? '600' : '400')};
@@ -109,8 +110,10 @@ interface ChecklistItem {
 // Styled Components
 
 const TaskCreationSection = styled.section<{ $theme?: Theme }>`
-  background: ${props => getThemeColor(props.$theme, 'background.primary', 'transparent')};
-  border: 1px solid ${props => getThemeColor(props.$theme, 'border.light', 'transparent')};
+  background: ${props =>
+    getThemeColor(props.$theme, 'background.primary', 'transparent')};
+  border: 1px solid
+    ${props => getThemeColor(props.$theme, 'border.light', 'transparent')};
   border-radius: 12px;
   padding: 2rem;
   margin-bottom: 2rem;
@@ -154,7 +157,7 @@ const TaskColumn = styled.div<{ $theme?: Theme }>`
   background: ${props =>
     getThemeColor(props.$theme, 'background.primary', 'transparent')};
   border: 1px solid
-    ${props => 
+    ${props =>
       getThemeColor(props.$theme, 'border.light', 'transparent') ||
       'transparent'};
   border-radius: 12px;
@@ -194,8 +197,7 @@ const ColumnHeader = styled.div<{ $theme?: Theme; $status: string }>`
 
   h3 {
     color: ${props =>
-      getThemeColor(props.$theme, 'text.dark', 'inherit') ||
-      'inherit'};
+      getThemeColor(props.$theme, 'text.dark', 'inherit') || 'inherit'};
     font-size: 1.2rem;
     font-weight: 600;
     margin: 0;
@@ -209,10 +211,16 @@ const ColumnHeader = styled.div<{ $theme?: Theme; $status: string }>`
         case TASK_STATUSES.IN_PROGRESS:
           return getThemeColor(props.$theme, 'primary', 'transparent');
         case TASK_STATUSES.COMPLETED:
-          return getStatusColor(props.$theme, 'success', 'background') ||
-                 'transparent';
+          return (
+            getStatusColor(props.$theme, 'success', 'background') ||
+            'transparent'
+          );
         default:
-          return getThemeColor(props.$theme, 'background.secondary', 'transparent');
+          return getThemeColor(
+            props.$theme,
+            'background.secondary',
+            'transparent'
+          );
       }
     }};
     color: ${props => {
@@ -295,8 +303,7 @@ const TaskCard = styled.div<{ $theme?: Theme; $priority: string }>`
 
   h4 {
     color: ${props =>
-      getThemeColor(props.$theme, 'text.dark', 'inherit') ||
-      'inherit'};
+      getThemeColor(props.$theme, 'text.dark', 'inherit') || 'inherit'};
     font-size: 1rem;
     font-weight: 600;
     margin: 0 0 0.5rem 0;
@@ -316,8 +323,7 @@ const TaskMeta = styled.div<{ $theme?: Theme }>`
   align-items: center;
   font-size: 0.75rem;
   color: ${props =>
-    getThemeColor(props.$theme, 'text.secondary', 'inherit') ||
-    'inherit'};
+    getThemeColor(props.$theme, 'text.secondary', 'inherit') || 'inherit'};
 
   .assignee {
     font-weight: 500;
@@ -325,8 +331,7 @@ const TaskMeta = styled.div<{ $theme?: Theme }>`
 
   .due-date {
     &.overdue {
-      color: ${props =>
-        getStatusColor(props.$theme, 'error', 'text')};
+      color: ${props => getStatusColor(props.$theme, 'error', 'text')};
       font-weight: 600;
     }
   }
@@ -342,15 +347,18 @@ const PriorityBadge = styled.span<{ $priority: string; $theme?: any }>`
   background: ${props => {
     switch (props.$priority) {
       case TASK_PRIORITIES.HIGH:
-          return getStatusColor(props.$theme, 'error', 'background') ||
-               'transparent';
+        return (
+          getStatusColor(props.$theme, 'error', 'background') || 'transparent'
+        );
       case TASK_PRIORITIES.MEDIUM:
         return getStatusColor(props.$theme, 'warning', 'background');
       case TASK_PRIORITIES.LOW:
         return getStatusColor(props.$theme, 'success', 'background');
       default:
-        return getThemeColor(props.$theme, 'background.secondary', 'transparent') ||
-               'transparent';
+        return (
+          getThemeColor(props.$theme, 'background.secondary', 'transparent') ||
+          'transparent'
+        );
     }
   }};
   color: ${props => {
@@ -362,8 +370,7 @@ const PriorityBadge = styled.span<{ $priority: string; $theme?: any }>`
       case TASK_PRIORITIES.LOW:
         return getStatusColor(props.$theme, 'success', 'text');
       default:
-        return getThemeColor(props.$theme, 'text.dark', 'inherit') ||
-               'inherit';
+        return getThemeColor(props.$theme, 'text.dark', 'inherit') || 'inherit';
     }
   }};
 `;
@@ -382,7 +389,7 @@ const CommentItem = styled.div<{ $theme?: Theme }>`
   background: ${props =>
     getThemeColor(props.$theme, 'background.primary', 'transparent')};
   border: 1px solid
-    ${props => 
+    ${props =>
       getThemeColor(props.$theme, 'border.light', 'transparent') ||
       'transparent'};
   border-radius: 8px;
@@ -402,11 +409,9 @@ const CommentAvatar = styled.div<{ $theme?: Theme }>`
   height: 32px;
   border-radius: 50%;
   background: ${props =>
-    getThemeColor(props.$theme, 'primary', 'transparent') || 
-    'transparent'};
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.primary', 'inherit') ||
-    'inherit'};
+    getThemeColor(props.$theme, 'primary', 'transparent') || 'transparent'};
+  color: ${props =>
+    getThemeColor(props.$theme, 'text.primary', 'inherit') || 'inherit'};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -415,17 +420,15 @@ const CommentAvatar = styled.div<{ $theme?: Theme }>`
 `;
 
 const CommentText = styled.p<{ $theme?: Theme }>`
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.dark', 'inherit') ||
-    'inherit'};
+  color: ${props =>
+    getThemeColor(props.$theme, 'text.dark', 'inherit') || 'inherit'};
   margin: 0;
   line-height: 1.4;
 `;
 
 const CommentTime = styled.span<{ $theme?: Theme }>`
   color: ${props =>
-    getThemeColor(props.$theme, 'text.secondary', 'inherit') ||
-    'inherit'};
+    getThemeColor(props.$theme, 'text.secondary', 'inherit') || 'inherit'};
   font-size: 0.75rem;
 `;
 
@@ -445,7 +448,7 @@ const ChecklistItem = styled.div<{ $theme?: Theme }>`
   gap: 0.75rem;
   padding: 0.5rem 0;
   border-bottom: 1px solid
-    ${props => 
+    ${props =>
       getThemeColor(props.$theme, 'border.light', 'transparent') ||
       'transparent'};
 
@@ -461,8 +464,7 @@ const ChecklistItem = styled.div<{ $theme?: Theme }>`
   }
 
   label {
-    color: ${props =>
-      getTextPrimary(props.$theme)};
+    color: ${props => getTextPrimary(props.$theme)};
     font-size: 0.875rem;
     cursor: pointer;
     flex: 1;
@@ -553,7 +555,9 @@ const TaskManagement: React.FC = () => {
     loadTasks();
   }, [loadTasks]);
   const [selectedTask, setSelectedTask] = useState<TaskData | null>(null);
-  const [selectedTaskIdForChat, setSelectedTaskIdForChat] = useState<string | null>(null); // ✅ NOVO: Para comunicação contextual
+  const [selectedTaskIdForChat, setSelectedTaskIdForChat] = useState<
+    string | null
+  >(null); // ✅ NOVO: Para comunicação contextual
   const [newTask, setNewTask] = useState({
     title: '',
     priority: TASK_PRIORITIES.MEDIUM as TaskPriority,
@@ -883,7 +887,9 @@ const TaskManagement: React.FC = () => {
         <TaskColumn $theme={theme}>
           <ColumnHeader $theme={theme} $status={TASK_STATUSES.TODO}>
             <h3>A Fazer</h3>
-            <TaskCount $theme={theme}>{getTasksByStatus('pending').length}</TaskCount>
+            <TaskCount $theme={theme}>
+              {getTasksByStatus('pending').length}
+            </TaskCount>
           </ColumnHeader>
           {getTasksByStatus('pending').map(task => (
             <TaskCard
@@ -907,7 +913,10 @@ const TaskManagement: React.FC = () => {
                 <TaskAssignee $theme={theme}>{task.assignee}</TaskAssignee>
               </TaskMeta>
               <TaskMeta $theme={theme}>
-                <TaskDueDate $isOverdue={isOverdue(task.dueDate)} $theme={theme}>
+                <TaskDueDate
+                  $isOverdue={isOverdue(task.dueDate)}
+                  $theme={theme}
+                >
                   {formatDate(task.dueDate)}
                 </TaskDueDate>
                 <div>
@@ -968,7 +977,10 @@ const TaskManagement: React.FC = () => {
                 <TaskAssignee $theme={theme}>{task.assignee}</TaskAssignee>
               </TaskMeta>
               <TaskMeta $theme={theme}>
-                <TaskDueDate $isOverdue={isOverdue(task.dueDate)} $theme={theme}>
+                <TaskDueDate
+                  $isOverdue={isOverdue(task.dueDate)}
+                  $theme={theme}
+                >
                   {formatDate(task.dueDate)}
                 </TaskDueDate>
                 <div>
@@ -1029,7 +1041,10 @@ const TaskManagement: React.FC = () => {
                 <TaskAssignee $theme={theme}>{task.assignee}</TaskAssignee>
               </TaskMeta>
               <TaskMeta $theme={theme}>
-                <TaskDueDate $isOverdue={isOverdue(task.dueDate)} $theme={theme}>
+                <TaskDueDate
+                  $isOverdue={isOverdue(task.dueDate)}
+                  $theme={theme}
+                >
                   {formatDate(task.dueDate)}
                 </TaskDueDate>
                 <div>
@@ -1167,10 +1182,10 @@ const TaskManagement: React.FC = () => {
           $theme={theme}
         >
           <ContextualChat
-            contextoTipo="TAREFA"
+            contextoTipo='TAREFA'
             contextoId={selectedTaskIdForChat}
             titulo={`Comunicação sobre esta Tarefa`}
-            altura="500px"
+            altura='500px'
             onMensagemEnviada={() => {
               // Recarregar tarefas ou atualizar UI se necessário
               loadTasks();

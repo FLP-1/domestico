@@ -144,7 +144,7 @@ const Logo = styled.img`
 `;
 
 const Title = styled.h1.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -216,9 +216,7 @@ const Input = styled.input<{ $hasError?: boolean }>`
   padding: 1rem;
   border: 2px solid
     ${props =>
-      props.$hasError
-        ? 'transparent'
-        : addOpacity(publicColors.primary, 0.2)};
+      props.$hasError ? 'transparent' : addOpacity(publicColors.primary, 0.2)};
   border-radius: 12px;
   font-size: 1rem;
   font-family: 'Roboto', sans-serif;
@@ -242,7 +240,7 @@ const Input = styled.input<{ $hasError?: boolean }>`
 `;
 
 const PasswordToggle = styled.button.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -374,7 +372,7 @@ const BiometricSection = styled.div`
 `;
 
 const BiometricTitle = styled.h3.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -401,7 +399,9 @@ const BiometricOptions = styled.div`
 
 // BiometricButton removido - usar UnifiedButton com styled wrapper para layout flex-col
 // Mantido wrapper para preservar layout específico (ícone + label vertical)
-const BiometricButtonWrapper = styled(UnifiedButton)<{ $variant?: 'primary' | 'secondary' }>`
+const BiometricButtonWrapper = styled(UnifiedButton)<{
+  $variant?: 'primary' | 'secondary';
+}>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -409,7 +409,7 @@ const BiometricButtonWrapper = styled(UnifiedButton)<{ $variant?: 'primary' | 's
   min-width: 60px;
   flex: 1;
   padding: 0.75rem 0.5rem;
-  
+
   /* Estilos específicos para variant primary */
   ${props =>
     props.$variant === 'primary'
@@ -422,7 +422,7 @@ const BiometricButtonWrapper = styled(UnifiedButton)<{ $variant?: 'primary' | 's
     background: none !important;
     border: 2px solid ${addOpacity(publicColors.primary, 0.2)} !important;
   `}
-  
+
   /* Override para ícone e label */
   > * {
     display: flex;
@@ -595,13 +595,13 @@ export default function LoginBiometric() {
 
       // ✅ Solicitar permissão e capturar localização com alta precisão
       navigator.geolocation.getCurrentPosition(
-        async (position) => {
+        async position => {
           // Permissão concedida; capturar localização com maior precisão e salvar no contexto
           try {
             // Obter endereço via geocoding
             let address = 'Endereço indisponível';
             let addressComponents = null;
-            
+
             try {
               const geocodingResponse = await fetch(
                 `/api/geocoding/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&zoom=18`
@@ -609,14 +609,17 @@ export default function LoginBiometric() {
               if (geocodingResponse.ok) {
                 const geocodingData = await geocodingResponse.json();
                 if (geocodingData.success) {
-                  address = geocodingData.formattedAddress || geocodingData.address || address;
+                  address =
+                    geocodingData.formattedAddress ||
+                    geocodingData.address ||
+                    address;
                   addressComponents = geocodingData.components || null;
                 }
               }
             } catch (geocodingError) {
               // Ignorar erros de geocoding
             }
-            
+
             // ✅ Salvar localização no contexto SEMPRE (forçar atualização após login)
             // Após login, sempre atualizar mesmo que seja menos precisa (usuário acabou de conceder permissão)
             updateLastLocationIfBetter({
@@ -629,22 +632,32 @@ export default function LoginBiometric() {
               networkInfo: undefined,
               timestamp: new Date(),
             });
-            
-            logger.geo('✅ Localização capturada e salva após permissão concedida:', {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              accuracy: position.coords.accuracy,
-              address,
-            });
-            
+
+            logger.geo(
+              '✅ Localização capturada e salva após permissão concedida:',
+              {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                accuracy: position.coords.accuracy,
+                address,
+              }
+            );
+
             // ✅ Forçar atualização imediata do contexto após login
             // Aguardar um pouco para garantir que o contexto foi atualizado
             setTimeout(() => {
-              logger.geo('🔄 Verificando atualização do contexto após login...');
+              logger.geo(
+                '🔄 Verificando atualização do contexto após login...'
+              );
             }, 500);
           } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-            logger.error('❌ Erro ao processar localização após permissão:', errorMessage, error);
+            const errorMessage =
+              error instanceof Error ? error.message : 'Erro desconhecido';
+            logger.error(
+              '❌ Erro ao processar localização após permissão:',
+              errorMessage,
+              error
+            );
           }
         },
         (error: any) => {
@@ -764,7 +777,8 @@ export default function LoginBiometric() {
         // ✅ Não logar erros 401 (credenciais inválidas são esperadas)
         // O erro 401 já é tratado no .then() anterior
         if (!error?.message?.includes('401')) {
-          const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+          const errorMessage =
+            error instanceof Error ? error.message : 'Erro desconhecido';
           logger.error('Erro ao fazer login:', errorMessage, error);
           alertManager.showError('Erro ao conectar com o servidor');
         }
@@ -1058,11 +1072,13 @@ export default function LoginBiometric() {
               text: publicColors.text,
               background: publicColors.background,
               surface: publicColors.surface,
-              border: typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border,
+              border:
+                typeof publicColors.border === 'object'
+                  ? publicColors.border.light
+                  : publicColors.border,
             },
           }}
         />
-
       </PageContainer>
     </>
   );

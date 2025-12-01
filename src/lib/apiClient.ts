@@ -1,19 +1,19 @@
 /**
  * 🔌 API Client Centralizado
- * 
+ *
  * Cliente HTTP unificado para todas as chamadas de API do sistema DOM.
- * 
+ *
  * BENEFÍCIOS:
  * - URLs centralizadas e fáceis de atualizar
  * - Headers automáticos (auth, content-type)
  * - Tratamento de erros consistente
  * - Type safety com TypeScript
  * - Interceptores para logging/erros globais
- * 
+ *
  * USO:
  * ```typescript
  * import { apiClient } from '@/lib/apiClient';
- * 
+ *
  * const alerts = await apiClient.alerts.getAll();
  * const alert = await apiClient.alerts.create(data);
  * const updated = await apiClient.alerts.update(id, data);
@@ -52,8 +52,10 @@ class ApiClient {
   private getHeaders(customHeaders?: HeadersInit): HeadersInit {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...(typeof customHeaders === 'object' && !Array.isArray(customHeaders) && customHeaders instanceof Headers === false
-        ? customHeaders as Record<string, string>
+      ...(typeof customHeaders === 'object' &&
+      !Array.isArray(customHeaders) &&
+      customHeaders instanceof Headers === false
+        ? (customHeaders as Record<string, string>)
         : {}),
     };
 
@@ -116,7 +118,8 @@ class ApiClient {
 
         return {
           success: false,
-          error: errorData.error || errorData.message || `HTTP ${response.status}`,
+          error:
+            errorData.error || errorData.message || `HTTP ${response.status}`,
           status: response.status,
         };
       }
@@ -185,8 +188,7 @@ class ApiClient {
         method: 'PATCH',
         body: JSON.stringify(data),
       }),
-    delete: (id: string) =>
-      this.request(`/alerts/${id}`, { method: 'DELETE' }),
+    delete: (id: string) => this.request(`/alerts/${id}`, { method: 'DELETE' }),
     toggleStatus: (id: string, status: 'active' | 'inactive') =>
       this.request(`/alerts/${id}`, {
         method: 'PATCH',
@@ -208,8 +210,7 @@ class ApiClient {
         method: 'PATCH',
         body: JSON.stringify(data),
       }),
-    delete: (id: string) =>
-      this.request(`/users/${id}`, { method: 'DELETE' }),
+    delete: (id: string) => this.request(`/users/${id}`, { method: 'DELETE' }),
   };
 
   // ==========================================

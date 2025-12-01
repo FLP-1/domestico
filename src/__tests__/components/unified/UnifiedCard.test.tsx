@@ -22,7 +22,7 @@ const mockTheme = {
 describe('UnifiedCard', () => {
   it('deve renderizar conteúdo básico', () => {
     render(
-      <UnifiedCard theme={mockTheme} variant="default" size="md">
+      <UnifiedCard theme={mockTheme} variant='default' size='md'>
         <div>Card content</div>
       </UnifiedCard>
     );
@@ -34,9 +34,9 @@ describe('UnifiedCard', () => {
     render(
       <UnifiedCard
         theme={mockTheme}
-        variant="default"
-        size="md"
-        title="Test Title"
+        variant='default'
+        size='md'
+        title='Test Title'
       >
         <div>Card content</div>
       </UnifiedCard>
@@ -49,8 +49,8 @@ describe('UnifiedCard', () => {
     render(
       <UnifiedCard
         theme={mockTheme}
-        variant="default"
-        size="md"
+        variant='default'
+        size='md'
         footer={<div>Footer content</div>}
       >
         <div>Card content</div>
@@ -62,7 +62,7 @@ describe('UnifiedCard', () => {
 
   it('deve aplicar variante corretamente', () => {
     const { container } = render(
-      <UnifiedCard theme={mockTheme} variant="outlined" size="md">
+      <UnifiedCard theme={mockTheme} variant='outlined' size='md'>
         <div>Card content</div>
       </UnifiedCard>
     );
@@ -73,13 +73,13 @@ describe('UnifiedCard', () => {
 
   it('deve aplicar tamanho corretamente', () => {
     const { container: containerSm } = render(
-      <UnifiedCard theme={mockTheme} variant="default" size="sm">
+      <UnifiedCard theme={mockTheme} variant='default' size='sm'>
         <div>Small card</div>
       </UnifiedCard>
     );
 
     const { container: containerLg } = render(
-      <UnifiedCard theme={mockTheme} variant="default" size="lg">
+      <UnifiedCard theme={mockTheme} variant='default' size='lg'>
         <div>Large card</div>
       </UnifiedCard>
     );

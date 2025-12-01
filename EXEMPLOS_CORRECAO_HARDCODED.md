@@ -12,10 +12,10 @@ Este documento contém exemplos práticos de como corrigir cores hardcoded e dad
 
 ```tsx
 const StyledButton = styled.button`
-  background-color: #29ABE2;
+  background-color: #29abe2;
   color: #ffffff;
   border: 1px solid #1a8bc2;
-  
+
   &:hover {
     background-color: #1a8bc2;
   }
@@ -26,27 +26,23 @@ const StyledButton = styled.button`
 
 ```tsx
 const StyledButton = styled.button<{ $theme?: any }>`
-  background-color: ${props => 
-    props.$theme?.colors?.primary || 
-    props.$theme?.colors?.accent || 
-    'transparent'
-  };
-  color: ${props => 
-    props.$theme?.colors?.text?.primary || 
-    props.$theme?.colors?.text || 
-    'inherit'
-  };
-  border: 1px solid ${props => 
-    props.$theme?.colors?.primary || 
-    props.$theme?.colors?.border?.primary || 
-    'transparent'
-  };
-  
+  background-color: ${props =>
+    props.$theme?.colors?.primary ||
+    props.$theme?.colors?.accent ||
+    'transparent'};
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
+    props.$theme?.colors?.text ||
+    'inherit'};
+  border: 1px solid
+    ${props =>
+      props.$theme?.colors?.primary ||
+      props.$theme?.colors?.border?.primary ||
+      'transparent'};
+
   &:hover {
-    background-color: ${props => 
-      props.$theme?.colors?.primary || 
-      'transparent'
-    };
+    background-color: ${props =>
+      props.$theme?.colors?.primary || 'transparent'};
     opacity: 0.9;
   }
 `;
@@ -70,24 +66,22 @@ const Card = styled.div<{ $theme?: any }>`
 
 ```tsx
 const Card = styled.div<{ $theme?: any }>`
-  background: ${props => 
-    props.$theme?.colors?.background?.secondary || 
-    props.$theme?.colors?.surface || 
-    props.$theme?.background?.secondary || 
-    'transparent'
-  };
-  border: 1px solid ${props => 
-    props.$theme?.colors?.border?.light || 
-    props.$theme?.colors?.border || 
-    props.$theme?.border?.light || 
-    'transparent'
-  };
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.colors?.text || 
-    props.$theme?.text?.dark || 
-    'inherit'
-  };
+  background: ${props =>
+    props.$theme?.colors?.background?.secondary ||
+    props.$theme?.colors?.surface ||
+    props.$theme?.background?.secondary ||
+    'transparent'};
+  border: 1px solid
+    ${props =>
+      props.$theme?.colors?.border?.light ||
+      props.$theme?.colors?.border ||
+      props.$theme?.border?.light ||
+      'transparent'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
+    props.$theme?.colors?.text ||
+    props.$theme?.text?.dark ||
+    'inherit'};
 `;
 ```
 
@@ -118,7 +112,7 @@ const StatusBadge = styled.div<{ status: 'success' | 'error' | 'warning' }>`
 #### ✅ **DEPOIS:**
 
 ```tsx
-const StatusBadge = styled.div<{ 
+const StatusBadge = styled.div<{
   status: 'success' | 'error' | 'warning' | 'info';
   $theme?: any;
 }>`
@@ -164,12 +158,8 @@ const StatusBadge = styled.div<{
 ```tsx
 const MyComponent = () => {
   const { colors } = useTheme();
-  
-  return (
-    <StyledDiv $theme={{ colors }}>
-      {/* conteúdo */}
-    </StyledDiv>
-  );
+
+  return <StyledDiv $theme={{ colors }}>{/* conteúdo */}</StyledDiv>;
 };
 
 const StyledDiv = styled.div<{ $theme?: any }>`
@@ -185,23 +175,14 @@ import { useSafeTheme } from '../../hooks/useSafeTheme';
 
 const MyComponent = () => {
   const { theme } = useSafeTheme();
-  
-  return (
-    <StyledDiv $theme={theme}>
-      {/* conteúdo */}
-    </StyledDiv>
-  );
+
+  return <StyledDiv $theme={theme}>{/* conteúdo */}</StyledDiv>;
 };
 
 const StyledDiv = styled.div<{ $theme?: any }>`
-  background: ${props => 
-    props.$theme?.colors?.background?.primary || 
-    'transparent'
-  };
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    'inherit'
-  };
+  background: ${props =>
+    props.$theme?.colors?.background?.primary || 'transparent'};
+  color: ${props => props.$theme?.colors?.text?.dark || 'inherit'};
 `;
 ```
 
@@ -297,16 +278,16 @@ useEffect(() => {
   const loadEmployees = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch('/api/employees');
-      
+
       if (!response.ok) {
         throw new Error('Erro ao carregar funcionários');
       }
-      
+
       const result = await response.json();
-      
+
       if (result.success && result.data) {
         setEmployees(result.data);
       } else {
@@ -319,7 +300,7 @@ useEffect(() => {
       setIsLoading(false);
     }
   };
-  
+
   loadEmployees();
 }, []);
 
@@ -377,16 +358,16 @@ const [isLoading, setIsLoading] = useState(true);
 useEffect(() => {
   const loadMetrics = async () => {
     setIsLoading(true);
-    
+
     try {
       const response = await fetch('/api/monitoring/metrics');
-      
+
       if (!response.ok) {
         throw new Error('Erro ao carregar métricas');
       }
-      
+
       const result = await response.json();
-      
+
       if (result.success && result.data) {
         setMetrics({
           eventosEnviados: result.data.eventosEnviados || 0,
@@ -401,19 +382,19 @@ useEffect(() => {
       setIsLoading(false);
     }
   };
-  
+
   loadMetrics();
-  
+
   // Opcional: Atualizar métricas periodicamente
   const interval = setInterval(loadMetrics, 60000); // A cada minuto
-  
+
   return () => clearInterval(interval);
 }, []);
 ```
 
 ---
 
-### **EXEMPLO 3: Remover Constantes MOCK_***
+### **EXEMPLO 3: Remover Constantes MOCK\_\***
 
 #### ❌ **ANTES:**
 
@@ -423,7 +404,7 @@ import { MOCK_TERMOS, MOCK_POLITICAS } from '../data/centralized';
 const TermsPage = () => {
   const [termos, setTermos] = useState(MOCK_TERMOS);
   const [politicas, setPoliticas] = useState(MOCK_POLITICAS);
-  
+
   // ...
 };
 ```
@@ -437,17 +418,17 @@ const TermsPage = () => {
   const [termos, setTermos] = useState([]);
   const [politicas, setPoliticas] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      
+
       try {
         const [termosData, politicasData] = await Promise.all([
           loadTermos(),
           loadPoliticas(),
         ]);
-        
+
         setTermos(termosData);
         setPoliticas(politicasData);
       } catch (err) {
@@ -456,14 +437,14 @@ const TermsPage = () => {
         setIsLoading(false);
       }
     };
-    
+
     loadData();
   }, []);
-  
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
-  
+
   // ...
 };
 ```
@@ -494,20 +475,20 @@ const IntegrationPage = () => {
 const IntegrationPage = () => {
   const [config, setConfig] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     const loadConfig = async () => {
       setIsLoading(true);
-      
+
       try {
         const response = await fetch('/api/employers/current');
-        
+
         if (!response.ok) {
           throw new Error('Erro ao carregar configuração');
         }
-        
+
         const result = await response.json();
-        
+
         if (result.success && result.data) {
           setConfig({
             companyId: result.data.cpf || result.data.cnpj,
@@ -523,18 +504,18 @@ const IntegrationPage = () => {
         setIsLoading(false);
       }
     };
-    
+
     loadConfig();
   }, []);
-  
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
-  
+
   if (!config) {
-    return <ErrorMessage message="Não foi possível carregar a configuração" />;
+    return <ErrorMessage message='Não foi possível carregar a configuração' />;
   }
-  
+
   // ...
 };
 ```
@@ -547,6 +528,7 @@ const IntegrationPage = () => {
 
 ```markdown
 ### Para Cores:
+
 - [ ] Componente renderiza sem erros quando `$theme` é undefined
 - [ ] Componente renderiza corretamente com tema completo
 - [ ] Cores visuais estão corretas
@@ -555,6 +537,7 @@ const IntegrationPage = () => {
 - [ ] Fallbacks usam apenas `transparent`, `inherit`, `currentColor`
 
 ### Para Dados:
+
 - [ ] Dados são carregados da API real
 - [ ] Estado de loading é exibido durante carregamento
 - [ ] Erros são tratados adequadamente
@@ -584,4 +567,3 @@ Após aplicar as correções seguindo estes exemplos:
 2. Verificar console por erros relacionados
 3. Validar que dados são carregados corretamente
 4. Documentar mudanças realizadas
-

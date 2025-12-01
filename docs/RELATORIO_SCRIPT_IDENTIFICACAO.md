@@ -7,6 +7,7 @@
 ## 📝 Scripts Criados
 
 ### 1. `scripts/find-withconfig-duplication.ps1` ⭐ RECOMENDADO
+
 Script PowerShell completo que identifica 3 padrões de duplicação:
 
 - **Padrão 1:** Duplicação direta `.withConfig().withConfig()`
@@ -14,25 +15,30 @@ Script PowerShell completo que identifica 3 padrões de duplicação:
 - **Padrão 3:** Extensão de componentes locais que já têm withConfig
 
 ### 2. `scripts/find-duplicate-withconfig-simple.ps1`
+
 Versão simplificada do script acima.
 
 ### 3. `scripts/analyze-withconfig-chains.ts`
+
 Script TypeScript para análise mais profunda (requer ts-node).
 
 ## 🔍 Padrões Identificados
 
 ### ❌ ERRO: Duplicação Direta
+
 ```typescript
 const Component = styled.div.withConfig({...}).withConfig({...})`
 ```
 
 ### ❌ ERRO: Extensão de Componente com withConfig
+
 ```typescript
 // UnifiedCard já tem withConfig
 const MyCard = styled(UnifiedCard).withConfig({...})`
 ```
 
 ### ❌ ERRO: Extensão de Componente Local
+
 ```typescript
 // No mesmo arquivo:
 const Base = styled.div.withConfig({...})`
@@ -58,6 +64,7 @@ cd E:\DOM
 ```
 
 O script:
+
 1. ✅ Analisa todos os arquivos TypeScript/TSX em `src/`
 2. ✅ Identifica padrões de duplicação
 3. ✅ Exporta resultados para `withconfig-issues.json`
@@ -68,4 +75,3 @@ O script:
 1. Executar o script para identificar problemas
 2. Corrigir os componentes identificados
 3. Verificar se o erro de build foi resolvido
-

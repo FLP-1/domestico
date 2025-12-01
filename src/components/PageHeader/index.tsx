@@ -18,7 +18,7 @@ interface PageHeaderProps {
 }
 
 const HeaderContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     if (prop === 'className' || prop === 'children') return true;
     const propName = prop as string;
     return !propName.startsWith('$');
@@ -36,10 +36,13 @@ const HeaderContainer = styled.div.withConfig({
   ${props => {
     if (!props.$showDivider) return '';
     const border = props.$theme?.colors?.border;
-    const borderColor = (typeof border === 'object' && border && 'light' in border 
-      ? String((border as any).light) 
-      : null) || 
-      (typeof (props.$theme as any)?.border === 'object' && (props.$theme as any)?.border && 'light' in (props.$theme as any).border
+    const borderColor =
+      (typeof border === 'object' && border && 'light' in border
+        ? String((border as any).light)
+        : null) ||
+      (typeof (props.$theme as any)?.border === 'object' &&
+      (props.$theme as any)?.border &&
+      'light' in (props.$theme as any).border
         ? String((props.$theme as any).border.light)
         : 'transparent');
     return `border-bottom: 1px solid ${borderColor}; padding-bottom: ${getSpacing('md')};`;
@@ -47,7 +50,7 @@ const HeaderContainer = styled.div.withConfig({
 `;
 
 const HeaderContent = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     if (prop === 'className' || prop === 'children') return true;
     const propName = prop as string;
     return !propName.startsWith('$');
@@ -65,12 +68,13 @@ const HeaderContent = styled.div.withConfig({
     return 'flex-start';
   }};
   flex-direction: ${props => (props.$variant === 'inline' ? 'row' : 'column')};
-  gap: ${props => (props.$variant === 'inline' ? getSpacing('md') : getSpacing('sm'))};
+  gap: ${props =>
+    props.$variant === 'inline' ? getSpacing('md') : getSpacing('sm')};
   text-align: ${props => (props.$variant === 'centered' ? 'center' : 'left')};
 `;
 
 const PageTitle = styled.h1.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     if (prop === 'className' || prop === 'children') return true;
     const propName = prop as string;
     return !propName.startsWith('$');
@@ -100,32 +104,36 @@ const PageTitle = styled.h1.withConfig({
   font-weight: 700;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    const textDark = (typeof text === 'object' && text && 'dark' in text ? String((text as any).dark) : null) ||
-                     (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'dark' in (props.$theme as any).text
-                       ? String((props.$theme as any).text.dark)
-                       : null) ||
-                     props.$theme?.colors?.primary ||
-                     'inherit';
+    const textDark =
+      (typeof text === 'object' && text && 'dark' in text
+        ? String((text as any).dark)
+        : null) ||
+      (typeof (props.$theme as any)?.text === 'object' &&
+      (props.$theme as any)?.text &&
+      'dark' in (props.$theme as any).text
+        ? String((props.$theme as any).text.dark)
+        : null) ||
+      props.$theme?.colors?.primary ||
+      'inherit';
     return textDark;
   }};
   margin: 0;
   ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
+    const shadowColor =
+      props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
         return `text-shadow: 0 2px 4px rgba(${match[1]}, ${match[2]}, ${match[3]}, 0.1);`;
       }
     }
-    return shadowColor
-      ? `text-shadow: 0 2px 4px ${shadowColor};`
-      : '';
+    return shadowColor ? `text-shadow: 0 2px 4px ${shadowColor};` : '';
   }}
   ${props => (props.$animation ? `animation: ${fadeIn} 0.3s ease-out;` : '')}
 `;
 
 const PageSubtitle = styled.p.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     if (prop === 'className' || prop === 'children') return true;
     const propName = prop as string;
     return !propName.startsWith('$');
@@ -141,11 +149,16 @@ const PageSubtitle = styled.p.withConfig({
   }};
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    const textSecondary = (typeof text === 'object' && text && 'secondary' in text ? String((text as any).secondary) : null) ||
-                          (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'secondary' in (props.$theme as any).text
-                            ? String((props.$theme as any).text.secondary)
-                            : null) ||
-                          'inherit';
+    const textSecondary =
+      (typeof text === 'object' && text && 'secondary' in text
+        ? String((text as any).secondary)
+        : null) ||
+      (typeof (props.$theme as any)?.text === 'object' &&
+      (props.$theme as any)?.text &&
+      'secondary' in (props.$theme as any).text
+        ? String((props.$theme as any).text.secondary)
+        : null) ||
+      'inherit';
     return textSecondary;
   }};
   margin: 0;
@@ -172,7 +185,11 @@ export default function PageHeader({
   animation = false,
 }: PageHeaderProps) {
   return (
-    <HeaderContainer $variant={variant} $showDivider={showDivider} $theme={$theme}>
+    <HeaderContainer
+      $variant={variant}
+      $showDivider={showDivider}
+      $theme={$theme}
+    >
       <HeaderContent $variant={variant}>
         <div>
           <PageTitle
@@ -184,7 +201,11 @@ export default function PageHeader({
             {title}
           </PageTitle>
           {subtitle && (
-            <PageSubtitle $theme={$theme} $variant={variant} $animation={animation}>
+            <PageSubtitle
+              $theme={$theme}
+              $variant={variant}
+              $animation={animation}
+            >
               {subtitle}
             </PageSubtitle>
           )}

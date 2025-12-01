@@ -24,55 +24,55 @@ export const useAlertManager = (): AlertManager => {
 
   const showAlert = useCallback(
     async (config: AlertConfig) => {
-    const { type, title, message, duration = 5000, showIcon = true } = config;
+      const { type, title, message, duration = 5000, showIcon = true } = config;
 
-    const icon = showIcon ? getIconForType(type) : '';
-    const fullMessage = title
-      ? `${icon} ${title}: ${message}`
-      : `${icon} ${message}`;
+      const icon = showIcon ? getIconForType(type) : '';
+      const fullMessage = title
+        ? `${icon} ${title}: ${message}`
+        : `${icon} ${message}`;
 
-    switch (type) {
-      case 'success':
-        toast.success(fullMessage, {
-          position: 'top-right',
-          autoClose: duration,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-        break;
-      case 'error':
-        toast.error(fullMessage, {
-          position: 'top-right',
-          autoClose: duration,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-        break;
-      case 'warning':
-        toast.warning(fullMessage, {
-          position: 'top-right',
-          autoClose: duration,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-        break;
-      case 'info':
-        toast.info(fullMessage, {
-          position: 'top-right',
-          autoClose: duration,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-        break;
-    }
+      switch (type) {
+        case 'success':
+          toast.success(fullMessage, {
+            position: 'top-right',
+            autoClose: duration,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+          break;
+        case 'error':
+          toast.error(fullMessage, {
+            position: 'top-right',
+            autoClose: duration,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+          break;
+        case 'warning':
+          toast.warning(fullMessage, {
+            position: 'top-right',
+            autoClose: duration,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+          break;
+        case 'info':
+          toast.info(fullMessage, {
+            position: 'top-right',
+            autoClose: duration,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+          break;
+      }
 
       // Registrar no histórico (não bloquear o fluxo se falhar)
       if (currentProfile?.id) {

@@ -22,7 +22,11 @@ import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
 import { useMessages } from '../hooks/useMessages';
 import { SHOPPING_CATEGORIES } from '../constants/shoppingCategories';
-import { getThemeColor, getStatusColor, addOpacity } from '../utils/themeHelpers';
+import {
+  getThemeColor,
+  getStatusColor,
+  addOpacity,
+} from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
 import {
   UnifiedButton,
@@ -71,12 +75,20 @@ interface ShoppingCategory {
 const CreateListSection = styled.div<{ $theme: Theme }>`
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    const surfaceColor = typeof surface === 'string' 
-      ? surface 
-      : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
-    return surfaceColor 
+    const surfaceColor =
+      typeof surface === 'string'
+        ? surface
+        : typeof surface === 'object' &&
+            surface !== null &&
+            'primary' in surface
+          ? surface.primary
+          : null;
+    return surfaceColor
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
+      : addOpacity(
+          getThemeColor(props.$theme, 'surface.primary', 'transparent'),
+          0.95
+        );
   }};
   backdrop-filter: blur(20px);
   border-radius: 16px;
@@ -146,13 +158,21 @@ const ListStats = styled.div<{ $theme?: Theme }>`
   padding: 1rem;
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    if (typeof surface === 'object' && surface !== null && 'secondary' in surface) {
+    if (
+      typeof surface === 'object' &&
+      surface !== null &&
+      'secondary' in surface
+    ) {
       return surface.secondary;
     }
     const background = props.$theme?.colors?.background;
     if (typeof background === 'string') {
       return background;
-    } else if (typeof background === 'object' && background !== null && 'secondary' in background) {
+    } else if (
+      typeof background === 'object' &&
+      background !== null &&
+      'secondary' in background
+    ) {
       return background.secondary;
     }
     return getThemeColor(props.$theme, 'surface.secondary', 'transparent');
@@ -225,19 +245,35 @@ const ItemRow = styled.div<{ $isBought: boolean; $theme?: Theme }>`
     props.$isBought
       ? props.$theme?.colors?.success
         ? addOpacity(props.$theme.colors.success, 0.1)
-        : addOpacity(getStatusColor(props.$theme, 'success', 'background') || 'transparent', 0.1)
+        : addOpacity(
+            getStatusColor(props.$theme, 'success', 'background') ||
+              'transparent',
+            0.1
+          )
       : (() => {
           const surface = props.$theme?.colors?.surface;
-          if (typeof surface === 'object' && surface !== null && 'secondary' in surface) {
+          if (
+            typeof surface === 'object' &&
+            surface !== null &&
+            'secondary' in surface
+          ) {
             return surface.secondary;
           }
           const background = props.$theme?.colors?.background;
           if (typeof background === 'string') {
             return background;
-          } else if (typeof background === 'object' && background !== null && 'secondary' in background) {
+          } else if (
+            typeof background === 'object' &&
+            background !== null &&
+            'secondary' in background
+          ) {
             return background.secondary;
           }
-          return getThemeColor(props.$theme, 'surface.secondary', 'transparent');
+          return getThemeColor(
+            props.$theme,
+            'surface.secondary',
+            'transparent'
+          );
         })()};
   opacity: ${props => (props.$isBought ? 0.7 : 1)};
   transition: all 0.3s ease;
@@ -247,19 +283,35 @@ const ItemRow = styled.div<{ $isBought: boolean; $theme?: Theme }>`
       props.$isBought
         ? props.$theme?.colors?.success
           ? addOpacity(props.$theme.colors.success, 0.15)
-          : addOpacity(getStatusColor(props.$theme, 'success', 'background') || 'transparent', 0.15)
+          : addOpacity(
+              getStatusColor(props.$theme, 'success', 'background') ||
+                'transparent',
+              0.15
+            )
         : (() => {
             const surface = props.$theme?.colors?.surface;
-            if (typeof surface === 'object' && surface !== null && 'secondary' in surface) {
+            if (
+              typeof surface === 'object' &&
+              surface !== null &&
+              'secondary' in surface
+            ) {
               return surface.secondary;
             }
             const background = props.$theme?.colors?.background;
             if (typeof background === 'string') {
               return background;
-            } else if (typeof background === 'object' && background !== null && 'secondary' in background) {
+            } else if (
+              typeof background === 'object' &&
+              background !== null &&
+              'secondary' in background
+            ) {
               return background.secondary;
             }
-            return getThemeColor(props.$theme, 'surface.secondary', 'transparent');
+            return getThemeColor(
+              props.$theme,
+              'surface.secondary',
+              'transparent'
+            );
           })()};
   }
 `;
@@ -914,7 +966,6 @@ export default function ShoppingManagement() {
           </div>
         )}
       </UnifiedModal>
-
     </PageContainer>
   );
 }

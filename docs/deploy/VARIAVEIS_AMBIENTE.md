@@ -72,4 +72,3 @@ JWT_SECRET=seu-jwt-secret
 ---
 
 **Última atualização:** Janeiro 2025
-

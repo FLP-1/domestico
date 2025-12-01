@@ -120,6 +120,7 @@ color: ${props => props.theme?.colors?.primary}  // Sem $
 **Impacto:** Cores não se adaptam ao perfil do usuário em vários lugares
 
 **Solução Proposta:**
+
 - Padronizar para `props.$theme` (transient prop)
 - Criar script de migração automática
 - Validar com ESLint customizado
@@ -137,6 +138,7 @@ color: ${props => props.theme?.colors?.primary}  // Sem $
 **Impacto:** Duplicação de código, manutenção difícil, inconsistências visuais
 
 **Solução Proposta:**
+
 - Migração gradual de componentes legados
 - Deprecar componentes antigos com warnings
 - Documentar processo de migração
@@ -155,6 +157,7 @@ color: ${props => props.theme?.colors?.primary}  // Sem $
 **Impacto:** Sistema de temas não funciona completamente
 
 **Solução Proposta:**
+
 - Script de busca e substituição automática
 - Validação com ESLint customizado
 - Documentação de padrões obrigatórios
@@ -212,6 +215,7 @@ color: ${props => props.theme?.colors?.primary}  // Sem $
 **Impacto:** Usuários com leitores de tela não conseguem usar formulários
 
 **Solução Proposta:**
+
 ```typescript
 // ✅ CORRETO
 <select
@@ -339,6 +343,7 @@ const MotivationCarousel = dynamic(
 ```
 
 **Solução Proposta:**
+
 ```typescript
 // ✅ CORRETO: Usar React.memo
 export const UnifiedButton = React.memo<UnifiedButtonProps>(({ ... }) => {
@@ -353,6 +358,7 @@ export const UnifiedButton = React.memo<UnifiedButtonProps>(({ ... }) => {
 ```
 
 **Solução Proposta:**
+
 ```typescript
 // ✅ CORRETO: Respeitar preferências do usuário
 const animation = props.$reducedMotion ? 'none' : fadeIn;
@@ -408,6 +414,7 @@ const fadeIn = keyframes`
 ```
 
 **Solução Proposta:**
+
 ```typescript
 // ✅ CORRETO: Modal de confirmação
 const handleDelete = async () => {
@@ -490,11 +497,13 @@ color: #29abe2;  // Deveria usar theme.colors.primary
 **Impacto:** Alto - Quebra funcionalidade para usuários com deficiência
 
 **Ações:**
+
 1. Adicionar `aria-label` ou `title` em todos os `<select>`
 2. Associar labels a inputs em formulários
 3. Validar com ESLint e leitor de tela
 
 **Arquivos prioritários:**
+
 - `src/pages/register.tsx`
 - `src/components/EmployeeModal.tsx`
 - `src/components/EmployerModal.tsx`
@@ -506,12 +515,14 @@ color: #29abe2;  // Deveria usar theme.colors.primary
 **Impacto:** Alto - Consistência visual e adaptação a perfis
 
 **Ações:**
+
 1. Criar script de migração automática
 2. Substituir cores hardcoded por `theme.colors.*`
 3. Validar com ESLint customizado
 4. Documentar padrões obrigatórios
 
 **Script proposto:**
+
 ```bash
 # Buscar e substituir cores hardcoded
 find src -name "*.tsx" -exec sed -i 's/#29abe2/${props.$theme?.colors?.primary}/g' {} \;
@@ -523,6 +534,7 @@ find src -name "*.tsx" -exec sed -i 's/#29abe2/${props.$theme?.colors?.primary}/
 **Impacto:** Médio-Alto - Reduz duplicação e facilita manutenção
 
 **Ações:**
+
 1. Identificar todos os usos de componentes legados
 2. Migrar gradualmente para componentes unificados
 3. Deprecar componentes antigos com warnings
@@ -538,6 +550,7 @@ find src -name "*.tsx" -exec sed -i 's/#29abe2/${props.$theme?.colors?.primary}/
 **Impacto:** Médio - Melhora experiência do usuário
 
 **Ações:**
+
 1. Adicionar confirmações em ações críticas (deletar, etc.)
 2. Melhorar mensagens de erro (específicas e acionáveis)
 3. Adicionar validação em tempo real em formulários
@@ -549,6 +562,7 @@ find src -name "*.tsx" -exec sed -i 's/#29abe2/${props.$theme?.colors?.primary}/
 **Impacto:** Médio - Melhora velocidade e responsividade
 
 **Ações:**
+
 1. Adicionar `React.memo` em componentes pesados
 2. Implementar `useMemo` e `useCallback` onde necessário
 3. Otimizar animações (respeitar `prefers-reduced-motion`)
@@ -560,6 +574,7 @@ find src -name "*.tsx" -exec sed -i 's/#29abe2/${props.$theme?.colors?.primary}/
 **Impacto:** Médio - Consistência visual
 
 **Ações:**
+
 1. Substituir espaçamentos hardcoded por `theme.spacing.*`
 2. Substituir tipografia hardcoded por `theme.typography.*`
 3. Validar com ESLint customizado
@@ -574,6 +589,7 @@ find src -name "*.tsx" -exec sed -i 's/#29abe2/${props.$theme?.colors?.primary}/
 **Impacto:** Baixo-Médio - Facilita manutenção
 
 **Ações:**
+
 1. Adicionar JSDoc em todos os componentes
 2. Criar Storybook ou similar
 3. Documentar exemplos de uso
@@ -585,6 +601,7 @@ find src -name "*.tsx" -exec sed -i 's/#29abe2/${props.$theme?.colors?.primary}/
 **Impacto:** Baixo-Médio - Melhora experiência em ambientes escuros
 
 **Ações:**
+
 1. Criar tema escuro no design system
 2. Implementar toggle de tema
 3. Salvar preferência do usuário
@@ -597,16 +614,19 @@ find src -name "*.tsx" -exec sed -i 's/#29abe2/${props.$theme?.colors?.primary}/
 ### **FASE 1: CORREÇÕES CRÍTICAS (Semana 1)**
 
 #### **Dia 1-2: Acessibilidade**
+
 - [ ] Corrigir 13 erros de acessibilidade
 - [ ] Testar com leitor de tela
 - [ ] Validar com ESLint
 
 #### **Dia 3-4: Padronização de Tema**
+
 - [ ] Criar script de migração
 - [ ] Migrar cores hardcoded
 - [ ] Validar consistência
 
 #### **Dia 5: Migração de Componentes**
+
 - [ ] Identificar componentes legados
 - [ ] Criar plano de migração
 - [ ] Iniciar migração gradual
@@ -616,16 +636,19 @@ find src -name "*.tsx" -exec sed -i 's/#29abe2/${props.$theme?.colors?.primary}/
 ### **FASE 2: MELHORIAS DE UX (Semana 2)**
 
 #### **Dia 1-2: Feedback Visual**
+
 - [ ] Adicionar confirmações
 - [ ] Melhorar mensagens de erro
 - [ ] Implementar validação em tempo real
 
 #### **Dia 3-4: Performance**
+
 - [ ] Otimizar componentes com React.memo
 - [ ] Implementar useMemo/useCallback
 - [ ] Otimizar animações
 
 #### **Dia 5: Padronização**
+
 - [ ] Padronizar espaçamentos
 - [ ] Padronizar tipografia
 - [ ] Validar consistência
@@ -635,6 +658,7 @@ find src -name "*.tsx" -exec sed -i 's/#29abe2/${props.$theme?.colors?.primary}/
 ### **FASE 3: REFINAMENTOS (Semana 3+)**
 
 #### **Melhorias Contínuas**
+
 - [ ] Documentação de componentes
 - [ ] Dark mode (opcional)
 - [ ] Micro-interações
@@ -645,21 +669,25 @@ find src -name "*.tsx" -exec sed -i 's/#29abe2/${props.$theme?.colors?.primary}/
 ## ✅ CRITÉRIOS DE SUCESSO
 
 ### **Acessibilidade**
+
 - [ ] 0 erros de ESLint relacionados a acessibilidade
 - [ ] Todos os formulários acessíveis com leitores de tela
 - [ ] Navegação por teclado funcional em todos os componentes
 
 ### **Consistência Visual**
+
 - [ ] 0 cores hardcoded (exceto em casos específicos documentados)
 - [ ] 100% dos componentes usando design system
 - [ ] Espaçamentos e tipografia padronizados
 
 ### **Performance**
+
 - [ ] Lighthouse score > 90 em todas as páginas
 - [ ] Tempo de carregamento < 2s
 - [ ] Animações suaves (60fps)
 
 ### **Experiência do Usuário**
+
 - [ ] Feedback visual em todas as ações críticas
 - [ ] Mensagens de erro específicas e acionáveis
 - [ ] Validação em tempo real em formulários
@@ -693,18 +721,21 @@ find src -name "*.tsx" -exec sed -i 's/#29abe2/${props.$theme?.colors?.primary}/
 ## 📚 RECURSOS E FERRAMENTAS
 
 ### **Documentação do Projeto**
+
 - `DEVELOPMENT_RULES.md` - Regras de desenvolvimento
 - `STRICT_RULES.md` - Regras estritas
 - `docs/DESIGN_SYSTEM.md` - Design system completo
 - `docs/BEST_PRACTICES.md` - Melhores práticas
 
 ### **Ferramentas Úteis**
+
 - ESLint com regras de acessibilidade
 - Lighthouse para performance
 - WAVE para acessibilidade
 - React DevTools para performance
 
 ### **Componentes de Referência**
+
 - `src/components/unified/index.ts` - Componentes unificados
 - `src/config/theme.ts` - Design tokens
 - `src/hooks/useTheme.ts` - Hook de tema
@@ -733,4 +764,3 @@ O projeto DOM possui uma **base sólida** com design system implementado e compo
 
 **Última atualização:** Janeiro 2025  
 **Próxima revisão:** Após implementação das correções críticas
-

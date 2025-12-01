@@ -37,6 +37,7 @@ O Sistema DOM é uma solução completa de gestão doméstica que inclui:
 ### **Arquitetura Técnica**
 
 **Stack Principal:**
+
 - **Frontend:** Next.js 15.5.2, React 18, TypeScript 5.0.4 (strict mode)
 - **Backend:** Next.js API Routes, Prisma ORM 6.16.3, PostgreSQL
 - **Autenticação:** NextAuth com certificados digitais ICP-Brasil
@@ -44,6 +45,7 @@ O Sistema DOM é uma solução completa de gestão doméstica que inclui:
 - **Certificados:** Suporte a A1 (software) e A3 (hardware) ICP-Brasil
 
 **Estrutura de Pastas Relevante:**
+
 ```
 E:\DOM\
 ├── src/
@@ -71,11 +73,13 @@ E:\DOM\
 ### **1. Conformidade Legal Obrigatória**
 
 **Contexto Legal:**
+
 - Empregadores domésticos no Brasil são **obrigados por lei** a enviar eventos trabalhistas ao eSocial
 - Eventos como **S-1000** (cadastro do empregador), **S-2200** (admissão de empregado), **S-1200** (folha de pagamento) são **mandatórios**
 - Falha no envio resulta em **multas e penalidades** da Receita Federal
 
 **Objetivo:**
+
 - Automatizar o envio de todos os eventos obrigatórios
 - Garantir que nenhum evento seja perdido ou enviado incorretamente
 - Manter histórico completo de envios e status de processamento
@@ -83,11 +87,13 @@ E:\DOM\
 ### **2. Sincronização de Dados**
 
 **Problema:**
+
 - Dados de empregados, salários e eventos trabalhistas existem no Sistema DOM
 - Esses dados precisam ser **sincronizados** com o eSocial oficial
 - Mudanças no eSocial (ex: recusas de eventos) precisam ser refletidas no DOM
 
 **Objetivo:**
+
 - Consultar dados cadastrais do empregador no eSocial
 - Consultar lista de empregados cadastrados
 - Consultar status de eventos enviados (protocolos, recusas, aceites)
@@ -96,11 +102,13 @@ E:\DOM\
 ### **3. Experiência do Usuário**
 
 **Problema:**
+
 - Empregadores domésticos geralmente não têm conhecimento técnico
 - Processo manual de envio via portal eSocial é complexo e propenso a erros
 - Falta de feedback claro sobre status de envios
 
 **Objetivo:**
+
 - Interface simples e intuitiva para envio de eventos
 - Feedback visual claro sobre status (enviado, processado, recusado)
 - Alertas automáticos para eventos pendentes ou com erro
@@ -109,11 +117,13 @@ E:\DOM\
 ### **4. Automação e Eficiência**
 
 **Problema:**
+
 - Envio manual de eventos é trabalhoso e repetitivo
 - Folha de pagamento precisa ser enviada mensalmente
 - Admissões e demissões precisam ser comunicadas imediatamente
 
 **Objetivo:**
+
 - Automação de envio de folha mensal (S-1200)
 - Automação de eventos de admissão/demissão (S-2200, S-2299)
 - Agendamento de envios recorrentes
@@ -126,6 +136,7 @@ E:\DOM\
 ### **1. Integração SOAP com eSocial**
 
 **Contexto Técnico:**
+
 - eSocial usa **SOAP (Simple Object Access Protocol)** para comunicação
 - Requer **certificados digitais ICP-Brasil** (A1 ou A3) para autenticação mTLS
 - Comunicação via **HTTPS com TLS 1.2+**
@@ -134,24 +145,28 @@ E:\DOM\
 **Objetivos Específicos:**
 
 #### **1.1. Consulta de Dados do Empregador**
+
 - **Operação:** `ConsultarIdentificadorCadastro`
 - **Objetivo:** Obter identificador de cadastro do empregador no eSocial
 - **Uso:** Validar se o CPF está cadastrado e obter dados cadastrais
 - **Status:** ⚠️ **BLOQUEADO** - Endpoint retorna HTTP 404 (URL não confirmada oficialmente)
 
 #### **1.2. Consulta de Dados dos Empregados**
+
 - **Operação:** `ConsultarEventos` (tipo S-2200)
 - **Objetivo:** Listar todos os empregados cadastrados no eSocial
 - **Uso:** Sincronizar lista de empregados entre DOM e eSocial
 - **Status:** ⚠️ **BLOQUEADO** - Endpoint retorna HTTP 404 (URL não confirmada oficialmente)
 
 #### **1.3. Consulta de Eventos Enviados**
+
 - **Operação:** `ConsultarIdentificadoresEventos`
 - **Objetivo:** Obter lista de eventos enviados com seus protocolos e status
 - **Uso:** Verificar status de processamento, identificar recusas, obter recibos
 - **Status:** ⚠️ **BLOQUEADO** - Endpoint retorna HTTP 404 (URL não confirmada oficialmente)
 
 #### **1.4. Envio de Lote de Eventos**
+
 - **Operação:** `EnviarLoteEventos`
 - **Objetivo:** Enviar múltiplos eventos em um único lote
 - **Uso:** Enviar eventos S-1000, S-2200, S-1200, etc.
@@ -160,12 +175,14 @@ E:\DOM\
 ### **2. Gerenciamento de Certificados Digitais**
 
 **Contexto:**
+
 - Certificados ICP-Brasil são obrigatórios para autenticação
 - Certificados A1 (software) são preferidos para automação
 - Certificados A3 (hardware/token) requerem interação do usuário
 - Certificados têm validade limitada (geralmente 1-3 anos)
 
 **Objetivos:**
+
 - Carregar certificados PFX/PKCS#12 do filesystem (backend)
 - Carregar certificados via upload (frontend)
 - Validar certificados (validade, cadeia de confiança)
@@ -178,12 +195,14 @@ E:\DOM\
 ### **3. Tratamento de Erros e Resiliência**
 
 **Contexto:**
+
 - APIs governamentais podem estar indisponíveis
 - Certificados podem expirar
 - Eventos podem ser recusados pelo eSocial
 - Rede pode falhar durante envio
 
 **Objetivos:**
+
 - **Circuit Breaker:** Evitar sobrecarga quando API está indisponível
 - **Retry Service:** Tentar novamente em caso de falhas temporárias
 - **Offline Cache:** Armazenar dados localmente quando API está offline
@@ -195,11 +214,13 @@ E:\DOM\
 ### **4. Sanitização e Segurança**
 
 **Contexto:**
+
 - Certificados digitais contêm chaves privadas sensíveis
 - Logs não devem expor dados pessoais (LGPD)
 - Erros podem conter informações sensíveis
 
 **Objetivos:**
+
 - Sanitizar todos os logs para remover certificados, chaves, senhas
 - Redigir buffers binários grandes
 - Limitar profundidade de objetos em logs
@@ -220,6 +241,7 @@ E:\DOM\
 **Content-Type:** `text/xml; charset=utf-8`
 
 **Envelope SOAP Esperado:**
+
 ```xml
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
                   xmlns:con="http://www.esocial.gov.br/servicos/empregador/consultaidentificadorcadastro/v1_0_0">
@@ -233,11 +255,13 @@ E:\DOM\
 ```
 
 **URLs Testadas (TODAS RETORNARAM 404):**
+
 - ❌ `https://webservices.producaorestrita.esocial.gov.br/ServicoConsultarIdentificadorCadastro/ConsultarIdentificadorCadastro.svc`
 - ❌ `https://webservices.consulta.esocial.gov.br/ServicoConsultarIdentificadorCadastro/ConsultarIdentificadorCadastro.svc`
 - ❌ Variações com `/servicos/empregador/...` também testadas
 
 **Objetivo de Negócio:**
+
 - Validar se o CPF do empregador está cadastrado no eSocial
 - Obter identificador de cadastro para uso em outros eventos
 - Verificar dados cadastrais básicos
@@ -254,6 +278,7 @@ E:\DOM\
 **Método HTTP:** POST
 
 **Envelope SOAP Esperado:**
+
 ```xml
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
                   xmlns:con="http://www.esocial.gov.br/servicos/empregador/consultaeventos/v1_0_0">
@@ -268,6 +293,7 @@ E:\DOM\
 ```
 
 **Objetivo de Negócio:**
+
 - Listar todos os empregados cadastrados (eventos S-2200)
 - Sincronizar dados entre DOM e eSocial
 - Verificar se há empregados cadastrados no eSocial que não estão no DOM
@@ -284,6 +310,7 @@ E:\DOM\
 **Método HTTP:** POST
 
 **Envelope SOAP Esperado (Baseado em Exemplo Fornecido):**
+
 ```xml
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
                   xmlns:con="http://www.esocial.gov.br/servico/consulta/identificadoreseventos">
@@ -304,11 +331,13 @@ E:\DOM\
 ```
 
 **URL Sugerida (Produção):**
+
 ```
 https://webservices.consulta.esocial.gov.br/servicos/empregador/consulta/identificadores-eventos/WsConsultarIdentificadoresEventos.svc
 ```
 
 **Objetivo de Negócio:**
+
 - Obter lista de eventos enviados com seus protocolos
 - Verificar status de processamento (aceito, recusado, pendente)
 - Obter recibos de eventos processados
@@ -325,6 +354,7 @@ https://webservices.consulta.esocial.gov.br/servicos/empregador/consulta/identif
 **Método HTTP:** POST
 
 **Objetivo de Negócio:**
+
 - Enviar eventos S-1000 (cadastro empregador)
 - Enviar eventos S-2200 (admissão empregado)
 - Enviar eventos S-1200 (folha de pagamento)
@@ -340,17 +370,20 @@ https://webservices.consulta.esocial.gov.br/servicos/empregador/consulta/identif
 ### **Bloqueio Principal: URLs Oficiais Não Confirmadas**
 
 **Problema:**
+
 - Manual de Orientação do Desenvolvedor (MOS) S-1.3 foi baixado (`docs/archive/mos-s-1-3.pdf`)
 - Extração automática de texto falhou (PDF comprimido/protegido)
 - URLs testadas retornam HTTP 404
 - Comunidade não fornece URLs oficiais confirmadas
 
 **Impacto:**
+
 - Consultas não funcionam (bloqueio crítico)
 - Envios não podem ser validados completamente
 - Sistema não pode sincronizar dados
 
 **Solução Necessária:**
+
 1. **Revisar manualmente** o PDF `docs/archive/mos-s-1-3.pdf` para encontrar URLs oficiais
 2. **Consultar SERPRO** (suporte oficial) para confirmar endpoints
 3. **Validar URLs** com certificado válido em ambiente de homologação
@@ -361,15 +394,18 @@ https://webservices.consulta.esocial.gov.br/servicos/empregador/consulta/identif
 ### **Bloqueio Secundário: Validação de Certificado**
 
 **Problema:**
+
 - Certificado carregado e válido até 15/05/2026
 - mTLS configurado corretamente
 - Mas consultas retornam 404 antes mesmo de validar certificado
 
 **Impacto:**
+
 - Não sabemos se o problema é URL ou certificado
 - Precisa resolver URL primeiro para validar certificado
 
 **Solução:**
+
 - Resolver bloqueio principal primeiro
 - Depois validar se certificado tem permissões corretas
 
@@ -380,11 +416,13 @@ https://webservices.consulta.esocial.gov.br/servicos/empregador/consulta/identif
 ### **1. Certificados Digitais ICP-Brasil**
 
 **Requisito:**
+
 - Certificado A1 (software) ou A3 (hardware) válido
 - Certificado deve estar na cadeia ICP-Brasil
 - Certificado deve ter permissões para o CPF do empregador
 
 **Implementação:**
+
 - ✅ Carregamento de PFX do filesystem
 - ✅ Validação de validade
 - ✅ Configuração de `https.Agent` para mTLS
@@ -393,11 +431,13 @@ https://webservices.consulta.esocial.gov.br/servicos/empregador/consulta/identif
 ### **2. TLS 1.2 ou Superior**
 
 **Requisito:**
+
 - Comunicação HTTPS obrigatória
 - TLS 1.2 mínimo (TLS 1.3 preferido)
 - Suporte a SHA-384
 
 **Implementação:**
+
 - ✅ Axios configurado para HTTPS
 - ✅ `https.Agent` com certificado
 - ✅ Node.js suporta TLS 1.2+ por padrão
@@ -405,22 +445,26 @@ https://webservices.consulta.esocial.gov.br/servicos/empregador/consulta/identif
 ### **3. Assinatura Digital XML**
 
 **Requisito:**
+
 - XMLs enviados devem ser assinados digitalmente
 - Assinatura deve usar certificado ICP-Brasil
 - Validação de assinatura no recebimento
 
 **Implementação:**
+
 - ⚠️ **PENDENTE** - Assinatura XML não implementada ainda
 - Necessário: biblioteca de assinatura XML (ex: `xml-crypto` ou `xmlsec1`)
 
 ### **4. Conformidade LGPD**
 
 **Requisito:**
+
 - Não expor dados pessoais em logs
 - Não expor certificados/chaves privadas
 - Sanitizar todos os logs
 
 **Implementação:**
+
 - ✅ `sanitizeErrorDetails` implementado
 - ✅ `sanitizeDetailObject` implementado
 - ✅ Logs não expõem dados sensíveis
@@ -435,6 +479,7 @@ https://webservices.consulta.esocial.gov.br/servicos/empregador/consulta/identif
 **Comando:** `npm run esocial:hml -- --acao consultar`
 
 **Funcionalidades:**
+
 - Carrega variáveis de ambiente de `.env.local` e `.env`
 - Valida presença de certificado e credenciais
 - Executa `consultarDadosEmpregador()`
@@ -586,10 +631,12 @@ ESOCIAL_SOFTWARE_HOUSE_TELEFONE=11999999999
 ## 📞 CONTATO E SUPORTE
 
 **Para questões técnicas sobre eSocial:**
+
 - SERPRO: Suporte oficial para desenvolvedores
 - Portal eSocial: https://www.esocial.gov.br/
 
 **Para questões sobre o Sistema DOM:**
+
 - Documentação: `docs/INDICE.md`
 - Código: `src/services/esocialRealApi.ts`
 
@@ -598,4 +645,3 @@ ESOCIAL_SOFTWARE_HOUSE_TELEFONE=11999999999
 **FIM DO DOCUMENTO**
 
 Este documento fornece contexto completo para um agente LLM entender os objetivos, bloqueios, implementação atual e próximos passos da integração eSocial no Sistema DOM.
-

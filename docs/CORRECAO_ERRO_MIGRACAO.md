@@ -1,4 +1,5 @@
 # ✅ CORREÇÃO: ERRO NA MIGRAÇÃO
+
 ## Sistema DOM - Migração Contextual Communication
 
 **Data:** Janeiro 2025  
@@ -11,6 +12,7 @@
 ### ENTENDIMENTO DO PROBLEMA
 
 **Erro Original:**
+
 ```
 Error: P3006
 Migration `20251121114856_add_mensagem_historico` failed to apply cleanly to the shadow database.
@@ -20,6 +22,7 @@ The underlying table for model `(not available)` does not exist.
 ```
 
 **Causa:**
+
 - A migração anterior `20251121114856_add_mensagem_historico` tenta fazer `DROP TABLE "ConfiguracaoSistema"`
 - Essa tabela não existe no shadow database do Prisma
 - O Prisma usa shadow database para validar migrações antes de aplicá-las
@@ -32,13 +35,14 @@ The underlying table for model `(not available)` does not exist.
 ### **1. Migração Criada Manualmente**
 
 Criada migração manual em:
+
 - `prisma/migrations/20250115120000_add_contextual_communication/migration.sql`
 
 **Conteúdo da Migração:**
 
 ```sql
 -- AlterTable
-ALTER TABLE "mensagens" 
+ALTER TABLE "mensagens"
   ALTER COLUMN "conversaId" DROP NOT NULL,
   ADD COLUMN "contextoTipo" VARCHAR(50),
   ADD COLUMN "contextoId" TEXT,
@@ -105,4 +109,3 @@ npx prisma generate
 
 **Última atualização:** Janeiro 2025  
 **Status:** ✅ **MIGRAÇÃO APLICADA COM SUCESSO**
-

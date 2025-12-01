@@ -371,7 +371,10 @@ export const OptimizedButtonGroup = styled(BaseFlexContainer)`
 `;
 
 // LoadingOverlay otimizado
-export const OptimizedLoadingOverlay = styled.div<{ $isLoading: boolean; $theme?: any }>`
+export const OptimizedLoadingOverlay = styled.div<{
+  $isLoading: boolean;
+  $theme?: any;
+}>`
   position: relative;
 
   &::after {
@@ -382,8 +385,9 @@ export const OptimizedLoadingOverlay = styled.div<{ $isLoading: boolean; $theme?
     right: 0;
     bottom: 0;
     background: ${props => {
-      const bgColor = props.$theme?.colors?.background?.primary ||
-                      props.$theme?.background?.primary;
+      const bgColor =
+        props.$theme?.colors?.background?.primary ||
+        props.$theme?.background?.primary;
       if (bgColor && bgColor.startsWith('#')) {
         const r = parseInt(bgColor.slice(1, 3), 16);
         const g = parseInt(bgColor.slice(3, 5), 16);

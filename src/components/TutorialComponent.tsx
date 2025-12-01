@@ -134,8 +134,9 @@ const Logo = styled.div<{ $theme?: any }>`
   height: 120px;
   border-radius: 30px;
   background: ${props => {
-    const bgColor = props.$theme?.colors?.background?.primary ||
-                    props.$theme?.background?.primary;
+    const bgColor =
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary;
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
@@ -149,8 +150,8 @@ const Logo = styled.div<{ $theme?: any }>`
   justify-content: center;
   margin: 0 auto 1rem;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -160,17 +161,19 @@ const Logo = styled.div<{ $theme?: any }>`
     return props.$theme?.shadows?.xl || 'none';
   }};
   /* backdrop-filter: blur(20px); - removido para melhorar legibilidade */
-  border: 2px solid ${props => {
-    const bgColor = props.$theme?.colors?.background?.primary ||
-                    props.$theme?.background?.primary;
-    if (bgColor && bgColor.startsWith('#')) {
-      const r = parseInt(bgColor.slice(1, 3), 16);
-      const g = parseInt(bgColor.slice(3, 5), 16);
-      const b = parseInt(bgColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.3)`;
-    }
-    return 'transparent';
-  }};
+  border: 2px solid
+    ${props => {
+      const bgColor =
+        props.$theme?.colors?.background?.primary ||
+        props.$theme?.background?.primary;
+      if (bgColor && bgColor.startsWith('#')) {
+        const r = parseInt(bgColor.slice(1, 3), 16);
+        const g = parseInt(bgColor.slice(3, 5), 16);
+        const b = parseInt(bgColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.3)`;
+      }
+      return 'transparent';
+    }};
 
   img {
     width: 80px;
@@ -186,8 +189,8 @@ const WelcomeTitle = styled.h1<{ $theme?: any }>`
   color: white;
   margin: 0 0 1rem 0;
   text-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -209,8 +212,8 @@ const WelcomeSubtitle = styled.p<{ $theme?: any }>`
   margin: 0 0 2rem 0;
   font-weight: ${fontWeight.medium};
   text-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -225,9 +228,10 @@ const WelcomeSubtitle = styled.p<{ $theme?: any }>`
 const WelcomeDescription = styled.p<{ $theme?: any }>`
   font-size: ${fontSize.lg};
   color: ${props => {
-    const textColor = props.$theme?.colors?.text?.onPrimary ||
-                      props.$theme?.text?.onPrimary ||
-                      props.$theme?.colors?.surface;
+    const textColor =
+      props.$theme?.colors?.text?.onPrimary ||
+      props.$theme?.text?.onPrimary ||
+      props.$theme?.colors?.surface;
     if (textColor && textColor.startsWith('#')) {
       const r = parseInt(textColor.slice(1, 3), 16);
       const g = parseInt(textColor.slice(3, 5), 16);
@@ -258,8 +262,9 @@ const SkipButton = styled.button<{ $theme?: any }>`
   top: 2rem;
   right: 2rem;
   background: ${props => {
-    const bgColor = props.$theme?.colors?.background?.primary ||
-                    props.$theme?.background?.primary;
+    const bgColor =
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary;
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
@@ -268,17 +273,19 @@ const SkipButton = styled.button<{ $theme?: any }>`
     }
     return 'transparent';
   }};
-  border: 1px solid ${props => {
-    const bgColor = props.$theme?.colors?.background?.primary ||
-                    props.$theme?.background?.primary;
-    if (bgColor && bgColor.startsWith('#')) {
-      const r = parseInt(bgColor.slice(1, 3), 16);
-      const g = parseInt(bgColor.slice(3, 5), 16);
-      const b = parseInt(bgColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.3)`;
-    }
-    return 'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const bgColor =
+        props.$theme?.colors?.background?.primary ||
+        props.$theme?.background?.primary;
+      if (bgColor && bgColor.startsWith('#')) {
+        const r = parseInt(bgColor.slice(1, 3), 16);
+        const g = parseInt(bgColor.slice(3, 5), 16);
+        const b = parseInt(bgColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.3)`;
+      }
+      return 'transparent';
+    }};
   border-radius: 25px;
   padding: 0.75rem 1.5rem;
   color: white;
@@ -289,8 +296,9 @@ const SkipButton = styled.button<{ $theme?: any }>`
 
   &:hover {
     background: ${props => {
-      const bgColor = props.$theme?.colors?.background?.primary ||
-                      props.$theme?.background?.primary;
+      const bgColor =
+        props.$theme?.colors?.background?.primary ||
+        props.$theme?.background?.primary;
       if (bgColor && bgColor.startsWith('#')) {
         const r = parseInt(bgColor.slice(1, 3), 16);
         const g = parseInt(bgColor.slice(3, 5), 16);
@@ -307,14 +315,23 @@ const TutorialContainer = styled.div<{ $theme?: any }>`
   min-height: 100vh;
   background: linear-gradient(
     135deg,
-    ${props => props.$theme?.colors?.surface || props.$theme?.colors?.background?.primary || publicColors.surface} 0%,
+    ${props =>
+        props.$theme?.colors?.surface ||
+        props.$theme?.colors?.background?.primary ||
+        publicColors.surface}
+      0%,
     ${props => {
-      const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) || 
-             props.$theme?.border?.light ||
-             (typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border) ||
-             'transparent';
-    }} 100%
+        const border = props.$theme?.colors?.border;
+        return (
+          (typeof border === 'object' && border?.light) ||
+          props.$theme?.border?.light ||
+          (typeof publicColors.border === 'object'
+            ? publicColors.border.light
+            : publicColors.border) ||
+          'transparent'
+        );
+      }}
+      100%
   );
   display: flex;
   flex-direction: column;
@@ -323,8 +340,9 @@ const TutorialContainer = styled.div<{ $theme?: any }>`
 
 const TutorialHeader = styled.header<{ $theme?: any }>`
   background: ${props => {
-    const bgColor = props.$theme?.colors?.background?.primary ||
-                    props.$theme?.background?.primary;
+    const bgColor =
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary;
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
@@ -336,8 +354,8 @@ const TutorialHeader = styled.header<{ $theme?: any }>`
   /* backdrop-filter: blur(20px); - removido para melhorar legibilidade */
   padding: 1.5rem 2rem;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -348,7 +366,8 @@ const TutorialHeader = styled.header<{ $theme?: any }>`
   }};
   border-bottom: 1px solid
     ${props => {
-      const primaryColor = props.$theme?.colors?.primary || publicColors.primary;
+      const primaryColor =
+        props.$theme?.colors?.primary || publicColors.primary;
       // Adiciona opacidade ao hex color
       if (primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
@@ -373,8 +392,8 @@ const ProgressBar = styled.div<{ $theme?: any }>`
   width: 200px;
   height: 8px;
   background: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -401,8 +420,8 @@ const ProgressFill = styled.div<{ $progress: number; $theme?: any }>`
 
 const ProgressText = styled.span<{ $theme?: any }>`
   font-weight: 600;
-  color: ${props => 
-    props.$theme?.colors?.text?.primary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
     props.$theme?.text?.primary ||
     publicColors.text?.primary ||
     'inherit'};
@@ -445,8 +464,8 @@ const SlideTitle = styled.h2<{ $color: string; $theme?: any }>`
   color: ${props => props.$theme?.colors?.primary || props.$color};
   margin: 0 0 0.75rem 0;
   text-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -468,8 +487,8 @@ const SlideTitle = styled.h2<{ $color: string; $theme?: any }>`
 
 const SlideDescription = styled.p<{ $theme?: any }>`
   font-size: ${fontSize.lg};
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
     publicColors.text?.secondary ||
     'inherit'};
@@ -499,8 +518,8 @@ const FeatureItem = styled.li<{ $theme?: any }>`
   gap: 0.5rem;
   margin-bottom: 0.5rem;
   font-size: ${fontSize.sm};
-  color: ${props => 
-    props.$theme?.colors?.text?.primary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
     props.$theme?.text?.primary ||
     publicColors.text?.primary ||
     'inherit'};
@@ -529,8 +548,8 @@ const BenefitItem = styled.li<{ $theme?: any }>`
   gap: 0.5rem;
   margin-bottom: 0.5rem;
   font-size: ${fontSize.xs};
-  color: ${props => 
-    props.$theme?.colors?.text?.tertiary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.tertiary ||
     props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
     props.$theme?.colors?.text ||
@@ -558,8 +577,8 @@ const SlideIllustration = styled.div<{ $color: string; $theme?: any }>`
     font-size: 6rem;
     color: ${props => props.$theme?.colors?.primary || props.$color};
     filter: ${props => {
-      const shadowColor = props.$theme?.colors?.shadow ||
-                          props.$theme?.shadow?.color;
+      const shadowColor =
+        props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
       if (shadowColor && shadowColor.startsWith('#')) {
         const r = parseInt(shadowColor.slice(1, 3), 16);
         const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -583,8 +602,9 @@ const NavigationContainer = styled.div<{ $theme?: any }>`
   align-items: center;
   padding: 2rem;
   background: ${props => {
-    const bgColor = props.$theme?.colors?.background?.primary ||
-                    props.$theme?.background?.primary;
+    const bgColor =
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary;
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
@@ -594,36 +614,45 @@ const NavigationContainer = styled.div<{ $theme?: any }>`
     return 'transparent';
   }};
   /* backdrop-filter: blur(20px); - removido para melhorar legibilidade */
-  border-top: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border-top: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
 `;
 
 const NavigationButton = styled.button<{ $theme?: any; $disabled?: boolean }>`
   background: ${props => {
     if (props.$disabled) {
-      return props.$theme?.colors?.text?.disabled ||
-             props.$theme?.colors?.text?.secondary ||
-             'transparent';
+      return (
+        props.$theme?.colors?.text?.disabled ||
+        props.$theme?.colors?.text?.secondary ||
+        'transparent'
+      );
     }
-    return props.$theme?.colors?.primary ||
-           props.$theme?.accent ||
-           'transparent';
+    return (
+      props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'
+    );
   }};
   color: ${props => {
     if (props.$disabled) {
-      return props.$theme?.colors?.text?.disabled ||
-             props.$theme?.colors?.text?.secondary ||
-             'inherit';
+      return (
+        props.$theme?.colors?.text?.disabled ||
+        props.$theme?.colors?.text?.secondary ||
+        'inherit'
+      );
     }
-    return props.$theme?.colors?.text?.primary ||
-           props.$theme?.text?.primary ||
-           props.$theme?.colors?.text ||
-           props.$theme?.colors?.surface ||
-           'inherit';
+    return (
+      props.$theme?.colors?.text?.primary ||
+      props.$theme?.text?.primary ||
+      props.$theme?.colors?.text ||
+      props.$theme?.colors?.surface ||
+      'inherit'
+    );
   }};
   border: none;
   border-radius: 12px;
@@ -639,8 +668,8 @@ const NavigationButton = styled.button<{ $theme?: any; $disabled?: boolean }>`
   &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: ${props => {
-      const primaryColor = props.$theme?.colors?.primary ||
-                           props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -693,8 +722,8 @@ const CompletionTitle = styled.h1<{ $theme?: any }>`
   color: white;
   margin: 0 0 1rem 0;
   text-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -712,9 +741,10 @@ const CompletionTitle = styled.h1<{ $theme?: any }>`
 const CompletionDescription = styled.p<{ $theme?: any }>`
   font-size: ${fontSize.xl};
   color: ${props => {
-    const textColor = props.$theme?.colors?.text?.onPrimary ||
-                      props.$theme?.text?.onPrimary ||
-                      props.$theme?.colors?.surface;
+    const textColor =
+      props.$theme?.colors?.text?.onPrimary ||
+      props.$theme?.text?.onPrimary ||
+      props.$theme?.colors?.surface;
     if (textColor && textColor.startsWith('#')) {
       const r = parseInt(textColor.slice(1, 3), 16);
       const g = parseInt(textColor.slice(3, 5), 16);
@@ -737,8 +767,7 @@ const StatsContainer = styled.div<{ $theme?: any }>`
 
 const StatCard = styled.div<{ $theme?: any }>`
   background: ${props => {
-    const primaryColor = props.$theme?.colors?.primary ||
-                         props.$theme?.accent;
+    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
     if (primaryColor && primaryColor.startsWith('#')) {
       const r = parseInt(primaryColor.slice(1, 3), 16);
       const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -749,21 +778,22 @@ const StatCard = styled.div<{ $theme?: any }>`
   }};
   border-radius: 16px;
   padding: 1.5rem;
-  border: 1px solid ${props => {
-    const primaryColor = props.$theme?.colors?.primary ||
-                         props.$theme?.accent;
-    if (primaryColor && primaryColor.startsWith('#')) {
-      const r = parseInt(primaryColor.slice(1, 3), 16);
-      const g = parseInt(primaryColor.slice(3, 5), 16);
-      const b = parseInt(primaryColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.3)`;
-    }
-    return 'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.3)`;
+      }
+      return 'transparent';
+    }};
   text-align: center;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -785,9 +815,10 @@ const StatNumber = styled.div<{ $theme?: any }>`
 const StatLabel = styled.div<{ $theme?: any }>`
   font-size: ${fontSize.sm};
   color: ${props => {
-    const textColor = props.$theme?.colors?.text?.onPrimary ||
-                      props.$theme?.text?.onPrimary ||
-                      props.$theme?.colors?.surface;
+    const textColor =
+      props.$theme?.colors?.text?.onPrimary ||
+      props.$theme?.text?.onPrimary ||
+      props.$theme?.colors?.surface;
     if (textColor && textColor.startsWith('#')) {
       const r = parseInt(textColor.slice(1, 3), 16);
       const g = parseInt(textColor.slice(3, 5), 16);
@@ -802,8 +833,8 @@ const StatLabel = styled.div<{ $theme?: any }>`
 
 const TutorialHeaderTitle = styled.h3<{ $theme?: any }>`
   margin: 0;
-  color: ${props => 
-    props.$theme?.colors?.text?.primary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
     props.$theme?.text?.primary ||
     publicColors.text?.primary ||
     'inherit'};
@@ -829,14 +860,16 @@ const DotIndicator = styled.div<{ $active: boolean; $theme?: any }>`
   border-radius: 50%;
   background: ${props => {
     if (props.$active) {
-      return props.$theme?.colors?.primary ||
-             props.$theme?.accent ||
-             'transparent';
+      return (
+        props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'
+      );
     }
     const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
+    return (
+      (typeof border === 'object' && border?.light) ||
+      props.$theme?.border?.light ||
+      'transparent'
+    );
   }};
   cursor: pointer;
   transition: all 0.3s ease;

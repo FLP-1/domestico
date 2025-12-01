@@ -1,4 +1,5 @@
 # 🚨 PLANO DE CORREÇÃO URGENTE: REPOSICIONAMENTO ESOCIAL
+
 ## Sistema DOM - Correções Imediatas Necessárias
 
 **Data:** Janeiro 2025  
@@ -30,6 +31,7 @@
 ### **1. ATUALIZAR PROPOSTA DE VALOR** 🔴 CRÍTICO
 
 **Arquivos a Atualizar:**
+
 - [ ] `README.md` - Proposta principal
 - [ ] `src/components/ValueProposition/index.tsx` - ✅ **JÁ ATUALIZADO**
 - [ ] `src/pages/index.tsx` - Landing page
@@ -38,9 +40,11 @@
 **Mudanças:**
 
 **ANTES:**
+
 > "Automatize suas obrigações trabalhistas domésticoSocial"
 
 **DEPOIS:**
+
 > "Registros de ponto seguros para trabalho doméstico. Sistema anti-fraude robusto e ferramentas auxiliares para facilitar o eSocial."
 
 ---
@@ -48,18 +52,19 @@
 ### **2. REPOSICIONAR ESOCIAL** 🔴 CRÍTICO
 
 **Arquivos a Atualizar:**
+
 - [ ] `src/pages/esocial-integration.tsx` - Página principal
 - [ ] `src/pages/esocial-domestico-completo.tsx` - Página completa
 - [ ] Documentação de eSocial
 
 **Mudanças de Linguagem:**
 
-| Antes (Incorreto) | Depois (Correto) |
-|-------------------|------------------|
+| Antes (Incorreto)       | Depois (Correto)         |
+| ----------------------- | ------------------------ |
 | "Integração automática" | "Ferramentas auxiliares" |
-| "Automatize eSocial" | "Facilite o eSocial" |
-| "Envio automático" | "Preparação de dados" |
-| "Conexão direta" | "Suporte ao processo" |
+| "Automatize eSocial"    | "Facilite o eSocial"     |
+| "Envio automático"      | "Preparação de dados"    |
+| "Conexão direta"        | "Suporte ao processo"    |
 
 ---
 
@@ -67,17 +72,19 @@
 
 **Mudanças:**
 
-| Plano | Preço Antigo | Preço Novo | Mudança |
-|-------|--------------|------------|---------|
-| Ultra Pro | R$ 99,90 | **R$ 69,90** | -30% |
+| Plano     | Preço Antigo | Preço Novo   | Mudança |
+| --------- | ------------ | ------------ | ------- |
+| Ultra Pro | R$ 99,90     | **R$ 69,90** | -30%    |
 
 **Justificativa:**
+
 - Sem eSocial automático, preço precisa refletir valor real
 - Anti-fraude robusto ainda justifica premium
 - Gestão financeira agrega valor
 - Preço mais competitivo
 
 **Arquivos a Atualizar:**
+
 - [ ] `src/pages/subscription-plans.tsx` - ✅ **JÁ ATUALIZADO NO COMPONENTE**
 - [ ] `src/components/PlanComparison/index.tsx` - ✅ **JÁ ATUALIZADO**
 
@@ -86,6 +93,7 @@
 ### **4. ATUALIZAR COMPONENTES** ✅ PARCIALMENTE FEITO
 
 **Status:**
+
 - ✅ `ValueProposition` - Atualizado (removido eSocial automático)
 - ✅ `PlanComparison` - Atualizado (preço e diferenciais)
 - ⏳ Páginas principais - Pendente
@@ -118,6 +126,7 @@
 > **"Registros de ponto seguros para trabalho doméstico. Sistema anti-fraude robusto de múltiplas camadas, gestão financeira completa e ferramentas auxiliares para facilitar o eSocial."**
 
 **Diferenciais Principais:**
+
 1. 🛡️ Sistema Anti-Fraude Robusto (DIFERENCIAL PRINCIPAL)
 2. 💰 Gestão Financeira Completa
 3. 📋 Ferramentas Auxiliares eSocial (complementar)
@@ -126,11 +135,11 @@
 
 ## 📊 NOVA MATRIZ DE VALOR
 
-| Funcionalidade | Valor | Diferenciação | Status |
-|----------------|-------|--------------|--------|
-| **Anti-Fraude Ponto** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 🔴 **DIFERENCIAL PRINCIPAL** |
-| **Gestão Financeira** | ⭐⭐⭐⭐ | ⭐⭐⭐ | 🟡 Importante |
-| **eSocial Auxiliar** | ⭐⭐⭐ | ⭐⭐ | 🟢 Complementar |
+| Funcionalidade        | Valor      | Diferenciação | Status                       |
+| --------------------- | ---------- | ------------- | ---------------------------- |
+| **Anti-Fraude Ponto** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐    | 🔴 **DIFERENCIAL PRINCIPAL** |
+| **Gestão Financeira** | ⭐⭐⭐⭐   | ⭐⭐⭐        | 🟡 Importante                |
+| **eSocial Auxiliar**  | ⭐⭐⭐     | ⭐⭐          | 🟢 Complementar              |
 
 ---
 
@@ -154,4 +163,3 @@
 
 **Última atualização:** Janeiro 2025  
 **Status:** 🔴 **CORREÇÕES EM ANDAMENTO**
-

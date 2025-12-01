@@ -37,12 +37,10 @@ export default async function handler(
     if (req.method === 'POST') {
       const { data, inicio, fim, justificativa } = req.body || {};
       if (!inicio || !fim)
-        return res
-          .status(400)
-          .json({
-            success: false,
-            error: 'Início e fim são obrigatórios (HH:MM)',
-          });
+        return res.status(400).json({
+          success: false,
+          error: 'Início e fim são obrigatórios (HH:MM)',
+        });
       const dia = data ? new Date(data) : new Date();
       const created = await prisma.solicitacaoHoraExtra.create({
         data: {
@@ -79,7 +77,8 @@ export default async function handler(
         data: {
           status: novo,
           revisadaPor: usuarioId,
-          revisadaEm: novo === OVERTIME_REQUEST_STATUSES.PENDING ? null : new Date(),
+          revisadaEm:
+            novo === OVERTIME_REQUEST_STATUSES.PENDING ? null : new Date(),
           observacao: observacao || null,
         },
       });

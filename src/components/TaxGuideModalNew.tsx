@@ -19,7 +19,10 @@ import {
   OptimizedCheckboxLabel,
   OptimizedCheckboxContent,
 } from '../components/shared/optimized-styles';
-import { PAYMENT_STATUSES, type PaymentStatus } from '../constants/paymentStatuses';
+import {
+  PAYMENT_STATUSES,
+  type PaymentStatus,
+} from '../constants/paymentStatuses';
 
 const FormRow = styled.div`
   display: grid;
@@ -79,15 +82,19 @@ const InputStyled = styled(Input)<{ $hasError?: boolean; $theme?: any }>`
   border: 2px solid
     ${props => {
       if (props.$hasError) {
-        return props.$theme?.colors?.status?.error?.background ||
-               props.$theme?.status?.error?.background ||
-               props.$theme?.colors?.error ||
-               'transparent';
+        return (
+          props.$theme?.colors?.status?.error?.background ||
+          props.$theme?.status?.error?.background ||
+          props.$theme?.colors?.error ||
+          'transparent'
+        );
       }
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) ||
-             props.$theme?.border?.light ||
-             'transparent';
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
     }};
   border-radius: 8px;
   font-size: 0.9rem;
@@ -107,10 +114,11 @@ const InputStyled = styled(Input)<{ $hasError?: boolean; $theme?: any }>`
       props.$theme?.accent ||
       'transparent'};
     box-shadow: ${props => {
-      const primaryColor = props.$theme?.colors?.navigation?.primary ||
-                           props.$theme?.navigation?.primary ||
-                           props.$theme?.colors?.primary ||
-                           props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.navigation?.primary ||
+        props.$theme?.navigation?.primary ||
+        props.$theme?.colors?.primary ||
+        props.$theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -152,24 +160,26 @@ const CheckboxContainer = styled.div<{ $theme?: any }>`
   margin: 0.75rem 0;
   max-height: 140px;
   overflow-y: auto;
-  border: 1px solid ${props => {
-    const primaryColor = props.$theme?.colors?.primary ||
-                         props.$theme?.accent;
-    if (primaryColor && primaryColor.startsWith('#')) {
-      const r = parseInt(primaryColor.slice(1, 3), 16);
-      const g = parseInt(primaryColor.slice(3, 5), 16);
-      const b = parseInt(primaryColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.2)`;
-    }
-    return 'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      return 'transparent';
+    }};
   border-radius: 8px;
   padding: 0.75rem;
   background: ${props => {
-    const bgColor = props.$theme?.colors?.background?.secondary ||
-                    props.$theme?.background?.secondary ||
-                    props.$theme?.colors?.background?.primary ||
-                    props.$theme?.background?.primary;
+    const bgColor =
+      props.$theme?.colors?.background?.secondary ||
+      props.$theme?.background?.secondary ||
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary;
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
@@ -185,8 +195,8 @@ const CheckboxContainer = styled.div<{ $theme?: any }>`
 
   &::-webkit-scrollbar-track {
     background: ${props => {
-      const shadowColor = props.$theme?.colors?.shadow ||
-                          props.$theme?.shadow?.color;
+      const shadowColor =
+        props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
       if (shadowColor && shadowColor.startsWith('#')) {
         const r = parseInt(shadowColor.slice(1, 3), 16);
         const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -200,8 +210,8 @@ const CheckboxContainer = styled.div<{ $theme?: any }>`
 
   &::-webkit-scrollbar-thumb {
     background: ${props => {
-      const primaryColor = props.$theme?.colors?.primary ||
-                           props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -219,22 +229,26 @@ const CheckboxItem = styled.label<{ $theme?: any }>`
   align-items: flex-start;
   gap: 0.5rem;
   padding: 0.75rem;
-  border: 1px solid ${props => {
-    const primaryColor = props.$theme?.colors?.navigation?.primary ||
-                         props.$theme?.navigation?.primary ||
-                         props.$theme?.colors?.primary ||
-                         props.$theme?.accent;
-    if (primaryColor && primaryColor.startsWith('#')) {
-      const r = parseInt(primaryColor.slice(1, 3), 16);
-      const g = parseInt(primaryColor.slice(3, 5), 16);
-      const b = parseInt(primaryColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.2)`;
-    }
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const primaryColor =
+        props.$theme?.colors?.navigation?.primary ||
+        props.$theme?.navigation?.primary ||
+        props.$theme?.colors?.primary ||
+        props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -246,10 +260,11 @@ const CheckboxItem = styled.label<{ $theme?: any }>`
 
   &:hover {
     background: ${props => {
-      const primaryColor = props.$theme?.colors?.navigation?.primary ||
-                           props.$theme?.navigation?.primary ||
-                           props.$theme?.colors?.primary ||
-                           props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.navigation?.primary ||
+        props.$theme?.navigation?.primary ||
+        props.$theme?.colors?.primary ||
+        props.$theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);

@@ -5,6 +5,7 @@
 Styled components que usam props com prefixo `$` (transient props) precisam ter `shouldForwardProp` configurado para evitar que essas props sejam passadas para o DOM durante o SSR (Server-Side Rendering), causando erros de prerendering.
 
 **Erro típico:**
+
 ```
 Error: An error occurred. See https://git.io/JUIaE#12
 Error occurred prerendering page "/..."
@@ -30,7 +31,7 @@ const Component = styled.div<{ $theme?: Theme }>`
 
 // ✅ DEPOIS (correto)
 const Component = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -51,6 +52,7 @@ Criamos o script `scripts/check-styled-components.ps1` que identifica todos os s
 ```
 
 **O que o script faz:**
+
 - Busca todos os arquivos `.tsx` e `.ts` em `src/`
 - Identifica styled components com props `$` mas sem `shouldForwardProp`
 - Lista todos os componentes que precisam de correção
@@ -82,7 +84,7 @@ Ao criar novos styled components, sempre usar o padrão:
 ```typescript
 // Template padrão
 const ComponentName = styled.elementType.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -130,6 +132,7 @@ cd E:\DOM
 ## ⚠️ Pontos de Atenção
 
 1. **Styled Components Baseados em Outros Componentes**
+
    ```typescript
    // Também precisa de shouldForwardProp
    const MyCard = styled(UnifiedCard).withConfig({
@@ -141,6 +144,7 @@ cd E:\DOM
    ```
 
 2. **Styled Components com Múltiplas Props `$`**
+
    ```typescript
    // Funciona para todas as props com $
    const Component = styled.div.withConfig({
@@ -174,4 +178,3 @@ cd E:\DOM
 
 **Última atualização:** 2025-01-XX  
 **Autor:** Manus AI
-

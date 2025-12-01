@@ -42,7 +42,11 @@ export const getSurfacePrimary = (theme?: Theme): string => {
     }
   }
   // Fallback: usar defaultColors.surface.primary se for objeto, ou defaultColors.surface se for string
-  if (typeof defaultColors.surface === 'object' && defaultColors.surface !== null && 'primary' in defaultColors.surface) {
+  if (
+    typeof defaultColors.surface === 'object' &&
+    defaultColors.surface !== null &&
+    'primary' in defaultColors.surface
+  ) {
     const fallbackPrimary = defaultColors.surface.primary;
     if (typeof fallbackPrimary === 'string') {
       return fallbackPrimary;
@@ -52,7 +56,9 @@ export const getSurfacePrimary = (theme?: Theme): string => {
     return defaultColors.surface;
   }
   // Último fallback: usar surface.primary de defaultColors (sempre objeto com primary)
-  return typeof defaultColors.surface === 'object' && defaultColors.surface !== null && 'primary' in defaultColors.surface
+  return typeof defaultColors.surface === 'object' &&
+    defaultColors.surface !== null &&
+    'primary' in defaultColors.surface
     ? String(defaultColors.surface.primary)
     : 'transparent';
 };
@@ -62,7 +68,11 @@ export const getSurfacePrimary = (theme?: Theme): string => {
  */
 export const getSurfaceSecondary = (theme?: Theme): string => {
   const surface = theme?.colors?.surface;
-  if (typeof surface === 'object' && surface !== null && 'secondary' in surface) {
+  if (
+    typeof surface === 'object' &&
+    surface !== null &&
+    'secondary' in surface
+  ) {
     const secondary = surface.secondary;
     if (typeof secondary === 'string') {
       return secondary;
@@ -70,7 +80,11 @@ export const getSurfaceSecondary = (theme?: Theme): string => {
   }
   // Fallback para background.secondary se surface não tiver secondary
   const background = theme?.colors?.background;
-  if (typeof background === 'object' && background !== null && 'secondary' in background) {
+  if (
+    typeof background === 'object' &&
+    background !== null &&
+    'secondary' in background
+  ) {
     const bgSecondary = background.secondary;
     if (typeof bgSecondary === 'string') {
       return bgSecondary;
@@ -80,7 +94,11 @@ export const getSurfaceSecondary = (theme?: Theme): string => {
     return background;
   }
   // Fallback: usar defaultColors.surface.secondary se for objeto, ou defaultColors.surface se for string
-  if (typeof defaultColors.surface === 'object' && defaultColors.surface !== null && 'secondary' in defaultColors.surface) {
+  if (
+    typeof defaultColors.surface === 'object' &&
+    defaultColors.surface !== null &&
+    'secondary' in defaultColors.surface
+  ) {
     const fallbackSecondary = defaultColors.surface.secondary;
     if (typeof fallbackSecondary === 'string') {
       return fallbackSecondary;
@@ -90,7 +108,9 @@ export const getSurfaceSecondary = (theme?: Theme): string => {
     return defaultColors.surface;
   }
   // Último fallback: usar surface.secondary de defaultColors (sempre objeto com secondary)
-  return typeof defaultColors.surface === 'object' && defaultColors.surface !== null && 'secondary' in defaultColors.surface
+  return typeof defaultColors.surface === 'object' &&
+    defaultColors.surface !== null &&
+    'secondary' in defaultColors.surface
     ? String(defaultColors.surface.secondary)
     : 'transparent';
 };
@@ -110,7 +130,11 @@ export const getBorderPrimary = (theme?: Theme): string => {
     }
   }
   // Fallback: usar defaultColors.border.primary se for objeto, ou defaultColors.border se for string
-  if (typeof defaultColors.border === 'object' && defaultColors.border !== null && 'primary' in defaultColors.border) {
+  if (
+    typeof defaultColors.border === 'object' &&
+    defaultColors.border !== null &&
+    'primary' in defaultColors.border
+  ) {
     const fallbackPrimary = defaultColors.border.primary;
     if (typeof fallbackPrimary === 'string') {
       return fallbackPrimary;
@@ -120,7 +144,9 @@ export const getBorderPrimary = (theme?: Theme): string => {
     return defaultColors.border;
   }
   // Último fallback: usar border.primary de defaultColors (sempre objeto com primary)
-  return typeof defaultColors.border === 'object' && defaultColors.border !== null && 'primary' in defaultColors.border
+  return typeof defaultColors.border === 'object' &&
+    defaultColors.border !== null &&
+    'primary' in defaultColors.border
     ? String(defaultColors.border.primary)
     : 'transparent';
 };
@@ -137,7 +163,11 @@ export const getBorderFocus = (theme?: Theme): string => {
     }
   }
   // Fallback: usar defaultColors.border.focus se for objeto, ou defaultColors.border se for string
-  if (typeof defaultColors.border === 'object' && defaultColors.border !== null && 'focus' in defaultColors.border) {
+  if (
+    typeof defaultColors.border === 'object' &&
+    defaultColors.border !== null &&
+    'focus' in defaultColors.border
+  ) {
     const fallbackFocus = defaultColors.border.focus;
     if (typeof fallbackFocus === 'string') {
       return fallbackFocus;
@@ -147,7 +177,9 @@ export const getBorderFocus = (theme?: Theme): string => {
     return defaultColors.border;
   }
   // Último fallback: usar border.focus de defaultColors (sempre objeto com focus)
-  return typeof defaultColors.border === 'object' && defaultColors.border !== null && 'focus' in defaultColors.border
+  return typeof defaultColors.border === 'object' &&
+    defaultColors.border !== null &&
+    'focus' in defaultColors.border
     ? String(defaultColors.border.focus)
     : 'transparent';
 };
@@ -160,21 +192,31 @@ export const getBackgroundPrimary = (theme?: Theme): string => {
   if (typeof background === 'string') {
     return background;
   }
-  if (typeof background === 'object' && background !== null && 'primary' in background) {
+  if (
+    typeof background === 'object' &&
+    background !== null &&
+    'primary' in background
+  ) {
     const primary = background.primary;
     if (typeof primary === 'string') {
       return primary;
     }
   }
   // Fallback: usar defaultColors.surface.secondary como fallback para background.primary
-  if (typeof defaultColors.surface === 'object' && defaultColors.surface !== null && 'secondary' in defaultColors.surface) {
+  if (
+    typeof defaultColors.surface === 'object' &&
+    defaultColors.surface !== null &&
+    'secondary' in defaultColors.surface
+  ) {
     const fallbackSecondary = defaultColors.surface.secondary;
     if (typeof fallbackSecondary === 'string') {
       return fallbackSecondary;
     }
   }
   // Último fallback: usar surface.secondary de defaultColors
-  return typeof defaultColors.surface === 'object' && defaultColors.surface !== null && 'secondary' in defaultColors.surface
+  return typeof defaultColors.surface === 'object' &&
+    defaultColors.surface !== null &&
+    'secondary' in defaultColors.surface
     ? String(defaultColors.surface.secondary)
     : 'transparent';
 };
@@ -187,21 +229,31 @@ export const getBackgroundSecondary = (theme?: Theme): string => {
   if (typeof background === 'string') {
     return background;
   }
-  if (typeof background === 'object' && background !== null && 'secondary' in background) {
+  if (
+    typeof background === 'object' &&
+    background !== null &&
+    'secondary' in background
+  ) {
     const secondary = background.secondary;
     if (typeof secondary === 'string') {
       return secondary;
     }
   }
   // Fallback: usar defaultColors.surface.tertiary como fallback para background.secondary
-  if (typeof defaultColors.surface === 'object' && defaultColors.surface !== null && 'tertiary' in defaultColors.surface) {
+  if (
+    typeof defaultColors.surface === 'object' &&
+    defaultColors.surface !== null &&
+    'tertiary' in defaultColors.surface
+  ) {
     const fallbackTertiary = defaultColors.surface.tertiary;
     if (typeof fallbackTertiary === 'string') {
       return fallbackTertiary;
     }
   }
   // Último fallback: usar surface.tertiary de defaultColors
-  return typeof defaultColors.surface === 'object' && defaultColors.surface !== null && 'tertiary' in defaultColors.surface
+  return typeof defaultColors.surface === 'object' &&
+    defaultColors.surface !== null &&
+    'tertiary' in defaultColors.surface
     ? String(defaultColors.surface.tertiary)
     : 'transparent';
 };
@@ -211,7 +263,12 @@ export const getBackgroundSecondary = (theme?: Theme): string => {
  */
 export const getTextDark = (theme?: Theme): string => {
   const text = theme?.colors?.text;
-  if (typeof text === 'object' && text !== null && 'dark' in text && text.dark) {
+  if (
+    typeof text === 'object' &&
+    text !== null &&
+    'dark' in text &&
+    text.dark
+  ) {
     return text.dark;
   }
   return getTextPrimary(theme);
@@ -222,10 +279,13 @@ export const getTextDark = (theme?: Theme): string => {
  */
 export const getTextLight = (theme?: Theme): string => {
   const text = theme?.colors?.text;
-  if (typeof text === 'object' && text !== null && 'light' in text && text.light) {
+  if (
+    typeof text === 'object' &&
+    text !== null &&
+    'light' in text &&
+    text.light
+  ) {
     return text.light;
   }
   return getTextSecondary(theme);
 };
-
-

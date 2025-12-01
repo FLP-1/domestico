@@ -1,7 +1,7 @@
 /**
  * Serviço de Gestão Inteligente de Suprimentos
  * Sistema DOM - Reformulação de Compras
- * 
+ *
  * Gestão inteligente de suprimentos domésticos vinculada a:
  * - Rotinas de trabalho
  * - Tarefas específicas
@@ -12,8 +12,18 @@
 import prisma from '../lib/prisma';
 import logger from '../lib/logger';
 
-export type TipoServico = 'LIMPEZA' | 'COZINHA' | 'ORGANIZACAO' | 'MANUTENCAO' | 'GERAL';
-export type CategoriaItem = 'LIMPEZA' | 'ALIMENTO' | 'UTENSILIO' | 'ORGANIZACAO' | 'OUTRO';
+export type TipoServico =
+  | 'LIMPEZA'
+  | 'COZINHA'
+  | 'ORGANIZACAO'
+  | 'MANUTENCAO'
+  | 'GERAL';
+export type CategoriaItem =
+  | 'LIMPEZA'
+  | 'ALIMENTO'
+  | 'UTENSILIO'
+  | 'ORGANIZACAO'
+  | 'OUTRO';
 export type UnidadeMedida = 'UN' | 'KG' | 'L' | 'CX' | 'PCT';
 
 export interface CriarListaSuprimentosInput {
@@ -89,7 +99,8 @@ class SuprimentosService {
       logger.info(`✅ Lista de suprimentos criada: ${lista.id}`);
       return { success: true, lista };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -130,7 +141,8 @@ class SuprimentosService {
 
       return { success: true, listas };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -171,7 +183,8 @@ class SuprimentosService {
       logger.info(`✅ Item adicionado à lista: ${item.id}`);
       return { success: true, item };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -235,7 +248,8 @@ class SuprimentosService {
       logger.info(`✅ Item marcado como comprado: ${itemId}`);
       return { success: true, item };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -267,7 +281,8 @@ class SuprimentosService {
       logger.info(`✅ Template de lista criado: ${template.id}`);
       return { success: true, template };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -298,7 +313,8 @@ class SuprimentosService {
 
       return { success: true, templates };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -361,7 +377,8 @@ class SuprimentosService {
       logger.info(`✅ Lista criada a partir de template: ${lista.id}`);
       return { success: true, lista };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -414,7 +431,8 @@ class SuprimentosService {
       logger.info(`✅ Estoque atualizado: ${estoque.id}`);
       return { success: true, estoque };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -462,7 +480,8 @@ class SuprimentosService {
         },
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -493,7 +512,9 @@ class SuprimentosService {
       // Filtrar por categoria e abaixo do mínimo se necessário
       let estoqueFiltrado = estoque;
       if (categoria) {
-        estoqueFiltrado = estoqueFiltrado.filter(e => e.categoria === categoria);
+        estoqueFiltrado = estoqueFiltrado.filter(
+          e => e.categoria === categoria
+        );
       }
       if (abaixoMinimo) {
         estoqueFiltrado = estoqueFiltrado.filter(
@@ -503,7 +524,8 @@ class SuprimentosService {
 
       return { success: true, estoque: estoqueFiltrado };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -530,7 +552,8 @@ class SuprimentosService {
 
       return { success: true, estoque };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       logger.error(
         {
           error: errorMessage,
@@ -554,4 +577,3 @@ export const getSuprimentosService = (): SuprimentosService => {
 };
 
 export default SuprimentosService;
-

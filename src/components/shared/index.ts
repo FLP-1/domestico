@@ -1,6 +1,6 @@
 /**
  * 🎨 COMPONENTES COMPARTILHADOS
- * 
+ *
  * Exportações centralizadas dos componentes e utilitários compartilhados
  */
 
@@ -125,4 +125,3 @@ export {
   borderRadiusMixin,
   spacingMixin,
 } from './mixins';
-

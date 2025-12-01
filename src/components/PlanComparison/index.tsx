@@ -25,8 +25,8 @@ const Table = styled.table<{ $theme?: any }>`
   border-radius: 12px;
   overflow: hidden;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -39,9 +39,7 @@ const Table = styled.table<{ $theme?: any }>`
 
 const HeaderRow = styled.tr<{ $theme?: any }>`
   background: ${props =>
-    props.$theme?.colors?.primary ||
-    props.$theme?.accent ||
-    'transparent'};
+    props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'};
   color: ${props =>
     props.$theme?.colors?.text?.primary ||
     props.$theme?.text?.primary ||
@@ -59,10 +57,12 @@ const HeaderCell = styled.th<{ $highlighted?: boolean; $theme?: any }>`
   ${props =>
     props.$highlighted &&
     `
-    background: ${props.$theme?.colors?.status?.success?.background ||
-                 props.$theme?.status?.success?.background ||
-                 props.$theme?.colors?.success ||
-                 'transparent'};
+    background: ${
+      props.$theme?.colors?.status?.success?.background ||
+      props.$theme?.status?.success?.background ||
+      props.$theme?.colors?.success ||
+      'transparent'
+    };
     position: relative;
     
     &::before {
@@ -82,9 +82,11 @@ const FeatureRow = styled.tr<{ $theme?: any }>`
   border-bottom: 1px solid
     ${props => {
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) ||
-             props.$theme?.border?.light ||
-             'transparent';
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
     }};
 
   &:last-child {
@@ -147,9 +149,7 @@ const Price = styled.div<{ $theme?: any }>`
   font-size: 2rem;
   font-weight: 700;
   color: ${props =>
-    props.$theme?.colors?.primary ||
-    props.$theme?.accent ||
-    'inherit'};
+    props.$theme?.colors?.primary || props.$theme?.accent || 'inherit'};
   margin-bottom: 0.5rem;
 `;
 
@@ -242,25 +242,13 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
 
   const renderFeatureValue = (value: boolean | string | 'limited') => {
     if (value === true) {
-      return (
-        <CheckIcon $theme={theme}>
-          ✓
-        </CheckIcon>
-      );
+      return <CheckIcon $theme={theme}>✓</CheckIcon>;
     }
     if (value === false) {
-      return (
-        <CrossIcon $theme={theme}>
-          ✗
-        </CrossIcon>
-      );
+      return <CrossIcon $theme={theme}>✗</CrossIcon>;
     }
     if (value === 'limited') {
-      return (
-        <LimitedIcon $theme={theme}>
-          ⚠
-        </LimitedIcon>
-      );
+      return <LimitedIcon $theme={theme}>⚠</LimitedIcon>;
     }
     return <span>{value}</span>;
   };
@@ -312,8 +300,8 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
       {onSelectPlan && (
         <div style={{ marginTop: '2rem', textAlign: 'center' }}>
           <UnifiedButton
-            $variant="primary"
-            $size="lg"
+            $variant='primary'
+            $size='lg'
             onClick={() => onSelectPlan('ultra-pro')}
             $theme={theme}
           >
@@ -326,4 +314,3 @@ export const PlanComparison: React.FC<PlanComparisonProps> = ({
 };
 
 export default PlanComparison;
-

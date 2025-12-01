@@ -1,7 +1,7 @@
 /**
  * Página: Gestão Inteligente de Suprimentos
  * Sistema DOM - Reformulação Completa
- * 
+ *
  * Gestão inteligente de suprimentos vinculada a:
  * - Rotinas de trabalho
  * - Tarefas específicas
@@ -21,19 +21,48 @@ import PageHeader from '../components/PageHeader';
 import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
 import WelcomeSection from '../components/WelcomeSection';
-import { UnifiedCard, UnifiedButton, UnifiedBadge, UnifiedModal } from '../components/unified';
+import {
+  UnifiedCard,
+  UnifiedButton,
+  UnifiedBadge,
+  UnifiedModal,
+} from '../components/unified';
 import { FormGroup, Input, Label, Select } from '../components/FormComponents';
 import EmptyState from '../components/EmptyState';
 import AccessibleEmoji from '../components/AccessibleEmoji';
 import { LoadingContainer } from '../components/shared/page-components';
 import { addOpacity, getThemeColor } from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
-import type { TipoServico, CategoriaItem, UnidadeMedida } from '../services/suprimentosService';
-import type { ListaSuprimentos, ItemSuprimento, TemplateLista, EstoqueDomestico, Tarefa } from '../types/suprimentos';
-import { TIPOS_SERVICO, CATEGORIAS_ITEM, UNIDADES, getTipoServicoInfo } from '../constants/suprimentos';
+import type {
+  TipoServico,
+  CategoriaItem,
+  UnidadeMedida,
+} from '../services/suprimentosService';
+import type {
+  ListaSuprimentos,
+  ItemSuprimento,
+  TemplateLista,
+  EstoqueDomestico,
+  Tarefa,
+} from '../types/suprimentos';
+import {
+  TIPOS_SERVICO,
+  CATEGORIAS_ITEM,
+  UNIDADES,
+  getTipoServicoInfo,
+} from '../constants/suprimentos';
 import { formatCurrency } from '../utils/formatters';
-import { tokens, getSpacing, getFontSize, getBorderRadius } from '../components/shared/tokens';
-import { ContentGrid, FlexRow, FlexColumn } from '../components/shared/page-components';
+import {
+  tokens,
+  getSpacing,
+  getFontSize,
+  getBorderRadius,
+} from '../components/shared/tokens';
+import {
+  ContentGrid,
+  FlexRow,
+  FlexColumn,
+} from '../components/shared/page-components';
 
 // Styled Components
 const ListasGrid = styled(ContentGrid)`
@@ -47,9 +76,9 @@ const ListaCard = styled(UnifiedCard)<{ $theme?: Theme }>`
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px ${props => 
-      addOpacity(getThemeColor(props.$theme, 'shadow', 'transparent'), 0.2)
-    };
+    box-shadow: 0 4px 12px
+      ${props =>
+        addOpacity(getThemeColor(props.$theme, 'shadow', 'transparent'), 0.2)};
   }
 `;
 
@@ -60,7 +89,7 @@ const ListaHeader = styled(FlexRow)`
 `;
 
 const ListaTitulo = styled.h3.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -74,9 +103,8 @@ const ListaTitulo = styled.h3.withConfig({
 const ListaInfo = styled(FlexColumn)<{ $theme?: Theme }>`
   margin-top: ${getSpacing('md')};
   padding-top: ${getSpacing('md')};
-  border-top: 1px solid ${props => 
-    getThemeColor(props.$theme, 'border.light', 'transparent')
-  };
+  border-top: 1px solid
+    ${props => getThemeColor(props.$theme, 'border.light', 'transparent')};
 `;
 
 const InfoRow = styled(FlexRow)`
@@ -85,7 +113,7 @@ const InfoRow = styled(FlexRow)`
 `;
 
 const InfoLabel = styled.span.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -94,7 +122,7 @@ const InfoLabel = styled.span.withConfig({
 `;
 
 const InfoValue = styled.span.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -111,25 +139,27 @@ const FiltrosContainer = styled.div`
 `;
 
 const FiltroButton = styled(UnifiedButton)<{ $active?: boolean }>`
-  ${props => props.$active && `
+  ${props =>
+    props.$active &&
+    `
     opacity: 1;
     font-weight: 600;
   `}
 `;
 
 const EstoqueSection = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: Theme }>`
   margin-top: ${getSpacing('xl')};
   padding: ${getSpacing('lg')};
-  background: ${props => getThemeColor(props.$theme, 'background.secondary', 'transparent')};
+  background: ${props =>
+    getThemeColor(props.$theme, 'background.secondary', 'transparent')};
   border-radius: ${getBorderRadius('md')};
-  border: 1px solid ${props => 
-    getThemeColor(props.$theme, 'border.light', 'transparent')
-  };
+  border: 1px solid
+    ${props => getThemeColor(props.$theme, 'border.light', 'transparent')};
 `;
 
 const EstoqueGrid = styled(ContentGrid)`
@@ -138,27 +168,26 @@ const EstoqueGrid = styled(ContentGrid)`
 `;
 
 const EstoqueItem = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: Theme; $abaixoMinimo?: boolean }>`
   padding: ${getSpacing('md')};
-  background: ${props => 
+  background: ${props =>
     props.$abaixoMinimo
       ? getThemeColor(props.$theme, 'status.warning.background', 'transparent')
-      : getThemeColor(props.$theme, 'background.primary', 'transparent')
-  };
-  border: 1px solid ${props => 
-    props.$abaixoMinimo
-      ? getThemeColor(props.$theme, 'status.warning.border', 'transparent')
-      : getThemeColor(props.$theme, 'border.light', 'transparent')
-  };
+      : getThemeColor(props.$theme, 'background.primary', 'transparent')};
+  border: 1px solid
+    ${props =>
+      props.$abaixoMinimo
+        ? getThemeColor(props.$theme, 'status.warning.border', 'transparent')
+        : getThemeColor(props.$theme, 'border.light', 'transparent')};
   border-radius: ${getBorderRadius('md')};
 `;
 
 const EstoqueNome = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -169,21 +198,20 @@ const EstoqueNome = styled.div.withConfig({
 `;
 
 const EstoqueQuantidade = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: Theme; $abaixoMinimo?: boolean }>`
   font-size: ${getFontSize('sm')};
-  color: ${props => 
+  color: ${props =>
     props.$abaixoMinimo
       ? getThemeColor(props.$theme, 'status.warning.text', 'transparent')
-      : getThemeColor(props.$theme, 'text.secondary', 'inherit')
-  };
+      : getThemeColor(props.$theme, 'text.secondary', 'inherit')};
 `;
 
 const EstoqueSectionTitle = styled.h3.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -193,7 +221,7 @@ const EstoqueSectionTitle = styled.h3.withConfig({
 `;
 
 const ListaDescricao = styled.p.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -211,19 +239,20 @@ const ModalActions = styled.div`
 `;
 
 const FormContainer = styled.form.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: Theme }>`
   margin-bottom: ${getSpacing('xl')};
   padding: ${getSpacing('md')};
-  background: ${props => getThemeColor(props.$theme, 'background.secondary', 'transparent')};
+  background: ${props =>
+    getThemeColor(props.$theme, 'background.secondary', 'transparent')};
   border-radius: ${getBorderRadius('md')};
 `;
 
 const FormTitle = styled.h4.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -243,7 +272,7 @@ const FormActions = styled.div`
 `;
 
 const SectionTitle = styled.h4.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -259,18 +288,18 @@ const ItensList = styled.div`
 `;
 
 const ItemCard = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: Theme; $comprado?: boolean }>`
   padding: ${getSpacing('md')};
-  background: ${props => 
+  background: ${props =>
     props.$comprado
       ? getThemeColor(props.$theme, 'status.success.background', 'transparent')
-      : getThemeColor(props.$theme, 'background.secondary', 'transparent')
-  };
-  border: 1px solid ${props => getThemeColor(props.$theme, 'border.light', 'transparent')};
+      : getThemeColor(props.$theme, 'background.secondary', 'transparent')};
+  border: 1px solid
+    ${props => getThemeColor(props.$theme, 'border.light', 'transparent')};
   border-radius: ${getBorderRadius('md')};
   display: flex;
   justify-content: space-between;
@@ -282,18 +311,18 @@ const ItemContent = styled.div`
 `;
 
 const ItemNome = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: Theme; $comprado?: boolean }>`
   font-weight: 600;
-  text-decoration: ${props => props.$comprado ? 'line-through' : 'none'};
+  text-decoration: ${props => (props.$comprado ? 'line-through' : 'none')};
   color: ${props => getThemeColor(props.$theme, 'text.primary', 'inherit')};
 `;
 
 const ItemInfo = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -312,7 +341,12 @@ interface ListaCardMemoProps {
   onAbrirDetalhes: (lista: ListaSuprimentos) => void;
 }
 
-const ListaCardMemo = memo(function ListaCardMemo({ lista, stats, theme, onAbrirDetalhes }: ListaCardMemoProps) {
+const ListaCardMemo = memo(function ListaCardMemo({
+  lista,
+  stats,
+  theme,
+  onAbrirDetalhes,
+}: ListaCardMemoProps) {
   const { total: totalItens, comprados: itensComprados, valorEstimado } = stats;
 
   return (
@@ -324,26 +358,20 @@ const ListaCardMemo = memo(function ListaCardMemo({ lista, stats, theme, onAbrir
       <ListaHeader>
         <div>
           <ListaTitulo $theme={theme}>{lista.nome}</ListaTitulo>
-          <UnifiedBadge
-            theme={theme}
-            variant="secondary"
-            size="sm"
-          >
+          <UnifiedBadge theme={theme} variant='secondary' size='sm'>
             {getTipoServicoInfo(lista.tipoServico).icon}{' '}
             {getTipoServicoInfo(lista.tipoServico).label}
           </UnifiedBadge>
         </div>
         {lista.concluida && (
-          <UnifiedBadge theme={theme} variant="success" size="sm">
+          <UnifiedBadge theme={theme} variant='success' size='sm'>
             Concluída
           </UnifiedBadge>
         )}
       </ListaHeader>
 
       {lista.descricao && (
-        <ListaDescricao $theme={theme}>
-          {lista.descricao}
-        </ListaDescricao>
+        <ListaDescricao $theme={theme}>{lista.descricao}</ListaDescricao>
       )}
 
       <ListaInfo $theme={theme}>
@@ -380,14 +408,19 @@ interface EstoqueItemMemoProps {
   theme: Theme;
 }
 
-const EstoqueItemMemo = memo(function EstoqueItemMemo({ item, theme }: EstoqueItemMemoProps) {
-  const abaixoMinimo = Number(item.quantidadeAtual) <= Number(item.quantidadeMinima);
+const EstoqueItemMemo = memo(function EstoqueItemMemo({
+  item,
+  theme,
+}: EstoqueItemMemoProps) {
+  const abaixoMinimo =
+    Number(item.quantidadeAtual) <= Number(item.quantidadeMinima);
 
   return (
     <EstoqueItem key={item.id} $theme={theme} $abaixoMinimo={abaixoMinimo}>
       <EstoqueNome $theme={theme}>{item.itemNome}</EstoqueNome>
       <EstoqueQuantidade $theme={theme} $abaixoMinimo={abaixoMinimo}>
-        {item.quantidadeAtual} {item.unidade} / Mínimo: {item.quantidadeMinima} {item.unidade}
+        {item.quantidadeAtual} {item.unidade} / Mínimo: {item.quantidadeMinima}{' '}
+        {item.unidade}
       </EstoqueQuantidade>
     </EstoqueItem>
   );
@@ -422,7 +455,9 @@ export default function ShoppingManagement() {
   const [filtroTipo, setFiltroTipo] = useState<TipoServico | 'TODOS'>('TODOS');
   const [showCriarListaModal, setShowCriarListaModal] = useState(false);
   const [showListaDetalhesModal, setShowListaDetalhesModal] = useState(false);
-  const [selectedLista, setSelectedLista] = useState<ListaSuprimentos | null>(null);
+  const [selectedLista, setSelectedLista] = useState<ListaSuprimentos | null>(
+    null
+  );
   const [showEstoqueModal, setShowEstoqueModal] = useState(false);
 
   // Formulário de nova lista
@@ -497,150 +532,168 @@ export default function ShoppingManagement() {
   }, [loadData]);
 
   // ✅ Criar lista (memoizada)
-  const handleCriarLista = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!currentProfile?.id || !novaLista.nome.trim()) return;
+  const handleCriarLista = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!currentProfile?.id || !novaLista.nome.trim()) return;
 
-    try {
-      // Se tem template, criar a partir do template
-      if (novaLista.templateId) {
-        const response = await fetch('/api/suprimentos/listas', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            usuarioId: currentProfile.id,
-            nome: novaLista.nome || undefined,
-            tipoServico: novaLista.tipoServico,
-            templateId: novaLista.templateId,
-            vinculadaTarefa: novaLista.vinculadaTarefa || undefined,
-            orcamento: novaLista.orcamento ? parseFloat(novaLista.orcamento) : undefined,
-            descricao: novaLista.descricao || undefined,
-          }),
-        });
-
-        const result = await response.json();
-        if (result.success) {
-          alertManager.showSuccess('Lista criada com sucesso!');
-          setShowCriarListaModal(false);
-          setNovaLista({
-            nome: '',
-            tipoServico: 'GERAL',
-            templateId: '',
-            vinculadaTarefa: '',
-            orcamento: '',
-            descricao: '',
+      try {
+        // Se tem template, criar a partir do template
+        if (novaLista.templateId) {
+          const response = await fetch('/api/suprimentos/listas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              usuarioId: currentProfile.id,
+              nome: novaLista.nome || undefined,
+              tipoServico: novaLista.tipoServico,
+              templateId: novaLista.templateId,
+              vinculadaTarefa: novaLista.vinculadaTarefa || undefined,
+              orcamento: novaLista.orcamento
+                ? parseFloat(novaLista.orcamento)
+                : undefined,
+              descricao: novaLista.descricao || undefined,
+            }),
           });
-          loadData();
-        } else {
-          alertManager.showError(result.error || 'Erro ao criar lista');
-        }
-      } else {
-        // Criar lista vazia
-        const response = await fetch('/api/suprimentos/listas', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            usuarioId: currentProfile.id,
-            nome: novaLista.nome,
-            tipoServico: novaLista.tipoServico,
-            vinculadaTarefa: novaLista.vinculadaTarefa || undefined,
-            orcamento: novaLista.orcamento ? parseFloat(novaLista.orcamento) : undefined,
-            descricao: novaLista.descricao || undefined,
-          }),
-        });
 
-        const result = await response.json();
-        if (result.success) {
-          alertManager.showSuccess('Lista criada com sucesso!');
-          setShowCriarListaModal(false);
-          setNovaLista({
-            nome: '',
-            tipoServico: 'GERAL',
-            templateId: '',
-            vinculadaTarefa: '',
-            orcamento: '',
-            descricao: '',
-          });
-          loadData();
+          const result = await response.json();
+          if (result.success) {
+            alertManager.showSuccess('Lista criada com sucesso!');
+            setShowCriarListaModal(false);
+            setNovaLista({
+              nome: '',
+              tipoServico: 'GERAL',
+              templateId: '',
+              vinculadaTarefa: '',
+              orcamento: '',
+              descricao: '',
+            });
+            loadData();
+          } else {
+            alertManager.showError(result.error || 'Erro ao criar lista');
+          }
         } else {
-          alertManager.showError(result.error || 'Erro ao criar lista');
+          // Criar lista vazia
+          const response = await fetch('/api/suprimentos/listas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              usuarioId: currentProfile.id,
+              nome: novaLista.nome,
+              tipoServico: novaLista.tipoServico,
+              vinculadaTarefa: novaLista.vinculadaTarefa || undefined,
+              orcamento: novaLista.orcamento
+                ? parseFloat(novaLista.orcamento)
+                : undefined,
+              descricao: novaLista.descricao || undefined,
+            }),
+          });
+
+          const result = await response.json();
+          if (result.success) {
+            alertManager.showSuccess('Lista criada com sucesso!');
+            setShowCriarListaModal(false);
+            setNovaLista({
+              nome: '',
+              tipoServico: 'GERAL',
+              templateId: '',
+              vinculadaTarefa: '',
+              orcamento: '',
+              descricao: '',
+            });
+            loadData();
+          } else {
+            alertManager.showError(result.error || 'Erro ao criar lista');
+          }
         }
+      } catch (error) {
+        errorHandler.handleAsyncError(error, 'criar lista de suprimentos');
       }
-    } catch (error) {
-      errorHandler.handleAsyncError(error, 'criar lista de suprimentos');
-    }
-  }, [currentProfile?.id, novaLista, alertManager, loadData, errorHandler]);
+    },
+    [currentProfile?.id, novaLista, alertManager, loadData, errorHandler]
+  );
 
   // ✅ Adicionar item à lista (memoizada)
-  const handleAdicionarItem = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedLista || !novoItem.nome.trim() || !novoItem.quantidade) return;
+  const handleAdicionarItem = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!selectedLista || !novoItem.nome.trim() || !novoItem.quantidade)
+        return;
 
-    try {
-      const response = await fetch('/api/suprimentos/itens', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          listaId: selectedLista.id,
-          nome: novoItem.nome,
-          categoria: novoItem.categoria,
-          quantidade: parseFloat(novoItem.quantidade),
-          unidade: novoItem.unidade,
-          precoEstimado: novoItem.precoEstimado ? parseFloat(novoItem.precoEstimado) : undefined,
-          fornecedor: novoItem.fornecedor || undefined,
-          estoqueMinimo: novoItem.estoqueMinimo ? parseFloat(novoItem.estoqueMinimo) : undefined,
-          observacao: novoItem.observacao || undefined,
-        }),
-      });
-
-      const result = await response.json();
-      if (result.success) {
-        alertManager.showSuccess('Item adicionado com sucesso!');
-        setNovoItem({
-          nome: '',
-          categoria: 'OUTRO',
-          quantidade: '',
-          unidade: 'UN',
-          precoEstimado: '',
-          fornecedor: '',
-          estoqueMinimo: '',
-          observacao: '',
+      try {
+        const response = await fetch('/api/suprimentos/itens', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            listaId: selectedLista.id,
+            nome: novoItem.nome,
+            categoria: novoItem.categoria,
+            quantidade: parseFloat(novoItem.quantidade),
+            unidade: novoItem.unidade,
+            precoEstimado: novoItem.precoEstimado
+              ? parseFloat(novoItem.precoEstimado)
+              : undefined,
+            fornecedor: novoItem.fornecedor || undefined,
+            estoqueMinimo: novoItem.estoqueMinimo
+              ? parseFloat(novoItem.estoqueMinimo)
+              : undefined,
+            observacao: novoItem.observacao || undefined,
+          }),
         });
-        loadData();
-      } else {
-        alertManager.showError(result.error || 'Erro ao adicionar item');
+
+        const result = await response.json();
+        if (result.success) {
+          alertManager.showSuccess('Item adicionado com sucesso!');
+          setNovoItem({
+            nome: '',
+            categoria: 'OUTRO',
+            quantidade: '',
+            unidade: 'UN',
+            precoEstimado: '',
+            fornecedor: '',
+            estoqueMinimo: '',
+            observacao: '',
+          });
+          loadData();
+        } else {
+          alertManager.showError(result.error || 'Erro ao adicionar item');
+        }
+      } catch (error) {
+        errorHandler.handleAsyncError(error, 'adicionar item');
       }
-    } catch (error) {
-      errorHandler.handleAsyncError(error, 'adicionar item');
-    }
-  }, [selectedLista, novoItem, alertManager, loadData, errorHandler]);
+    },
+    [selectedLista, novoItem, alertManager, loadData, errorHandler]
+  );
 
   // ✅ Marcar item como comprado (memoizada)
-  const handleMarcarComprado = useCallback(async (itemId: string) => {
-    if (!currentProfile?.id) return;
+  const handleMarcarComprado = useCallback(
+    async (itemId: string) => {
+      if (!currentProfile?.id) return;
 
-    try {
-      const response = await fetch('/api/suprimentos/itens', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'marcar-comprado',
-          itemId,
-          compradoPor: currentProfile.id,
-        }),
-      });
+      try {
+        const response = await fetch('/api/suprimentos/itens', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'marcar-comprado',
+            itemId,
+            compradoPor: currentProfile.id,
+          }),
+        });
 
-      const result = await response.json();
-      if (result.success) {
-        alertManager.showSuccess('Item marcado como comprado!');
-        loadData();
-      } else {
-        alertManager.showError(result.error || 'Erro ao marcar item');
+        const result = await response.json();
+        if (result.success) {
+          alertManager.showSuccess('Item marcado como comprado!');
+          loadData();
+        } else {
+          alertManager.showError(result.error || 'Erro ao marcar item');
+        }
+      } catch (error) {
+        errorHandler.handleAsyncError(error, 'marcar item como comprado');
       }
-    } catch (error) {
-      errorHandler.handleAsyncError(error, 'marcar item como comprado');
-    }
-  }, [currentProfile?.id, alertManager, loadData, errorHandler]);
+    },
+    [currentProfile?.id, alertManager, loadData, errorHandler]
+  );
 
   // ✅ Abrir detalhes da lista (memoizada)
   const handleAbrirDetalhes = useCallback((lista: ListaSuprimentos) => {
@@ -650,8 +703,8 @@ export default function ShoppingManagement() {
 
   // Memoizar listas filtradas
   const listasFiltradas = useMemo(() => {
-    return filtroTipo === 'TODOS' 
-      ? listas 
+    return filtroTipo === 'TODOS'
+      ? listas
       : listas.filter(l => l.tipoServico === filtroTipo);
   }, [listas, filtroTipo]);
 
@@ -664,49 +717,58 @@ export default function ShoppingManagement() {
   const listasComStats = useMemo(() => {
     return listasFiltradas.map(lista => {
       // Calcular estatísticas em uma única iteração
-      const stats = lista.itens.reduce((acc, item) => {
-        acc.total++;
-        if (item.comprado) acc.comprados++;
-        acc.valorEstimado += Number(item.precoEstimado || 0) * Number(item.quantidade);
-        return acc;
-      }, { total: 0, comprados: 0, valorEstimado: 0 });
-      
+      const stats = lista.itens.reduce(
+        (acc, item) => {
+          acc.total++;
+          if (item.comprado) acc.comprados++;
+          acc.valorEstimado +=
+            Number(item.precoEstimado || 0) * Number(item.quantidade);
+          return acc;
+        },
+        { total: 0, comprados: 0, valorEstimado: 0 }
+      );
+
       return {
         ...lista,
-        stats
+        stats,
       };
     });
   }, [listasFiltradas]);
 
   return (
     <>
-      <Sidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} currentPath={router.pathname} />
-      <TopBar>{null}</TopBar>
-      <WelcomeSection 
-        userAvatar={currentProfile?.avatar || 'U'} 
-        userName={currentProfile?.name || 'Usuário'} 
-        userRole={currentProfile?.role || 'Usuário'} 
+      <Sidebar
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+        currentPath={router.pathname}
       />
-      
-      <PageContainer $theme={theme} variant="dashboard">
+      <TopBar>{null}</TopBar>
+      <WelcomeSection
+        userAvatar={currentProfile?.avatar || 'U'}
+        userName={currentProfile?.name || 'Usuário'}
+        userRole={currentProfile?.role || 'Usuário'}
+      />
+
+      <PageContainer $theme={theme} variant='dashboard'>
         <PageHeader
           $theme={theme}
           title={
             <>
-              <AccessibleEmoji emoji="🛒" label="Suprimentos" /> Gestão Inteligente de Suprimentos
+              <AccessibleEmoji emoji='🛒' label='Suprimentos' /> Gestão
+              Inteligente de Suprimentos
             </>
           }
-          subtitle="Listas vinculadas a rotinas de trabalho, controle de estoque e templates por tipo de serviço"
-          variant="default"
+          subtitle='Listas vinculadas a rotinas de trabalho, controle de estoque e templates por tipo de serviço'
+          variant='default'
           animation={true}
           actions={
             <UnifiedButton
               $theme={theme}
-              $variant="primary"
-              $size="medium"
+              $variant='primary'
+              $size='medium'
               onClick={() => setShowCriarListaModal(true)}
             >
-              <AccessibleEmoji emoji="➕" label="Nova lista" /> Nova Lista
+              <AccessibleEmoji emoji='➕' label='Nova lista' /> Nova Lista
             </UnifiedButton>
           }
         />
@@ -716,7 +778,7 @@ export default function ShoppingManagement() {
           <FiltroButton
             theme={theme}
             $variant={filtroTipo === 'TODOS' ? 'primary' : 'secondary'}
-            $size="sm"
+            $size='sm'
             onClick={() => setFiltroTipo('TODOS')}
             $active={filtroTipo === 'TODOS'}
           >
@@ -725,13 +787,14 @@ export default function ShoppingManagement() {
           {TIPOS_SERVICO.map(tipo => (
             <FiltroButton
               key={tipo.value}
-        $theme={theme}
+              $theme={theme}
               $variant={filtroTipo === tipo.value ? 'primary' : 'secondary'}
-              $size="sm"
+              $size='sm'
               onClick={() => setFiltroTipo(tipo.value)}
               $active={filtroTipo === tipo.value}
             >
-              <AccessibleEmoji emoji={tipo.icon} label={tipo.label} /> {tipo.label}
+              <AccessibleEmoji emoji={tipo.icon} label={tipo.label} />{' '}
+              {tipo.label}
             </FiltroButton>
           ))}
         </FiltrosContainer>
@@ -740,7 +803,8 @@ export default function ShoppingManagement() {
         {estoqueAbaixoMinimo.length > 0 && (
           <EstoqueSection $theme={theme}>
             <EstoqueSectionTitle $theme={theme}>
-              <AccessibleEmoji emoji="⚠️" label="Alerta" /> Estoque Abaixo do Mínimo
+              <AccessibleEmoji emoji='⚠️' label='Alerta' /> Estoque Abaixo do
+              Mínimo
             </EstoqueSectionTitle>
             <EstoqueGrid>
               {estoqueAbaixoMinimo.map(item => (
@@ -753,19 +817,24 @@ export default function ShoppingManagement() {
         {/* Lista de Listas */}
         {loading ? (
           <LoadingContainer $theme={theme}>
-            <AccessibleEmoji emoji="⏳" label="Carregando" /> Carregando listas...
+            <AccessibleEmoji emoji='⏳' label='Carregando' /> Carregando
+            listas...
           </LoadingContainer>
         ) : listasFiltradas.length === 0 ? (
           <EmptyState
-            icon="🛒"
-            title="Nenhuma lista de suprimentos encontrada"
-            description="Crie uma nova lista ou use um template para começar."
+            icon='🛒'
+            title='Nenhuma lista de suprimentos encontrada'
+            description='Crie uma nova lista ou use um template para começar.'
             theme={theme}
           />
         ) : (
           <ListasGrid>
             {listasComStats.map(({ stats, ...lista }) => {
-              const { total: totalItens, comprados: itensComprados, valorEstimado } = stats;
+              const {
+                total: totalItens,
+                comprados: itensComprados,
+                valorEstimado,
+              } = stats;
 
               return (
                 <ListaCard
@@ -776,17 +845,13 @@ export default function ShoppingManagement() {
                   <ListaHeader>
                     <div>
                       <ListaTitulo $theme={theme}>{lista.nome}</ListaTitulo>
-                      <UnifiedBadge
-                        theme={theme}
-                        variant="secondary"
-                        size="sm"
-                      >
+                      <UnifiedBadge theme={theme} variant='secondary' size='sm'>
                         {getTipoServicoInfo(lista.tipoServico).icon}{' '}
                         {getTipoServicoInfo(lista.tipoServico).label}
                       </UnifiedBadge>
                     </div>
                     {lista.concluida && (
-                      <UnifiedBadge theme={theme} variant="success" size="sm">
+                      <UnifiedBadge theme={theme} variant='success' size='sm'>
                         Concluída
                       </UnifiedBadge>
                     )}
@@ -834,7 +899,7 @@ export default function ShoppingManagement() {
         <UnifiedModal
           isOpen={showCriarListaModal}
           onClose={() => setShowCriarListaModal(false)}
-          title="Nova Lista de Suprimentos"
+          title='Nova Lista de Suprimentos'
           $theme={theme}
         >
           <form onSubmit={handleCriarLista}>
@@ -842,9 +907,11 @@ export default function ShoppingManagement() {
               <Label>Nome da Lista *</Label>
               <Input
                 value={novaLista.nome}
-                onChange={(e) => setNovaLista({ ...novaLista, nome: e.target.value })}
+                onChange={e =>
+                  setNovaLista({ ...novaLista, nome: e.target.value })
+                }
                 required
-                placeholder="Ex: Limpeza Semanal"
+                placeholder='Ex: Limpeza Semanal'
               />
             </FormGroup>
 
@@ -852,7 +919,12 @@ export default function ShoppingManagement() {
               <Label>Tipo de Serviço *</Label>
               <Select
                 value={novaLista.tipoServico}
-                onChange={(e) => setNovaLista({ ...novaLista, tipoServico: e.target.value as TipoServico })}
+                onChange={e =>
+                  setNovaLista({
+                    ...novaLista,
+                    tipoServico: e.target.value as TipoServico,
+                  })
+                }
                 required
               >
                 {TIPOS_SERVICO.map(tipo => (
@@ -863,13 +935,15 @@ export default function ShoppingManagement() {
               </Select>
             </FormGroup>
 
-          <FormGroup>
+            <FormGroup>
               <Label>Template (Opcional)</Label>
               <Select
                 value={novaLista.templateId}
-                onChange={(e) => setNovaLista({ ...novaLista, templateId: e.target.value })}
+                onChange={e =>
+                  setNovaLista({ ...novaLista, templateId: e.target.value })
+                }
               >
-                <option value="">Nenhum (Lista vazia)</option>
+                <option value=''>Nenhum (Lista vazia)</option>
                 {templates
                   .filter(t => t.tipoServico === novaLista.tipoServico)
                   .map(template => (
@@ -878,57 +952,62 @@ export default function ShoppingManagement() {
                     </option>
                   ))}
               </Select>
-          </FormGroup>
+            </FormGroup>
 
-          <FormGroup>
+            <FormGroup>
               <Label>Vincular a Tarefa (Opcional)</Label>
-            <Select
+              <Select
                 value={novaLista.vinculadaTarefa}
-                onChange={(e) => setNovaLista({ ...novaLista, vinculadaTarefa: e.target.value })}
+                onChange={e =>
+                  setNovaLista({
+                    ...novaLista,
+                    vinculadaTarefa: e.target.value,
+                  })
+                }
               >
-                <option value="">Nenhuma</option>
+                <option value=''>Nenhuma</option>
                 {tarefas.map(tarefa => (
                   <option key={tarefa.id} value={tarefa.id}>
                     {tarefa.title}
-                </option>
-              ))}
-            </Select>
-          </FormGroup>
+                  </option>
+                ))}
+              </Select>
+            </FormGroup>
 
-          <FormGroup>
+            <FormGroup>
               <Label>Orçamento (Opcional)</Label>
               <Input
-                type="number"
-                step="0.01"
+                type='number'
+                step='0.01'
                 value={novaLista.orcamento}
-                onChange={(e) => setNovaLista({ ...novaLista, orcamento: e.target.value })}
-                placeholder="0.00"
+                onChange={e =>
+                  setNovaLista({ ...novaLista, orcamento: e.target.value })
+                }
+                placeholder='0.00'
               />
-          </FormGroup>
+            </FormGroup>
 
             <FormGroup>
               <Label>Descrição (Opcional)</Label>
               <Input
                 value={novaLista.descricao}
-                onChange={(e) => setNovaLista({ ...novaLista, descricao: e.target.value })}
-                placeholder="Descrição da lista..."
+                onChange={e =>
+                  setNovaLista({ ...novaLista, descricao: e.target.value })
+                }
+                placeholder='Descrição da lista...'
               />
             </FormGroup>
 
             <ModalActions>
               <UnifiedButton
                 $theme={theme}
-                $variant="secondary"
+                $variant='secondary'
                 onClick={() => setShowCriarListaModal(false)}
-                type="button"
+                type='button'
               >
                 Cancelar
               </UnifiedButton>
-              <UnifiedButton
-                $theme={theme}
-                $variant="primary"
-                type="submit"
-              >
+              <UnifiedButton $theme={theme} $variant='primary' type='submit'>
                 Criar Lista
               </UnifiedButton>
             </ModalActions>
@@ -938,7 +1017,7 @@ export default function ShoppingManagement() {
 
       {/* Modal: Detalhes da Lista */}
       {showListaDetalhesModal && selectedLista && (
-      <UnifiedModal
+        <UnifiedModal
           isOpen={showListaDetalhesModal}
           onClose={() => {
             setShowListaDetalhesModal(false);
@@ -950,17 +1029,17 @@ export default function ShoppingManagement() {
           <div>
             {/* Formulário de Novo Item */}
             <FormContainer $theme={theme} onSubmit={handleAdicionarItem}>
-              <FormTitle $theme={theme}>
-                Adicionar Item
-              </FormTitle>
+              <FormTitle $theme={theme}>Adicionar Item</FormTitle>
               <FormGrid>
                 <FormGroup>
                   <Label>Nome *</Label>
                   <Input
                     value={novoItem.nome}
-                    onChange={(e) => setNovoItem({ ...novoItem, nome: e.target.value })}
+                    onChange={e =>
+                      setNovoItem({ ...novoItem, nome: e.target.value })
+                    }
                     required
-                    placeholder="Nome do item"
+                    placeholder='Nome do item'
                   />
                 </FormGroup>
 
@@ -968,7 +1047,12 @@ export default function ShoppingManagement() {
                   <Label>Categoria *</Label>
                   <Select
                     value={novoItem.categoria}
-                    onChange={(e) => setNovoItem({ ...novoItem, categoria: e.target.value as CategoriaItem })}
+                    onChange={e =>
+                      setNovoItem({
+                        ...novoItem,
+                        categoria: e.target.value as CategoriaItem,
+                      })
+                    }
                     required
                   >
                     {CATEGORIAS_ITEM.map(cat => (
@@ -981,13 +1065,15 @@ export default function ShoppingManagement() {
 
                 <FormGroup>
                   <Label>Quantidade *</Label>
-              <Input
-                    type="number"
-                    step="0.01"
+                  <Input
+                    type='number'
+                    step='0.01'
                     value={novoItem.quantidade}
-                    onChange={(e) => setNovoItem({ ...novoItem, quantidade: e.target.value })}
+                    onChange={e =>
+                      setNovoItem({ ...novoItem, quantidade: e.target.value })
+                    }
                     required
-                    placeholder="0"
+                    placeholder='0'
                   />
                 </FormGroup>
 
@@ -995,7 +1081,12 @@ export default function ShoppingManagement() {
                   <Label>Unidade *</Label>
                   <Select
                     value={novoItem.unidade}
-                    onChange={(e) => setNovoItem({ ...novoItem, unidade: e.target.value as UnidadeMedida })}
+                    onChange={e =>
+                      setNovoItem({
+                        ...novoItem,
+                        unidade: e.target.value as UnidadeMedida,
+                      })
+                    }
                     required
                   >
                     {UNIDADES.map(uni => (
@@ -1009,11 +1100,16 @@ export default function ShoppingManagement() {
                 <FormGroup>
                   <Label>Preço Estimado</Label>
                   <Input
-                    type="number"
-                    step="0.01"
+                    type='number'
+                    step='0.01'
                     value={novoItem.precoEstimado}
-                    onChange={(e) => setNovoItem({ ...novoItem, precoEstimado: e.target.value })}
-                    placeholder="0.00"
+                    onChange={e =>
+                      setNovoItem({
+                        ...novoItem,
+                        precoEstimado: e.target.value,
+                      })
+                    }
+                    placeholder='0.00'
                   />
                 </FormGroup>
 
@@ -1021,18 +1117,16 @@ export default function ShoppingManagement() {
                   <Label>Fornecedor</Label>
                   <Input
                     value={novoItem.fornecedor}
-                    onChange={(e) => setNovoItem({ ...novoItem, fornecedor: e.target.value })}
-                    placeholder="Nome do fornecedor"
+                    onChange={e =>
+                      setNovoItem({ ...novoItem, fornecedor: e.target.value })
+                    }
+                    placeholder='Nome do fornecedor'
                   />
                 </FormGroup>
               </FormGrid>
 
               <FormActions>
-                <UnifiedButton
-                  $theme={theme}
-                  $variant="primary"
-                  type="submit"
-                >
+                <UnifiedButton $theme={theme} $variant='primary' type='submit'>
                   Adicionar Item
                 </UnifiedButton>
               </FormActions>
@@ -1045,33 +1139,39 @@ export default function ShoppingManagement() {
               </SectionTitle>
               {selectedLista.itens.length === 0 ? (
                 <EmptyState
-                  icon="📝"
-                  title="Nenhum item na lista"
-                  description="Adicione itens usando o formulário acima."
+                  icon='📝'
+                  title='Nenhum item na lista'
+                  description='Adicione itens usando o formulário acima.'
                   theme={theme}
                 />
               ) : (
                 <ItensList>
                   {selectedLista.itens.map(item => (
-                    <ItemCard key={item.id} $theme={theme} $comprado={item.comprado}>
+                    <ItemCard
+                      key={item.id}
+                      $theme={theme}
+                      $comprado={item.comprado}
+                    >
                       <ItemContent>
                         <ItemNome $theme={theme} $comprado={item.comprado}>
                           {item.nome}
                         </ItemNome>
                         <ItemInfo $theme={theme}>
                           {item.quantidade} {item.unidade}
-                          {item.precoEstimado && ` • ${formatCurrency(Number(item.precoEstimado) * Number(item.quantidade))}`}
+                          {item.precoEstimado &&
+                            ` • ${formatCurrency(Number(item.precoEstimado) * Number(item.quantidade))}`}
                           {item.fornecedor && ` • ${item.fornecedor}`}
                         </ItemInfo>
                       </ItemContent>
                       {!item.comprado && (
                         <UnifiedButton
                           $theme={theme}
-                          $variant="success"
-                          $size="sm"
+                          $variant='success'
+                          $size='sm'
                           onClick={() => handleMarcarComprado(item.id)}
                         >
-                          <AccessibleEmoji emoji="✅" label="Marcar comprado" /> Marcar Comprado
+                          <AccessibleEmoji emoji='✅' label='Marcar comprado' />{' '}
+                          Marcar Comprado
                         </UnifiedButton>
                       )}
                     </ItemCard>
@@ -1081,7 +1181,7 @@ export default function ShoppingManagement() {
             </div>
           </div>
         </UnifiedModal>
-        )}
+      )}
     </>
   );
 }

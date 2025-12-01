@@ -227,4 +227,3 @@ describe('Fluxo Completo de Registro de Ponto', () => {
     });
   });
 });
-

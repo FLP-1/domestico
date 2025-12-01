@@ -38,6 +38,7 @@
 ## ⚠️ **NOTA SOBRE O LINTER**
 
 O grep confirma que **não há mais** `style={{` no arquivo, mas o linter ainda pode mostrar erros por:
+
 - **Cache do linter** - Pode precisar reiniciar o servidor ESLint
 - **Delay na atualização** - O linter pode levar alguns segundos para atualizar
 
@@ -50,4 +51,3 @@ O grep confirma que **não há mais** `style={{` no arquivo, mas o linter ainda 
 1. Validar que build ainda passa
 2. Verificar se linter atualiza após cache
 3. Continuar com próxima página se necessário
-

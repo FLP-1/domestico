@@ -2,9 +2,10 @@
 
 ## ⚠️ ANÁLISE HONESTA
 
-Você está correto em questionar. Eu disse "reduzido significativamente" mas **NÃO eliminei** todos os valores hardcoded. 
+Você está correto em questionar. Eu disse "reduzido significativamente" mas **NÃO eliminei** todos os valores hardcoded.
 
 ### **O QUE FOI FEITO:**
+
 - ✅ Constantes centralizadas (TIPOS_SERVICO, CATEGORIAS_ITEM, UNIDADES)
 - ✅ Tipos/interfaces centralizados
 - ✅ Funções de formatação centralizadas
@@ -19,23 +20,24 @@ Você está correto em questionar. Eu disse "reduzido significativamente" mas **
 ```typescript
 // ❌ HARDCODED:
 const EstoqueSection = styled.div`
-  margin-top: 2rem;        // ← Hardcoded
-  padding: 1.5rem;         // ← Hardcoded
-  gap: 1rem;               // ← Hardcoded
+  margin-top: 2rem; // ← Hardcoded
+  padding: 1.5rem; // ← Hardcoded
+  gap: 1rem; // ← Hardcoded
 `;
 
 const EstoqueItem = styled.div`
-  padding: 1rem;            // ← Hardcoded
-  margin-bottom: 0.5rem;   // ← Hardcoded
+  padding: 1rem; // ← Hardcoded
+  margin-bottom: 0.5rem; // ← Hardcoded
 `;
 
 const FiltrosContainer = styled.div`
-  gap: 1rem;               // ← Hardcoded
-  margin-bottom: 1.5rem;   // ← Hardcoded
+  gap: 1rem; // ← Hardcoded
+  margin-bottom: 1.5rem; // ← Hardcoded
 `;
 ```
 
 **✅ DEVERIA SER:**
+
 ```typescript
 import { tokens } from '../components/shared/tokens';
 
@@ -55,19 +57,20 @@ const EstoqueSection = styled.div`
 ```typescript
 // ❌ HARDCODED:
 const ListaTitulo = styled.h3`
-  font-size: 1.1rem;       // ← Hardcoded
+  font-size: 1.1rem; // ← Hardcoded
 `;
 
 const EstoqueQuantidade = styled.div`
-  font-size: 0.9rem;      // ← Hardcoded
+  font-size: 0.9rem; // ← Hardcoded
 `;
 
 const InfoRow = styled.div`
-  font-size: 0.9rem;      // ← Hardcoded
+  font-size: 0.9rem; // ← Hardcoded
 `;
 ```
 
 **✅ DEVERIA SER:**
+
 ```typescript
 const ListaTitulo = styled.h3`
   font-size: ${tokens.fontSize.lg};
@@ -87,15 +90,16 @@ const EstoqueQuantidade = styled.div`
 ```typescript
 // ❌ HARDCODED:
 const EstoqueSection = styled.div`
-  border-radius: 8px;     // ← Hardcoded
+  border-radius: 8px; // ← Hardcoded
 `;
 
 const EstoqueItem = styled.div`
-  border-radius: 8px;     // ← Hardcoded
+  border-radius: 8px; // ← Hardcoded
 `;
 ```
 
 **✅ DEVERIA SER:**
+
 ```typescript
 const EstoqueSection = styled.div`
   border-radius: ${tokens.borderRadius.md};
@@ -117,6 +121,7 @@ const EstoqueSection = styled.div`
 ```
 
 **✅ DEVERIA SER:**
+
 ```typescript
 // Criar styled components ou usar tokens
 const SectionTitle = styled.h3`
@@ -146,6 +151,7 @@ background: ${props => getThemeColor(props.$theme, 'status.success.background', 
 ```
 
 **✅ DEVERIA SER:**
+
 ```typescript
 import { tokens } from '../components/shared/tokens';
 
@@ -162,29 +168,29 @@ background: ${props => getThemeColor(props.$theme, 'status.warning.background', 
 ```typescript
 // ❌ HARDCODED:
 const ContextoIcon = styled.div`
-  font-size: 2rem;         // ← Hardcoded
+  font-size: 2rem; // ← Hardcoded
 `;
 
 const ContextoTitulo = styled.h3`
-  font-size: 1.1rem;      // ← Hardcoded
-  margin: 0 0 0.25rem 0;  // ← Hardcoded
+  font-size: 1.1rem; // ← Hardcoded
+  margin: 0 0 0.25rem 0; // ← Hardcoded
 `;
 
 const ContextoDescricao = styled.p`
-  font-size: 0.9rem;      // ← Hardcoded
+  font-size: 0.9rem; // ← Hardcoded
 `;
 
 const UltimaMensagem = styled.div`
-  font-size: 0.85rem;     // ← Hardcoded
+  font-size: 0.85rem; // ← Hardcoded
 `;
 
 const FiltrosContainer = styled.div`
-  gap: 1rem;              // ← Hardcoded
-  margin-bottom: 1.5rem;  // ← Hardcoded
+  gap: 1rem; // ← Hardcoded
+  margin-bottom: 1.5rem; // ← Hardcoded
 `;
 
 const ChatModalContainer = styled.div`
-  padding: 1rem;          // ← Hardcoded
+  padding: 1rem; // ← Hardcoded
 `;
 ```
 
@@ -193,6 +199,7 @@ const ChatModalContainer = styled.div`
 ## 📊 RESUMO DO QUE AINDA ESTÁ HARDCODED
 
 ### **shopping-management.tsx:**
+
 - ⚠️ **Espaçamento:** ~15 ocorrências (`1rem`, `1.5rem`, `2rem`, `0.5rem`)
 - ⚠️ **Font-size:** ~5 ocorrências (`1.1rem`, `0.9rem`)
 - ⚠️ **Border-radius:** ~2 ocorrências (`8px`)
@@ -200,6 +207,7 @@ const ChatModalContainer = styled.div`
 - ⚠️ **Cores em fallbacks:** ~6 ocorrências (`#f5f5f5`, `#ffffff`, etc)
 
 ### **communication.tsx:**
+
 - ⚠️ **Espaçamento:** ~8 ocorrências
 - ⚠️ **Font-size:** ~4 ocorrências
 - ⚠️ **Border-radius:** 0 ocorrências (já está bom)
@@ -209,39 +217,45 @@ const ChatModalContainer = styled.div`
 ## ✅ PLANO PARA ELIMINAR COMPLETAMENTE
 
 ### **Fase 1: Substituir Espaçamento**
+
 1. Importar `tokens` de `src/components/shared/tokens.ts`
 2. Substituir todos os valores hardcoded por `tokens.spacing.*`
 3. Criar helper `getSpacing()` se necessário
 
 ### **Fase 2: Substituir Font-size**
+
 1. Substituir todos os `font-size` hardcoded por `tokens.fontSize.*`
 
 ### **Fase 3: Substituir Border-radius**
+
 1. Substituir todos os `border-radius` hardcoded por `tokens.borderRadius.*`
 
 ### **Fase 4: Eliminar Inline Styles**
+
 1. Criar styled components para elementos repetidos
 2. Ou usar tokens diretamente em styled-components
 
 ### **Fase 5: Substituir Cores em Fallbacks**
+
 1. Substituir cores hex hardcoded por `tokens.colors.*`
 
 ---
 
 ## 🎯 CONCLUSÃO
 
-**Você está correto:** Eu não eliminei completamente os valores hardcoded. 
+**Você está correto:** Eu não eliminei completamente os valores hardcoded.
 
 **O que fiz:**
+
 - Centralizei constantes de negócio (TIPOS_SERVICO, etc)
 - Centralizei tipos/interfaces
 - Criei utilitários de formatação
 - Otimizei performance
 
 **O que falta fazer:**
+
 - Eliminar valores hardcoded de CSS (spacing, font-size, border-radius)
 - Eliminar inline styles
 - Substituir cores hardcoded em fallbacks
 
 **Próximo passo:** Posso eliminar TODOS os valores hardcoded agora, substituindo por tokens centralizados. Deseja que eu faça isso?
-

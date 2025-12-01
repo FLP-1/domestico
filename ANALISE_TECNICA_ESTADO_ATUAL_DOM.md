@@ -73,6 +73,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 #### Stack Tecnológico Implementado
 
 **Frontend:**
+
 - ✅ Next.js 15.5.2 (última versão estável)
 - ✅ React 18.2.0
 - ✅ TypeScript 5.0.4 (strict mode)
@@ -82,6 +83,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ Swiper para carrosséis
 
 **Backend:**
+
 - ✅ Next.js API Routes (50+ endpoints)
 - ✅ Prisma ORM 6.16.3
 - ✅ PostgreSQL como banco de dados
@@ -90,6 +92,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ JWT tokens e refresh tokens
 
 **Ferramentas de Desenvolvimento:**
+
 - ✅ ESLint + Prettier configurados
 - ✅ Husky + lint-staged para git hooks
 - ✅ Jest configurado (mas testes não implementados)
@@ -132,6 +135,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
    - 2FA (configurado mas não obrigatório)
 
 **Arquivos relevantes:**
+
 - `package.json` - Dependências completas
 - `tsconfig.json` - Configuração TypeScript strict
 - `.eslintrc.json` - Regras de linting
@@ -144,6 +148,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 #### Schema Prisma - 50+ Modelos
 
 **Core (6 modelos):**
+
 - ✅ `Usuario` - Usuários do sistema
 - ✅ `Perfil` - Tipos de perfil (Empregado, Empregador, Família, Admin)
 - ✅ `Funcionalidade` - Funcionalidades do sistema
@@ -152,6 +157,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ `UsuarioGrupo` - Relacionamento N:N usuário-grupo
 
 **Gestão Doméstica (9 modelos):**
+
 - ✅ `RegistroPonto` - Sistema de ponto com anti-fraude
 - ✅ `LocalTrabalho` - Locais de trabalho com geofencing
 - ✅ `GeofencingLog` - Logs de geofencing
@@ -163,17 +169,20 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ `Notificacao` - Notificações do sistema
 
 **Financeiro (4 modelos):**
+
 - ✅ `CalculoSalarial` - Cálculos de folha
 - ✅ `HoleritePagamento` - Holerites
 - ✅ `GuiaImposto` - Guias de impostos
 - ✅ `Emprestimo` - Gestão de empréstimos
 
 **eSocial (3 modelos):**
+
 - ✅ `EventoESocial` - Eventos eSocial
 - ✅ `Empregador` - Dados do empregador
 - ✅ `CertificadoDigital` - Certificados A1/A3
 
 **Segurança e Anti-Fraude (7 modelos):**
+
 - ✅ `LogAuditoria` - Logs de auditoria LGPD
 - ✅ `DeviceFingerprint` - Anti-fraude
 - ✅ `NetworkFingerprint` - Anti-fraude
@@ -183,12 +192,14 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ `IPAnalysis` - Análise de IP
 
 **Compliance (4 modelos):**
+
 - ✅ `Termo` - Termos e políticas
 - ✅ `AceiteTermo` - Aceites de termos
 - ✅ `Convite` - Convites de usuários
 - ✅ `Onboarding` - Onboarding de usuários
 
 **Outros (8 modelos):**
+
 - ✅ `Dispositivo` - Dispositivos dos usuários
 - ✅ `Sessao` - Sessões de usuários
 - ✅ `Conversa` - Conversas do chat
@@ -199,6 +210,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ `GeolocationHistory` - Histórico de geolocalizações
 
 **Configuração (8 modelos):**
+
 - ✅ `Configuracao` - Configurações gerais
 - ✅ `ConfiguracaoSistema` - Configurações do sistema
 - ✅ `ConfiguracaoPerfil` - Configurações por perfil
@@ -209,6 +221,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ `DadosPagina` - Dados de páginas
 
 **Constraints e Índices:**
+
 - ✅ CPF único (`@unique`)
 - ✅ Email único (`@unique`)
 - ✅ Usuário-Perfil único (`@@unique([usuarioId, perfilId])`)
@@ -217,6 +230,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ Foreign keys com cascade onde apropriado
 
 **Compliance LGPD:**
+
 - ✅ Campos de consentimento
 - ✅ Logs de auditoria completos
 - ✅ Direitos do titular implementados
@@ -224,6 +238,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ Política de retenção de dados
 
 **Arquivos relevantes:**
+
 - `prisma/schema.prisma` - Schema completo
 - `ESTRUTURA_BANCO_DADOS_RESUMO.md` - Documentação
 - `REGRAS_NEGOCIO_INTEGRIDADE.md` - Regras de negócio
@@ -235,6 +250,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 #### Páginas Implementadas (99 páginas)
 
 **Core (9 páginas):**
+
 1. ✅ `index.tsx` - Página inicial
 2. ✅ `dashboard.tsx` - Dashboard principal
 3. ✅ `login.tsx` - Login completo
@@ -245,38 +261,14 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 8. ✅ `design-system-demo.tsx` - Demo do design system
 9. ✅ `_app.tsx` / `_document.tsx` - Configuração Next.js
 
-**Gestão de Dados (15 páginas):**
-10. ✅ `task-management.tsx` - Gestão de tarefas
-11. ✅ `document-management.tsx` - Gestão de documentos
-12. ✅ `communication.tsx` - Comunicação/chat
-13. ✅ `shopping-management.tsx` - Gestão de compras
-14. ✅ `loan-management.tsx` - Gestão de empréstimos
-15. ✅ `payroll-management.tsx` - Gestão de folha
-16. ✅ `alert-management.tsx` - Gestão de alertas
-17. ✅ `monitoring-dashboard.tsx` - Dashboard de monitoramento
-18. ✅ `subscription-plans.tsx` - Planos de assinatura
-19. ✅ `terms-management.tsx` - Gestão de termos
-20. ✅ `time-clock.tsx` - Registro de ponto completo
-21. ✅ `time-clock-simple.tsx` - Registro de ponto simples
-22. ✅ `geofencing/locais.tsx` - Gestão de locais
-23. ✅ `geofencing/auditoria.tsx` - Auditoria de geofencing
-24. ✅ `user-management.tsx` - Gestão de usuários
+**Gestão de Dados (15 páginas):** 10. ✅ `task-management.tsx` - Gestão de tarefas 11. ✅ `document-management.tsx` - Gestão de documentos 12. ✅ `communication.tsx` - Comunicação/chat 13. ✅ `shopping-management.tsx` - Gestão de compras 14. ✅ `loan-management.tsx` - Gestão de empréstimos 15. ✅ `payroll-management.tsx` - Gestão de folha 16. ✅ `alert-management.tsx` - Gestão de alertas 17. ✅ `monitoring-dashboard.tsx` - Dashboard de monitoramento 18. ✅ `subscription-plans.tsx` - Planos de assinatura 19. ✅ `terms-management.tsx` - Gestão de termos 20. ✅ `time-clock.tsx` - Registro de ponto completo 21. ✅ `time-clock-simple.tsx` - Registro de ponto simples 22. ✅ `geofencing/locais.tsx` - Gestão de locais 23. ✅ `geofencing/auditoria.tsx` - Auditoria de geofencing 24. ✅ `user-management.tsx` - Gestão de usuários
 
-**eSocial (6 páginas):**
-25. ✅ `esocial-integration.tsx` - Integração eSocial
-26. ✅ `esocial-domestico-completo.tsx` - eSocial doméstico completo
-27. ✅ `esocial-demo.tsx` - Demo eSocial
-28. ✅ `esocial-fluxo-completo.tsx` - Fluxo completo eSocial
-29. ✅ `diagnostico-esocial.tsx` - Diagnóstico eSocial
-30. ✅ `test-api.tsx` - Teste de APIs
+**eSocial (6 páginas):** 25. ✅ `esocial-integration.tsx` - Integração eSocial 26. ✅ `esocial-domestico-completo.tsx` - eSocial doméstico completo 27. ✅ `esocial-demo.tsx` - Demo eSocial 28. ✅ `esocial-fluxo-completo.tsx` - Fluxo completo eSocial 29. ✅ `diagnostico-esocial.tsx` - Diagnóstico eSocial 30. ✅ `test-api.tsx` - Teste de APIs
 
-**Testes (4 páginas):**
-31. ✅ `test-login.tsx` - Teste de login
-32. ✅ `test-geolocation.tsx` - Teste de geolocalização
-33. ✅ `test-simple.tsx` - Testes simples
-34. ✅ `test-simple-api.tsx` - Testes simples de API
+**Testes (4 páginas):** 31. ✅ `test-login.tsx` - Teste de login 32. ✅ `test-geolocation.tsx` - Teste de geolocalização 33. ✅ `test-simple.tsx` - Testes simples 34. ✅ `test-simple-api.tsx` - Testes simples de API
 
 **Outras (65 páginas):**
+
 - Páginas de API (50+ endpoints)
 - Páginas auxiliares
 - Páginas de configuração
@@ -284,6 +276,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 #### Componentes Implementados (71 componentes)
 
 **Core (15):**
+
 - ✅ `Layout.tsx` - Layout principal
 - ✅ `Sidebar/index.tsx` - Sidebar navegável
 - ✅ `TopBar/index.tsx` - Topbar com notificações
@@ -301,6 +294,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ `DataList.tsx` - Lista de dados
 
 **Gestão (20):**
+
 - ✅ `EmployeeModalNew.tsx` - Modal de empregados
 - ✅ `EmployerModalNew.tsx` - Modal de empregadores
 - ✅ `PayrollModalNew.tsx` - Modal de folha
@@ -323,6 +317,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ `FormComponents/index.tsx` - Componentes de formulário
 
 **Específicos (15):**
+
 - ✅ `ClockInButton/index.tsx` - Botão de ponto
 - ✅ `GroupSelector/index.tsx` - Seletor de grupos
 - ✅ `GroupSelectionModal.tsx` - Modal de seleção de grupos
@@ -340,12 +335,14 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ `MotivationCarousel.tsx` - Carrossel de motivação
 
 **Gestão de Usuários (5):**
+
 - ✅ `UserManagementForm/index.tsx` - Formulário de gestão de usuários
 - ✅ `PendingActionIcon/index.tsx` - Ícone de ação pendente
 - ✅ `NetworkDebugInfo/index.tsx` - Info de debug de rede
 - ✅ `HeaderWithSelection.tsx` - Header com seleção
 
 **Compartilhados (8):**
+
 - ✅ `shared/styles.ts` - Estilos compartilhados
 - ✅ `shared/tokens.ts` - Tokens de design
 - ✅ `shared/base-components.ts` - Componentes base
@@ -356,6 +353,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ `AntifaudeProvider.tsx` - Provider de anti-fraude
 
 **Design System:**
+
 - ✅ Sistema de cores por perfil (4 temas)
 - ✅ Tokens de design centralizados
 - ✅ Componentes unificados
@@ -369,6 +367,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 #### Serviços Implementados (21 serviços)
 
 **Core (7):**
+
 - ✅ `auditService.ts` - Serviço de auditoria
 - ✅ `configService.ts` - Serviço de configuração
 - ✅ `validationService.ts` - Serviço de validação
@@ -378,32 +377,39 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ `dadosReaisService.ts` - Serviço de dados reais
 
 **eSocial (4):**
+
 - ✅ `esocialApi.ts` - API eSocial base
 - ✅ `esocialRealApi.ts` - API eSocial real
 - ⚠️ `esocialHybridApi.ts` - API híbrida (implementado, precisa testes)
 - ⚠️ `esocialSoapClient.ts` - Cliente SOAP (implementado, precisa validação)
 
 **Documentos (1):**
+
 - ✅ `DocumentService.ts` - Serviço de documentos
 
 **Certificados (2):**
+
 - ✅ `certificateService.ts` - Serviço de certificados
 - ✅ `certificateValidationService.ts` - Serviço de validação de certificados
 
 **Segurança (1):**
+
 - ✅ `webhookService.ts` - Serviço de webhooks
 
 **Anti-fraude (3):**
+
 - ✅ `antifraude/ip-analyzer.ts` - Análise de IP
 - ✅ `antifraude/network-fingerprinting.ts` - Fingerprinting de rede
 - ✅ `antifraude/risk-analyzer.ts` - Análise de risco
 
 **Outros (3):**
+
 - ✅ `errorRecoveryService.ts` - Recuperação de erros
 - ✅ `performanceMonitoringService.ts` - Monitoramento de performance
 - ✅ `timeClockNotificationService.ts` - Notificações de ponto
 
 **Pendências:**
+
 - ⚠️ Alguns serviços podem ter tratamento de erros incompleto
 - ⚠️ Validações podem precisar de ajustes
 - ⚠️ Testes unitários não implementados
@@ -415,11 +421,13 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 #### APIs Implementadas (50+ endpoints)
 
 **Autenticação (3):**
+
 - ✅ `auth/login.ts` - Endpoint de login
 - ✅ `auth/[...nextauth].ts` - NextAuth completo
 - ✅ `auth/profiles.ts` - Endpoints de perfis
 
 **Core (15):**
+
 - ✅ `users/index.ts` - CRUD de usuários
 - ✅ `users/manage.ts` - Gestão de usuários
 - ✅ `profiles/index.ts` - CRUD de perfis
@@ -437,6 +445,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ `user/groups.ts` - Grupos do usuário
 
 **Gestão (12):**
+
 - ✅ `tasks/index.ts` - CRUD de tarefas
 - ✅ `documents/index.ts` - CRUD de documentos
 - ✅ `messages/index.ts` - CRUD de mensagens
@@ -451,15 +460,18 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ `employers/index.ts` - CRUD de empregadores
 
 **eSocial (1):**
+
 - ⚠️ Integrações eSocial (implementadas mas precisam validação)
 
 **Geofencing (4):**
+
 - ✅ `geofencing/locais.ts` - CRUD de locais
 - ✅ `geofencing/validar.ts` - Validação de geofencing
 - ✅ `geofencing/auditoria/logs.ts` - Logs de auditoria
 - ✅ `geofencing/auditoria/validacoes.ts` - Validações
 
 **Ponto (7):**
+
 - ✅ `time-clock/registrar.ts` - Registrar ponto
 - ✅ `time-clock/records.ts` - Registros de ponto
 - ✅ `time-clock/pending.ts` - Pontos pendentes
@@ -469,10 +481,12 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ `time-clock/aprovar-hora-extra.ts` - Aprovar hora extra
 
 **Certificados (2):**
+
 - ✅ `certificates/index.ts` - CRUD de certificados
 - ✅ `certificates/use.ts` - Usar certificado
 
 **Outros (10):**
+
 - ✅ `subscriptions/plans.ts` - Planos de assinatura
 - ✅ `templates/index.ts` - Templates
 - ✅ `page-data/index.ts` - Dados de páginas
@@ -483,6 +497,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ `antifraude/` - Endpoints de anti-fraude
 
 **Pendências:**
+
 - ⚠️ Alguns endpoints podem ter validação incompleta
 - ⚠️ Tratamento de erros pode ser melhorado
 - ⚠️ Documentação de API pode estar incompleta
@@ -494,30 +509,35 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 #### Implementação
 
 **Serviços:**
+
 - ✅ `esocialRealApi.ts` - API real implementada
 - ✅ `esocialHybridApi.ts` - API híbrida implementada
 - ✅ `certificateService.ts` - Serviço de certificados
 - ✅ WSDLs oficiais configurados
 
 **Certificados:**
+
 - ✅ Suporte para certificados A1/A3
 - ✅ Upload de certificados PFX
 - ✅ Validação de certificados
 - ✅ Gestão de certificados digitais
 
 **Funcionalidades:**
+
 - ✅ Consulta de cadastro empregador
 - ✅ Consulta de cadastro trabalhador
 - ✅ Envio de eventos
 - ✅ Consulta de status
 
 **Limitações:**
+
 - ⚠️ Não validado em produção real
 - ⚠️ Testes manuais necessários
 - ⚠️ Documentação técnica precisa de atualização
 - ⚠️ Tratamento de erros pode ser melhorado
 
 **Arquivos relevantes:**
+
 - `INTEGRACAO_ESOCIAL_OFICIAL.md` - Guia completo
 - `src/services/esocialRealApi.ts` - API principal
 - `certificados/` - Certificados de exemplo
@@ -529,6 +549,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 #### Implementado
 
 **Autenticação:**
+
 - ✅ NextAuth configurado
 - ✅ JWT tokens
 - ✅ Refresh tokens
@@ -536,6 +557,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ Dispositivos confiáveis
 
 **Anti-fraude:**
+
 - ✅ Device fingerprinting
 - ✅ Network fingerprinting (Wi-Fi SSID)
 - ✅ IP analysis (VPN/Proxy detection)
@@ -545,6 +567,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ Behavior analysis
 
 **Compliance:**
+
 - ✅ LGPD implementado
 - ✅ Logs de auditoria completos
 - ✅ Consentimento explícito
@@ -552,6 +575,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ Criptografia de dados sensíveis
 
 **Registro de Ponto:**
+
 - ✅ Hora do servidor (nunca dispositivo)
 - ✅ Geolocalização obrigatória
 - ✅ Geofence validation
@@ -561,6 +585,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ Validação de rede Wi-Fi
 
 **Arquivos relevantes:**
+
 - `src/services/antifraude/` - Serviços de anti-fraude
 - `CERTIFICADOS_DIGITAIS_LGPD.md` - Documentação LGPD
 
@@ -571,12 +596,14 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 #### Status Atual
 
 **Implementado:**
+
 - ✅ Configuração Jest
 - ✅ Configuração de testes unitários
 - ✅ Setup de testes
 - ✅ Alguns testes básicos de API (3 arquivos)
 
 **NÃO Implementado:**
+
 - ❌ Testes unitários de componentes
 - ❌ Testes unitários de serviços
 - ❌ Testes de integração
@@ -585,6 +612,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ❌ Cobertura de código
 
 **Scripts no package.json:**
+
 ```json
 "test": "echo \"Tests not implemented yet\" && exit 0",
 "test:unit": "echo \"Unit tests not implemented yet\" && exit 0",
@@ -594,6 +622,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 ```
 
 **Arquivos relevantes:**
+
 - `jest.config.js` - Configuração Jest
 - `jest.setup.js` - Setup Jest
 - `src/__tests__/` - Pasta de testes (parcialmente vazia)
@@ -607,6 +636,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 #### Status Atual
 
 **Implementado:**
+
 - ✅ README principal completo
 - ✅ CHANGELOG detalhado
 - ✅ Documentação técnica completa
@@ -617,12 +647,14 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 - ✅ Documentação de certificados LGPD
 
 **Estrutura:**
+
 - ✅ 12 arquivos essenciais na raiz
 - ✅ ~217 arquivos históricos em `docs/archive/`
 - ✅ ~14 guias em `docs/guias/`
 - ✅ Índice centralizado em `docs/INDICE.md`
 
 **Pendente:**
+
 - ⚠️ Manual de usuário final mais detalhado
 - ⚠️ Guias de troubleshooting
 - ⚠️ Documentação de deployment
@@ -632,19 +664,19 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 
 ## 📊 RESUMO POR CATEGORIA
 
-| Categoria      | Status | Completude | Prioridade | Observações |
-| -------------- | ------ | ---------- | ---------- | ----------- |
-| Arquitetura    | ✅     | 95%        | Alta       | Stack moderna e sólida |
-| Banco de Dados | ✅     | 100%       | Alta       | Completo e bem estruturado |
-| Interface      | ✅     | 95%        | Alta       | 99 páginas, 71 componentes |
-| Serviços       | ⚠️     | 70%        | Alta       | Alguns incompletos |
-| APIs           | ⚠️     | 75%        | Alta       | Maioria funcionando |
-| Design System  | ✅     | 95%        | Média      | Temas e tokens completos |
-| eSocial        | ⚠️     | 60%        | **Crítica** | Precisa validação |
-| Segurança      | ✅     | 90%        | Alta       | Anti-fraude robusto |
-| Testes         | ❌     | 10%        | **Crítica** | Praticamente inexistente |
-| Documentação   | ✅     | 85%        | Baixa      | Boa, mas pode melhorar |
-| **TOTAL**      | ⚠️     | **65-70%** | -          | MVP funcional |
+| Categoria      | Status | Completude | Prioridade  | Observações                |
+| -------------- | ------ | ---------- | ----------- | -------------------------- |
+| Arquitetura    | ✅     | 95%        | Alta        | Stack moderna e sólida     |
+| Banco de Dados | ✅     | 100%       | Alta        | Completo e bem estruturado |
+| Interface      | ✅     | 95%        | Alta        | 99 páginas, 71 componentes |
+| Serviços       | ⚠️     | 70%        | Alta        | Alguns incompletos         |
+| APIs           | ⚠️     | 75%        | Alta        | Maioria funcionando        |
+| Design System  | ✅     | 95%        | Média       | Temas e tokens completos   |
+| eSocial        | ⚠️     | 60%        | **Crítica** | Precisa validação          |
+| Segurança      | ✅     | 90%        | Alta        | Anti-fraude robusto        |
+| Testes         | ❌     | 10%        | **Crítica** | Praticamente inexistente   |
+| Documentação   | ✅     | 85%        | Baixa       | Boa, mas pode melhorar     |
+| **TOTAL**      | ⚠️     | **65-70%** | -           | MVP funcional              |
 
 ---
 
@@ -725,6 +757,7 @@ O projeto DOM é um **sistema de gestão doméstica completo** com foco especial
 O projeto DOM possui uma **base técnica sólida e moderna**, com aproximadamente **65-70% de completude**. A arquitetura está bem estruturada, o banco de dados está completo, e a interface está profissional.
 
 **Principais desafios:**
+
 1. **Falta de testes automatizados** (risco crítico)
 2. **Validação da integração eSocial** (funcionalidade crítica)
 3. **Documentação de deploy** (necessária para produção)
@@ -735,4 +768,3 @@ O projeto **não está pronto para produção** sem a implementação de testes 
 ---
 
 **Próximo arquivo:** `ANALISE_MERCADO_CONCORRENCIA_DOM.md`
-

@@ -118,43 +118,58 @@ const BackgroundPattern = styled.div<{ $theme?: any }>`
     radial-gradient(
       circle at 20% 80%,
       ${props => {
-        const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
-        if (bgColor && bgColor.startsWith('#')) {
-          const r = parseInt(bgColor.slice(1, 3), 16);
-          const g = parseInt(bgColor.slice(3, 5), 16);
-          const b = parseInt(bgColor.slice(5, 7), 16);
-          return `rgba(${r}, ${g}, ${b}, 0.1)`;
-        }
-        return 'transparent';
-      }} 0%,
+          const bgColor = getThemeColor(
+            props.$theme,
+            'background.primary',
+            'transparent'
+          );
+          if (bgColor && bgColor.startsWith('#')) {
+            const r = parseInt(bgColor.slice(1, 3), 16);
+            const g = parseInt(bgColor.slice(3, 5), 16);
+            const b = parseInt(bgColor.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, 0.1)`;
+          }
+          return 'transparent';
+        }}
+        0%,
       transparent 50%
     ),
     radial-gradient(
       circle at 80% 20%,
       ${props => {
-        const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
-        if (bgColor && bgColor.startsWith('#')) {
-          const r = parseInt(bgColor.slice(1, 3), 16);
-          const g = parseInt(bgColor.slice(3, 5), 16);
-          const b = parseInt(bgColor.slice(5, 7), 16);
-          return `rgba(${r}, ${g}, ${b}, 0.1)`;
-        }
-        return 'transparent';
-      }} 0%,
+          const bgColor = getThemeColor(
+            props.$theme,
+            'background.primary',
+            'transparent'
+          );
+          if (bgColor && bgColor.startsWith('#')) {
+            const r = parseInt(bgColor.slice(1, 3), 16);
+            const g = parseInt(bgColor.slice(3, 5), 16);
+            const b = parseInt(bgColor.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, 0.1)`;
+          }
+          return 'transparent';
+        }}
+        0%,
       transparent 50%
     ),
     radial-gradient(
       circle at 40% 40%,
       ${props => {
-        const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
-        if (bgColor && bgColor.startsWith('#')) {
-          const r = parseInt(bgColor.slice(1, 3), 16);
-          const g = parseInt(bgColor.slice(3, 5), 16);
-          const b = parseInt(bgColor.slice(5, 7), 16);
-          return `rgba(${r}, ${g}, ${b}, 0.05)`;
-        }
-        return 'transparent';
-      }} 0%,
+          const bgColor = getThemeColor(
+            props.$theme,
+            'background.primary',
+            'transparent'
+          );
+          if (bgColor && bgColor.startsWith('#')) {
+            const r = parseInt(bgColor.slice(1, 3), 16);
+            const g = parseInt(bgColor.slice(3, 5), 16);
+            const b = parseInt(bgColor.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, 0.05)`;
+          }
+          return 'transparent';
+        }}
+        0%,
       transparent 50%
     );
   animation: ${float} 6s ease-in-out infinite;
@@ -179,7 +194,11 @@ const Logo = styled.div<{ $theme?: Theme }>`
   height: 120px;
   border-radius: 30px;
   background: ${props => {
-    const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
+    const bgColor = getThemeColor(
+      props.$theme,
+      'background.primary',
+      'transparent'
+    );
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
@@ -203,16 +222,21 @@ const Logo = styled.div<{ $theme?: Theme }>`
     return 'none';
   }};
   backdrop-filter: blur(20px);
-  border: 2px solid ${props => {
-    const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
-    if (bgColor && bgColor.startsWith('#')) {
-      const r = parseInt(bgColor.slice(1, 3), 16);
-      const g = parseInt(bgColor.slice(3, 5), 16);
-      const b = parseInt(bgColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.3)`;
-    }
-    return 'transparent';
-  }};
+  border: 2px solid
+    ${props => {
+      const bgColor = getThemeColor(
+        props.$theme,
+        'background.primary',
+        'transparent'
+      );
+      if (bgColor && bgColor.startsWith('#')) {
+        const r = parseInt(bgColor.slice(1, 3), 16);
+        const g = parseInt(bgColor.slice(3, 5), 16);
+        const b = parseInt(bgColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.3)`;
+      }
+      return 'transparent';
+    }};
 
   img {
     width: 80px;
@@ -225,8 +249,7 @@ const WelcomeTitle = styled.h1<{ $theme?: Theme }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 3.5rem;
   font-weight: 800;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.primary', 'inherit')};
+  color: ${props => getThemeColor(props.$theme, 'text.primary', 'inherit')};
   margin: 0 0 1rem 0;
   text-shadow: ${props => {
     const shadowColor = getThemeColor(props.$theme, 'shadow', 'transparent');
@@ -240,8 +263,17 @@ const WelcomeTitle = styled.h1<{ $theme?: Theme }>`
   }};
   background: ${props => {
     const textColor = getThemeColor(props.$theme, 'text.primary', 'inherit');
-    const secondaryColor = getThemeColor(props.$theme, 'text.secondary', 'inherit');
-    if (textColor && secondaryColor && textColor.startsWith('#') && secondaryColor.startsWith('#')) {
+    const secondaryColor = getThemeColor(
+      props.$theme,
+      'text.secondary',
+      'inherit'
+    );
+    if (
+      textColor &&
+      secondaryColor &&
+      textColor.startsWith('#') &&
+      secondaryColor.startsWith('#')
+    ) {
       return `linear-gradient(45deg, ${textColor}, ${secondaryColor})`;
     }
     return 'inherit';
@@ -253,8 +285,7 @@ const WelcomeTitle = styled.h1<{ $theme?: Theme }>`
 
 const WelcomeSubtitle = styled.p<{ $theme?: any }>`
   font-size: 1.3rem;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.primary', 'inherit')};
+  color: ${props => getThemeColor(props.$theme, 'text.primary', 'inherit')};
   margin: 0 0 2rem 0;
   font-weight: 500;
   text-shadow: ${props => {
@@ -271,8 +302,7 @@ const WelcomeSubtitle = styled.p<{ $theme?: any }>`
 
 const WelcomeDescription = styled.p<{ $theme?: any }>`
   font-size: 1.1rem;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.secondary', 'inherit')};
+  color: ${props => getThemeColor(props.$theme, 'text.secondary', 'inherit')};
   margin: 0 0 3rem 0;
   line-height: 1.6;
   max-width: 600px;
@@ -294,7 +324,11 @@ const SkipButton = styled.button<{ $theme?: any }>`
   top: 2rem;
   right: 2rem;
   background: ${props => {
-    const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
+    const bgColor = getThemeColor(
+      props.$theme,
+      'background.primary',
+      'transparent'
+    );
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
@@ -303,20 +337,24 @@ const SkipButton = styled.button<{ $theme?: any }>`
     }
     return 'transparent';
   }};
-  border: 1px solid ${props => {
-    const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
-    if (bgColor && bgColor.startsWith('#')) {
-      const r = parseInt(bgColor.slice(1, 3), 16);
-      const g = parseInt(bgColor.slice(3, 5), 16);
-      const b = parseInt(bgColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.3)`;
-    }
-    return 'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const bgColor = getThemeColor(
+        props.$theme,
+        'background.primary',
+        'transparent'
+      );
+      if (bgColor && bgColor.startsWith('#')) {
+        const r = parseInt(bgColor.slice(1, 3), 16);
+        const g = parseInt(bgColor.slice(3, 5), 16);
+        const b = parseInt(bgColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.3)`;
+      }
+      return 'transparent';
+    }};
   border-radius: 25px;
   padding: 0.75rem 1.5rem;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.primary', 'inherit')};
+  color: ${props => getThemeColor(props.$theme, 'text.primary', 'inherit')};
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -324,7 +362,11 @@ const SkipButton = styled.button<{ $theme?: any }>`
 
   &:hover {
     background: ${props => {
-      const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
+      const bgColor = getThemeColor(
+        props.$theme,
+        'background.primary',
+        'transparent'
+      );
       if (bgColor && bgColor.startsWith('#')) {
         const r = parseInt(bgColor.slice(1, 3), 16);
         const g = parseInt(bgColor.slice(3, 5), 16);
@@ -343,12 +385,19 @@ const TutorialContainer = styled.div<{ $theme?: Theme }>`
     135deg,
     ${props => props.$theme?.colors?.surface || publicColors.surface} 0%,
     ${props => {
-      const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border && 'light' in border ? String((border as any).light) : null) ||
-             (typeof border === 'string' ? border : null) ||
-             (typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border) ||
-             'transparent';
-    }} 100%
+        const border = props.$theme?.colors?.border;
+        return (
+          (typeof border === 'object' && border && 'light' in border
+            ? String((border as any).light)
+            : null) ||
+          (typeof border === 'string' ? border : null) ||
+          (typeof publicColors.border === 'object'
+            ? publicColors.border.light
+            : publicColors.border) ||
+          'transparent'
+        );
+      }}
+      100%
   );
   display: flex;
   flex-direction: column;
@@ -357,7 +406,11 @@ const TutorialContainer = styled.div<{ $theme?: Theme }>`
 
 const TutorialHeader = styled.header<{ $theme?: Theme }>`
   background: ${props => {
-    const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
+    const bgColor = getThemeColor(
+      props.$theme,
+      'background.primary',
+      'transparent'
+    );
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
@@ -378,16 +431,21 @@ const TutorialHeader = styled.header<{ $theme?: Theme }>`
     }
     return 'none';
   }};
-  border-bottom: 1px solid ${props => {
-    const primaryColor = getThemeColor(props.$theme, 'colors.primary', 'transparent');
-    if (primaryColor && primaryColor.startsWith('#')) {
-      const r = parseInt(primaryColor.slice(1, 3), 16);
-      const g = parseInt(primaryColor.slice(3, 5), 16);
-      const b = parseInt(primaryColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.2)`;
-    }
-    return getThemeColor(props.$theme, 'border.light', 'transparent');
-  }};
+  border-bottom: 1px solid
+    ${props => {
+      const primaryColor = getThemeColor(
+        props.$theme,
+        'colors.primary',
+        'transparent'
+      );
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      return getThemeColor(props.$theme, 'border.light', 'transparent');
+    }};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -403,8 +461,7 @@ const ProgressContainer = styled.div`
 
 const ProgressText = styled.span<{ $theme?: any }>`
   font-weight: 600;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.dark', 'inherit')};
+  color: ${props => getThemeColor(props.$theme, 'text.dark', 'inherit')};
   font-size: 0.9rem;
 `;
 
@@ -455,8 +512,7 @@ const SlideTitle = styled.h2<{ $color: string; $theme?: Theme }>`
 
 const SlideDescription = styled.p<{ $theme?: any }>`
   font-size: 1.2rem;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.secondary', 'inherit')};
+  color: ${props => getThemeColor(props.$theme, 'text.secondary', 'inherit')};
   margin: 0 0 2rem 0;
   line-height: 1.6;
 `;
@@ -473,8 +529,7 @@ const FeatureItem = styled.li<{ $theme?: any }>`
   gap: 0.75rem;
   margin-bottom: 0.75rem;
   font-size: 1rem;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.dark', 'inherit')};
+  color: ${props => getThemeColor(props.$theme, 'text.dark', 'inherit')};
 
   &::before {
     content: '✨';
@@ -494,8 +549,7 @@ const BenefitItem = styled.li<{ $theme?: any }>`
   gap: 0.75rem;
   margin-bottom: 0.75rem;
   font-size: 0.95rem;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.secondary', 'inherit')};
+  color: ${props => getThemeColor(props.$theme, 'text.secondary', 'inherit')};
 
   &::before {
     content: '🎯';
@@ -508,7 +562,11 @@ const ActionStepsList = styled.ul<{ $theme?: any }>`
   padding: 0;
   margin: 1.5rem 0 2rem 0;
   background: ${props => {
-    const bgColor = getThemeColor(props.$theme, 'background.secondary', 'transparent');
+    const bgColor = getThemeColor(
+      props.$theme,
+      'background.secondary',
+      'transparent'
+    );
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
@@ -519,10 +577,15 @@ const ActionStepsList = styled.ul<{ $theme?: any }>`
   }};
   border-radius: 12px;
   padding: 1.5rem;
-  border-left: 4px solid ${props => {
-    const primaryColor = getThemeColor(props.$theme, 'colors.primary', 'transparent');
-    return primaryColor || 'transparent';
-  }};
+  border-left: 4px solid
+    ${props => {
+      const primaryColor = getThemeColor(
+        props.$theme,
+        'colors.primary',
+        'transparent'
+      );
+      return primaryColor || 'transparent';
+    }};
 `;
 
 const ActionStepItem = styled.li<{ $theme?: any }>`
@@ -531,8 +594,7 @@ const ActionStepItem = styled.li<{ $theme?: any }>`
   gap: 0.75rem;
   margin-bottom: 0.75rem;
   font-size: 0.95rem;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.dark', 'inherit')};
+  color: ${props => getThemeColor(props.$theme, 'text.dark', 'inherit')};
   line-height: 1.5;
 
   &:last-child {
@@ -544,7 +606,11 @@ const ActionStepItem = styled.li<{ $theme?: any }>`
     font-size: 1rem;
     font-weight: bold;
     color: ${props => {
-      const primaryColor = getThemeColor(props.$theme, 'colors.primary', 'transparent');
+      const primaryColor = getThemeColor(
+        props.$theme,
+        'colors.primary',
+        'transparent'
+      );
       return primaryColor || 'inherit';
     }};
     flex-shrink: 0;
@@ -556,7 +622,11 @@ const TipBox = styled.div<{ $theme?: any }>`
   margin-top: 1.5rem;
   padding: 1rem 1.5rem;
   background: ${props => {
-    const primaryColor = getThemeColor(props.$theme, 'colors.primary', 'transparent');
+    const primaryColor = getThemeColor(
+      props.$theme,
+      'colors.primary',
+      'transparent'
+    );
     if (primaryColor && primaryColor.startsWith('#')) {
       const r = parseInt(primaryColor.slice(1, 3), 16);
       const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -566,10 +636,15 @@ const TipBox = styled.div<{ $theme?: any }>`
     return 'transparent';
   }};
   border-radius: 12px;
-  border-left: 4px solid ${props => {
-    const primaryColor = getThemeColor(props.$theme, 'colors.primary', 'transparent');
-    return primaryColor || 'transparent';
-  }};
+  border-left: 4px solid
+    ${props => {
+      const primaryColor = getThemeColor(
+        props.$theme,
+        'colors.primary',
+        'transparent'
+      );
+      return primaryColor || 'transparent';
+    }};
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
@@ -584,8 +659,7 @@ const TipIcon = styled.span`
 const TipText = styled.p<{ $theme?: any }>`
   margin: 0;
   font-size: 0.9rem;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.secondary', 'inherit')};
+  color: ${props => getThemeColor(props.$theme, 'text.secondary', 'inherit')};
   line-height: 1.5;
   font-style: italic;
 `;
@@ -618,7 +692,11 @@ const NavigationContainer = styled.div<{ $theme?: any }>`
   align-items: center;
   padding: 2rem;
   background: ${props => {
-    const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
+    const bgColor = getThemeColor(
+      props.$theme,
+      'background.primary',
+      'transparent'
+    );
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
@@ -628,8 +706,8 @@ const NavigationContainer = styled.div<{ $theme?: any }>`
     return getThemeColor(props.$theme, 'background.primary', 'transparent');
   }};
   backdrop-filter: blur(20px);
-  border-top: 1px solid ${props => 
-    getThemeColor(props.$theme, 'border.light', 'transparent')};
+  border-top: 1px solid
+    ${props => getThemeColor(props.$theme, 'border.light', 'transparent')};
 `;
 
 const NavigationButton = styled.button<{ $theme?: Theme; $disabled?: boolean }>`
@@ -637,11 +715,10 @@ const NavigationButton = styled.button<{ $theme?: Theme; $disabled?: boolean }>`
     props.$disabled
       ? getThemeColor(props.$theme, 'background.secondary', 'transparent')
       : getThemeColor(props.$theme, 'colors.primary', 'transparent')};
-  color: ${props => 
+  color: ${props =>
     props.$disabled
       ? getThemeColor(props.$theme, 'text.secondary', 'inherit')
-      : getThemeColor(props.$theme, 'text.primary', 'inherit') ||
-        'inherit'};
+      : getThemeColor(props.$theme, 'text.primary', 'inherit') || 'inherit'};
   border: none;
   border-radius: 12px;
   padding: 1rem 2rem;
@@ -656,7 +733,11 @@ const NavigationButton = styled.button<{ $theme?: Theme; $disabled?: boolean }>`
   &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: ${props => {
-      const primaryColor = getThemeColor(props.$theme, 'colors.primary', 'transparent');
+      const primaryColor = getThemeColor(
+        props.$theme,
+        'colors.primary',
+        'transparent'
+      );
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -703,8 +784,7 @@ const CompletionTitle = styled.h1<{ $theme?: any }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 3rem;
   font-weight: 700;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.primary', 'inherit')};
+  color: ${props => getThemeColor(props.$theme, 'text.primary', 'inherit')};
   margin: 0 0 1rem 0;
   text-shadow: ${props => {
     const shadowColor = getThemeColor(props.$theme, 'shadow', 'transparent');
@@ -720,8 +800,7 @@ const CompletionTitle = styled.h1<{ $theme?: any }>`
 
 const CompletionDescription = styled.p<{ $theme?: any }>`
   font-size: 1.2rem;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.secondary', 'inherit')};
+  color: ${props => getThemeColor(props.$theme, 'text.secondary', 'inherit')};
   margin: 0 0 3rem 0;
   line-height: 1.6;
 `;
@@ -780,15 +859,13 @@ const SecondaryButton = styled(UnifiedButton)<{ $theme?: Theme }>`
 
 const TutorialHeaderTitle = styled.h3<{ $theme?: any }>`
   margin: 0;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.dark', 'inherit')};
+  color: ${props => getThemeColor(props.$theme, 'text.dark', 'inherit')};
   font-size: 1.2rem;
 `;
 
 const TutorialHeaderSubtitle = styled.p<{ $theme?: any }>`
   margin: 0.25rem 0 0 0;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.secondary', 'inherit')};
+  color: ${props => getThemeColor(props.$theme, 'text.secondary', 'inherit')};
   font-size: 0.9rem;
 `;
 
@@ -799,7 +876,7 @@ const DotIndicator = styled.div<{ $active: boolean; $theme?: Theme }>`
   background: ${props =>
     props.$active
       ? getThemeColor(props.$theme, 'colors.primary', 'transparent')
-      : getThemeColor(props.$theme, 'background.secondary', 'transparent') || 
+      : getThemeColor(props.$theme, 'background.secondary', 'transparent') ||
         getThemeColor(props.$theme, 'background.secondary', 'transparent')};
   cursor: pointer;
   transition: all 0.3s ease;
@@ -826,7 +903,10 @@ export default function WelcomeTutorial() {
       text: publicColors.text,
       background: publicColors.background,
       surface: publicColors.surface,
-      border: typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border,
+      border:
+        typeof publicColors.border === 'object'
+          ? publicColors.border.light
+          : publicColors.border,
     },
   };
 
@@ -1095,9 +1175,7 @@ export default function WelcomeTutorial() {
 
   const handleStartTutorial = () => {
     setCurrentStep('tutorial');
-    alertManager.showSuccess(
-      'Bem-vindo ao tutorial do Sistema DOM! 🎉'
-    );
+    alertManager.showSuccess('Bem-vindo ao tutorial do Sistema DOM! 🎉');
   };
 
   const handleSkipTutorial = () => {
@@ -1123,9 +1201,7 @@ export default function WelcomeTutorial() {
 
   const handleGoToDashboard = () => {
     router.push('/dashboard');
-    alertManager.showSuccess(
-      'Bem-vindo ao Sistema DOM! 🚀'
-    );
+    alertManager.showSuccess('Bem-vindo ao Sistema DOM! 🚀');
   };
 
   const handleRevisitTutorial = () => {
@@ -1139,7 +1215,9 @@ export default function WelcomeTutorial() {
     return (
       <WelcomeContainer $theme={theme}>
         <BackgroundPattern $theme={theme} />
-        <SkipButton $theme={theme} onClick={handleSkipTutorial}>Pular Tour</SkipButton>
+        <SkipButton $theme={theme} onClick={handleSkipTutorial}>
+          Pular Tour
+        </SkipButton>
 
         <WelcomeContent>
           <LogoContainer>
@@ -1176,7 +1254,6 @@ export default function WelcomeTutorial() {
             </WelcomeButton>
           </ButtonContainer>
         </WelcomeContent>
-
       </WelcomeContainer>
     );
   }
@@ -1192,7 +1269,9 @@ export default function WelcomeTutorial() {
       <TutorialContainer $theme={theme}>
         <TutorialHeader $theme={theme}>
           <div>
-            <TutorialHeaderTitle $theme={theme}>Tutorial do Sistema DOM</TutorialHeaderTitle>
+            <TutorialHeaderTitle $theme={theme}>
+              Tutorial do Sistema DOM
+            </TutorialHeaderTitle>
             <TutorialHeaderSubtitle $theme={theme}>
               Conhecendo as funcionalidades
             </TutorialHeaderSubtitle>
@@ -1202,11 +1281,11 @@ export default function WelcomeTutorial() {
             <ProgressText $theme={theme}>
               {currentSlide + 1} de {tutorialSlides.length}
             </ProgressText>
-            <ProgressBarWithWidth 
-              value={progress} 
-              variant="primary" 
+            <ProgressBarWithWidth
+              value={progress}
+              variant='primary'
               theme={theme}
-              size="sm"
+              size='sm'
             />
           </ProgressContainer>
         </TutorialHeader>
@@ -1306,41 +1385,25 @@ export default function WelcomeTutorial() {
           </CompletionDescription>
 
           <StatsContainer>
-            <UnifiedCard
-              theme={theme}
-              variant='glass'
-              size='md'
-            >
+            <UnifiedCard theme={theme} variant='glass' size='md'>
               <StatCardContent>
                 <StatNumber>7</StatNumber>
                 <StatLabel>Módulos Principais</StatLabel>
               </StatCardContent>
             </UnifiedCard>
-            <UnifiedCard
-              theme={theme}
-              variant='glass'
-              size='md'
-            >
+            <UnifiedCard theme={theme} variant='glass' size='md'>
               <StatCardContent>
                 <StatNumber>100%</StatNumber>
                 <StatLabel>Seguro e Conforme</StatLabel>
               </StatCardContent>
             </UnifiedCard>
-            <UnifiedCard
-              theme={theme}
-              variant='glass'
-              size='md'
-            >
+            <UnifiedCard theme={theme} variant='glass' size='md'>
               <StatCardContent>
                 <StatNumber>24/7</StatNumber>
                 <StatLabel>Disponível</StatLabel>
               </StatCardContent>
             </UnifiedCard>
-            <UnifiedCard
-              theme={theme}
-              variant='glass'
-              size='md'
-            >
+            <UnifiedCard theme={theme} variant='glass' size='md'>
               <StatCardContent>
                 <StatNumber>∞</StatNumber>
                 <StatLabel>Possibilidades</StatLabel>
@@ -1367,7 +1430,6 @@ export default function WelcomeTutorial() {
             </SecondaryButton>
           </ButtonContainer>
         </CompletionContent>
-
       </CompletionContainer>
     );
   }

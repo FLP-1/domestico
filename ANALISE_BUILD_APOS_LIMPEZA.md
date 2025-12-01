@@ -16,10 +16,13 @@
 ## ❌ **ERRO IDENTIFICADO**
 
 ### **Arquivo:** `src/pages/shopping-management.tsx`
+
 ### **Linha:** 420 (erro reportado) / Linhas 397 e 400 (duplicação real)
+
 ### **Erro:** `Identifier 'dynamic' has already been declared`
 
 **Problema:**
+
 ```typescript
 // Linha 397
 export const dynamic = 'force-dynamic';
@@ -29,6 +32,7 @@ export const dynamic = 'force-dynamic';
 ```
 
 **Correção Aplicada:**
+
 - ✅ Removida declaração duplicada na linha 400
 - ✅ Mantida apenas uma declaração
 
@@ -45,6 +49,7 @@ export const dynamic = 'force-dynamic';
   - ✅ Ou o erro foi resolvido anteriormente
 
 **Verificação:**
+
 - Linha 255 atual usa `getThemeColor(props.$theme, 'colors.primary', 'transparent')`
 - ✅ Sem referências a `props.$theme?.accent`
 - ✅ Código correto
@@ -60,4 +65,3 @@ export const dynamic = 'force-dynamic';
 ---
 
 **Status:** ✅ Primeiro erro corrigido | ⏳ Próximo: Re-executar build
-

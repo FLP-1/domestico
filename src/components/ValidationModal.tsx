@@ -5,12 +5,15 @@ import { UnifiedModal, UnifiedButton } from './unified';
 const FooterContainer = styled.div<{ $theme?: any }>`
   margin-top: 1.5rem;
   padding-top: 1rem;
-  border-top: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border-top: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
 `;
 
 interface ValidationModalProps {

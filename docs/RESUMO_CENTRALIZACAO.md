@@ -5,16 +5,18 @@
 ### **1. 🔌 API Client Centralizado** 🔴 ALTA PRIORIDADE
 
 **Problema:**
+
 - URLs hardcoded em 20+ lugares
 - Headers repetidos
 - Tratamento de erro inconsistente
 
 **Solução:**
+
 ```typescript
 // Cliente HTTP centralizado
-apiClient.alerts.getAll()
-apiClient.users.getAll()
-apiClient.timeClock.getRecords()
+apiClient.alerts.getAll();
+apiClient.users.getAll();
+apiClient.timeClock.getRecords();
 ```
 
 **Impacto:** 🔴 **ALTO** - Afeta manutenibilidade diretamente
@@ -24,10 +26,12 @@ apiClient.timeClock.getRecords()
 ### **2. ⏳ Hook de Data Fetching** 🟡 MÉDIA PRIORIDADE
 
 **Problema:**
+
 - Padrão fetch + loading + error repetido 15+ vezes
 - Código boilerplate excessivo
 
 **Solução:**
+
 ```typescript
 // Hook customizado
 const { data, loading, error } = useDataFetch(() => apiClient.alerts.getAll());
@@ -40,10 +44,12 @@ const { data, loading, error } = useDataFetch(() => apiClient.alerts.getAll());
 ### **3. 📋 Constantes de Dados** 🟡 MÉDIA PRIORIDADE
 
 **Problema:**
+
 - Arrays de tipos/categorias duplicados
 - Dados hardcoded em componentes
 
 **Solução:**
+
 ```typescript
 // Constantes centralizadas
 import { ALERT_TYPES } from '@/constants/alertTypes';
@@ -76,4 +82,3 @@ import { SHOPPING_CATEGORIES } from '@/constants/shoppingCategories';
 ## 🚀 **RECOMENDAÇÃO**
 
 **Começar pelo API Client** - maior impacto e resolve múltiplos problemas de uma vez.
-

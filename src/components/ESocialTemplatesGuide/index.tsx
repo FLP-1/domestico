@@ -1,7 +1,7 @@
 /**
  * Componente de Templates e Guias para eSocial
  * Sistema DOM - Documentação Trabalhista Especializada
- * 
+ *
  * Funcionalidades:
  * - Templates de documentos para eSocial
  * - Guias passo a passo para cada tipo de evento
@@ -12,7 +12,12 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import AccessibleEmoji from '../AccessibleEmoji';
-import { UnifiedButton, UnifiedBadge, UnifiedCard, UnifiedModal } from '../unified';
+import {
+  UnifiedButton,
+  UnifiedBadge,
+  UnifiedCard,
+  UnifiedModal,
+} from '../unified';
 import { FormGroup, Input, Label } from '../FormComponents';
 import { OptimizedFormRow, OptimizedLabel } from '../shared/optimized-styles';
 import { LoadingContainer } from '../shared/page-components';
@@ -23,7 +28,7 @@ import { getTextSecondary } from '../../utils/themeTypeGuards';
 import { useAlertManager } from '../../hooks/useAlertManager';
 
 // ✅ Tipos de eventos eSocial para Trabalho Doméstico
-export type TipoEventoESocial = 
+export type TipoEventoESocial =
   | 'S-1000' // Cadastro de Empregador
   | 'S-2200' // Cadastro de Trabalhador
   | 'S-2205' // Alteração de Dados do Trabalhador
@@ -65,7 +70,9 @@ interface TemplateESocial {
 
 // ✅ Função para converter templates do banco para formato do componente
 // Busca templates agrupados por evento eSocial e converte para formato do componente
-function converterTemplatesBancoParaComponentes(templates: any[]): TemplateESocial[] {
+function converterTemplatesBancoParaComponentes(
+  templates: any[]
+): TemplateESocial[] {
   const templatesConvertidos: TemplateESocial[] = [];
   const templatesPorEvento = new Map<TipoEventoESocial, any[]>();
 
@@ -108,12 +115,13 @@ function converterTemplatesBancoParaComponentes(templates: any[]): TemplateESoci
       }
 
       // Coletar documentos necessários de todos os templates do evento
-      const documentosNecessarios: DocumentoNecessario[] = templatesDoEvento.map(t => ({
-        tipo: t.tipo,
-        nome: t.nome,
-        obrigatorio: t.categoria === 'OBRIGATORIO',
-        descricao: t.descricao || undefined,
-      }));
+      const documentosNecessarios: DocumentoNecessario[] =
+        templatesDoEvento.map(t => ({
+          tipo: t.tipo,
+          nome: t.nome,
+          obrigatorio: t.categoria === 'OBRIGATORIO',
+          descricao: t.descricao || undefined,
+        }));
 
       templatesConvertidos.push({
         evento,
@@ -146,14 +154,16 @@ const TemplatesContainer = styled.div`
 
 const TemplateCard = styled(UnifiedCard)<{ $theme?: Theme }>`
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
     transform: translateY(-2px);
     box-shadow: ${props => {
       const themeAny = props.$theme as any;
-      const shadowColor = props.$theme?.colors?.shadow ||
-                          (themeAny?.shadow?.color);
+      const shadowColor =
+        props.$theme?.colors?.shadow || themeAny?.shadow?.color;
       if (shadowColor && shadowColor.startsWith('#')) {
         const r = parseInt(shadowColor.slice(1, 3), 16);
         const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -176,7 +186,10 @@ const TemplateTitle = styled.h3<{ $theme?: Theme }>`
   margin: 0;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+    return (
+      (text && typeof text === 'object' && text.primary) ||
+      defaultColors.text.primary
+    );
   }};
   font-size: 1.25rem;
   font-weight: 600;
@@ -186,7 +199,10 @@ const TemplateDescription = styled.p<{ $theme?: Theme }>`
   margin: 0.5rem 0 0 0;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+    return (
+      (text && typeof text === 'object' && text.secondary) ||
+      defaultColors.text.secondary
+    );
   }};
   font-size: 0.9rem;
 `;
@@ -204,7 +220,10 @@ const DocumentoItem = styled.li<{ $theme?: Theme }>`
   padding: 0.5rem 0;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+    return (
+      (text && typeof text === 'object' && text.primary) ||
+      defaultColors.text.primary
+    );
   }};
 `;
 
@@ -217,7 +236,10 @@ const PassoItem = styled.li<{ $theme?: Theme }>`
   margin-bottom: 1rem;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+    return (
+      (text && typeof text === 'object' && text.primary) ||
+      defaultColors.text.primary
+    );
   }};
 `;
 
@@ -226,7 +248,10 @@ const PassoTitulo = styled.div<{ $theme?: Theme }>`
   margin-bottom: 0.25rem;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+    return (
+      (text && typeof text === 'object' && text.primary) ||
+      defaultColors.text.primary
+    );
   }};
 `;
 
@@ -234,7 +259,10 @@ const PassoDescricao = styled.div<{ $theme?: Theme }>`
   font-size: 0.9rem;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+    return (
+      (text && typeof text === 'object' && text.secondary) ||
+      defaultColors.text.secondary
+    );
   }};
   margin-bottom: 0.5rem;
 `;
@@ -252,10 +280,13 @@ const AlertasList = styled.ul<{ $theme?: Theme }>`
   margin: 0.5rem 0;
   background: ${props => {
     const warning = props.$theme?.colors?.warning;
-    return warning ? addOpacity(warning, 0.1) : addOpacity(defaultColors.warning, 0.1);
+    return warning
+      ? addOpacity(warning, 0.1)
+      : addOpacity(defaultColors.warning, 0.1);
   }};
   border-radius: 4px;
-  border-left: 3px solid ${props => props.$theme?.colors?.warning || defaultColors.warning};
+  border-left: 3px solid
+    ${props => props.$theme?.colors?.warning || defaultColors.warning};
 `;
 
 interface ESocialTemplatesGuideProps {
@@ -263,9 +294,13 @@ interface ESocialTemplatesGuideProps {
   onSelectTemplate?: (template: TemplateESocial) => void;
 }
 
-export default function ESocialTemplatesGuide({ theme, onSelectTemplate }: ESocialTemplatesGuideProps) {
+export default function ESocialTemplatesGuide({
+  theme,
+  onSelectTemplate,
+}: ESocialTemplatesGuideProps) {
   const alertManager = useAlertManager();
-  const [selectedTemplate, setSelectedTemplate] = useState<TemplateESocial | null>(null);
+  const [selectedTemplate, setSelectedTemplate] =
+    useState<TemplateESocial | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [templates, setTemplates] = useState<TemplateESocial[]>([]);
   const [loading, setLoading] = useState(true);
@@ -275,18 +310,21 @@ export default function ESocialTemplatesGuide({ theme, onSelectTemplate }: ESoci
     const loadTemplates = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/documents/templates?esocialRequerido=true&ativo=true');
+        const response = await fetch(
+          '/api/documents/templates?esocialRequerido=true&ativo=true'
+        );
         const templatesData = await response.json();
-        
+
         if (Array.isArray(templatesData)) {
           // Converter templates do banco para formato do componente
-          const templatesConvertidos = converterTemplatesBancoParaComponentes(templatesData);
-          
+          const templatesConvertidos =
+            converterTemplatesBancoParaComponentes(templatesData);
+
           // Ordenar por evento (S-1000, S-2200, etc.)
           const templatesOrdenados = templatesConvertidos.sort((a, b) => {
             return a.evento.localeCompare(b.evento);
           });
-          
+
           setTemplates(templatesOrdenados);
         }
       } catch (error) {
@@ -311,7 +349,8 @@ export default function ESocialTemplatesGuide({ theme, onSelectTemplate }: ESoci
   if (loading) {
     return (
       <LoadingContainer $theme={theme}>
-        <AccessibleEmoji emoji="⏳" label="Carregando" /> Carregando templates...
+        <AccessibleEmoji emoji='⏳' label='Carregando' /> Carregando
+        templates...
       </LoadingContainer>
     );
   }
@@ -319,9 +358,9 @@ export default function ESocialTemplatesGuide({ theme, onSelectTemplate }: ESoci
   if (templates.length === 0) {
     return (
       <EmptyStateComponent
-        icon="📚"
-        title="Nenhum template eSocial encontrado"
-        description="Entre em contato com o administrador para configurar os templates."
+        icon='📚'
+        title='Nenhum template eSocial encontrado'
+        description='Entre em contato com o administrador para configurar os templates.'
         theme={theme}
       />
     );
@@ -334,7 +373,7 @@ export default function ESocialTemplatesGuide({ theme, onSelectTemplate }: ESoci
           <TemplateCard
             key={template.evento}
             theme={theme}
-            variant="default"
+            variant='default'
             onClick={() => handleSelectTemplate(template)}
           >
             <TemplateHeader>
@@ -346,7 +385,7 @@ export default function ESocialTemplatesGuide({ theme, onSelectTemplate }: ESoci
                   {template.descricao}
                 </TemplateDescription>
               </div>
-              <UnifiedBadge variant="info" theme={theme}>
+              <UnifiedBadge variant='info' theme={theme}>
                 {template.documentosNecessarios.length} documentos
               </UnifiedBadge>
             </TemplateHeader>
@@ -355,9 +394,9 @@ export default function ESocialTemplatesGuide({ theme, onSelectTemplate }: ESoci
               {template.documentosNecessarios.slice(0, 3).map((doc, index) => (
                 <DocumentoItem key={index} $theme={theme}>
                   {doc.obrigatorio ? (
-                    <AccessibleEmoji emoji="✅" label="Obrigatório" />
+                    <AccessibleEmoji emoji='✅' label='Obrigatório' />
                   ) : (
-                    <AccessibleEmoji emoji="📄" label="Opcional" />
+                    <AccessibleEmoji emoji='📄' label='Opcional' />
                   )}
                   <span>{doc.nome}</span>
                 </DocumentoItem>
@@ -373,8 +412,11 @@ export default function ESocialTemplatesGuide({ theme, onSelectTemplate }: ESoci
 
             {template.prazoLimite && (
               <div style={{ marginTop: '1rem' }}>
-                <UnifiedBadge variant="warning" theme={theme}>
-                  <span role="img" aria-label="Relógio">⏰</span> Prazo: {template.prazoLimite}
+                <UnifiedBadge variant='warning' theme={theme}>
+                  <span role='img' aria-label='Relógio'>
+                    ⏰
+                  </span>{' '}
+                  Prazo: {template.prazoLimite}
                 </UnifiedBadge>
               </div>
             )}
@@ -389,33 +431,57 @@ export default function ESocialTemplatesGuide({ theme, onSelectTemplate }: ESoci
           onClose={() => setModalOpen(false)}
           title={`${selectedTemplate.evento} - ${selectedTemplate.nome}`}
           $theme={theme}
-          maxWidth="900px"
+          maxWidth='900px'
         >
           <div>
-            <TemplateDescription $theme={theme} style={{ marginBottom: '1.5rem' }}>
+            <TemplateDescription
+              $theme={theme}
+              style={{ marginBottom: '1.5rem' }}
+            >
               {selectedTemplate.descricao}
             </TemplateDescription>
 
             {/* Documentos Necessários */}
             <div style={{ marginBottom: '2rem' }}>
-              <h4 style={{ marginBottom: '1rem', fontWeight: 600 }}>Documentos Necessários</h4>
+              <h4 style={{ marginBottom: '1rem', fontWeight: 600 }}>
+                Documentos Necessários
+              </h4>
               <DocumentosList>
                 {selectedTemplate.documentosNecessarios.map((doc, index) => (
                   <DocumentoItem key={index} $theme={theme}>
                     {doc.obrigatorio ? (
-                      <UnifiedBadge variant="warning" theme={theme} style={{ fontSize: '0.75rem' }}>
+                      <UnifiedBadge
+                        variant='warning'
+                        theme={theme}
+                        style={{ fontSize: '0.75rem' }}
+                      >
                         Obrigatório
                       </UnifiedBadge>
                     ) : (
-                      <UnifiedBadge variant="secondary" theme={theme} style={{ fontSize: '0.75rem' }}>
+                      <UnifiedBadge
+                        variant='secondary'
+                        theme={theme}
+                        style={{ fontSize: '0.75rem' }}
+                      >
                         Opcional
                       </UnifiedBadge>
                     )}
-                    <span style={{ marginLeft: '0.5rem', fontWeight: doc.obrigatorio ? 600 : 400 }}>
+                    <span
+                      style={{
+                        marginLeft: '0.5rem',
+                        fontWeight: doc.obrigatorio ? 600 : 400,
+                      }}
+                    >
                       {doc.nome}
                     </span>
                     {doc.descricao && (
-                      <span style={{ marginLeft: '0.5rem', fontSize: '0.875rem', color: getTextSecondary(theme) }}>
+                      <span
+                        style={{
+                          marginLeft: '0.5rem',
+                          fontSize: '0.875rem',
+                          color: getTextSecondary(theme),
+                        }}
+                      >
                         - {doc.descricao}
                       </span>
                     )}
@@ -426,14 +492,18 @@ export default function ESocialTemplatesGuide({ theme, onSelectTemplate }: ESoci
 
             {/* Guia Passo a Passo */}
             <div style={{ marginBottom: '2rem' }}>
-              <h4 style={{ marginBottom: '1rem', fontWeight: 600 }}>Guia Passo a Passo</h4>
+              <h4 style={{ marginBottom: '1rem', fontWeight: 600 }}>
+                Guia Passo a Passo
+              </h4>
               <PassosList>
-                {selectedTemplate.guiaPassoAPasso.map((passo) => (
+                {selectedTemplate.guiaPassoAPasso.map(passo => (
                   <PassoItem key={passo.numero} $theme={theme}>
                     <PassoTitulo $theme={theme}>
                       Passo {passo.numero}: {passo.titulo}
                     </PassoTitulo>
-                    <PassoDescricao $theme={theme}>{passo.descricao}</PassoDescricao>
+                    <PassoDescricao $theme={theme}>
+                      {passo.descricao}
+                    </PassoDescricao>
                     {passo.acoes && passo.acoes.length > 0 && (
                       <AcoesList>
                         {passo.acoes.map((acao, index) => (
@@ -445,7 +515,8 @@ export default function ESocialTemplatesGuide({ theme, onSelectTemplate }: ESoci
                       <AlertasList $theme={theme}>
                         {passo.alertas.map((alerta, index) => (
                           <li key={index}>
-                            <AccessibleEmoji emoji="⚠️" label="Alerta" /> {alerta}
+                            <AccessibleEmoji emoji='⚠️' label='Alerta' />{' '}
+                            {alerta}
                           </li>
                         ))}
                       </AlertasList>
@@ -457,11 +528,13 @@ export default function ESocialTemplatesGuide({ theme, onSelectTemplate }: ESoci
 
             {/* Validações */}
             <div style={{ marginBottom: '2rem' }}>
-              <h4 style={{ marginBottom: '1rem', fontWeight: 600 }}>Validações Necessárias</h4>
+              <h4 style={{ marginBottom: '1rem', fontWeight: 600 }}>
+                Validações Necessárias
+              </h4>
               <DocumentosList>
                 {selectedTemplate.validacoes.map((validacao, index) => (
                   <DocumentoItem key={index} $theme={theme}>
-                    <AccessibleEmoji emoji="✓" label="Validação" />
+                    <AccessibleEmoji emoji='✓' label='Validação' />
                     <span>{validacao}</span>
                   </DocumentoItem>
                 ))}
@@ -469,25 +542,39 @@ export default function ESocialTemplatesGuide({ theme, onSelectTemplate }: ESoci
             </div>
 
             {selectedTemplate.observacoes && (
-              <div style={{ 
-                padding: '1rem', 
-                background: (() => {
-                  const surface = theme?.colors?.surface;
-                  if (typeof surface === 'object' && surface && 'secondary' in surface) {
-                    return String((surface as any).secondary);
-                  }
-                  if (typeof surface === 'string') {
-                    return surface;
-                  }
-                  const defaultSurface = defaultColors.surface;
-                  if (typeof defaultSurface === 'object' && defaultSurface && 'secondary' in defaultSurface) {
-                    return String((defaultSurface as any).secondary);
-                  }
-                  return typeof defaultSurface === 'string' ? defaultSurface : 'transparent';
-                })(),
-                borderRadius: '8px',
-                marginTop: '1rem'
-              } as React.CSSProperties}>
+              <div
+                style={
+                  {
+                    padding: '1rem',
+                    background: (() => {
+                      const surface = theme?.colors?.surface;
+                      if (
+                        typeof surface === 'object' &&
+                        surface &&
+                        'secondary' in surface
+                      ) {
+                        return String((surface as any).secondary);
+                      }
+                      if (typeof surface === 'string') {
+                        return surface;
+                      }
+                      const defaultSurface = defaultColors.surface;
+                      if (
+                        typeof defaultSurface === 'object' &&
+                        defaultSurface &&
+                        'secondary' in defaultSurface
+                      ) {
+                        return String((defaultSurface as any).secondary);
+                      }
+                      return typeof defaultSurface === 'string'
+                        ? defaultSurface
+                        : 'transparent';
+                    })(),
+                    borderRadius: '8px',
+                    marginTop: '1rem',
+                  } as React.CSSProperties
+                }
+              >
                 <strong>Observações:</strong> {selectedTemplate.observacoes}
               </div>
             )}
@@ -497,4 +584,3 @@ export default function ESocialTemplatesGuide({ theme, onSelectTemplate }: ESoci
     </>
   );
 }
-

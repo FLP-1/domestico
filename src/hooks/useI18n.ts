@@ -8,7 +8,7 @@ import { useUserProfile } from '../contexts/UserProfileContext';
  */
 export function useI18n() {
   const { currentProfile } = useUserProfile();
-  
+
   // Detectar locale baseado no perfil ou usar padrão
   const locale: Locale = useMemo(() => {
     // Por enquanto, sempre usar pt-BR
@@ -18,4 +18,3 @@ export function useI18n() {
 
   return useTranslation(locale);
 }
-

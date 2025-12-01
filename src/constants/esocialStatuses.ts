@@ -1,6 +1,6 @@
 /**
  * 📋 Status de eSocial Centralizados
- * 
+ *
  * Centraliza todos os status possíveis para eventos eSocial.
  */
 
@@ -10,7 +10,8 @@ export const ESOCIAL_STATUSES = {
   SENT: 'ENVIADO',
 } as const;
 
-export type ESocialStatus = typeof ESOCIAL_STATUSES[keyof typeof ESOCIAL_STATUSES];
+export type ESocialStatus =
+  (typeof ESOCIAL_STATUSES)[keyof typeof ESOCIAL_STATUSES];
 
 /**
  * Obter label em português para um status
@@ -45,4 +46,3 @@ export function toESocialStatus(status: string): ESocialStatus {
   }
   return ESOCIAL_STATUSES.PENDING;
 }
-

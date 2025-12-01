@@ -22,22 +22,21 @@ export default async function handler(
     );
 
     if (!theme) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         error: 'Tema não encontrado',
-        message: 'Nenhum tema configurado no banco de dados'
+        message: 'Nenhum tema configurado no banco de dados',
       });
     }
 
     return res.status(200).json({
       success: true,
-      data: theme
+      data: theme,
     });
   } catch (error: any) {
     console.error('Erro ao obter tema:', error);
     return res.status(500).json({
       error: 'Erro ao obter tema',
-      message: error.message || 'Erro desconhecido'
+      message: error.message || 'Erro desconhecido',
     });
   }
 }
-

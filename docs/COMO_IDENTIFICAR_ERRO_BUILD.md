@@ -21,6 +21,7 @@ Error: An error occurred. See https://git.io/JUIaE#12 for more information. Args
 ## 📝 Script Criado para Capturar:
 
 Criei o script `scripts/capture-build-error.ps1` que:
+
 - ✅ Executa o build
 - ✅ Captura output completo
 - ✅ Identifica erros de prerendering
@@ -35,6 +36,7 @@ cd E:\DOM
 ```
 
 Ou manualmente:
+
 ```powershell
 npm run build 2>&1 | Tee-Object -FilePath "build-error.log"
 ```
@@ -42,6 +44,7 @@ npm run build 2>&1 | Tee-Object -FilePath "build-error.log"
 ## 💡 O que o Log Mostra:
 
 ### Exemplo de Erro Típico:
+
 ```
 Error occurred prerendering page "/communication". Read more: https://nextjs.org/docs/messages/prerender-error
 
@@ -55,6 +58,7 @@ Error: An error occurred. See https://git.io/JUIaE#12 for more information. Args
 ```
 
 ### Informações Extraídas:
+
 - **Página**: `/communication`
 - **Arquivo**: `src/pages/communication.tsx`
 - **Linha**: ~500
@@ -63,4 +67,3 @@ Error: An error occurred. See https://git.io/JUIaE#12 for more information. Args
 ## 🔧 Próximo Passo:
 
 Execute o build e capture o log completo para identificar exatamente qual componente está causando o erro.
-

@@ -22,7 +22,9 @@ const Description = styled.p`
 
 const Button = styled.button`
   background: ${props => getThemeColor(props.theme, 'primary', 'transparent')};
-  color: ${props => getThemeColor(props.theme, 'text.onPrimary', 'inherit') || getThemeColor(props.theme, 'surface', 'inherit')};
+  color: ${props =>
+    getThemeColor(props.theme, 'text.onPrimary', 'inherit') ||
+    getThemeColor(props.theme, 'surface', 'inherit')};
   border: none;
   padding: 10px 20px;
   border-radius: 4px;

@@ -77,7 +77,9 @@ showInfo(keys.INFO.COMPARTILHAMENTO_DESENVOLVIMENTO);
 // ❌ ANTES
 alertManager.showError('Sessão expirada. Faça login novamente.');
 alertManager.showSuccess('Solicitação de hora extra enviada para aprovação!');
-alertManager.showSuccess('Dados transferidos para folha de pagamento com sucesso!');
+alertManager.showSuccess(
+  'Dados transferidos para folha de pagamento com sucesso!'
+);
 alertManager.showInfo('Funcionalidade de edição em desenvolvimento');
 alertManager.showInfo('Detalhes do registro em desenvolvimento');
 
@@ -185,4 +187,3 @@ Se a mensagem não existir no sistema i18n, adicione em `src/lib/i18n.ts`:
 - **Fallback automático**: Se a chave não existir no i18n, usa TEMP_MESSAGES
 - **Compatibilidade**: Código antigo continua funcionando durante a migração
 - **Documentação**: Sempre documente novas mensagens adicionadas
-

@@ -8,7 +8,7 @@ type FallbackType = 'transparent' | 'inherit' | 'currentColor';
 
 /**
  * Obtém uma cor do tema seguindo um caminho hierárquico
- * 
+ *
  * @param theme - Objeto do tema
  * @param path - Array com o caminho da propriedade (ex: ['colors', 'border', 'light']) ou string separada por ponto (ex: 'colors.border.light')
  * @param fallback - Tipo de fallback absoluto (apenas transparent/inherit/currentColor)
@@ -20,10 +20,10 @@ export const getThemeColor = (
   fallback: FallbackType = 'transparent'
 ): string => {
   if (!theme) return fallback;
-  
+
   // Converter string para array se necessário
   const pathArray = Array.isArray(path) ? path : path.split('.');
-  
+
   // Tentar caminho completo primeiro (ex: theme.colors.border.light)
   let value = theme;
   for (const key of pathArray) {
@@ -34,11 +34,11 @@ export const getThemeColor = (
       break;
     }
   }
-  
+
   if (value && typeof value === 'string') {
     return value;
   }
-  
+
   // Tentar caminho alternativo sem 'colors' (ex: theme.border.light)
   if (pathArray[0] === 'colors' && pathArray.length > 1) {
     const altPath = pathArray.slice(1);
@@ -51,19 +51,19 @@ export const getThemeColor = (
         break;
       }
     }
-    
+
     if (value && typeof value === 'string') {
       return value;
     }
   }
-  
+
   // Retornar fallback absoluto (nunca cores hardcoded)
   return fallback;
 };
 
 /**
  * Obtém cor de status do tema
- * 
+ *
  * @param theme - Objeto do tema
  * @param status - Tipo de status (success, warning, error, info)
  * @param property - Propriedade desejada (background, border, text)
@@ -75,15 +75,15 @@ export const getStatusColor = (
   property: 'background' | 'border' | 'text' = 'background'
 ): string => {
   const fallback = property === 'text' ? 'inherit' : 'transparent';
-  
+
   // Tentar caminho completo primeiro
   const fullPath = ['colors', 'status', status, property];
   const color = getThemeColor(theme, fullPath, fallback);
-  
+
   if (color !== fallback) {
     return color;
   }
-  
+
   // Tentar caminho alternativo
   const altPath = ['status', status, property];
   return getThemeColor(theme, altPath, fallback);
@@ -91,7 +91,7 @@ export const getStatusColor = (
 
 /**
  * Obtém cor de texto do tema
- * 
+ *
  * @param theme - Objeto do tema
  * @param variant - Variante do texto (dark, secondary, primary, medium, light)
  * @returns Valor da cor ou 'inherit'
@@ -103,11 +103,11 @@ export const getTextColor = (
   // Tentar caminho completo primeiro
   const fullPath = ['colors', 'text', variant];
   const color = getThemeColor(theme, fullPath, 'inherit');
-  
+
   if (color !== 'inherit') {
     return color;
   }
-  
+
   // Tentar caminho alternativo
   const altPath = ['text', variant];
   return getThemeColor(theme, altPath, 'inherit');
@@ -115,7 +115,7 @@ export const getTextColor = (
 
 /**
  * Obtém cor de background do tema
- * 
+ *
  * @param theme - Objeto do tema
  * @param variant - Variante do background (primary, secondary)
  * @returns Valor da cor ou 'transparent'
@@ -127,11 +127,11 @@ export const getBackgroundColor = (
   // Tentar caminho completo primeiro
   const fullPath = ['colors', 'background', variant];
   const color = getThemeColor(theme, fullPath, 'transparent');
-  
+
   if (color !== 'transparent') {
     return color;
   }
-  
+
   // Tentar caminho alternativo
   const altPath = ['background', variant];
   return getThemeColor(theme, altPath, 'transparent');
@@ -139,7 +139,7 @@ export const getBackgroundColor = (
 
 /**
  * Obtém cor de borda do tema
- * 
+ *
  * @param theme - Objeto do tema
  * @param variant - Variante da borda (light, primary)
  * @returns Valor da cor ou 'transparent'
@@ -151,11 +151,11 @@ export const getBorderColor = (
   // Tentar caminho completo primeiro
   const fullPath = ['colors', 'border', variant];
   const color = getThemeColor(theme, fullPath, 'transparent');
-  
+
   if (color !== 'transparent') {
     return color;
   }
-  
+
   // Tentar caminho alternativo
   const altPath = ['border', variant];
   return getThemeColor(theme, altPath, 'transparent');
@@ -163,7 +163,7 @@ export const getBorderColor = (
 
 /**
  * Adiciona opacidade a uma cor
- * 
+ *
  * @param color - Cor em formato hex (#RRGGBB) ou rgba
  * @param opacity - Opacidade entre 0 e 1
  * @returns Cor com opacidade aplicada em formato rgba

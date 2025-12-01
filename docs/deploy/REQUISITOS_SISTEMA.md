@@ -103,4 +103,3 @@ Antes de iniciar:
 ---
 
 **Última atualização:** Janeiro 2025
-

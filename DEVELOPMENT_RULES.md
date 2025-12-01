@@ -234,6 +234,7 @@ npm run validate:hardcoded
 ```
 
 Este comando verifica:
+
 - ❌ Cores hex (`#...`)
 - ❌ Cores rgb/rgba hardcoded
 - ❌ Cores hsl hardcoded
@@ -243,6 +244,7 @@ Este comando verifica:
 **Se encontrar cores hardcoded, o commit será bloqueado!**
 
 📚 **Consulte `PROIBICAO_CORES_HARDCODED.md` para:**
+
 - Regras detalhadas
 - Exemplos de código correto/incorreto
 - Padrões de fallback hierárquico

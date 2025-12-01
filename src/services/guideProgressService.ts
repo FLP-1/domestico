@@ -50,11 +50,11 @@ export class GuideProgressService {
         where: {
           usuarioId_guideId: {
             usuarioId,
-            guideId
-          }
-        }
+            guideId,
+          },
+        },
       });
-      
+
       if (existing) {
         // Atualizar progresso existente
         return await prisma.guideProgress.update({
@@ -62,8 +62,8 @@ export class GuideProgressService {
           data: {
             currentStep: stepId,
             progressData: data,
-            updatedAt: new Date()
-          }
+            updatedAt: new Date(),
+          },
         });
       } else {
         // Criar novo progresso
@@ -74,16 +74,21 @@ export class GuideProgressService {
             currentStep: stepId,
             progressData: data,
             completed: false,
-            startedAt: new Date()
-          }
+            startedAt: new Date(),
+          },
         });
       }
     } catch (error: any) {
-      logger.error({ error, usuarioId, guideId }, 'Erro ao salvar progresso do guia');
-      throw new Error(`Erro ao salvar progresso: ${error.message || 'Erro desconhecido'}`);
+      logger.error(
+        { error, usuarioId, guideId },
+        'Erro ao salvar progresso do guia'
+      );
+      throw new Error(
+        `Erro ao salvar progresso: ${error.message || 'Erro desconhecido'}`
+      );
     }
   }
-  
+
   /**
    * Obtém progresso do guia
    */
@@ -96,16 +101,19 @@ export class GuideProgressService {
         where: {
           usuarioId_guideId: {
             usuarioId,
-            guideId
-          }
-        }
+            guideId,
+          },
+        },
       });
     } catch (error: any) {
-      logger.error({ error, usuarioId, guideId }, 'Erro ao buscar progresso do guia');
+      logger.error(
+        { error, usuarioId, guideId },
+        'Erro ao buscar progresso do guia'
+      );
       return null;
     }
   }
-  
+
   /**
    * Retoma guia do último passo
    */
@@ -117,65 +125,66 @@ export class GuideProgressService {
     try {
       const progress = await this.getProgress(usuarioId, guideId);
       const allSteps = getAllSteps();
-      
+
       if (!progress) {
         // Iniciar novo guia
         return {
           steps: allSteps,
-          currentStepIndex: 0
+          currentStepIndex: 0,
         };
       }
-      
+
       // Retomar do último passo
-      const currentStepIndex = allSteps.findIndex(s => s.id === progress.currentStep);
-      
+      const currentStepIndex = allSteps.findIndex(
+        s => s.id === progress.currentStep
+      );
+
       if (currentStepIndex === -1) {
         // Passo não encontrado, começar do início
         return {
           steps: allSteps,
-          currentStepIndex: 0
+          currentStepIndex: 0,
         };
       }
-      
+
       return {
         steps: allSteps.slice(currentStepIndex),
-        currentStepIndex
+        currentStepIndex,
       };
     } catch (error: any) {
       logger.error({ error, usuarioId, guideId }, 'Erro ao retomar guia');
       // Em caso de erro, retornar todos os passos do início
       return {
         steps: getAllSteps(),
-        currentStepIndex: 0
+        currentStepIndex: 0,
       };
     }
   }
-  
+
   /**
    * Marca guia como completo
    */
-  async completeGuide(
-    usuarioId: string,
-    guideId: string
-  ): Promise<void> {
+  async completeGuide(usuarioId: string, guideId: string): Promise<void> {
     try {
       await prisma.guideProgress.updateMany({
         where: {
           usuarioId,
-          guideId
+          guideId,
         },
         data: {
           completed: true,
           completedAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       });
     } catch (error: any) {
       logger.error({ error, usuarioId, guideId }, 'Erro ao completar guia');
-      throw new Error(`Erro ao completar guia: ${error.message || 'Erro desconhecido'}`);
+      throw new Error(
+        `Erro ao completar guia: ${error.message || 'Erro desconhecido'}`
+      );
     }
   }
-  
+
   /**
    * Obtém histórico de guias completados
    */
@@ -184,18 +193,18 @@ export class GuideProgressService {
       return await prisma.guideProgress.findMany({
         where: {
           usuarioId,
-          completed: true
+          completed: true,
         },
         orderBy: {
-          completedAt: 'desc'
-        }
+          completedAt: 'desc',
+        },
       });
     } catch (error: any) {
       logger.error({ error, usuarioId }, 'Erro ao buscar guias completados');
       return [];
     }
   }
-  
+
   /**
    * Obtém guias em progresso
    */
@@ -204,35 +213,34 @@ export class GuideProgressService {
       return await prisma.guideProgress.findMany({
         where: {
           usuarioId,
-          completed: false
+          completed: false,
         },
         orderBy: {
-          updatedAt: 'desc'
-        }
+          updatedAt: 'desc',
+        },
       });
     } catch (error: any) {
       logger.error({ error, usuarioId }, 'Erro ao buscar guias em progresso');
       return [];
     }
   }
-  
+
   /**
    * Reseta progresso do guia
    */
-  async resetProgress(
-    usuarioId: string,
-    guideId: string
-  ): Promise<void> {
+  async resetProgress(usuarioId: string, guideId: string): Promise<void> {
     try {
       await prisma.guideProgress.deleteMany({
         where: {
           usuarioId,
-          guideId
-        }
+          guideId,
+        },
       });
     } catch (error: any) {
       logger.error({ error, usuarioId, guideId }, 'Erro ao resetar progresso');
-      throw new Error(`Erro ao resetar progresso: ${error.message || 'Erro desconhecido'}`);
+      throw new Error(
+        `Erro ao resetar progresso: ${error.message || 'Erro desconhecido'}`
+      );
     }
   }
 }
@@ -260,4 +268,3 @@ export function resetGuideProgressService(): void {
     guideProgressInstance = null;
   }
 }
-

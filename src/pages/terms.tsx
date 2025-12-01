@@ -77,7 +77,10 @@ const Highlight = styled.strong`
 const BackButton = styled(UnifiedButton)`
   margin-bottom: 2rem;
   background: transparent;
-  border: 1px solid ${typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border};
+  border: 1px solid
+    ${typeof publicColors.border === 'object'
+      ? publicColors.border.light
+      : publicColors.border};
   color: ${publicColors.text.primary};
 
   &:hover {
@@ -97,7 +100,10 @@ const TermsPage: React.FC = () => {
       text: publicColors.text,
       background: publicColors.background,
       surface: publicColors.surface,
-      border: typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border,
+      border:
+        typeof publicColors.border === 'object'
+          ? publicColors.border.light
+          : publicColors.border,
     },
   };
 

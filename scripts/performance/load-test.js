@@ -3,11 +3,11 @@ import { sleep, check } from 'k6';
 
 export const options = {
   stages: [
-    { duration: '1m', target: 50 },  // rampa inicial
-    { duration: '3m', target: 50 },  // sustentação
+    { duration: '1m', target: 50 }, // rampa inicial
+    { duration: '3m', target: 50 }, // sustentação
     { duration: '1m', target: 100 }, // pico de carga
     { duration: '3m', target: 100 },
-    { duration: '1m', target: 0 },   // rampa de saída
+    { duration: '1m', target: 0 }, // rampa de saída
   ],
   thresholds: {
     http_req_duration: ['p(95)<800', 'p(99)<1200'],
@@ -18,10 +18,8 @@ export const options = {
 const BASE_URL = __ENV.PERF_BASE_URL || 'http://localhost:3000';
 const AUTH_TOKEN = __ENV.PERF_AUTH_TOKEN || '';
 
-export default function () {
-  const headers = AUTH_TOKEN
-    ? { Authorization: `Bearer ${AUTH_TOKEN}` }
-    : {};
+function loadTest() {
+  const headers = AUTH_TOKEN ? { Authorization: `Bearer ${AUTH_TOKEN}` } : {};
 
   const endpoints = [
     `${BASE_URL}/api/time-clock/records?usuarioId=test-user`,
@@ -40,3 +38,5 @@ export default function () {
 
   sleep(1);
 }
+
+export default loadTest;

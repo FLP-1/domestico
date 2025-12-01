@@ -38,4 +38,3 @@
 1. Migrar páginas restantes (`geofencing/locais.tsx`, `geofencing/auditoria.tsx`, `time-clock-simple.tsx`)
 2. Substituir cards customizados por UnifiedCard onde aplicável
 3. Validação visual e funcional de todas as migrações
-

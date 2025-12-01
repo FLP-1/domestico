@@ -11,19 +11,23 @@
 ## 🔍 Causas Possíveis
 
 ### 1. **Cache do Navegador**
+
 - Navegador pode estar usando coordenadas em cache apesar de `maximumAge: 0`
 - Cache pode estar sendo mantido em nível de sistema operacional
 
 ### 2. **Localização Aproximada (IP/WiFi)**
+
 - Navegador não está usando GPS real
 - Usando localização baseada em IP ou WiFi (menos preciso)
 - Windows Location Service pode estar desativado
 
 ### 3. **Permissões Insuficientes**
+
 - Navegador não tem permissão para "precisão alta"
 - Permissão está em modo "aproximada" em vez de "precisa"
 
 ### 4. **GPS Não Disponível**
+
 - Dispositivo não tem GPS (desktop sem GPS)
 - GPS está desativado nas configurações do sistema
 - Ambiente fechado sem sinal GPS
@@ -33,16 +37,19 @@
 ### Mudança: `getCurrentPosition` → `watchPosition`
 
 **Antes:**
+
 ```typescript
 navigator.geolocation.getCurrentPosition(...)
 ```
 
 **Depois:**
+
 ```typescript
 navigator.geolocation.watchPosition(...)
 ```
 
 **Por quê?**
+
 - `watchPosition` força uso de GPS real em vez de cache
 - Recebe múltiplas atualizações até GPS estabilizar
 - Permite validar se é GPS real (altitude, heading, speed)
@@ -51,8 +58,13 @@ navigator.geolocation.watchPosition(...)
 ### Validações Adicionadas
 
 1. **Verificação de GPS Real:**
+
    ```typescript
-   const isRealGPS = !!(pos.coords.altitude || pos.coords.heading !== null || pos.coords.speed !== null);
+   const isRealGPS = !!(
+     pos.coords.altitude ||
+     pos.coords.heading !== null ||
+     pos.coords.speed !== null
+   );
    ```
 
 2. **Rejeição de Localização Aproximada:**
@@ -82,6 +94,7 @@ Após captura, verificar logs:
 ```
 
 **Se `isRealGPS: false`:**
+
 - GPS não está sendo usado
 - Navegador usando localização aproximada
 - Verificar permissões e Windows Location Service
@@ -89,11 +102,13 @@ Após captura, verificar logs:
 ### 2. Verificar Permissões do Navegador
 
 **Chrome/Edge:**
+
 1. Ir em `chrome://settings/content/location` ou `edge://settings/content/location`
 2. Verificar se "Precisão alta" está ativada
 3. Verificar se `localhost:3000` está em "Permitir"
 
 **Windows:**
+
 1. Configurações → Privacidade e segurança → Localização
 2. ✅ "Serviços de localização" ATIVADO
 3. ✅ "Permitir que aplicativos acessem sua localização" ATIVADO
@@ -113,6 +128,7 @@ Após captura, verificar logs:
 4. Comparar com coordenadas capturadas pelo nosso sistema
 
 **Se Google Maps mostra coordenadas diferentes:**
+
 - Google Maps está usando GPS real
 - Nosso sistema pode estar usando localização aproximada
 - Verificar permissões e configurações
@@ -161,11 +177,13 @@ Após captura, verificar logs:
 ### Opção 1: Usar Google Geolocation API
 
 **Vantagens:**
+
 - Mesma API que Google Maps usa
 - Precisão garantida: 10-50m
 - Funciona mesmo sem GPS (usa WiFi + Cell Tower)
 
 **Desvantagens:**
+
 - Custo: $0.005 por requisição (500 grátis/mês)
 - Requer API Key do Google Cloud
 
@@ -188,4 +206,3 @@ Após captura, verificar logs:
 3. ✅ **Verificar permissões** - garantir "precisão alta"
 4. ✅ **Testar em ambiente aberto** - melhor recepção GPS
 5. ✅ **Comparar com Google Maps** - validar coordenadas
-

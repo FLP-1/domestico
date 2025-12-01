@@ -9,12 +9,14 @@
 **Localização:** `src/components/TimeRecordCard/index.tsx`
 
 **Como funciona:**
+
 - `TimeRecordCard` usa `useGeolocationCapture` e `useSmartGeolocation`
 - Antes de registrar ponto, verifica se localização é recente e precisa
 - Se não for, captura nova localização antes de executar ação crítica
 - Usa `createCriticalButtonHandler` que garante captura antes do registro
 
 **Código:**
+
 ```typescript
 // ✅ Capturar localização atualizada antes de registrar
 if (!isDataRecent || !isDataAccurate) {
@@ -33,12 +35,14 @@ await criticalHandler();
 **Localização:** `src/contexts/GeolocationContext.tsx`
 
 **Como funciona:**
+
 - `GeolocationProvider` tem um `useEffect` que configura intervalo de 10 minutos
 - Captura localização automaticamente a cada 10 minutos
 - Também tenta capturar na primeira carga (após 2 segundos)
 - Usa `captureLocationSafely` que não bloqueia a aplicação em caso de erro
 
 **Código:**
+
 ```typescript
 // ✅ 2. Atualização periódica de 10 em 10 minutos
 useEffect(() => {
@@ -48,9 +52,12 @@ useEffect(() => {
   }, 2000);
 
   // Configurar intervalo de 10 minutos (600000ms)
-  const interval = setInterval(() => {
-    captureLocationSafely();
-  }, 10 * 60 * 1000); // 10 minutos
+  const interval = setInterval(
+    () => {
+      captureLocationSafely();
+    },
+    10 * 60 * 1000
+  ); // 10 minutos
 
   return () => {
     clearTimeout(initialCapture);
@@ -66,12 +73,14 @@ useEffect(() => {
 **Localização:** `src/pages/_app.tsx`
 
 **Como funciona:**
+
 - `AppContent` tem função `captureLocationBeforePage`
 - Esta função é chamada no `handleRouteChange` antes de mostrar qualquer página
 - Não executa na página de login (para não interferir no fluxo de autenticação)
 - Garante que localização está atualizada antes de renderizar qualquer página
 
 **Código:**
+
 ```typescript
 // ✅ 3. Capturar localização antes de mostrar qualquer página
 const captureLocationBeforePage = useCallback(async () => {
@@ -81,7 +90,7 @@ const captureLocationBeforePage = useCallback(async () => {
       timeout: 30000,
       maximumAge: 0, // Sempre capturar nova posição
     });
-    
+
     if (locationData) {
       updateLastLocationIfBetter({
         latitude: locationData.latitude,
@@ -127,16 +136,19 @@ if (router.pathname !== '/login') {
 ## 📊 Benefícios para Auditoria
 
 ### 1. Consistência entre Visual e Logs
+
 - ✅ Localização mostrada na UI sempre corresponde à última captura
 - ✅ Logs e tabelas têm mesma localização que usuário vê
 - ✅ Facilita auditorias e investigações
 
 ### 2. Atualização Contínua
+
 - ✅ Localização atualizada a cada 10 minutos automaticamente
 - ✅ Sempre atualizada antes de mostrar páginas
 - ✅ Sempre atualizada antes de registrar ponto
 
 ### 3. Rastreabilidade
+
 - ✅ Timestamp em todas as capturas
 - ✅ Precisão registrada para validação
 - ✅ Histórico completo de localizações
@@ -146,11 +158,13 @@ if (router.pathname !== '/login') {
 ### Política de Geolocalização do Navegador
 
 **Limitação:**
+
 - Alguns navegadores podem bloquear captura automática sem interação do usuário
 - Primeira captura pode falhar se não houver interação prévia
 - Após primeira interação (ex: login), capturas automáticas funcionam normalmente
 
 **Solução:**
+
 - Captura na primeira carga tem delay de 2 segundos
 - Se falhar, não bloqueia aplicação
 - Próxima captura acontece após interação do usuário ou no intervalo de 10 minutos
@@ -158,6 +172,7 @@ if (router.pathname !== '/login') {
 ### Performance
 
 **Otimizações:**
+
 - Capturas não bloqueiam renderização
 - Erros são tratados silenciosamente
 - Intervalo de 10 minutos evita sobrecarga
@@ -165,6 +180,7 @@ if (router.pathname !== '/login') {
 ## 🎯 Resultado Esperado
 
 ### Comportamento
+
 1. ✅ Localização capturada antes de cada registro de ponto
 2. ✅ Localização atualizada automaticamente a cada 10 minutos
 3. ✅ Localização capturada antes de mostrar qualquer página
@@ -172,6 +188,7 @@ if (router.pathname !== '/login') {
 5. ✅ Facilita auditorias e investigações
 
 ### Precisão
+
 - ✅ Sempre usa `enableHighAccuracy: true`
 - ✅ Timeout de 30 segundos para GPS estabilizar
 - ✅ Sempre captura nova posição (`maximumAge: 0`)
@@ -192,4 +209,3 @@ if (router.pathname !== '/login') {
 3. `src/components/TimeRecordCard/index.tsx`
    - ✅ Já estava implementado corretamente
    - Verifica e atualiza localização antes de registrar ponto
-

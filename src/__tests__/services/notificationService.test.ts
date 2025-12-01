@@ -148,7 +148,10 @@ describe('NotificationService', () => {
         messageId: 'email-123',
       });
 
-      const results = await service.notify(userWithPreferences, mockNotification);
+      const results = await service.notify(
+        userWithPreferences,
+        mockNotification
+      );
 
       expect(results.some(r => r.channel === 'email')).toBe(true);
       expect(results.some(r => r.channel === 'sms')).toBe(false);
@@ -277,4 +280,3 @@ describe('NotificationService', () => {
     });
   });
 });
-

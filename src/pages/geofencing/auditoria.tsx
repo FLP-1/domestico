@@ -5,7 +5,11 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { useGeofencingTheme } from '../../hooks/useGeofencingTheme';
 import { geofencingColors } from '../../design-system/tokens/geofencing-colors';
-import { UnifiedCard, UnifiedBadge, UnifiedMetaInfo } from '../../components/unified';
+import {
+  UnifiedCard,
+  UnifiedBadge,
+  UnifiedMetaInfo,
+} from '../../components/unified';
 import PageContainer from '../../components/PageContainer';
 import PageHeader from '../../components/PageHeader';
 import type { Theme } from '../../types/theme';
@@ -53,7 +57,10 @@ const Tabs = styled.div<{ $theme?: Theme }>`
   border-bottom: 1px solid
     ${props => {
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border && (border as any).primary) || geofencingColors.border.primary;
+      return (
+        (typeof border === 'object' && border && (border as any).primary) ||
+        geofencingColors.border.primary
+      );
     }};
   margin-bottom: 20px;
 `;
@@ -71,10 +78,16 @@ const Tab = styled.button<{ $active: boolean; $theme?: Theme }>`
         : 'transparent'};
   color: ${props => {
     if (props.$active) {
-      return props.$theme?.colors?.navigation?.active || geofencingColors.navigation.active;
+      return (
+        props.$theme?.colors?.navigation?.active ||
+        geofencingColors.navigation.active
+      );
     }
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || geofencingColors.text.secondary;
+    return (
+      (text && typeof text === 'object' && text.secondary) ||
+      geofencingColors.text.secondary
+    );
   }};
   font-weight: ${props => (props.$active ? 'bold' : 'normal')};
 
@@ -90,7 +103,10 @@ const Tab = styled.button<{ $active: boolean; $theme?: Theme }>`
 const Timestamp = styled.span<{ $theme?: Theme }>`
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || geofencingColors.text.secondary;
+    return (
+      (text && typeof text === 'object' && text.secondary) ||
+      geofencingColors.text.secondary
+    );
   }};
   font-size: 14px;
 `;
@@ -103,7 +119,14 @@ const Timestamp = styled.span<{ $theme?: Theme }>`
 const Coordinates = styled.div<{ $theme?: Theme }>`
   background: ${props => {
     const background = props.$theme?.colors?.background;
-    return (typeof background === 'object' && background && (background as any).secondary) || (typeof background === 'string' ? background : geofencingColors.background.secondary);
+    return (
+      (typeof background === 'object' &&
+        background &&
+        (background as any).secondary) ||
+      (typeof background === 'string'
+        ? background
+        : geofencingColors.background.secondary)
+    );
   }};
   padding: 10px;
   border-radius: 5px;
@@ -114,7 +137,14 @@ const Coordinates = styled.div<{ $theme?: Theme }>`
 const JsonData = styled.pre<{ $theme?: Theme }>`
   background: ${props => {
     const background = props.$theme?.colors?.background;
-    return (typeof background === 'object' && background && (background as any).secondary) || (typeof background === 'string' ? background : geofencingColors.background.secondary);
+    return (
+      (typeof background === 'object' &&
+        background &&
+        (background as any).secondary) ||
+      (typeof background === 'string'
+        ? background
+        : geofencingColors.background.secondary)
+    );
   }};
   padding: 10px;
   border-radius: 5px;
@@ -129,18 +159,35 @@ const Loading = styled.div<{ $theme?: Theme }>`
   padding: 40px;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || geofencingColors.text.secondary;
+    return (
+      (text && typeof text === 'object' && text.secondary) ||
+      geofencingColors.text.secondary
+    );
   }};
 `;
 
 const Error = styled.div<{ $theme?: Theme }>`
   background: ${props => {
     const statusError = props.$theme?.colors?.status?.error;
-    return (typeof statusError === 'object' && statusError && (statusError as any).background) || (typeof statusError === 'string' ? statusError : geofencingColors.status.error.background);
+    return (
+      (typeof statusError === 'object' &&
+        statusError &&
+        (statusError as any).background) ||
+      (typeof statusError === 'string'
+        ? statusError
+        : geofencingColors.status.error.background)
+    );
   }};
   color: ${props => {
     const statusError = props.$theme?.colors?.status?.error;
-    return (typeof statusError === 'object' && statusError && (statusError as any).text) || (typeof statusError === 'string' ? statusError : geofencingColors.status.error.text);
+    return (
+      (typeof statusError === 'object' &&
+        statusError &&
+        (statusError as any).text) ||
+      (typeof statusError === 'string'
+        ? statusError
+        : geofencingColors.status.error.text)
+    );
   }};
   padding: 15px;
   border-radius: 5px;
@@ -159,7 +206,10 @@ const Select = styled.select<{ $theme?: Theme }>`
   border: 1px solid
     ${props => {
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border && (border as any).primary) || geofencingColors.border.primary;
+      return (
+        (typeof border === 'object' && border && (border as any).primary) ||
+        geofencingColors.border.primary
+      );
     }};
   border-radius: 5px;
   font-size: 14px;
@@ -170,7 +220,10 @@ const Input = styled.input<{ $theme?: Theme }>`
   border: 1px solid
     ${props => {
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border && (border as any).primary) || geofencingColors.border.primary;
+      return (
+        (typeof border === 'object' && border && (border as any).primary) ||
+        geofencingColors.border.primary
+      );
     }};
   border-radius: 5px;
   font-size: 14px;
@@ -204,7 +257,10 @@ const EmptyState = styled.div<{ $theme?: Theme }>`
 const EmptyStateTitle = styled.h3<{ $theme?: Theme }>`
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.primary) || geofencingColors.text.primary;
+    return (
+      (text && typeof text === 'object' && text.primary) ||
+      geofencingColors.text.primary
+    );
   }};
   margin: 0 0 10px 0;
 `;
@@ -212,7 +268,10 @@ const EmptyStateTitle = styled.h3<{ $theme?: Theme }>`
 const EmptyStateText = styled.p<{ $theme?: Theme }>`
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || geofencingColors.text.secondary;
+    return (
+      (text && typeof text === 'object' && text.secondary) ||
+      geofencingColors.text.secondary
+    );
   }};
   margin: 0;
 `;
@@ -323,14 +382,12 @@ export default function AuditoriaGeofencing() {
     return (
       <PageContainer
         $theme={theme}
-        variant="minimal"
-        background="transparent"
-        padding="lg"
-        maxWidth="1200px"
+        variant='minimal'
+        background='transparent'
+        padding='lg'
+        maxWidth='1200px'
       >
-        <Loading $theme={theme}>
-          Carregando tema...
-        </Loading>
+        <Loading $theme={theme}>Carregando tema...</Loading>
       </PageContainer>
     );
   }
@@ -339,10 +396,10 @@ export default function AuditoriaGeofencing() {
     return (
       <PageContainer
         $theme={theme}
-        variant="minimal"
-        background="transparent"
-        padding="lg"
-        maxWidth="1200px"
+        variant='minimal'
+        background='transparent'
+        padding='lg'
+        maxWidth='1200px'
       >
         <Loading $theme={theme}>Carregando dados de auditoria...</Loading>
       </PageContainer>
@@ -352,10 +409,10 @@ export default function AuditoriaGeofencing() {
   return (
     <PageContainer
       $theme={theme}
-      variant="minimal"
-      background="transparent"
-      padding="lg"
-      maxWidth="1200px"
+      variant='minimal'
+      background='transparent'
+      padding='lg'
+      maxWidth='1200px'
       animation={true}
     >
       <PageHeader
@@ -368,8 +425,8 @@ export default function AuditoriaGeofencing() {
             Auditoria de Geofencing
           </>
         }
-        subtitle="Logs e validações do sistema de geofencing"
-        variant="default"
+        subtitle='Logs e validações do sistema de geofencing'
+        variant='default'
         animation={true}
       />
 
@@ -399,9 +456,7 @@ export default function AuditoriaGeofencing() {
       </Tabs>
 
       <FilterBar>
-        <HiddenLabel htmlFor='filtro-acao'>
-          Filtrar por ação
-        </HiddenLabel>
+        <HiddenLabel htmlFor='filtro-acao'>Filtrar por ação</HiddenLabel>
         <Select
           id='filtro-acao'
           $theme={theme}
@@ -482,8 +537,8 @@ export default function AuditoriaGeofencing() {
                   { label: 'User Agent', value: log.userAgent },
                   { label: 'Local de Trabalho', value: log.localTrabalho.nome },
                 ]}
-                variant="grid"
-                size="sm"
+                variant='grid'
+                size='sm'
                 theme={theme}
               />
 
@@ -541,37 +596,49 @@ export default function AuditoriaGeofencing() {
             <UnifiedMetaInfo
               items={[
                 { label: 'Usuário', value: validacao.usuario.nomeCompleto },
-                { 
-                  label: 'Status', 
+                {
+                  label: 'Status',
                   value: (
-                    <UnifiedBadge 
-                      variant={validacao.dentroGeofence ? 'success' : 'error'} 
-                      size="sm" 
+                    <UnifiedBadge
+                      variant={validacao.dentroGeofence ? 'success' : 'error'}
+                      size='sm'
                       theme={theme}
                     >
                       {validacao.dentroGeofence
                         ? 'Dentro do Geofence'
                         : 'Fora do Geofence'}
                     </UnifiedBadge>
-                  )
+                  ),
                 },
-                { label: 'Distância', value: `${Math.round(validacao.distancia)}m` },
-                { label: 'Precisão', value: `${Math.round(validacao.precisao)}m` },
-                { 
-                  label: 'Coordenadas', 
+                {
+                  label: 'Distância',
+                  value: `${Math.round(validacao.distancia)}m`,
+                },
+                {
+                  label: 'Precisão',
+                  value: `${Math.round(validacao.precisao)}m`,
+                },
+                {
+                  label: 'Coordenadas',
                   value: (
                     <Coordinates>
                       Lat: {validacao.latitude.toFixed(8)}
                       <br />
                       Lon: {validacao.longitude.toFixed(8)}
                     </Coordinates>
-                  )
+                  ),
                 },
-                { label: 'Endereço', value: validacao.endereco || 'Não disponível' },
-                { label: 'WiFi', value: validacao.wifiName || 'Não disponível' },
+                {
+                  label: 'Endereço',
+                  value: validacao.endereco || 'Não disponível',
+                },
+                {
+                  label: 'WiFi',
+                  value: validacao.wifiName || 'Não disponível',
+                },
               ]}
-              variant="grid"
-              size="sm"
+              variant='grid'
+              size='sm'
               theme={theme}
             />
           </UnifiedCard>

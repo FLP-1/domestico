@@ -58,6 +58,7 @@ Esta combinação é **muito boa** e oferece um ótimo equilíbrio entre simplic
 ## 💡 **MINHA RECOMENDAÇÃO: ABORDAGEM HÍBRIDA SIMPLIFICADA**
 
 ### **Opção A: Pura (Sua Sugestão)**
+
 ```
 1. Auto-Fix ESLint (5 min)
 2. Refatoração Arquivo por Arquivo (5-7 horas)
@@ -71,6 +72,7 @@ Esta combinação é **muito boa** e oferece um ótimo equilíbrio entre simplic
 ---
 
 ### **Opção B: Híbrida Simplificada (Minha Sugestão)**
+
 ```
 1. Auto-Fix ESLint (5 min)
 2. Mini-Script Apenas para Console Statements (30 min criar, 5 min executar)
@@ -88,13 +90,13 @@ Esta combinação é **muito boa** e oferece um ótimo equilíbrio entre simplic
 
 ## 🎯 **COMPARAÇÃO**
 
-| Aspecto | Pura (Sua) | Híbrida Simplificada (Minha) |
-|---------|-----------|------------------------------|
-| **Simplicidade** | ✅✅✅ Muito simples | ✅✅ Simples |
-| **Tempo Total** | 5-7 horas | 5-6 horas |
-| **Controle** | ✅✅✅ Máximo | ✅✅✅ Máximo |
-| **Qualidade** | ✅✅✅ Excelente | ✅✅✅ Excelente |
-| **Console Statements** | Manual (304x) | Script (1x) |
+| Aspecto                | Pura (Sua)           | Híbrida Simplificada (Minha) |
+| ---------------------- | -------------------- | ---------------------------- |
+| **Simplicidade**       | ✅✅✅ Muito simples | ✅✅ Simples                 |
+| **Tempo Total**        | 5-7 horas            | 5-6 horas                    |
+| **Controle**           | ✅✅✅ Máximo        | ✅✅✅ Máximo                |
+| **Qualidade**          | ✅✅✅ Excelente     | ✅✅✅ Excelente             |
+| **Console Statements** | Manual (304x)        | Script (1x)                  |
 
 ---
 
@@ -119,6 +121,7 @@ Se você quiser economizar ~1-2 horas, adicionar um **mini-script apenas para co
 ### **Se escolher a abordagem Pura:**
 
 1. **Executar Auto-Fix:**
+
    ```bash
    npm run lint:fix
    ```
@@ -140,6 +143,7 @@ Se você quiser economizar ~1-2 horas, adicionar um **mini-script apenas para co
 ### **Se escolher a Híbrida Simplificada:**
 
 1. **Executar Auto-Fix:**
+
    ```bash
    npm run lint:fix
    ```
@@ -161,12 +165,14 @@ Se você quiser economizar ~1-2 horas, adicionar um **mini-script apenas para co
 **Sua abordagem (Auto-Fix + Refatoração) é EXCELENTE!**
 
 É uma escolha muito boa porque:
+
 - ✅ Balanceia velocidade (auto-fix) com qualidade (refatoração)
 - ✅ É simples e direta
 - ✅ Garante controle total
 - ✅ Resultado final de alta qualidade
 
 A única diferença da minha sugestão híbrida simplificada é:
+
 - **Sua:** 100% manual após auto-fix (5-7 horas, máximo controle)
 - **Minha:** 95% manual + 5% script para console statements (5-6 horas, mesmo controle, menos repetição)
 
@@ -182,4 +188,3 @@ A diferença de 1-2 horas pode não ser significativa se você preferir manter t
 - **Opção B (Híbrida Simplificada):** Auto-Fix + Mini-Script Console + Refatoração Manual
 
 Ambas funcionam muito bem! Qual faz mais sentido para você?
-

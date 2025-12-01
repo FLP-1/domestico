@@ -3,6 +3,7 @@
 ## 📋 PROBLEMA IDENTIFICADO
 
 O erro `f.div.withConfig.withConfig.b` persiste mesmo após:
+
 - Adicionar `export const dynamic = 'force-dynamic'`
 - Ajustar `shouldForwardProp` em componentes
 - Melhorar configuração de styled-components
@@ -30,11 +31,13 @@ export const getServerSideProps: GetServerSideProps = async () => {
 ```
 
 **Vantagens:**
+
 - ✅ Funciona 100% do tempo
 - ✅ Não requer mudanças na configuração global
 - ✅ Controle por página
 
 **Desvantagens:**
+
 - ⚠️ Cada página precisa ser editada individualmente
 
 ---
@@ -94,10 +97,12 @@ export default class MyDocument extends Document {
 ```
 
 **Vantagens:**
+
 - ✅ Resolve problema de hidratação do styled-components
 - ✅ Configuração global
 
 **Desvantagens:**
+
 - ⚠️ Requer mudança significativa no `_document.tsx`
 - ⚠️ Pode não resolver completamente o prerendering
 
@@ -113,27 +118,29 @@ export default class MyDocument extends Document {
 // next.config.js
 module.exports = {
   // ... outras configurações ...
-  
+
   // Desabilitar prerendering de rotas específicas
   generateBuildId: async () => {
     return 'build-id';
   },
-  
+
   // Configurar rotas que não devem ser pré-renderizadas
   experimental: {
     // ... outras configs ...
     disableOptimizedLoading: true, // Desabilitar otimizações que causam prerendering
   },
-  
+
   // Ou usar output: 'export' com configurações específicas
   // (mas isso muda completamente o comportamento do Next.js)
 };
 ```
 
 **Vantagens:**
+
 - ✅ Configuração global
 
 **Desvantagens:**
+
 - ⚠️ Pode afetar outras páginas
 - ⚠️ Configuração complexa
 - ⚠️ Pode não funcionar perfeitamente
@@ -151,7 +158,7 @@ Quando estender componentes, verificar se já têm `withConfig` e evitar adicion
 ```typescript
 // ❌ ERRADO - Duplica withConfig
 const MyCard = styled(UnifiedCard).withConfig({
-  shouldForwardProp: (prop) => !prop.startsWith('$'),
+  shouldForwardProp: prop => !prop.startsWith('$'),
 })<{ $theme?: Theme }>`
   /* estilos */
 `;
@@ -162,7 +169,7 @@ const MyCard = styled(UnifiedCard)<{ $theme?: Theme }>`
 `;
 
 // ✅ OU - Adicionar apenas se necessário
-const MyCard = styled(UnifiedCard).attrs((props) => ({
+const MyCard = styled(UnifiedCard).attrs(props => ({
   // Filtrar props aqui se necessário
 }))<{ $theme?: Theme }>`
   /* estilos */
@@ -170,10 +177,12 @@ const MyCard = styled(UnifiedCard).attrs((props) => ({
 ```
 
 **Vantagens:**
+
 - ✅ Resolve a causa raiz do erro
 - ✅ Melhora a estrutura do código
 
 **Desvantagens:**
+
 - ⚠️ Requer revisão de vários componentes
 - ⚠️ Pode não resolver completamente
 
@@ -184,15 +193,18 @@ const MyCard = styled(UnifiedCard).attrs((props) => ({
 **Por que funciona:** Combina forçar SSR dinâmico com configuração correta do styled-components.
 
 **Como implementar:**
+
 1. Adicionar `getServerSideProps` nas páginas problemáticas
 2. Configurar `ServerStyleSheet` no `_document.tsx`
 3. Revisar e remover duplicações de `withConfig`
 
 **Vantagens:**
+
 - ✅ Solução mais robusta e completa
 - ✅ Resolve múltiplos problemas de uma vez
 
 **Desvantagens:**
+
 - ⚠️ Requer mais trabalho inicial
 
 ---
@@ -200,14 +212,17 @@ const MyCard = styled(UnifiedCard).attrs((props) => ({
 ## 🎯 RECOMENDAÇÃO FINAL
 
 **Implementar OPÇÃO 1 primeiro** (mais simples e direta):
+
 - Adicionar `getServerSideProps` nas 6 páginas problemáticas
 - Isso deve resolver imediatamente
 
 **Se não funcionar, implementar OPÇÃO 2**:
+
 - Configurar `ServerStyleSheet` no `_document.tsx`
 - Isso resolve problemas de hidratação do styled-components
 
 **Por último, OPÇÃO 4**:
+
 - Revisar componentes que estendem outros
 - Remover duplicações desnecessárias de `withConfig`
 

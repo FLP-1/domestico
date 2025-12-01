@@ -4,7 +4,11 @@ import { useEffect, useState, useMemo, useCallback, memo } from 'react';
 import { useMessages } from '../hooks/useMessages';
 import { apiClient } from '../lib/apiClient';
 import { useAsyncOperation } from '../hooks/useAsyncOperation';
-import { OVERTIME_REQUEST_STATUSES, type OvertimeRequestStatus, toOvertimeRequestStatus } from '../constants/overtimeRequestStatuses';
+import {
+  OVERTIME_REQUEST_STATUSES,
+  type OvertimeRequestStatus,
+  toOvertimeRequestStatus,
+} from '../constants/overtimeRequestStatuses';
 import styled from 'styled-components';
 import { useTheme, profileThemes } from '../hooks/useTheme';
 import { useUserProfile } from '../contexts/UserProfileContext';
@@ -47,7 +51,15 @@ import {
   UnifiedModal,
   UnifiedCard,
 } from '../components/unified';
-import { formatDate, formatDateTime, formatTime, formatDateLong, formatMonthYear, formatTimeWithSeconds, formatDateISO } from '../utils/formatters';
+import {
+  formatDate,
+  formatDateTime,
+  formatTime,
+  formatDateLong,
+  formatMonthYear,
+  formatTimeWithSeconds,
+  formatDateISO,
+} from '../utils/formatters';
 import { useGeolocationContext } from '../contexts/GeolocationContext';
 import { useAutoGeolocation } from '../hooks/useAutoGeolocation';
 import { useTimeClockNotifications } from '../hooks/useTimeClockNotifications';
@@ -134,7 +146,12 @@ const CurrentTime = styled.h1<{ $theme?: Theme }>`
   font-weight: 700;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    if (typeof text === 'object' && text !== null && 'dark' in text && text.dark) {
+    if (
+      typeof text === 'object' &&
+      text !== null &&
+      'dark' in text &&
+      text.dark
+    ) {
       return text.dark;
     }
     return getThemeColor(props.$theme, 'text.dark', 'inherit');
@@ -156,7 +173,12 @@ const CurrentDate = styled.p<{ $theme?: Theme }>`
   font-size: 1.25rem;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    if (typeof text === 'object' && text !== null && 'light' in text && text.light) {
+    if (
+      typeof text === 'object' &&
+      text !== null &&
+      'light' in text &&
+      text.light
+    ) {
       return text.light;
     }
     return getTextSecondary(props.$theme);
@@ -179,7 +201,12 @@ const ScheduleTitle = styled.h3<{ $theme?: Theme }>`
   margin: 0 0 1rem 0;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    if (typeof text === 'object' && text !== null && 'dark' in text && text.dark) {
+    if (
+      typeof text === 'object' &&
+      text !== null &&
+      'dark' in text &&
+      text.dark
+    ) {
       return text.dark;
     }
     return getTextPrimary(props.$theme);
@@ -196,16 +223,25 @@ const ScheduleItem = styled.div<{ $theme?: any }>`
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0;
-  border-bottom: 1px solid ${props => {
-    const borderColor = getThemeColor(props.$theme, 'border.light', 'transparent');
-    if (borderColor && borderColor !== 'transparent' && borderColor.startsWith('#')) {
-      const r = parseInt(borderColor.slice(1, 3), 16);
-      const g = parseInt(borderColor.slice(3, 5), 16);
-      const b = parseInt(borderColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.1)`;
-    }
-    return borderColor !== 'transparent' ? borderColor : 'transparent';
-  }};
+  border-bottom: 1px solid
+    ${props => {
+      const borderColor = getThemeColor(
+        props.$theme,
+        'border.light',
+        'transparent'
+      );
+      if (
+        borderColor &&
+        borderColor !== 'transparent' &&
+        borderColor.startsWith('#')
+      ) {
+        const r = parseInt(borderColor.slice(1, 3), 16);
+        const g = parseInt(borderColor.slice(3, 5), 16);
+        const b = parseInt(borderColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return borderColor !== 'transparent' ? borderColor : 'transparent';
+    }};
 
   &:last-child {
     border-bottom: none;
@@ -216,7 +252,12 @@ const ScheduleLabel = styled.span<{ $theme?: Theme }>`
   font-size: 0.9rem;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    if (typeof text === 'object' && text !== null && 'light' in text && text.light) {
+    if (
+      typeof text === 'object' &&
+      text !== null &&
+      'light' in text &&
+      text.light
+    ) {
       return text.light;
     }
     return getTextSecondary(props.$theme);
@@ -232,14 +273,20 @@ const ScheduleTime = styled.span<{ $theme?: Theme }>`
 
 const HistorySection = styled.div<{ $theme?: Theme }>`
   background: ${props => {
-    const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
+    const bgColor = getThemeColor(
+      props.$theme,
+      'background.primary',
+      'transparent'
+    );
     if (bgColor && bgColor !== 'transparent' && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
       const b = parseInt(bgColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.95)`;
     }
-    return bgColor !== 'transparent' ? addOpacity(bgColor, 0.95) : 'transparent';
+    return bgColor !== 'transparent'
+      ? addOpacity(bgColor, 0.95)
+      : 'transparent';
   }};
   backdrop-filter: blur(20px);
   border-radius: 16px;
@@ -255,16 +302,21 @@ const HistorySection = styled.div<{ $theme?: Theme }>`
     }
     return 'none';
   }};
-  border: 1px solid ${props => {
-    const primaryColor = getThemeColor(props.$theme, 'colors.primary', 'transparent');
-    if (primaryColor && primaryColor.startsWith('#')) {
-      const r = parseInt(primaryColor.slice(1, 3), 16);
-      const g = parseInt(primaryColor.slice(3, 5), 16);
-      const b = parseInt(primaryColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.2)`;
-    }
-    return getThemeColor(props.$theme, 'border.light', 'transparent');
-  }};
+  border: 1px solid
+    ${props => {
+      const primaryColor = getThemeColor(
+        props.$theme,
+        'colors.primary',
+        'transparent'
+      );
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      return getThemeColor(props.$theme, 'border.light', 'transparent');
+    }};
 `;
 
 // SectionTitle removido - usar OptimizedSectionTitle com $size='lg'
@@ -274,7 +326,12 @@ const EmptyState = styled.div<{ $theme?: Theme }>`
   padding: 3rem;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    if (typeof text === 'object' && text !== null && 'light' in text && text.light) {
+    if (
+      typeof text === 'object' &&
+      text !== null &&
+      'light' in text &&
+      text.light
+    ) {
       return text.light;
     }
     return getTextSecondary(props.$theme);
@@ -504,7 +561,10 @@ export default function TimeClock() {
             empresaConfig = configResponse.data?.empresa || {};
           }
           const senhaPadrao = empresaConfig?.sistema_senha_padrao || 'senha123';
-          const cpfEmpresa = empresaConfig?.cpf || empresaConfig?.empresa_cpf_principal || '59876913700';
+          const cpfEmpresa =
+            empresaConfig?.cpf ||
+            empresaConfig?.empresa_cpf_principal ||
+            '59876913700';
 
           const loginResponse = await apiClient.auth.login({
             cpf: cpfEmpresa,
@@ -675,7 +735,9 @@ export default function TimeClock() {
               startTime: r.inicio,
               endTime: r.fim,
               justification: r.justificativa || '',
-              status: toOvertimeRequestStatus(r.status || OVERTIME_REQUEST_STATUSES.PENDING),
+              status: toOvertimeRequestStatus(
+                r.status || OVERTIME_REQUEST_STATUSES.PENDING
+              ),
               requestedAt: new Date(r.criadoEm),
               reviewedAt: r.revisadaEm ? new Date(r.revisadaEm) : undefined,
               reviewedBy: r.revisadaPor || undefined,
@@ -782,44 +844,44 @@ export default function TimeClock() {
           rtt: locationData?.networkInfo?.rtt,
           userAgent:
             typeof navigator !== 'undefined' ? navigator.userAgent : '',
-            networkTimestamp: new Date().toISOString(),
-            // ✅ Adicionar campos obrigatórios para a API
-            grupoId: currentUser?.gruposUsuario?.[0]?.grupoId || null,
-            usuarioPerfilId:
-              currentUser?.perfis?.find((p: any) => p.principal)?.id ||
-              currentUser?.perfis?.[0]?.id ||
-              null,
-            // ✅ Adicionar IP do cliente (se disponível via WebRTC)
-            clientIP: await getClientIP(),
-            // ✅ Adicionar fingerprinting de rede para antifraude
-            networkFingerprint: networkFingerprint
-              ? {
-                  connectionType: networkFingerprint.connectionType,
-                  effectiveType: networkFingerprint.effectiveType,
-                  downlink: networkFingerprint.downlink,
-                  rtt: networkFingerprint.rtt,
-                  ipAddress: networkFingerprint.ipAddress,
-                  timezone: networkFingerprint.timezone,
-                  language: networkFingerprint.language,
-                  platform: networkFingerprint.platform,
-                  screenResolution: networkFingerprint.screenResolution,
-                  sessionId: networkFingerprint.sessionId,
-                  timestamp: networkFingerprint.timestamp,
-                  // ✅ SSID real capturado do sistema operacional
-                  realSSID: networkDetection.realSSID,
-                  ssidPlatform: networkDetection.ssidPlatform,
-                }
-              : null,
-            // ✅ Adicionar análise de risco
-            riskAnalysis: networkAnalysis
-              ? {
-                  riskScore: networkAnalysis.riskScore,
-                  confidence: networkAnalysis.confidence,
-                  isFraud: networkAnalysis.riskScore > 70,
-                  fraudConfidence: networkAnalysis.confidence,
-                  anomalies: networkAnalysis.anomalies,
-                }
-              : null,
+          networkTimestamp: new Date().toISOString(),
+          // ✅ Adicionar campos obrigatórios para a API
+          grupoId: currentUser?.gruposUsuario?.[0]?.grupoId || null,
+          usuarioPerfilId:
+            currentUser?.perfis?.find((p: any) => p.principal)?.id ||
+            currentUser?.perfis?.[0]?.id ||
+            null,
+          // ✅ Adicionar IP do cliente (se disponível via WebRTC)
+          clientIP: await getClientIP(),
+          // ✅ Adicionar fingerprinting de rede para antifraude
+          networkFingerprint: networkFingerprint
+            ? {
+                connectionType: networkFingerprint.connectionType,
+                effectiveType: networkFingerprint.effectiveType,
+                downlink: networkFingerprint.downlink,
+                rtt: networkFingerprint.rtt,
+                ipAddress: networkFingerprint.ipAddress,
+                timezone: networkFingerprint.timezone,
+                language: networkFingerprint.language,
+                platform: networkFingerprint.platform,
+                screenResolution: networkFingerprint.screenResolution,
+                sessionId: networkFingerprint.sessionId,
+                timestamp: networkFingerprint.timestamp,
+                // ✅ SSID real capturado do sistema operacional
+                realSSID: networkDetection.realSSID,
+                ssidPlatform: networkDetection.ssidPlatform,
+              }
+            : null,
+          // ✅ Adicionar análise de risco
+          riskAnalysis: networkAnalysis
+            ? {
+                riskScore: networkAnalysis.riskScore,
+                confidence: networkAnalysis.confidence,
+                isFraud: networkAnalysis.riskScore > 70,
+                fraudConfidence: networkAnalysis.confidence,
+                anomalies: networkAnalysis.anomalies,
+              }
+            : null,
         });
 
         // Limpar timer após a requisição
@@ -988,11 +1050,11 @@ export default function TimeClock() {
         fim: request.endTime,
         justificativa: request.justification,
       };
-        const resp = await apiClient.timeClock.overtimeRequests.create(body);
-        if (!resp.success || !resp.data) {
-          throw new Error(resp.error || 'Falha ao criar solicitação');
-        }
-        const r = resp.data;
+      const resp = await apiClient.timeClock.overtimeRequests.create(body);
+      if (!resp.success || !resp.data) {
+        throw new Error(resp.error || 'Falha ao criar solicitação');
+      }
+      const r = resp.data;
       const mapped: OvertimeRequest = {
         id: r.id,
         employeeId: currentUser?.id || 'current-user',
@@ -1001,7 +1063,9 @@ export default function TimeClock() {
         startTime: r.inicio,
         endTime: r.fim,
         justification: r.justificativa || '',
-        status: toOvertimeRequestStatus(r.status || OVERTIME_REQUEST_STATUSES.PENDING),
+        status: toOvertimeRequestStatus(
+          r.status || OVERTIME_REQUEST_STATUSES.PENDING
+        ),
         requestedAt: new Date(r.criadoEm),
         reviewedAt: r.revisadaEm ? new Date(r.revisadaEm) : undefined,
         reviewedBy: r.revisadaPor || undefined,
@@ -1010,14 +1074,20 @@ export default function TimeClock() {
       setOvertimeRequests(prev => [mapped, ...prev]);
       showSuccess(keys.SUCCESS.SOLICITACAO_ENVIADA);
     } catch (e: any) {
-      showError('error.erro_solicitar_hora_extra', undefined, e?.message || 'Erro ao solicitar hora extra');
+      showError(
+        'error.erro_solicitar_hora_extra',
+        undefined,
+        e?.message || 'Erro ao solicitar hora extra'
+      );
     }
   };
 
   const reviewOvertime = async (id: string, approve: boolean) => {
     try {
       const resp = await apiClient.timeClock.overtimeRequests.update(id, {
-        status: approve ? OVERTIME_REQUEST_STATUSES.APPROVED : OVERTIME_REQUEST_STATUSES.REJECTED,
+        status: approve
+          ? OVERTIME_REQUEST_STATUSES.APPROVED
+          : OVERTIME_REQUEST_STATUSES.REJECTED,
       });
       if (!resp.success || !resp.data) {
         throw new Error(resp.error || 'Falha ao atualizar solicitação');
@@ -1027,7 +1097,9 @@ export default function TimeClock() {
           r.id === id
             ? {
                 ...r,
-                status: toOvertimeRequestStatus(resp.data.status || OVERTIME_REQUEST_STATUSES.PENDING),
+                status: toOvertimeRequestStatus(
+                  resp.data.status || OVERTIME_REQUEST_STATUSES.PENDING
+                ),
                 reviewedAt: resp.data.revisadaEm
                   ? new Date(resp.data.revisadaEm)
                   : undefined,
@@ -1037,9 +1109,17 @@ export default function TimeClock() {
             : r
         )
       );
-      showSuccess(approve ? 'success.solicitacao_aprovada' : 'success.solicitacao_rejeitada');
+      showSuccess(
+        approve
+          ? 'success.solicitacao_aprovada'
+          : 'success.solicitacao_rejeitada'
+      );
     } catch (e: any) {
-      showError('error.erro_atualizar_solicitacao', undefined, e?.message || 'Erro ao atualizar solicitação');
+      showError(
+        'error.erro_atualizar_solicitacao',
+        undefined,
+        e?.message || 'Erro ao atualizar solicitação'
+      );
     }
   };
 
@@ -1110,8 +1190,11 @@ export default function TimeClock() {
         throw new Error('Erro ao registrar ponto');
       }
     } catch (error: any) {
-      showError(keys.ERROR.ERRO_REGISTRAR_PONTO, undefined, 
-        'Erro ao registrar ponto com justificativa: ' + (error?.message || 'Erro desconhecido')
+      showError(
+        keys.ERROR.ERRO_REGISTRAR_PONTO,
+        undefined,
+        'Erro ao registrar ponto com justificativa: ' +
+          (error?.message || 'Erro desconhecido')
       );
     }
   };
@@ -1189,8 +1272,7 @@ export default function TimeClock() {
       key: 'dataHora',
       label: 'Data/Hora',
       width: '160px',
-      render: (item: any) =>
-        formatDateTime((item as any).dataHora),
+      render: (item: any) => formatDateTime((item as any).dataHora),
     },
     { key: 'tipo', label: 'Tipo', width: '140px' },
     {
@@ -1213,8 +1295,7 @@ export default function TimeClock() {
       key: 'data',
       label: 'Data',
       width: '120px',
-      render: (item: any) =>
-        formatDate((item as any).date),
+      render: (item: any) => formatDate((item as any).date),
     },
     {
       key: 'horario',
@@ -1611,15 +1692,15 @@ export default function TimeClock() {
       {/* ✅ NOVO: Seção de Comunicação Contextual para Registro de Ponto */}
       {selectedRecordId && (
         <HistorySection $theme={theme}>
-          <OptimizedSectionTitle $theme={theme} $size="lg">
+          <OptimizedSectionTitle $theme={theme} $size='lg'>
             <AccessibleEmoji emoji='💬' label='Comunicação' />
             Comunicação sobre este Registro de Ponto
           </OptimizedSectionTitle>
           <ContextualChat
-            contextoTipo="PONTO"
+            contextoTipo='PONTO'
             contextoId={selectedRecordId}
             titulo={`Comunicação - Registro ${selectedRecordId.slice(0, 8)}`}
-            altura="400px"
+            altura='400px'
             onMensagemEnviada={() => {
               // Recarregar mensagens ou atualizar UI se necessário
             }}
@@ -1628,8 +1709,8 @@ export default function TimeClock() {
             <UnifiedButton
               onClick={() => setSelectedRecordId(null)}
               $theme={theme}
-              $variant="secondary"
-              $size="sm"
+              $variant='secondary'
+              $size='sm'
             >
               Fechar Comunicação
             </UnifiedButton>
@@ -1731,7 +1812,6 @@ export default function TimeClock() {
           endereco={geofencingData.endereco}
         />
       )}
-
 
       {/* Modal de Aprovação de Registros Pendentes */}
       <PendingApprovalModal

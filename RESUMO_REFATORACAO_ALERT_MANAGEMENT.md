@@ -29,4 +29,3 @@
 ## ✅ **PRÓXIMO ARQUIVO**
 
 **`welcome-tutorial.tsx`** - 13 estilos inline
-

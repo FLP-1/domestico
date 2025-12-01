@@ -9,25 +9,25 @@
 
 ### **1. Componentes Unificados (✅ Centralizados)**
 
-| Componente | Localização | Status | Uso Atual |
-|------------|-------------|--------|-----------|
-| `UnifiedCard` | `src/components/unified/` | ✅ Centralizado | ✅ Usado em dashboard, monitoring-dashboard, shopping-management |
-| `UnifiedButton` | `src/components/unified/` | ✅ Centralizado | ⚠️ Parcialmente usado (ainda há botões customizados) |
-| `UnifiedModal` | `src/components/unified/` | ✅ Centralizado | ✅ Amplamente usado |
-| `DataList` | `src/components/DataList.tsx` | ✅ Centralizado | ✅ Usado em time-clock |
-| `FormComponents` | `src/components/FormComponents/` | ✅ Centralizado | ✅ Usado (Input, Select, Label, Form) |
-| `Widget` | `src/components/Widget/` | ✅ Centralizado | ✅ Usado em dashboard |
-| `WidgetGrid` | `src/components/WidgetGrid/` | ✅ Centralizado | ✅ Usado em dashboard |
+| Componente       | Localização                      | Status          | Uso Atual                                                        |
+| ---------------- | -------------------------------- | --------------- | ---------------------------------------------------------------- |
+| `UnifiedCard`    | `src/components/unified/`        | ✅ Centralizado | ✅ Usado em dashboard, monitoring-dashboard, shopping-management |
+| `UnifiedButton`  | `src/components/unified/`        | ✅ Centralizado | ⚠️ Parcialmente usado (ainda há botões customizados)             |
+| `UnifiedModal`   | `src/components/unified/`        | ✅ Centralizado | ✅ Amplamente usado                                              |
+| `DataList`       | `src/components/DataList.tsx`    | ✅ Centralizado | ✅ Usado em time-clock                                           |
+| `FormComponents` | `src/components/FormComponents/` | ✅ Centralizado | ✅ Usado (Input, Select, Label, Form)                            |
+| `Widget`         | `src/components/Widget/`         | ✅ Centralizado | ✅ Usado em dashboard                                            |
+| `WidgetGrid`     | `src/components/WidgetGrid/`     | ✅ Centralizado | ✅ Usado em dashboard                                            |
 
 ### **2. Estilos Compartilhados (✅ Centralizados)**
 
-| Estilo | Localização | Status |
-|--------|-------------|--------|
+| Estilo                | Localização              | Status          |
+| --------------------- | ------------------------ | --------------- |
 | `optimized-styles.ts` | `src/components/shared/` | ✅ Centralizado |
-| `shared/styles.ts` | `src/components/shared/` | ✅ Centralizado |
-| `base-components.ts` | `src/components/shared/` | ✅ Centralizado |
-| `mixins.ts` | `src/components/shared/` | ✅ Centralizado |
-| `tokens.ts` | `src/components/shared/` | ✅ Centralizado |
+| `shared/styles.ts`    | `src/components/shared/` | ✅ Centralizado |
+| `base-components.ts`  | `src/components/shared/` | ✅ Centralizado |
+| `mixins.ts`           | `src/components/shared/` | ✅ Centralizado |
+| `tokens.ts`           | `src/components/shared/` | ✅ Centralizado |
 
 ---
 
@@ -36,6 +36,7 @@
 ### **1. Duplicação Massiva de Styled Components**
 
 **Métricas:**
+
 - **444 styled components** criados diretamente nas páginas
 - **92 botões/cards/inputs** duplicados em **27 arquivos**
 - **26 páginas** criando seus próprios componentes ao invés de usar os centralizados
@@ -45,6 +46,7 @@
 #### **Botões Duplicados:**
 
 **❌ `alert-management.tsx`:**
+
 ```typescript
 const AlertUnifiedButton = styled.button<{
   $theme: any;
@@ -55,6 +57,7 @@ const AlertUnifiedButton = styled.button<{
 ```
 
 **❌ `shopping-management.tsx`:**
+
 ```typescript
 const ItemUnifiedButton = styled.button<{ $theme: any }>`
   // ... código idêntico ao UnifiedButton
@@ -62,6 +65,7 @@ const ItemUnifiedButton = styled.button<{ $theme: any }>`
 ```
 
 **❌ `shopping-management-backup.tsx`:**
+
 ```typescript
 const ItemUnifiedButton = styled.button<{ $theme: any }>`
   // ... código duplicado novamente
@@ -73,6 +77,7 @@ const ItemUnifiedButton = styled.button<{ $theme: any }>`
 #### **FormRow Duplicado:**
 
 **❌ Presente em 15+ páginas:**
+
 - `alert-management.tsx`
 - `shopping-management.tsx`
 - `loan-management.tsx`
@@ -85,6 +90,7 @@ const ItemUnifiedButton = styled.button<{ $theme: any }>`
 #### **SectionTitle Duplicado:**
 
 **❌ Presente em 12+ páginas:**
+
 - `alert-management.tsx`
 - `shopping-management.tsx`
 - `loan-management.tsx`
@@ -95,6 +101,7 @@ const ItemUnifiedButton = styled.button<{ $theme: any }>`
 #### **Inputs Duplicados:**
 
 **❌ Exemplos:**
+
 - `AddItemInput` em `shopping-management.tsx`
 - `ConditionInput` em `alert-management.tsx`
 - `CurrencyInput` em `loan-management.tsx`
@@ -106,16 +113,16 @@ const ItemUnifiedButton = styled.button<{ $theme: any }>`
 
 ## 📋 **PÁGINAS COM MAIOR DUPLICAÇÃO**
 
-| Página | Styled Components | Duplicação Crítica |
-|--------|-------------------|-------------------|
-| `shopping-management.tsx` | 20+ | ItemUnifiedButton, AddItemInput, AddItemButton, FormRow, SectionTitle |
-| `alert-management.tsx` | 23+ | AlertUnifiedButton, ConditionInput, FormRow, SectionTitle |
-| `loan-management.tsx` | 24+ | CurrencyInput, FormRow, SectionTitle, RequestSection |
-| `document-management.tsx` | 16+ | FormRow, TextArea, UploadSection |
-| `communication.tsx` | 35+ | Múltiplos componentes customizados |
-| `esocial-integration.tsx` | 33+ | Múltiplos componentes customizados |
-| `login.tsx` | 19+ | Input, FloatingLabel, BiometricButton |
-| `geofencing/locais.tsx` | 20+ | FormRow, SectionTitle, múltiplos inputs |
+| Página                    | Styled Components | Duplicação Crítica                                                    |
+| ------------------------- | ----------------- | --------------------------------------------------------------------- |
+| `shopping-management.tsx` | 20+               | ItemUnifiedButton, AddItemInput, AddItemButton, FormRow, SectionTitle |
+| `alert-management.tsx`    | 23+               | AlertUnifiedButton, ConditionInput, FormRow, SectionTitle             |
+| `loan-management.tsx`     | 24+               | CurrencyInput, FormRow, SectionTitle, RequestSection                  |
+| `document-management.tsx` | 16+               | FormRow, TextArea, UploadSection                                      |
+| `communication.tsx`       | 35+               | Múltiplos componentes customizados                                    |
+| `esocial-integration.tsx` | 33+               | Múltiplos componentes customizados                                    |
+| `login.tsx`               | 19+               | Input, FloatingLabel, BiometricButton                                 |
+| `geofencing/locais.tsx`   | 20+               | FormRow, SectionTitle, múltiplos inputs                               |
 
 **Total:** 26 páginas com duplicação significativa
 
@@ -178,6 +185,7 @@ const ItemUnifiedButton = styled.button<{ $theme: any }>`
 ### **1. Criar Guia de Uso dos Componentes Centralizados**
 
 Documentar:
+
 - Quando usar `UnifiedButton` vs `UnifiedCard`
 - Quando usar `FormComponents` vs `optimized-styles`
 - Exemplos de uso para cada componente
@@ -224,4 +232,3 @@ Documentar:
 ---
 
 **Próximos Passos:** Criar plano de migração para substituir componentes duplicados.
-

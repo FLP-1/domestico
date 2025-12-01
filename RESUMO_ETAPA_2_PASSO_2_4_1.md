@@ -3,10 +3,12 @@
 ## 📊 **VALIDAÇÃO**
 
 ### **Grep Confirma:**
+
 - ✅ **Nenhum `style=` encontrado** no arquivo
 - ✅ **Todos os estilos inline foram removidos**
 
 ### **Linter:**
+
 - ⚠️ Ainda mostra 22 erros (provavelmente **cache do linter**)
 - Os números de linha podem ter mudado após edições
 - **O grep confirma que não há mais estilos inline**
@@ -50,6 +52,7 @@
 ## ⚠️ **NOTA SOBRE O LINTER**
 
 O linter ainda mostra erros, mas isso é provavelmente:
+
 - **Cache do linter** - Precisa reiniciar/atualizar
 - **Números de linha antigos** - Mudaram após edições
 
@@ -62,4 +65,3 @@ O linter ainda mostra erros, mas isso é provavelmente:
 1. Validar build (já passou antes)
 2. Continuar refatoração de outros arquivos se necessário
 3. Verificar se há mais problemas em outros arquivos
-

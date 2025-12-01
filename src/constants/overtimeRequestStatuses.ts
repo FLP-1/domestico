@@ -1,6 +1,6 @@
 /**
  * 📋 Status de Solicitações de Hora Extra Centralizados
- * 
+ *
  * Centraliza todos os status possíveis para solicitações de hora extra.
  */
 
@@ -10,12 +10,15 @@ export const OVERTIME_REQUEST_STATUSES = {
   REJECTED: 'REJEITADA',
 } as const;
 
-export type OvertimeRequestStatus = typeof OVERTIME_REQUEST_STATUSES[keyof typeof OVERTIME_REQUEST_STATUSES];
+export type OvertimeRequestStatus =
+  (typeof OVERTIME_REQUEST_STATUSES)[keyof typeof OVERTIME_REQUEST_STATUSES];
 
 /**
  * Obter label em português para um status
  */
-export function getOvertimeRequestStatusLabel(status: OvertimeRequestStatus): string {
+export function getOvertimeRequestStatusLabel(
+  status: OvertimeRequestStatus
+): string {
   switch (status) {
     case OVERTIME_REQUEST_STATUSES.PENDING:
       return 'Pendente';
@@ -31,8 +34,12 @@ export function getOvertimeRequestStatusLabel(status: OvertimeRequestStatus): st
 /**
  * Verificar se um status é válido
  */
-export function isValidOvertimeRequestStatus(status: string): status is OvertimeRequestStatus {
-  return Object.values(OVERTIME_REQUEST_STATUSES).includes(status as OvertimeRequestStatus);
+export function isValidOvertimeRequestStatus(
+  status: string
+): status is OvertimeRequestStatus {
+  return Object.values(OVERTIME_REQUEST_STATUSES).includes(
+    status as OvertimeRequestStatus
+  );
 }
 
 /**
@@ -52,4 +59,3 @@ export function toOvertimeRequestStatus(status: string): OvertimeRequestStatus {
 export function toLowerCaseStatus(status: OvertimeRequestStatus): string {
   return status.toLowerCase();
 }
-

@@ -1,7 +1,7 @@
 /**
  * Página: Comunicação Contextual
  * Sistema DOM - Reformulação Completa
- * 
+ *
  * Comunicação vinculada a contextos específicos:
  * - PONTO: Registros de ponto
  * - TAREFA: Tarefas do sistema
@@ -21,7 +21,12 @@ import PageHeader from '../components/PageHeader';
 import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
 import WelcomeSection from '../components/WelcomeSection';
-import { UnifiedCard, UnifiedButton, UnifiedBadge, UnifiedModal } from '../components/unified';
+import {
+  UnifiedCard,
+  UnifiedButton,
+  UnifiedBadge,
+  UnifiedModal,
+} from '../components/unified';
 import ContextualChat from '../components/ContextualChat';
 import EmptyState from '../components/EmptyState';
 import AccessibleEmoji from '../components/AccessibleEmoji';
@@ -30,7 +35,10 @@ import { addOpacity, getThemeColor } from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
 import type { ProfileTheme } from '../hooks/useTheme';
 import type { ContextoTipo } from '../services/communicationService';
-import type { MensagemContextual, ContextoComunicacao } from '../types/communication';
+import type {
+  MensagemContextual,
+  ContextoComunicacao,
+} from '../types/communication';
 import { truncateText } from '../utils/formatters';
 import { sortByDate } from '../utils/sorters';
 import { tokens, getSpacing, getFontSize } from '../components/shared/tokens';
@@ -42,20 +50,24 @@ const ContextosGrid = styled(ContentGrid)`
   margin-top: ${getSpacing('xl')};
 `;
 
-const ContextoCard = styled(UnifiedCard)<{ $theme?: Theme; $selected?: boolean }>`
+const ContextoCard = styled(UnifiedCard)<{
+  $theme?: Theme;
+  $selected?: boolean;
+}>`
   cursor: pointer;
   transition: all 0.3s ease;
-  border: 2px solid ${props => 
-    props.$selected 
-      ? getThemeColor(props.$theme, 'primary')
-      : 'transparent'
-  };
+  border: 2px solid
+    ${props =>
+      props.$selected ? getThemeColor(props.$theme, 'primary') : 'transparent'};
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px ${props => 
-      addOpacity(getThemeColor(props.$theme, 'shadow') || 'transparent', 0.2)
-    };
+    box-shadow: 0 4px 12px
+      ${props =>
+        addOpacity(
+          getThemeColor(props.$theme, 'shadow') || 'transparent',
+          0.2
+        )};
   }
 `;
 
@@ -67,7 +79,7 @@ const ContextoHeader = styled.div`
 `;
 
 const ContextoIcon = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -82,7 +94,7 @@ const ContextoInfo = styled.div`
 `;
 
 const ContextoTitulo = styled.h3.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -94,7 +106,7 @@ const ContextoTitulo = styled.h3.withConfig({
 `;
 
 const ContextoDescricao = styled.p.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -105,7 +117,7 @@ const ContextoDescricao = styled.p.withConfig({
 `;
 
 const ContextoFooter = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -115,13 +127,12 @@ const ContextoFooter = styled.div.withConfig({
   align-items: center;
   margin-top: ${getSpacing('md')};
   padding-top: ${getSpacing('md')};
-  border-top: 1px solid ${props => 
-    getThemeColor(props.$theme, 'border.light', 'transparent')
-  };
+  border-top: 1px solid
+    ${props => getThemeColor(props.$theme, 'border.light', 'transparent')};
 `;
 
 const UltimaMensagem = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -148,20 +159,23 @@ const FiltrosContainer = styled.div`
 `;
 
 const FiltroButton = styled(UnifiedButton)<{ $active?: boolean }>`
-  ${props => props.$active && `
+  ${props =>
+    props.$active &&
+    `
     opacity: 1;
     font-weight: 600;
   `}
 `;
 
 const ChatModalContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: Theme }>`
   padding: ${getSpacing('md')};
-  background: ${props => getThemeColor(props.$theme, 'background.primary', 'transparent')};
+  background: ${props =>
+    getThemeColor(props.$theme, 'background.primary', 'transparent')};
 `;
 
 // Desabilitar prerendering - página requer autenticação e contexto
@@ -182,13 +196,17 @@ export default function Communication() {
   const { currentProfile } = useUserProfile();
   const profileThemeKey = currentProfile?.role?.toLowerCase() || 'empregado';
   const themeObject = useTheme(profileThemeKey);
-  const theme: Theme = themeObject && themeObject.colors ? { colors: themeObject.colors } as Theme : { colors: {} } as Theme;
+  const theme: Theme =
+    themeObject && themeObject.colors
+      ? ({ colors: themeObject.colors } as Theme)
+      : ({ colors: {} } as Theme);
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [contextos, setContextos] = useState<ContextoComunicacao[]>([]);
   const [filtroTipo, setFiltroTipo] = useState<ContextoTipo | 'TODOS'>('TODOS');
-  const [selectedContexto, setSelectedContexto] = useState<ContextoComunicacao | null>(null);
+  const [selectedContexto, setSelectedContexto] =
+    useState<ContextoComunicacao | null>(null);
   const [showChatModal, setShowChatModal] = useState(false);
 
   // ✅ Buscar contextos de comunicação
@@ -215,12 +233,12 @@ export default function Communication() {
 
       mensagens.forEach(msg => {
         const key = `${msg.contextoTipo}-${msg.contextoId}`;
-        
+
         if (!contextosMap.has(key)) {
           // Determinar título e ícone baseado no tipo
           let titulo = '';
           let icon = '';
-          
+
           switch (msg.contextoTipo) {
             case 'PONTO':
               titulo = `Registro de Ponto #${msg.contextoId.slice(0, 8)}`;
@@ -258,9 +276,12 @@ export default function Communication() {
         if (!msg.lida) {
           contexto.mensagensNaoLidas++;
         }
-        
+
         // Atualizar última mensagem se for mais recente
-        if (!contexto.ultimaMensagem || new Date(msg.criadoEm) > new Date(contexto.ultimaMensagem.criadoEm)) {
+        if (
+          !contexto.ultimaMensagem ||
+          new Date(msg.criadoEm) > new Date(contexto.ultimaMensagem.criadoEm)
+        ) {
           contexto.ultimaMensagem = msg;
         }
       });
@@ -268,7 +289,7 @@ export default function Communication() {
       // Converter para array e ordenar por última mensagem
       const contextosArray = sortByDate(
         Array.from(contextosMap.values()),
-        (contexto) => contexto.ultimaMensagem?.criadoEm || contexto.contextoId,
+        contexto => contexto.ultimaMensagem?.criadoEm || contexto.contextoId,
         'desc'
       );
 
@@ -298,14 +319,18 @@ export default function Communication() {
 
   // Memoizar contextos filtrados
   const contextosFiltrados = useMemo(() => {
-    return filtroTipo === 'TODOS' 
-      ? contextos 
+    return filtroTipo === 'TODOS'
+      ? contextos
       : contextos.filter(c => c.contextoTipo === filtroTipo);
   }, [contextos, filtroTipo]);
 
   return (
     <>
-      <Sidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} currentPath={router.pathname} />
+      <Sidebar
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+        currentPath={router.pathname}
+      />
       <TopBar $theme={theme}>{null}</TopBar>
       <WelcomeSection
         $theme={theme}
@@ -313,17 +338,18 @@ export default function Communication() {
         userName={currentProfile?.name || 'Usuário'}
         userRole={currentProfile?.role || 'Usuário'}
       />
-      
-      <PageContainer $theme={theme} variant="dashboard">
+
+      <PageContainer $theme={theme} variant='dashboard'>
         <PageHeader
           $theme={theme}
           title={
             <>
-              <AccessibleEmoji emoji="💬" label="Comunicação" /> Comunicação Contextual
+              <AccessibleEmoji emoji='💬' label='Comunicação' /> Comunicação
+              Contextual
             </>
           }
-          subtitle="Mensagens vinculadas a pontos, tarefas, documentos e folha de pagamento"
-          variant="default"
+          subtitle='Mensagens vinculadas a pontos, tarefas, documentos e folha de pagamento'
+          variant='default'
           animation
         />
 
@@ -332,7 +358,7 @@ export default function Communication() {
           <FiltroButton
             $theme={theme}
             $variant={filtroTipo === 'TODOS' ? 'primary' : 'secondary'}
-            $size="sm"
+            $size='sm'
             onClick={() => setFiltroTipo('TODOS')}
             $active={filtroTipo === 'TODOS'}
           >
@@ -341,51 +367,52 @@ export default function Communication() {
           <FiltroButton
             $theme={theme}
             $variant={filtroTipo === 'PONTO' ? 'primary' : 'secondary'}
-            $size="sm"
+            $size='sm'
             onClick={() => setFiltroTipo('PONTO')}
             $active={filtroTipo === 'PONTO'}
           >
-            <AccessibleEmoji emoji="🕐" label="Ponto" /> Ponto
+            <AccessibleEmoji emoji='🕐' label='Ponto' /> Ponto
           </FiltroButton>
           <FiltroButton
             $theme={theme}
             $variant={filtroTipo === 'TAREFA' ? 'primary' : 'secondary'}
-            $size="sm"
+            $size='sm'
             onClick={() => setFiltroTipo('TAREFA')}
             $active={filtroTipo === 'TAREFA'}
           >
-            <AccessibleEmoji emoji="✅" label="Tarefa" /> Tarefa
+            <AccessibleEmoji emoji='✅' label='Tarefa' /> Tarefa
           </FiltroButton>
           <FiltroButton
             $theme={theme}
             $variant={filtroTipo === 'DOCUMENTO' ? 'primary' : 'secondary'}
-            $size="sm"
+            $size='sm'
             onClick={() => setFiltroTipo('DOCUMENTO')}
             $active={filtroTipo === 'DOCUMENTO'}
           >
-            <AccessibleEmoji emoji="📄" label="Documento" /> Documento
+            <AccessibleEmoji emoji='📄' label='Documento' /> Documento
           </FiltroButton>
           <FiltroButton
             $theme={theme}
             $variant={filtroTipo === 'FOLHA' ? 'primary' : 'secondary'}
-            $size="sm"
+            $size='sm'
             onClick={() => setFiltroTipo('FOLHA')}
             $active={filtroTipo === 'FOLHA'}
           >
-            <AccessibleEmoji emoji="💰" label="Folha" /> Folha
+            <AccessibleEmoji emoji='💰' label='Folha' /> Folha
           </FiltroButton>
         </FiltrosContainer>
 
         {/* Lista de Contextos */}
         {loading ? (
           <LoadingContainer $theme={theme}>
-            <AccessibleEmoji emoji="⏳" label="Carregando" /> Carregando mensagens...
+            <AccessibleEmoji emoji='⏳' label='Carregando' /> Carregando
+            mensagens...
           </LoadingContainer>
         ) : contextosFiltrados.length === 0 ? (
           <EmptyState
-            icon="💬"
-            title="Nenhuma mensagem contextual encontrada"
-            description="As mensagens vinculadas a pontos, tarefas, documentos e folha de pagamento aparecerão aqui."
+            icon='💬'
+            title='Nenhuma mensagem contextual encontrada'
+            description='As mensagens vinculadas a pontos, tarefas, documentos e folha de pagamento aparecerão aqui.'
             theme={theme}
           />
         ) : (
@@ -400,12 +427,19 @@ export default function Communication() {
               >
                 <ContextoHeader>
                   <ContextoIcon $theme={theme}>
-                    <AccessibleEmoji emoji={contexto.icon} label={contexto.titulo} />
+                    <AccessibleEmoji
+                      emoji={contexto.icon}
+                      label={contexto.titulo}
+                    />
                   </ContextoIcon>
                   <ContextoInfo>
-                    <ContextoTitulo $theme={theme}>{contexto.titulo}</ContextoTitulo>
+                    <ContextoTitulo $theme={theme}>
+                      {contexto.titulo}
+                    </ContextoTitulo>
                     {contexto.descricao && (
-                      <ContextoDescricao $theme={theme}>{contexto.descricao}</ContextoDescricao>
+                      <ContextoDescricao $theme={theme}>
+                        {contexto.descricao}
+                      </ContextoDescricao>
                     )}
                   </ContextoInfo>
                 </ContextoHeader>
@@ -415,7 +449,9 @@ export default function Communication() {
                     {contexto.ultimaMensagem ? (
                       <>
                         <strong>
-                          {contexto.ultimaMensagem.remetente.apelido || contexto.ultimaMensagem.remetente.nomeCompleto}:
+                          {contexto.ultimaMensagem.remetente.apelido ||
+                            contexto.ultimaMensagem.remetente.nomeCompleto}
+                          :
                         </strong>{' '}
                         {truncateText(contexto.ultimaMensagem.conteudo, 50)}
                       </>
@@ -425,19 +461,11 @@ export default function Communication() {
                   </UltimaMensagem>
                   <MensagensInfo>
                     {contexto.mensagensNaoLidas > 0 && (
-                      <UnifiedBadge
-                        theme={theme}
-                        variant="warning"
-                        size="sm"
-                      >
+                      <UnifiedBadge theme={theme} variant='warning' size='sm'>
                         {contexto.mensagensNaoLidas}
                       </UnifiedBadge>
                     )}
-                    <UnifiedBadge
-                      theme={theme}
-                      variant="secondary"
-                      size="sm"
-                    >
+                    <UnifiedBadge theme={theme} variant='secondary' size='sm'>
                       {contexto.totalMensagens}
                     </UnifiedBadge>
                   </MensagensInfo>
@@ -461,7 +489,7 @@ export default function Communication() {
               contextoTipo={selectedContexto.contextoTipo}
               contextoId={selectedContexto.contextoId}
               titulo={selectedContexto.titulo}
-              altura="500px"
+              altura='500px'
               onMensagemEnviada={() => {
                 loadContextos();
               }}

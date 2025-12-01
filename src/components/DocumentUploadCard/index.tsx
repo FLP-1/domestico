@@ -17,7 +17,7 @@ const DocumentUploadContainer = styled.div<{
 `;
 
 const UploadSection = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -25,22 +25,24 @@ const UploadSection = styled.div.withConfig({
   border: 2px dashed
     ${props => {
       if (props.$isDragOver) {
-        return props.$theme?.colors?.primary ||
-               props.$theme?.accent ||
-               'transparent';
+        return (
+          props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'
+        );
       }
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) ||
-             props.$theme?.border?.light ||
-             'transparent';
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
     }};
   border-radius: 12px;
   padding: 1.5rem;
   text-align: center;
   background: ${props => {
     if (props.$isDragOver) {
-      const primaryColor = props.$theme?.colors?.primary ||
-                           props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -55,7 +57,7 @@ const UploadSection = styled.div.withConfig({
 `;
 
 const UploadButton = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -64,21 +66,19 @@ const UploadButton = styled.div.withConfig({
 `;
 
 const UploadIcon = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: any }>`
   font-size: 2.5rem;
   color: ${props =>
-    props.$theme?.colors?.primary ||
-    props.$theme?.accent ||
-    'inherit'};
+    props.$theme?.colors?.primary || props.$theme?.accent || 'inherit'};
   margin-bottom: 1rem;
 `;
 
 const UploadText = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -106,7 +106,7 @@ const UploadText = styled.div.withConfig({
 `;
 
 const HiddenFileInput = styled.input.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -115,7 +115,7 @@ const HiddenFileInput = styled.input.withConfig({
 `;
 
 const DocumentTypes = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -123,8 +123,7 @@ const DocumentTypes = styled.div.withConfig({
   margin-top: 1rem;
   padding: 1rem;
   background: ${props => {
-    const primaryColor = props.$theme?.colors?.primary ||
-                         props.$theme?.accent;
+    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
     if (primaryColor && primaryColor.startsWith('#')) {
       const r = parseInt(primaryColor.slice(1, 3), 16);
       const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -134,21 +133,22 @@ const DocumentTypes = styled.div.withConfig({
     return 'transparent';
   }};
   border-radius: 8px;
-  border: 1px solid ${props => {
-    const primaryColor = props.$theme?.colors?.primary ||
-                         props.$theme?.accent;
-    if (primaryColor && primaryColor.startsWith('#')) {
-      const r = parseInt(primaryColor.slice(1, 3), 16);
-      const g = parseInt(primaryColor.slice(3, 5), 16);
-      const b = parseInt(primaryColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.2)`;
-    }
-    return 'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      return 'transparent';
+    }};
 `;
 
 const DocumentTypesTitle = styled.h4.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -164,7 +164,7 @@ const DocumentTypesTitle = styled.h4.withConfig({
 `;
 
 const DocumentTypesList = styled.ul.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -181,7 +181,7 @@ const DocumentTypesList = styled.ul.withConfig({
 `;
 
 const RecentDocuments = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -190,7 +190,7 @@ const RecentDocuments = styled.div.withConfig({
 `;
 
 const RecentDocumentsTitle = styled.h4.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -209,7 +209,7 @@ const RecentDocumentsTitle = styled.h4.withConfig({
 `;
 
 const DocumentItem = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -219,10 +219,11 @@ const DocumentItem = styled.div.withConfig({
   gap: 0.5rem;
   padding: 0.5rem;
   background: ${props => {
-    const bg = props.$theme?.colors?.background?.secondary ||
-                props.$theme?.background?.secondary ||
-                props.$theme?.colors?.surface ||
-                props.$theme?.colors?.background;
+    const bg =
+      props.$theme?.colors?.background?.secondary ||
+      props.$theme?.background?.secondary ||
+      props.$theme?.colors?.surface ||
+      props.$theme?.colors?.background;
     if (bg && bg.startsWith('#')) {
       const r = parseInt(bg.slice(1, 3), 16);
       const g = parseInt(bg.slice(3, 5), 16);
@@ -242,14 +243,12 @@ const DocumentItem = styled.div.withConfig({
 
   .document-icon {
     color: ${props =>
-      props.$theme?.colors?.primary ||
-      props.$theme?.accent ||
-      'inherit'};
+      props.$theme?.colors?.primary || props.$theme?.accent || 'inherit'};
   }
 `;
 
 const DocumentDate = styled.span.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },

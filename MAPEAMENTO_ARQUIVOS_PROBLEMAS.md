@@ -11,6 +11,7 @@
 ## 🔍 **PROBLEMAS DE LINTING IDENTIFICADOS**
 
 ### **Arquivo: `diagnostico-geolocalizacao.tsx`**
+
 - **Erros:** 22 warnings de CSS inline styles
 - **Status:** ✅ **CORRIGIDO** (grep confirma que não há mais estilos inline)
 - **Nota:** Linter ainda mostra erros por cache
@@ -32,4 +33,3 @@
 2. Mapear todos os problemas
 3. Priorizar por quantidade de erros
 4. Refatorar sistematicamente
-

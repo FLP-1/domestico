@@ -83,15 +83,15 @@ const TabsContainer = styled.div<{
   }};
   overflow-x: auto;
   scrollbar-width: thin;
-  
+
   &::-webkit-scrollbar {
     height: 4px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: ${props =>
       props.$theme?.colors?.border || defaultColors.border};
@@ -132,7 +132,10 @@ const TabButton = styled.button<{
   color: ${props => {
     if (props.$disabled) {
       const text = props.$theme?.colors?.text;
-      return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+      return (
+        (text && typeof text === 'object' && text.secondary) ||
+        defaultColors.text.secondary
+      );
     }
     if (props.$variant === 'pills' && props.$active) {
       return props.$theme?.colors?.surface || defaultColors.surface;
@@ -141,7 +144,10 @@ const TabButton = styled.button<{
       return props.$theme?.colors?.primary || defaultColors.primary;
     }
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+    return (
+      (text && typeof text === 'object' && text.secondary) ||
+      defaultColors.text.secondary
+    );
   }};
   font-size: ${props => {
     switch (props.$size) {
@@ -171,7 +177,7 @@ const TabButton = styled.button<{
   transition: all 0.2s ease;
   white-space: nowrap;
   position: relative;
-  
+
   &:hover {
     ${props => {
       if (props.$disabled) return '';
@@ -191,7 +197,7 @@ const TabButton = styled.button<{
       `;
     }}
   }
-  
+
   &:active {
     transform: ${props => (props.$disabled ? 'none' : 'scale(0.98)')};
   }
@@ -222,15 +228,18 @@ const TabBadge = styled.span<{
       ? props.$theme?.colors?.primary || defaultColors.primary
       : (() => {
           const text = props.$theme?.colors?.text;
-          return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+          return (
+            (text && typeof text === 'object' && text.secondary) ||
+            defaultColors.text.secondary
+          );
         })()};
 `;
 
 /**
  * Componente genérico de Tabs reutilizável
- * 
+ *
  * Substitui: Tab, TabButton, ColumnHeader duplicados em vários arquivos
- * 
+ *
  * @example
  * ```tsx
  * // Tabs básico
@@ -242,7 +251,7 @@ const TabBadge = styled.span<{
  *   activeTab={activeTab}
  *   onTabChange={setActiveTab}
  * />
- * 
+ *
  * // Tabs com ícones e badges
  * <UnifiedTabs
  *   tabs={[
@@ -254,7 +263,7 @@ const TabBadge = styled.span<{
  *   variant="pills"
  *   size="lg"
  * />
- * 
+ *
  * // Tabs underline
  * <UnifiedTabs
  *   tabs={tabs}
@@ -275,7 +284,12 @@ export const UnifiedTabs: React.FC<UnifiedTabsProps> = ({
   style,
 }) => {
   return (
-    <TabsContainer $variant={variant} $theme={theme} className={className} style={style}>
+    <TabsContainer
+      $variant={variant}
+      $theme={theme}
+      className={className}
+      style={style}
+    >
       {tabs.map(tab => (
         <TabButton
           key={tab.id}
@@ -298,4 +312,3 @@ export const UnifiedTabs: React.FC<UnifiedTabsProps> = ({
     </TabsContainer>
   );
 };
-

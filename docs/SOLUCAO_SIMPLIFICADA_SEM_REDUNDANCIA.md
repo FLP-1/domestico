@@ -1,4 +1,5 @@
 # ✅ SOLUÇÃO SIMPLIFICADA: SEM REDUNDÂNCIA
+
 ## Sistema DOM - Arquitetura Enxuta e Eficiente
 
 **Data:** Janeiro 2025  
@@ -38,24 +39,24 @@ model MensagemContextual {
   remetenteId     String   // 'SISTEMA' ou ID do usuário
   destinatarioId  String?
   conteudo        String   @db.Text
-  
+
   // Origem da mensagem
   origem          String   @db.VarChar(50) // 'ALERTA', 'ACAO', 'SISTEMA', 'USUARIO'
   alertaId        String?  // Se veio de um alerta
-  
+
   // Status
   tipo            String   @db.VarChar(20) // 'TEXTO', 'ALERTA', 'NOTIFICACAO', 'SISTEMA'
   templateId      String?
   lida            Boolean  @default(false)
   exibidaToast    Boolean  @default(false) // Se já foi exibida como Toast
-  
+
   criadoEm        DateTime @default(now())
-  
+
   // Relações
   usuario         Usuario  @relation(fields: [usuarioId], references: [id])
   alerta          Alerta?  @relation(fields: [alertaId], references: [id])
   template        TemplateMensagem? @relation(fields: [templateId], references: [id])
-  
+
   @@index([usuarioId])
   @@index([contextoTipo, contextoId])
   @@index([alertaId])
@@ -64,6 +65,7 @@ model MensagemContextual {
 ```
 
 **O que NÃO precisa:**
+
 - ❌ Modelo separado de Notificações (Toast não armazena)
 - ❌ Modelo separado de Histórico (mensagem contextual já é histórico)
 - ❌ Modelo separado de Comunicação (mensagem contextual já é comunicação)
@@ -87,6 +89,7 @@ model MensagemContextual {
 ```
 
 **Resultado:**
+
 - ✅ Toast exibido (visualização instantânea)
 - ✅ Mensagem contextual criada (histórico único)
 - ✅ Sem redundância
@@ -135,7 +138,7 @@ class CommunicationService {
   async processEvent(event: SystemEvent) {
     // 1. Verificar alertas
     const alertas = await this.checkAlerts(event);
-    
+
     // 2. Para cada alerta ativo
     for (const alerta of alertas) {
       // Criar mensagem contextual (único armazenamento)
@@ -152,12 +155,12 @@ class CommunicationService {
           exibidaToast: false,
         },
       });
-      
+
       // Exibir Toast (apenas visualização - não armazena)
       toast.warning(mensagem.conteudo, {
         title: alerta.titulo,
       });
-      
+
       // Marcar como exibida
       await prisma.mensagemContextual.update({
         where: { id: mensagem.id },
@@ -193,4 +196,3 @@ class CommunicationService {
 
 **Última atualização:** Janeiro 2025  
 **Status:** ✅ **ARQUITETURA SIMPLIFICADA - SEM REDUNDÂNCIA**
-

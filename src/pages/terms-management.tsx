@@ -52,9 +52,10 @@ const GlobalStyle = styled.div<{ $theme?: any }>`
     width: 100%;
     height: 400px;
     padding: 1rem;
-    border: 2px solid ${props => 
-      getThemeColor(props.$theme, 'border.light', 'transparent') ||
-      'transparent'};
+    border: 2px solid
+      ${props =>
+        getThemeColor(props.$theme, 'border.light', 'transparent') ||
+        'transparent'};
     border-radius: 8px;
     font-size: 1rem;
     font-family: 'Roboto', sans-serif;
@@ -63,7 +64,7 @@ const GlobalStyle = styled.div<{ $theme?: any }>`
 
     &:focus {
       outline: none;
-      border-color: ${props => 
+      border-color: ${props =>
         getThemeColor(props.$theme, 'primary', 'transparent')};
     }
   }
@@ -73,9 +74,10 @@ const DocumentTextarea = styled.textarea<{ $theme?: any }>`
   width: 100%;
   height: 400px;
   padding: 1rem;
-  border: 2px solid ${props => 
-    getThemeColor(props.$theme, 'border.light', 'transparent') ||
-    'transparent'};
+  border: 2px solid
+    ${props =>
+      getThemeColor(props.$theme, 'border.light', 'transparent') ||
+      'transparent'};
   border-radius: 8px;
   font-size: 1rem;
   font-family: 'Roboto', sans-serif;
@@ -84,9 +86,8 @@ const DocumentTextarea = styled.textarea<{ $theme?: any }>`
 
   &:focus {
     outline: none;
-    border-color: ${props => 
-      getThemeColor(props.$theme, 'primary', 'transparent') ||
-      'transparent'};
+    border-color: ${props =>
+      getThemeColor(props.$theme, 'primary', 'transparent') || 'transparent'};
   }
 `;
 
@@ -101,16 +102,22 @@ const ContentGrid = styled.div`
 
 const DocumentSection = styled.div<{ $theme?: any }>`
   background: ${props => {
-    const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
+    const bgColor = getThemeColor(
+      props.$theme,
+      'background.primary',
+      'transparent'
+    );
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
       const b = parseInt(bgColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.95)`;
     }
-    return getThemeColor(props.$theme, 'background.primary', 'transparent') || 
-           getThemeColor(props.$theme, 'background.primary', 'transparent') ||
-           'transparent';
+    return (
+      getThemeColor(props.$theme, 'background.primary', 'transparent') ||
+      getThemeColor(props.$theme, 'background.primary', 'transparent') ||
+      'transparent'
+    );
   }};
   border-radius: 16px;
   padding: 2rem;
@@ -135,17 +142,16 @@ const DocumentHeader = styled.div<{ $theme?: any }>`
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid ${props => 
-    getThemeColor(props.$theme, 'border.light', 'transparent')};
+  border-bottom: 2px solid
+    ${props => getThemeColor(props.$theme, 'border.light', 'transparent')};
 `;
 
 const DocumentTitle = styled.h2<{ $theme?: any }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 1.8rem;
   font-weight: 700;
-  color: ${props => 
-    getThemeColor(props.$theme, 'primary', 'transparent') ||
-    'inherit'};
+  color: ${props =>
+    getThemeColor(props.$theme, 'primary', 'transparent') || 'inherit'};
   margin: 0;
 `;
 
@@ -158,9 +164,8 @@ const VersionInfo = styled.div`
 // VersionBadge removido - usar UnifiedBadge
 
 const EffectiveDate = styled.span<{ $theme?: any }>`
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.secondary', 'inherit') ||
-    'inherit'};
+  color: ${props =>
+    getThemeColor(props.$theme, 'text.secondary', 'inherit') || 'inherit'};
   font-size: 0.9rem;
 `;
 
@@ -168,29 +173,27 @@ const DocumentContent = styled.div<{ $theme?: any }>`
   max-height: 600px;
   overflow-y: auto;
   padding: 1rem;
-  background: ${props => 
-    getThemeColor(props.$theme, 'background.secondary', 'transparent') || 
+  background: ${props =>
+    getThemeColor(props.$theme, 'background.secondary', 'transparent') ||
     getThemeColor(props.$theme, 'background.secondary', 'transparent') ||
     'transparent'};
   border-radius: 8px;
-  border: 1px solid ${props => 
-    getThemeColor(props.$theme, 'border.light', 'transparent')};
+  border: 1px solid
+    ${props => getThemeColor(props.$theme, 'border.light', 'transparent')};
   line-height: 1.6;
   font-size: 0.95rem;
 
   h3 {
-    color: ${props => 
-      getThemeColor(props.$theme, 'primary', 'transparent') ||
-      'inherit'};
+    color: ${props =>
+      getThemeColor(props.$theme, 'primary', 'transparent') || 'inherit'};
     margin-top: 2rem;
     margin-bottom: 1rem;
     font-family: 'Montserrat', sans-serif;
   }
 
   h4 {
-    color: ${props => 
-      getThemeColor(props.$theme, 'text.dark', 'inherit') ||
-      'inherit'};
+    color: ${props =>
+      getThemeColor(props.$theme, 'text.dark', 'inherit') || 'inherit'};
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
   }
@@ -211,9 +214,8 @@ const DocumentContent = styled.div<{ $theme?: any }>`
   }
 
   strong {
-    color: ${props => 
-      getThemeColor(props.$theme, 'primary', 'transparent') ||
-      'inherit'};
+    color: ${props =>
+      getThemeColor(props.$theme, 'primary', 'transparent') || 'inherit'};
   }
 `;
 
@@ -222,22 +224,28 @@ const DocumentActions = styled.div<{ $theme?: any }>`
   gap: 1rem;
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 2px solid ${props => 
-    getThemeColor(props.$theme, 'border.light', 'transparent')};
+  border-top: 2px solid
+    ${props => getThemeColor(props.$theme, 'border.light', 'transparent')};
 `;
 
 const SidebarSection = styled.div<{ $theme?: any }>`
   background: ${props => {
-    const bgColor = getThemeColor(props.$theme, 'background.primary', 'transparent');
+    const bgColor = getThemeColor(
+      props.$theme,
+      'background.primary',
+      'transparent'
+    );
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
       const b = parseInt(bgColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.95)`;
     }
-    return getThemeColor(props.$theme, 'background.primary', 'transparent') || 
-           getThemeColor(props.$theme, 'background.primary', 'transparent') ||
-           'transparent';
+    return (
+      getThemeColor(props.$theme, 'background.primary', 'transparent') ||
+      getThemeColor(props.$theme, 'background.primary', 'transparent') ||
+      'transparent'
+    );
   }};
   border-radius: 16px;
   padding: 2rem;
@@ -259,18 +267,16 @@ const SidebarTitle = styled.h3<{ $theme?: any }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 1.3rem;
   font-weight: 700;
-  color: ${props => 
-    getThemeColor(props.$theme, 'primary', 'transparent') ||
-    'inherit'};
+  color: ${props =>
+    getThemeColor(props.$theme, 'primary', 'transparent') || 'inherit'};
   margin: 0 0 1.5rem 0;
 `;
 
 const LoadingContainer = styled.div<{ $theme?: any }>`
   text-align: center;
   padding: 2rem;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.dark', 'inherit') ||
-    'inherit'};
+  color: ${props =>
+    getThemeColor(props.$theme, 'text.dark', 'inherit') || 'inherit'};
   font-size: 1.1rem;
 `;
 
@@ -290,7 +296,11 @@ const VersionItem = styled.div<{ $active?: boolean; $theme?: Theme }>`
         : getThemeColor(props.$theme, 'border.light', 'transparent')};
   background: ${props => {
     if (props.$active) {
-      const primaryColor = getThemeColor(props.$theme, 'primary', 'transparent');
+      const primaryColor = getThemeColor(
+        props.$theme,
+        'primary',
+        'transparent'
+      );
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -299,19 +309,24 @@ const VersionItem = styled.div<{ $active?: boolean; $theme?: Theme }>`
       }
       return 'transparent';
     }
-    return getThemeColor(props.$theme, 'background.primary', 'transparent') || 
-           getThemeColor(props.$theme, 'background.primary', 'transparent') ||
-           'transparent';
+    return (
+      getThemeColor(props.$theme, 'background.primary', 'transparent') ||
+      getThemeColor(props.$theme, 'background.primary', 'transparent') ||
+      'transparent'
+    );
   }};
   cursor: pointer;
   transition: all 0.3s ease;
 
   &:hover {
-    border-color: ${props => 
-      getThemeColor(props.$theme, 'primary', 'transparent') ||
-      'transparent'};
+    border-color: ${props =>
+      getThemeColor(props.$theme, 'primary', 'transparent') || 'transparent'};
     background: ${props => {
-      const primaryColor = getThemeColor(props.$theme, 'primary', 'transparent');
+      const primaryColor = getThemeColor(
+        props.$theme,
+        'primary',
+        'transparent'
+      );
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -325,17 +340,15 @@ const VersionItem = styled.div<{ $active?: boolean; $theme?: Theme }>`
 
 const VersionNumber = styled.div<{ $theme?: any }>`
   font-weight: 600;
-  color: ${props => 
-    getThemeColor(props.$theme, 'primary', 'transparent') ||
-    'inherit'};
+  color: ${props =>
+    getThemeColor(props.$theme, 'primary', 'transparent') || 'inherit'};
   margin-bottom: 0.5rem;
 `;
 
 const VersionDate = styled.div<{ $theme?: any }>`
   font-size: 0.9rem;
-  color: ${props => 
-    getThemeColor(props.$theme, 'text.secondary', 'inherit') ||
-    'inherit'};
+  color: ${props =>
+    getThemeColor(props.$theme, 'text.secondary', 'inherit') || 'inherit'};
 `;
 
 const VersionStatus = styled.span<{ $theme?: Theme }>`
@@ -345,9 +358,9 @@ const VersionStatus = styled.span<{ $theme?: Theme }>`
   font-size: 0.8rem;
   font-weight: 600;
   margin-top: 0.5rem;
-  background: ${props => 
+  background: ${props =>
     getStatusColor(props.$theme, 'success', 'background') || 'transparent'};
-  color: ${props => 
+  color: ${props =>
     getStatusColor(props.$theme, 'success', 'text') ||
     getStatusColor(props.$theme, 'success', 'text') ||
     'inherit'};
@@ -356,16 +369,16 @@ const VersionStatus = styled.span<{ $theme?: Theme }>`
 const AdminSection = styled.div<{ $theme?: any }>`
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 2px solid ${props => getThemeColor(props.$theme, 'border.light', 'transparent')};
+  border-top: 2px solid
+    ${props => getThemeColor(props.$theme, 'border.light', 'transparent')};
 `;
 
 const AdminTitle = styled.h4<{ $theme?: any }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 1.1rem;
   font-weight: 600;
-  color: ${props => 
-    getThemeColor(props.$theme, 'primary', 'transparent') ||
-    'inherit'};
+  color: ${props =>
+    getThemeColor(props.$theme, 'primary', 'transparent') || 'inherit'};
   margin: 0 0 1rem 0;
 `;
 
@@ -614,12 +627,20 @@ const TermsManagement: React.FC = () => {
           <DocumentSection $theme={theme}>
             <UnifiedTabs
               tabs={[
-                { id: 'terms', label: 'Termos de Uso', icon: <AccessibleEmoji emoji='📋' label='Checklist' /> },
-                { id: 'privacy', label: 'Políticas de Privacidade', icon: <AccessibleEmoji emoji='🔒' label='Privado' /> },
+                {
+                  id: 'terms',
+                  label: 'Termos de Uso',
+                  icon: <AccessibleEmoji emoji='📋' label='Checklist' />,
+                },
+                {
+                  id: 'privacy',
+                  label: 'Políticas de Privacidade',
+                  icon: <AccessibleEmoji emoji='🔒' label='Privado' />,
+                },
               ]}
               activeTab={activeTab}
-              onTabChange={(tabId) => setActiveTab(tabId as 'terms' | 'privacy')}
-              variant="underline"
+              onTabChange={tabId => setActiveTab(tabId as 'terms' | 'privacy')}
+              variant='underline'
               theme={theme}
             />
 
@@ -632,7 +653,7 @@ const TermsManagement: React.FC = () => {
                 </DocumentTitle>
                 {activeVersion && (
                   <VersionInfo>
-                    <UnifiedBadge variant="success" size="md" theme={theme}>
+                    <UnifiedBadge variant='success' size='md' theme={theme}>
                       {activeVersion.versao} - Atual
                     </UnifiedBadge>
                     <EffectiveDate $theme={theme}>

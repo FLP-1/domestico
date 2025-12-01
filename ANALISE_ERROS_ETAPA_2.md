@@ -9,6 +9,7 @@
 **Tipo:** CSS inline styles (22 ocorrências)
 
 **Linhas afetadas:**
+
 - 455, 503, 505, 545, 547, 549, 572, 587, 595, 598
 - 610, 620, 629, 637, 647, 694, 702, 705, 706, 708, 715, 723
 
@@ -28,10 +29,12 @@
 ## 🎯 **ESTRATÉGIA DE CORREÇÃO**
 
 ### **Opção A: Converter para Styled Components** (Recomendada)
+
 - Criar styled components para cada estilo inline
 - Manter consistência com o resto do projeto
 
 ### **Opção B: Mover para CSS Module**
+
 - Criar arquivo CSS module
 - Importar no componente
 
@@ -45,4 +48,3 @@
 - ✅ PASSO 2.2: Erros identificados (22 warnings)
 - ⏳ PASSO 2.3: Verificar erros de compilação
 - ⏳ PASSO 2.4: Corrigir problemas identificados
-

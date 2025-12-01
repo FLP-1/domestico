@@ -71,18 +71,23 @@ const RelativeContainer = styled.div`
 const InputStyled = styled(Input)<{ $hasError?: boolean; $theme?: any }>`
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid ${props => {
-    if (props.$hasError) {
-      return props.$theme?.colors?.status?.error?.background ||
-             props.$theme?.status?.error?.background ||
-             props.$theme?.colors?.error ||
-             'transparent';
-    }
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border: 2px solid
+    ${props => {
+      if (props.$hasError) {
+        return (
+          props.$theme?.colors?.status?.error?.background ||
+          props.$theme?.status?.error?.background ||
+          props.$theme?.colors?.error ||
+          'transparent'
+        );
+      }
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
@@ -95,46 +100,51 @@ const InputStyled = styled(Input)<{ $hasError?: boolean; $theme?: any }>`
   &:focus {
     outline: none;
     border-color: ${props =>
-      props.$theme?.colors?.primary ||
-      props.$theme?.accent ||
-      'transparent'};
-    box-shadow: 0 0 0 3px ${props => {
-      const primaryColor = props.$theme?.colors?.primary ||
-                           props.$theme?.accent;
-      if (primaryColor && primaryColor.startsWith('#')) {
-        const r = parseInt(primaryColor.slice(1, 3), 16);
-        const g = parseInt(primaryColor.slice(3, 5), 16);
-        const b = parseInt(primaryColor.slice(5, 7), 16);
-        return `rgba(${r}, ${g}, ${b}, 0.1)`;
-      }
-      return 'transparent';
-    }};
+      props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'};
+    box-shadow: 0 0 0 3px
+      ${props => {
+        const primaryColor =
+          props.$theme?.colors?.primary || props.$theme?.accent;
+        if (primaryColor && primaryColor.startsWith('#')) {
+          const r = parseInt(primaryColor.slice(1, 3), 16);
+          const g = parseInt(primaryColor.slice(3, 5), 16);
+          const b = parseInt(primaryColor.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, 0.1)`;
+        }
+        return 'transparent';
+      }};
   }
 `;
 
 const SelectStyled = styled(Select)<{ $hasError?: boolean; $theme?: any }>`
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid ${props => {
-    if (props.$hasError) {
-      return props.$theme?.colors?.status?.error?.background ||
-             props.$theme?.status?.error?.background ||
-             props.$theme?.colors?.error ||
-             'transparent';
-    }
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border: 2px solid
+    ${props => {
+      if (props.$hasError) {
+        return (
+          props.$theme?.colors?.status?.error?.background ||
+          props.$theme?.status?.error?.background ||
+          props.$theme?.colors?.error ||
+          'transparent'
+        );
+      }
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
   background: ${props => {
-    const bg = props.$theme?.colors?.background?.primary ||
-                props.$theme?.background?.primary ||
-                props.$theme?.colors?.surface ||
-                props.$theme?.colors?.background;
+    const bg =
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary ||
+      props.$theme?.colors?.surface ||
+      props.$theme?.colors?.background;
     if (bg && bg.startsWith('#')) {
       const r = parseInt(bg.slice(1, 3), 16);
       const g = parseInt(bg.slice(3, 5), 16);
@@ -148,20 +158,19 @@ const SelectStyled = styled(Select)<{ $hasError?: boolean; $theme?: any }>`
   &:focus {
     outline: none;
     border-color: ${props =>
-      props.$theme?.colors?.primary ||
-      props.$theme?.accent ||
-      'transparent'};
-    box-shadow: 0 0 0 3px ${props => {
-      const primaryColor = props.$theme?.colors?.primary ||
-                           props.$theme?.accent;
-      if (primaryColor && primaryColor.startsWith('#')) {
-        const r = parseInt(primaryColor.slice(1, 3), 16);
-        const g = parseInt(primaryColor.slice(3, 5), 16);
-        const b = parseInt(primaryColor.slice(5, 7), 16);
-        return `rgba(${r}, ${g}, ${b}, 0.1)`;
-      }
-      return 'transparent';
-    }};
+      props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'};
+    box-shadow: 0 0 0 3px
+      ${props => {
+        const primaryColor =
+          props.$theme?.colors?.primary || props.$theme?.accent;
+        if (primaryColor && primaryColor.startsWith('#')) {
+          const r = parseInt(primaryColor.slice(1, 3), 16);
+          const g = parseInt(primaryColor.slice(3, 5), 16);
+          const b = parseInt(primaryColor.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, 0.1)`;
+        }
+        return 'transparent';
+      }};
   }
 `;
 

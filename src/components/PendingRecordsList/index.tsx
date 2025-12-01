@@ -26,10 +26,11 @@ interface PendingRecordsListProps {
 
 const ListContainer = styled.div<{ $theme?: any }>`
   background: ${props => {
-    const bg = props.$theme?.colors?.background?.primary ||
-                props.$theme?.background?.primary ||
-                props.$theme?.colors?.surface ||
-                props.$theme?.colors?.background;
+    const bg =
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary ||
+      props.$theme?.colors?.surface ||
+      props.$theme?.colors?.background;
     if (bg && bg.startsWith('#')) {
       const r = parseInt(bg.slice(1, 3), 16);
       const g = parseInt(bg.slice(3, 5), 16);
@@ -43,8 +44,8 @@ const ListContainer = styled.div<{ $theme?: any }>`
   padding: 1.5rem;
   margin-bottom: 2rem;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -53,17 +54,18 @@ const ListContainer = styled.div<{ $theme?: any }>`
     }
     return props.$theme?.shadows?.md || 'none';
   }};
-  border: 1px solid ${props => {
-    const primaryColor = props.$theme?.colors?.primary ||
-                         props.$theme?.accent;
-    if (primaryColor && primaryColor.startsWith('#')) {
-      const r = parseInt(primaryColor.slice(1, 3), 16);
-      const g = parseInt(primaryColor.slice(3, 5), 16);
-      const b = parseInt(primaryColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.2)`;
-    }
-    return 'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      return 'transparent';
+    }};
 `;
 
 const ListHeader = styled.div<{ $theme?: any }>`
@@ -72,14 +74,17 @@ const ListHeader = styled.div<{ $theme?: any }>`
   justify-content: space-between;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.muted) ||
-           props.$theme?.border?.muted ||
-           (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border-bottom: 2px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.muted) ||
+        props.$theme?.border?.muted ||
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
 `;
 
 const ListTitle = styled.h3<{ $theme?: any }>`
@@ -148,8 +153,8 @@ const RecordItem = styled.div<{ $theme?: any }>`
   &:hover {
     transform: translateY(-2px);
     box-shadow: ${props => {
-      const shadowColor = props.$theme?.colors?.shadow ||
-                          props.$theme?.shadow?.color;
+      const shadowColor =
+        props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
       if (shadowColor && shadowColor.startsWith('#')) {
         const r = parseInt(shadowColor.slice(1, 3), 16);
         const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -250,9 +255,10 @@ const ErrorState = styled.div<{ $theme?: any }>`
     props.$theme?.colors?.error ||
     'inherit'};
   background: ${props => {
-    const errorColor = props.$theme?.colors?.status?.error?.background ||
-                        props.$theme?.status?.error?.background ||
-                        props.$theme?.colors?.error;
+    const errorColor =
+      props.$theme?.colors?.status?.error?.background ||
+      props.$theme?.status?.error?.background ||
+      props.$theme?.colors?.error;
     if (errorColor && errorColor.startsWith('#')) {
       const r = parseInt(errorColor.slice(1, 3), 16);
       const g = parseInt(errorColor.slice(3, 5), 16);
@@ -262,18 +268,20 @@ const ErrorState = styled.div<{ $theme?: any }>`
     return 'transparent';
   }};
   border-radius: 8px;
-  border: 1px solid ${props => {
-    const errorColor = props.$theme?.colors?.status?.error?.background ||
-                        props.$theme?.status?.error?.background ||
-                        props.$theme?.colors?.error;
-    if (errorColor && errorColor.startsWith('#')) {
-      const r = parseInt(errorColor.slice(1, 3), 16);
-      const g = parseInt(errorColor.slice(3, 5), 16);
-      const b = parseInt(errorColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.3)`;
-    }
-    return 'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const errorColor =
+        props.$theme?.colors?.status?.error?.background ||
+        props.$theme?.status?.error?.background ||
+        props.$theme?.colors?.error;
+      if (errorColor && errorColor.startsWith('#')) {
+        const r = parseInt(errorColor.slice(1, 3), 16);
+        const g = parseInt(errorColor.slice(3, 5), 16);
+        const b = parseInt(errorColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.3)`;
+      }
+      return 'transparent';
+    }};
 `;
 
 const PendingRecordsList: React.FC<PendingRecordsListProps> = ({ theme }) => {
@@ -422,7 +430,9 @@ const PendingRecordsList: React.FC<PendingRecordsListProps> = ({ theme }) => {
                   <AccessibleEmoji emoji='📍' label='Registro' />
                   {getTypeLabel(record.tipo)}
                 </RecordType>
-                <RecordTime $theme={theme}>{formatTime(record.dataHora)}</RecordTime>
+                <RecordTime $theme={theme}>
+                  {formatTime(record.dataHora)}
+                </RecordTime>
               </RecordHeader>
 
               <RecordDetails>

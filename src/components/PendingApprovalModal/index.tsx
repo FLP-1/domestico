@@ -39,14 +39,17 @@ const ModalContent = styled.div`
 `;
 
 const RecordItem = styled.div<{ $theme?: any }>`
-  border: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.muted) ||
-           props.$theme?.border?.muted ||
-           (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.muted) ||
+        props.$theme?.border?.muted ||
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
@@ -106,14 +109,17 @@ const JustificationInput = styled.textarea<{ $theme?: any }>`
   width: 100%;
   min-height: 60px;
   padding: 0.5rem;
-  border: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.primary) ||
-           props.$theme?.border?.primary ||
-           (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.primary) ||
+        props.$theme?.border?.primary ||
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   border-radius: 4px;
   font-size: 0.9rem;
   margin-top: 0.5rem;
@@ -305,7 +311,9 @@ const PendingApprovalModal: React.FC<PendingApprovalModalProps> = ({
       label: 'Tipo',
       width: '120px',
       render: (item: any) => (
-        <RecordType $theme={theme || themeColors}>{getTypeLabel((item as PendingRecord).tipo)}</RecordType>
+        <RecordType $theme={theme || themeColors}>
+          {getTypeLabel((item as PendingRecord).tipo)}
+        </RecordType>
       ),
     },
     {

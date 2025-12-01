@@ -24,9 +24,14 @@ test.describe('Fluxo de Autenticação', () => {
 
     // Verificar se está na página correta ou se modal apareceu
     const url = page.url();
-    const hasModal = await page.locator('[role="dialog"]').isVisible().catch(() => false);
-    
-    expect(url.includes('/dashboard') || hasModal || url.includes('/login')).toBe(true);
+    const hasModal = await page
+      .locator('[role="dialog"]')
+      .isVisible()
+      .catch(() => false);
+
+    expect(
+      url.includes('/dashboard') || hasModal || url.includes('/login')
+    ).toBe(true);
   });
 
   test('deve mostrar erro com credenciais inválidas', async ({ page }) => {
@@ -41,7 +46,10 @@ test.describe('Fluxo de Autenticação', () => {
     await page.waitForTimeout(1000);
 
     // Verificar se mensagem de erro aparece
-    const errorMessage = await page.locator('text=/credenciais|inválidas|erro/i').isVisible().catch(() => false);
+    const errorMessage = await page
+      .locator('text=/credenciais|inválidas|erro/i')
+      .isVisible()
+      .catch(() => false);
     expect(errorMessage).toBe(true);
   });
 
@@ -55,9 +63,8 @@ test.describe('Fluxo de Autenticação', () => {
     // Verificar se há mensagens de validação ou se o botão está desabilitado
     const submitButton = page.locator('button[type="submit"]');
     const isDisabled = await submitButton.isDisabled().catch(() => false);
-    
+
     // Pode haver validação HTML5 ou customizada
     expect(isDisabled || page.url().includes('/login')).toBe(true);
   });
 });
-

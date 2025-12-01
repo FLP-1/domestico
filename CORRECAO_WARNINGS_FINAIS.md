@@ -5,22 +5,26 @@
 ### 1. Warning de Preload de Imagem ✅ CORRIGIDO
 
 **Problema:**
+
 ```
-The resource http://localhost:3000/_next/image?url=%2FLogo.png&w=128&q=75 
+The resource http://localhost:3000/_next/image?url=%2FLogo.png&w=128&q=75
 was preloaded using link preload but not used within a few seconds
 ```
 
 **Causa:**
+
 - Imagens com `priority` em componentes dinâmicos (`ssr: false`) são pré-carregadas pelo Next.js
 - Se o componente não é renderizado imediatamente, o navegador mostra o warning
 
 **Solução:**
+
 - ✅ Removido `priority` de imagens em componentes dinâmicos:
   - `src/pages/index.tsx` (loading do TutorialComponent)
   - `src/components/TutorialComponent.tsx` (welcome do tutorial)
   - `src/pages/welcome-tutorial.tsx` (welcome do tutorial)
 
 **Arquivos Modificados:**
+
 - `src/pages/index.tsx`
 - `src/components/TutorialComponent.tsx`
 - `src/pages/welcome-tutorial.tsx`
@@ -28,20 +32,24 @@ was preloaded using link preload but not used within a few seconds
 ### 2. Erro 401 na API de Login ✅ MELHORADO
 
 **Problema:**
+
 ```
 api/auth/login:1 Failed to load resource: the server responded with a status of 401 (Unauthorized)
 ```
 
 **Causa:**
+
 - Erro 401 é esperado quando credenciais são inválidas
 - O erro estava sendo logado no console mesmo sendo um comportamento esperado
 
 **Solução:**
+
 - ✅ Melhorado tratamento de erro para verificar status antes de parsear JSON
 - ✅ Erros 401 não são mais logados no console (são esperados)
 - ✅ Mensagens de erro são mostradas apenas para erros inesperados
 
 **Arquivos Modificados:**
+
 - `src/pages/login.tsx` (2 locais: `handleLogin` e `handleBiometricLogin`)
 
 ## 📝 Mudanças Aplicadas
@@ -49,6 +57,7 @@ api/auth/login:1 Failed to load resource: the server responded with a status of 
 ### 1. Remoção de `priority` em Imagens
 
 **Antes:**
+
 ```typescript
 <Image
   src='/Logo.png'
@@ -60,6 +69,7 @@ api/auth/login:1 Failed to load resource: the server responded with a status of 
 ```
 
 **Depois:**
+
 ```typescript
 <Image
   src='/Logo.png'
@@ -73,6 +83,7 @@ api/auth/login:1 Failed to load resource: the server responded with a status of 
 ### 2. Melhor Tratamento de Erros 401
 
 **Antes:**
+
 ```typescript
 .then(response => response.json())
 .then(result => {
@@ -85,6 +96,7 @@ api/auth/login:1 Failed to load resource: the server responded with a status of 
 ```
 
 **Depois:**
+
 ```typescript
 .then(response => {
   // ✅ Verificar status antes de parsear JSON
@@ -116,10 +128,12 @@ api/auth/login:1 Failed to load resource: the server responded with a status of 
 ## ✅ Resultado Esperado
 
 ### Warnings de Preload
+
 - ✅ Não devem mais aparecer warnings de preload de imagem
 - ✅ Imagens ainda carregam normalmente, apenas sem prioridade de pré-carregamento
 
 ### Erros 401
+
 - ✅ Erros 401 não aparecem mais no console
 - ✅ Mensagens de erro são mostradas apenas para erros inesperados
 - ✅ Usuário ainda recebe feedback adequado quando credenciais são inválidas
@@ -129,4 +143,3 @@ api/auth/login:1 Failed to load resource: the server responded with a status of 
 1. ✅ Recarregar a página e verificar se warnings desapareceram
 2. ✅ Testar login com credenciais inválidas (não deve aparecer erro no console)
 3. ✅ Verificar se imagens ainda carregam corretamente
-

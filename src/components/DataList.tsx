@@ -42,10 +42,11 @@ export interface DataListProps {
 // Styled Components
 const DataListContainer = styled.div<{ $theme?: any; $variant: string }>`
   background: ${props => {
-    const bg = props.$theme?.colors?.background?.primary ||
-                props.$theme?.background?.primary ||
-                props.$theme?.colors?.surface ||
-                props.$theme?.colors?.background;
+    const bg =
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary ||
+      props.$theme?.colors?.surface ||
+      props.$theme?.colors?.background;
     if (bg && bg.startsWith('#')) {
       const r = parseInt(bg.slice(1, 3), 16);
       const g = parseInt(bg.slice(3, 5), 16);
@@ -58,8 +59,8 @@ const DataListContainer = styled.div<{ $theme?: any; $variant: string }>`
   border-radius: 16px;
   overflow: hidden;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -68,17 +69,18 @@ const DataListContainer = styled.div<{ $theme?: any; $variant: string }>`
     }
     return props.$theme?.shadows?.md || 'none';
   }};
-  border: 1px solid ${props => {
-    const primaryColor = props.$theme?.colors?.primary ||
-                         props.$theme?.accent;
-    if (primaryColor && primaryColor.startsWith('#')) {
-      const r = parseInt(primaryColor.slice(1, 3), 16);
-      const g = parseInt(primaryColor.slice(3, 5), 16);
-      const b = parseInt(primaryColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.2)`;
-    }
-    return 'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      return 'transparent';
+    }};
 
   ${props =>
     props.$variant === 'compact' &&
@@ -101,8 +103,7 @@ const DataListHeader = styled.div<{
   $gridTemplate?: string;
 }>`
   background: ${props => {
-    const primaryColor = props.$theme?.colors?.primary ||
-                         props.$theme?.accent;
+    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
     if (primaryColor && primaryColor.startsWith('#')) {
       const r = parseInt(primaryColor.slice(1, 3), 16);
       const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -113,17 +114,18 @@ const DataListHeader = styled.div<{
   }};
   padding: ${props =>
     props.$variant === 'compact' ? '0.75rem 1rem' : '1rem 1.5rem'};
-  border-bottom: 1px solid ${props => {
-    const primaryColor = props.$theme?.colors?.primary ||
-                         props.$theme?.accent;
-    if (primaryColor && primaryColor.startsWith('#')) {
-      const r = parseInt(primaryColor.slice(1, 3), 16);
-      const g = parseInt(primaryColor.slice(3, 5), 16);
-      const b = parseInt(primaryColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.2)`;
-    }
-    return 'transparent';
-  }};
+  border-bottom: 1px solid
+    ${props => {
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      return 'transparent';
+    }};
   display: grid;
   grid-template-columns: ${props =>
     props.$gridTemplate || 'repeat(auto-fit, minmax(150px, 1fr))'};
@@ -155,9 +157,10 @@ const DataListBody = styled.div<{
     `
     .data-list-item:nth-child(even) {
       background: ${(() => {
-        const bg = props.$theme?.colors?.background?.secondary ||
-                   props.$theme?.background?.secondary ||
-                   props.$theme?.colors?.surface;
+        const bg =
+          props.$theme?.colors?.background?.secondary ||
+          props.$theme?.background?.secondary ||
+          props.$theme?.colors?.surface;
         if (bg && bg.startsWith('#')) {
           const r = parseInt(bg.slice(1, 3), 16);
           const g = parseInt(bg.slice(3, 5), 16);
@@ -174,8 +177,8 @@ const DataListBody = styled.div<{
     `
     .data-list-item:hover {
       background: ${(() => {
-        const primaryColor = props.$theme?.colors?.primary ||
-                             props.$theme?.accent;
+        const primaryColor =
+          props.$theme?.colors?.primary || props.$theme?.accent;
         if (primaryColor && primaryColor.startsWith('#')) {
           const r = parseInt(primaryColor.slice(1, 3), 16);
           const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -200,17 +203,18 @@ const DataListItem = styled.div<{
   align-items: center;
   padding: ${props =>
     props.$variant === 'compact' ? '0.75rem 1rem' : '1rem 1.5rem'};
-  border-bottom: 1px solid ${props => {
-    const primaryColor = props.$theme?.colors?.primary ||
-                         props.$theme?.accent;
-    if (primaryColor && primaryColor.startsWith('#')) {
-      const r = parseInt(primaryColor.slice(1, 3), 16);
-      const g = parseInt(primaryColor.slice(3, 5), 16);
-      const b = parseInt(primaryColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.1)`;
-    }
-    return 'transparent';
-  }};
+  border-bottom: 1px solid
+    ${props => {
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   transition: all 0.3s ease;
   cursor: ${props => (props.$clickable ? 'pointer' : 'default')};
 
@@ -227,8 +231,8 @@ const DataListItem = styled.div<{
   &:hover {
     background: ${props => {
       if (!props.$clickable) return 'transparent';
-      const primaryColor = props.$theme?.colors?.primary ||
-                           props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -290,13 +294,16 @@ const ActionButton = styled.button<{
         `;
       case 'danger':
         return `
-          color: ${props.$theme?.colors?.error ||
-                   props.$theme?.colors?.status?.error?.text ||
-                   'inherit'};
+          color: ${
+            props.$theme?.colors?.error ||
+            props.$theme?.colors?.status?.error?.text ||
+            'inherit'
+          };
           &:hover:not(:disabled) {
             background: ${(() => {
-              const errorColor = props.$theme?.colors?.error ||
-                                 props.$theme?.colors?.status?.error?.background;
+              const errorColor =
+                props.$theme?.colors?.error ||
+                props.$theme?.colors?.status?.error?.background;
               if (errorColor && errorColor.startsWith('#')) {
                 const r = parseInt(errorColor.slice(1, 3), 16);
                 const g = parseInt(errorColor.slice(3, 5), 16);
@@ -309,14 +316,16 @@ const ActionButton = styled.button<{
         `;
       default:
         return `
-          color: ${props.$theme?.colors?.text?.secondary ||
-                   props.$theme?.text?.secondary ||
-                   props.$theme?.colors?.text ||
-                   'inherit'};
+          color: ${
+            props.$theme?.colors?.text?.secondary ||
+            props.$theme?.text?.secondary ||
+            props.$theme?.colors?.text ||
+            'inherit'
+          };
           &:hover:not(:disabled) {
             background: ${(() => {
-              const primaryColor = props.$theme?.colors?.primary ||
-                                   props.$theme?.accent;
+              const primaryColor =
+                props.$theme?.colors?.primary || props.$theme?.accent;
               if (primaryColor && primaryColor.startsWith('#')) {
                 const r = parseInt(primaryColor.slice(1, 3), 16);
                 const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -407,13 +416,19 @@ const Badge = styled.span<{ $color?: string; $variant: string; $theme?: any }>`
   `}
 `;
 
-const IconWrapper = styled.span<{ $color?: string; $size?: string; $theme?: any }>`
+const IconWrapper = styled.span<{
+  $color?: string;
+  $size?: string;
+  $theme?: any;
+}>`
   color: ${props => {
     if (props.$color) return props.$color;
-    return props.$theme?.colors?.text?.secondary ||
-           props.$theme?.text?.secondary ||
-           props.$theme?.colors?.text ||
-           'inherit';
+    return (
+      props.$theme?.colors?.text?.secondary ||
+      props.$theme?.text?.secondary ||
+      props.$theme?.colors?.text ||
+      'inherit'
+    );
   }};
   font-size: ${props => props.$size || '1.5rem'};
   margin-right: 0.5rem;
@@ -460,11 +475,13 @@ const DataList: React.FC<DataListProps> = ({
     // Renderização automática baseada no tipo de dado
     if (typeof value === 'boolean') {
       return (
-        <Badge 
-          $color={value 
-            ? (theme?.colors?.success || theme?.colors?.status?.success?.background)
-            : (theme?.colors?.error || theme?.colors?.status?.error?.background)
-          } 
+        <Badge
+          $color={
+            value
+              ? theme?.colors?.success ||
+                theme?.colors?.status?.success?.background
+              : theme?.colors?.error || theme?.colors?.status?.error?.background
+          }
           $variant={variant}
           $theme={theme}
         >

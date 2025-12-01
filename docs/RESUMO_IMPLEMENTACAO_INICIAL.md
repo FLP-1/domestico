@@ -1,4 +1,5 @@
 # ✅ RESUMO: IMPLEMENTAÇÃO INICIAL DA REFORMULAÇÃO
+
 ## Sistema DOM - Versão 2.5.0
 
 **Data:** Janeiro 2025  
@@ -19,6 +20,7 @@
 ### **2. Schema Prisma Atualizado**
 
 **Mudanças no modelo `Mensagem`:**
+
 - ✅ `conversaId` agora é opcional (permite mensagens contextuais sem conversa)
 - ✅ Adicionado `contextoTipo` (PONTO, TAREFA, DOCUMENTO, FOLHA)
 - ✅ Adicionado `contextoId` (ID do contexto)
@@ -29,6 +31,7 @@
 - ✅ Índices adicionados para busca contextual
 
 **Mudanças no modelo `Alerta`:**
+
 - ✅ Relação com `Mensagem[]` adicionada
 
 ---
@@ -70,4 +73,3 @@
 
 **Última atualização:** Janeiro 2025  
 **Status:** ✅ **FASE 1 INICIADA - SCHEMA ATUALIZADO**
-

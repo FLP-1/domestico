@@ -7,6 +7,7 @@
 **Arquivo criado:** `src/pages/diagnostico-geolocalizacao.tsx`
 
 **Funcionalidades:**
+
 - ✅ Teste de captura GPS com `watchPosition` (força GPS real)
 - ✅ Verificação de permissões do navegador
 - ✅ Comparação com coordenadas reais fornecidas
@@ -17,6 +18,7 @@
 - ✅ Checklist de verificação integrado
 
 **Como acessar:**
+
 ```
 http://localhost:3000/diagnostico-geolocalizacao
 ```
@@ -24,6 +26,7 @@ http://localhost:3000/diagnostico-geolocalizacao
 ### ✅ 2. Melhorias no `useSmartGeolocation`
 
 **Mudanças implementadas:**
+
 - ✅ Substituição de `getCurrentPosition` por `watchPosition` temporário
 - ✅ Validação de GPS real (altitude, heading, speed)
 - ✅ Rejeição automática de localização aproximada
@@ -33,10 +36,12 @@ http://localhost:3000/diagnostico-geolocalizacao
 ### ✅ 3. Coordenadas Reais Registradas
 
 **Coordenadas reais fornecidas:**
+
 - Latitude: `-23.614260`
 - Longitude: `-46.633498`
 
 **Coordenadas anteriormente capturadas (incorretas):**
+
 - Latitude: `-23.615898`
 - Longitude: `-46.638694`
 - Distância: ~585 metros
@@ -46,6 +51,7 @@ http://localhost:3000/diagnostico-geolocalizacao
 ### 1. Testar Página de Diagnóstico
 
 **Ação:**
+
 1. Acessar `http://localhost:3000/diagnostico-geolocalizacao`
 2. Clicar em "📍 Testar Captura GPS"
 3. Aguardar até 30 segundos para GPS estabilizar
@@ -59,12 +65,14 @@ http://localhost:3000/diagnostico-geolocalizacao
 ### 2. Verificar Permissões do Navegador
 
 **Chrome/Edge:**
+
 1. Acessar `chrome://settings/content/location` ou `edge://settings/content/location`
 2. Verificar se "Precisão alta" está ativada
 3. Verificar se `localhost:3000` está em "Permitir"
 4. Se não estiver, adicionar manualmente
 
 **Windows:**
+
 1. Configurações → Privacidade e segurança → Localização
 2. ✅ "Serviços de localização" ATIVADO
 3. ✅ "Permitir que aplicativos acessem sua localização" ATIVADO
@@ -73,6 +81,7 @@ http://localhost:3000/diagnostico-geolocalizacao
 ### 3. Limpar Cache do Navegador
 
 **Ação:**
+
 1. Pressionar `Ctrl+Shift+Delete`
 2. Marcar "Cookies e outros dados de sites"
 3. Marcar "Imagens e arquivos em cache"
@@ -83,6 +92,7 @@ http://localhost:3000/diagnostico-geolocalizacao
 ### 4. Testar em Ambiente Aberto
 
 **Ação:**
+
 - GPS funciona melhor ao ar livre
 - Evitar edifícios altos ou estruturas metálicas
 - Aguardar até 30 segundos para GPS estabilizar
@@ -91,6 +101,7 @@ http://localhost:3000/diagnostico-geolocalizacao
 ### 5. Comparar com Google Maps
 
 **Ação:**
+
 1. Abrir https://www.google.com/maps
 2. Clicar em "Minha localização" (🎯)
 3. Anotar coordenadas exatas mostradas
@@ -100,6 +111,7 @@ http://localhost:3000/diagnostico-geolocalizacao
 ### 6. Verificar Logs no Console
 
 **Ação:**
+
 1. Abrir DevTools (F12)
 2. Ir na aba "Console"
 3. Executar teste de GPS
@@ -121,6 +133,7 @@ http://localhost:3000/diagnostico-geolocalizacao
 ### ✅ GPS Real Funcionando
 
 **Indicadores:**
+
 - `isRealGPS: true`
 - `altitude` presente (não null)
 - `heading` ou `speed` presentes
@@ -130,6 +143,7 @@ http://localhost:3000/diagnostico-geolocalizacao
 ### ❌ Localização Aproximada
 
 **Indicadores:**
+
 - `isRealGPS: false`
 - `altitude` null
 - `heading` e `speed` null
@@ -141,26 +155,31 @@ http://localhost:3000/diagnostico-geolocalizacao
 ### Opção 1: Usar Google Geolocation API
 
 **Vantagens:**
+
 - Mesma API que Google Maps usa
 - Precisão garantida: 10-50m
 - Funciona mesmo sem GPS (usa WiFi + Cell Tower)
 
 **Desvantagens:**
+
 - Custo: $0.005 por requisição (500 grátis/mês)
 - Requer API Key do Google Cloud
 
 **Implementação:**
+
 - Já existe `src/lib/googleGeolocation.ts`
 - Pode ser integrado como fallback quando GPS real não disponível
 
 ### Opção 2: Testar em Dispositivo Móvel
 
 **Vantagens:**
+
 - GPS de smartphones geralmente é mais preciso
 - Desktop pode não ter GPS real
 - Testar em smartphone pode confirmar se problema é do dispositivo
 
 **Ação:**
+
 1. Acessar `http://[SEU-IP]:3000/diagnostico-geolocalizacao` no smartphone
 2. Permitir localização quando solicitado
 3. Executar teste de GPS
@@ -169,11 +188,13 @@ http://localhost:3000/diagnostico-geolocalizacao
 ### Opção 3: Aceitar Limitação
 
 **Se:**
+
 - Ambiente não permite GPS real
 - Precisão de 500m é aceitável para o caso de uso
 - Configurações do sistema não podem ser alteradas
 
 **Ação:**
+
 - Documentar limitação conhecida
 - Informar usuários sobre precisão esperada
 - Considerar usar Google Geolocation API como upgrade futuro
@@ -188,6 +209,7 @@ http://localhost:3000/diagnostico-geolocalizacao
 ## 🎯 Próxima Ação Imediata
 
 **Testar a página de diagnóstico:**
+
 1. Acessar `http://localhost:3000/diagnostico-geolocalizacao`
 2. Clicar em "📍 Testar Captura GPS"
 3. Aguardar resultado e verificar:
@@ -196,7 +218,7 @@ http://localhost:3000/diagnostico-geolocalizacao
    - Se `distance > 200m` → Seguir próximos passos do checklist
 
 **Após teste, informar:**
+
 - Resultado do teste (`isRealGPS`, `accuracy`, `distance`)
 - Se problema persiste ou foi resolvido
 - Próximos passos necessários
-

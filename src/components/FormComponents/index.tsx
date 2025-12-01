@@ -55,23 +55,28 @@ export const Input = styled.input<{ $theme?: any; $hasError?: boolean }>`
   border: 2px solid
     ${props => {
       if (props.$hasError) {
-        return props.$theme?.colors?.error ||
-               props.$theme?.colors?.status?.error?.background ||
-               'transparent';
+        return (
+          props.$theme?.colors?.error ||
+          props.$theme?.colors?.status?.error?.background ||
+          'transparent'
+        );
       }
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) ||
-             props.$theme?.border?.light ||
-             'transparent';
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
     }};
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
   background: ${props => {
-    const bg = props.$theme?.colors?.background?.primary ||
-                props.$theme?.background?.primary ||
-                props.$theme?.colors?.surface ||
-                props.$theme?.colors?.background;
+    const bg =
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary ||
+      props.$theme?.colors?.surface ||
+      props.$theme?.colors?.background;
     if (bg && bg.startsWith('#')) {
       const r = parseInt(bg.slice(1, 3), 16);
       const g = parseInt(bg.slice(3, 5), 16);
@@ -86,12 +91,10 @@ export const Input = styled.input<{ $theme?: any; $hasError?: boolean }>`
   &:focus {
     outline: none;
     border-color: ${props =>
-      props.$theme?.colors?.primary ||
-      props.$theme?.accent ||
-      'transparent'};
+      props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'};
     box-shadow: ${props => {
-      const primaryColor = props.$theme?.colors?.primary ||
-                           props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -127,20 +130,24 @@ interface SelectProps {
 
 export const Select = styled.select<SelectProps>`
   padding: 0.75rem;
-  border: 2px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border: 2px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
   background: ${props => {
-    const bg = props.$theme?.colors?.background?.primary ||
-                props.$theme?.background?.primary ||
-                props.$theme?.colors?.surface ||
-                props.$theme?.colors?.background;
+    const bg =
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary ||
+      props.$theme?.colors?.surface ||
+      props.$theme?.colors?.background;
     if (bg && bg.startsWith('#')) {
       const r = parseInt(bg.slice(1, 3), 16);
       const g = parseInt(bg.slice(3, 5), 16);
@@ -156,12 +163,10 @@ export const Select = styled.select<SelectProps>`
   &:focus {
     outline: none;
     border-color: ${props =>
-      props.$theme?.colors?.primary ||
-      props.$theme?.accent ||
-      'transparent'};
+      props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'};
     box-shadow: ${props => {
-      const primaryColor = props.$theme?.colors?.primary ||
-                           props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);

@@ -10,6 +10,7 @@
 ### **Grupo 1: Casa Principal** 🏠
 
 **Características:**
+
 - **Nome:** Casa Principal
 - **Descrição:** Grupo da casa principal
 - **Tipo:** RESIDENCIAL
@@ -20,14 +21,15 @@
 
 **Composição (4 membros):**
 
-| Usuário | Perfil | Papel no Grupo | Email |
-|---------|--------|----------------|-------|
-| **Francisco Silva** | Empregador | **ADMIN** | francisco@flpbusiness.com |
-| **Ana Costa** | Empregado | MEMBRO | ana.costa@email.com |
-| **Carlos Oliveira** | Empregado | MEMBRO | carlos.oliveira@email.com |
-| **Pedro Silva** | Família | MEMBRO | pedro.silva@email.com |
+| Usuário             | Perfil     | Papel no Grupo | Email                     |
+| ------------------- | ---------- | -------------- | ------------------------- |
+| **Francisco Silva** | Empregador | **ADMIN**      | francisco@flpbusiness.com |
+| **Ana Costa**       | Empregado  | MEMBRO         | ana.costa@email.com       |
+| **Carlos Oliveira** | Empregado  | MEMBRO         | carlos.oliveira@email.com |
+| **Pedro Silva**     | Família    | MEMBRO         | pedro.silva@email.com     |
 
 **Local de Trabalho Associado:**
+
 - **Nome:** Casa Principal - Entrada
 - **Endereço:** Rua das Flores, 123 - Centro, São Paulo - SP
 - **Coordenadas:** Latitude: -23.5505, Longitude: -46.6333
@@ -39,6 +41,7 @@
 ### **Grupo 2: Casa de Verão** 🏖️
 
 **Características:**
+
 - **Nome:** Casa de Verão
 - **Descrição:** Grupo da casa de verão
 - **Tipo:** RESIDENCIAL
@@ -49,12 +52,13 @@
 
 **Composição (2 membros):**
 
-| Usuário | Perfil | Papel no Grupo | Email |
-|---------|--------|----------------|-------|
-| **Maria Santos** | Empregador | **ADMIN** | maria.santos@email.com |
-| **Beatriz Lima** | Empregado | MEMBRO | beatriz.lima@email.com |
+| Usuário          | Perfil     | Papel no Grupo | Email                  |
+| ---------------- | ---------- | -------------- | ---------------------- |
+| **Maria Santos** | Empregador | **ADMIN**      | maria.santos@email.com |
+| **Beatriz Lima** | Empregado  | MEMBRO         | beatriz.lima@email.com |
 
 **Local de Trabalho Associado:**
+
 - **Nome:** Casa de Verão - Portão
 - **Endereço:** Avenida Beira Mar, 456 - Praia, Guarujá - SP
 - **Coordenadas:** Latitude: -23.9931, Longitude: -46.2562
@@ -71,13 +75,14 @@
 
 Nenhum empregado participa de mais de um grupo. Cada empregado está associado a apenas um grupo:
 
-| Empregado | Grupo Único | Papel |
-|-----------|-------------|-------|
-| **Ana Costa** (empregado1) | Casa Principal | MEMBRO |
+| Empregado                        | Grupo Único    | Papel  |
+| -------------------------------- | -------------- | ------ |
+| **Ana Costa** (empregado1)       | Casa Principal | MEMBRO |
 | **Carlos Oliveira** (empregado2) | Casa Principal | MEMBRO |
-| **Beatriz Lima** (empregado3) | Casa de Verão | MEMBRO |
+| **Beatriz Lima** (empregado3)    | Casa de Verão  | MEMBRO |
 
 **Observação:**
+
 - O seed atual **NÃO cria** empregados compartilhados entre grupos
 - Para testar cenários de empregados em múltiplos grupos, seria necessário adicionar mais associações no seed
 
@@ -89,17 +94,19 @@ Nenhum empregado participa de mais de um grupo. Cada empregado está associado a
 
 **Detalhes:**
 
-| Usuário | Perfil | Grupo | Papel | Email |
-|---------|--------|-------|-------|-------|
+| Usuário         | Perfil  | Grupo              | Papel  | Email                 |
+| --------------- | ------- | ------------------ | ------ | --------------------- |
 | **Pedro Silva** | Família | **Casa Principal** | MEMBRO | pedro.silva@email.com |
 
 **Informações Adicionais:**
+
 - **CPF:** Gerado automaticamente (válido)
 - **Data de Nascimento:** 2010-12-05
 - **Relacionamento:** Filho do empregador Francisco Silva
 - **Status:** Ativo no grupo
 
 **Observação:**
+
 - O familiar está associado apenas ao grupo "Casa Principal"
 - Não está associado ao grupo "Casa de Verão"
 
@@ -111,16 +118,18 @@ Nenhum empregado participa de mais de um grupo. Cada empregado está associado a
 
 **Detalhes:**
 
-| Usuário | Perfil | Grupos | Email |
-|---------|--------|--------|-------|
-| **Admin Sistema** | Admin | **NENHUM** | admin@sistemadom.com |
+| Usuário           | Perfil | Grupos     | Email                |
+| ----------------- | ------ | ---------- | -------------------- |
+| **Admin Sistema** | Admin  | **NENHUM** | admin@sistemadom.com |
 
 **Análise:**
+
 - O usuário admin **NÃO está associado** a nenhum grupo no seed atual
 - Isso é **intencional** - o admin tem acesso global ao sistema, não precisa estar vinculado a grupos específicos
 - O admin pode acessar todas as funcionalidades independentemente de grupos
 
 **Observação:**
+
 - Se necessário testar admin em grupos específicos, seria necessário adicionar associações no seed
 
 ---
@@ -163,19 +172,23 @@ Sem Grupo:
 #### **Registros de Ponto por Grupo:**
 
 **Casa Principal:**
+
 - 6 registros de ponto (Ana Costa e Carlos Oliveira)
 - Todos associados ao local "Casa Principal - Entrada"
 
 **Casa de Verão:**
+
 - 0 registros de ponto no seed atual
 - Local disponível: "Casa de Verão - Portão"
 
 #### **Solicitações de Hora Extra por Grupo:**
 
 **Casa Principal:**
+
 - 2 solicitações (Ana Costa e Carlos Oliveira)
 
 **Casa de Verão:**
+
 - 1 solicitação (Beatriz Lima)
 
 #### **Conversas por Grupo:**
@@ -209,4 +222,3 @@ Se necessário testar cenário de empregado compartilhado, adicionar no seed:
 
 **Relatório gerado em:** 08/01/2025  
 **Fonte:** `prisma/seeds/seed-completo-testes.ts` (linhas 396-437)
-

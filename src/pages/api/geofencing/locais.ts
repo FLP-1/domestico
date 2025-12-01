@@ -8,9 +8,11 @@ import { loadSystemConfig } from '../../../config/centralized-config';
 async function geocodeAddress(endereco: string) {
   try {
     const config = await loadSystemConfig();
-    const nominatimBaseUrl = config.urls.geocoding.nominatim || 'https://nominatim.openstreetmap.org/reverse';
+    const nominatimBaseUrl =
+      config.urls.geocoding.nominatim ||
+      'https://nominatim.openstreetmap.org/reverse';
     const searchUrl = nominatimBaseUrl.replace('/reverse', '/search');
-    
+
     const response = await fetch(
       `${searchUrl}?format=json&q=${encodeURIComponent(endereco)}&limit=1&countrycodes=br&addressdetails=1`,
       {

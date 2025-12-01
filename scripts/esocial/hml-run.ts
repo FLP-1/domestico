@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-console */
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
@@ -15,8 +16,10 @@ for (const envFile of envFiles) {
 
 const loggerModule = require('@/lib/logger') as typeof import('@/lib/logger');
 const logger = loggerModule.default;
-const ESOCIAL_CONFIG_MODULE = require('@/config/esocial') as typeof import('@/config/esocial');
-const ESOCIAL_REAL_API_MODULE = require('@/services/esocialRealApi') as typeof import('@/services/esocialRealApi');
+const ESOCIAL_CONFIG_MODULE =
+  require('@/config/esocial') as typeof import('@/config/esocial');
+const ESOCIAL_REAL_API_MODULE =
+  require('@/services/esocialRealApi') as typeof import('@/services/esocialRealApi');
 const { ESOCIAL_CONFIG } = ESOCIAL_CONFIG_MODULE;
 const { getESocialRealApiService } = ESOCIAL_REAL_API_MODULE;
 
@@ -39,7 +42,10 @@ const parseArgs = (rawArgs: string[]): CliOptions => {
     switch (arg) {
       case '-a':
       case '--acao':
-        if (!nextValue || !['consultar', 'enviar', 'status'].includes(nextValue)) {
+        if (
+          !nextValue ||
+          !['consultar', 'enviar', 'status'].includes(nextValue)
+        ) {
           throw new Error(
             "Use '--acao consultar|enviar|status' ou '-a consultar|enviar|status'."
           );
@@ -50,7 +56,9 @@ const parseArgs = (rawArgs: string[]): CliOptions => {
       case '-e':
       case '--evento':
         if (!nextValue) {
-          throw new Error("Informe o tipo do evento com '--evento S1000' ou '-e S1000'.");
+          throw new Error(
+            "Informe o tipo do evento com '--evento S1000' ou '-e S1000'."
+          );
         }
         options.evento = nextValue;
         i += 1;
@@ -166,9 +174,7 @@ const runConsulta = async () => {
       },
       'Falha ao consultar eventos enviados no eSocial'
     );
-    throw new Error(
-      eventos.message || 'Falha ao consultar eventos enviados.'
-    );
+    throw new Error(eventos.message || 'Falha ao consultar eventos enviados.');
   }
 
   logger.info(
@@ -315,7 +321,10 @@ const main = async () => {
 
 main()
   .then(() => {
-    logger.info({ module: 'esocial:hml-run' }, 'Execução finalizada com sucesso');
+    logger.info(
+      { module: 'esocial:hml-run' },
+      'Execução finalizada com sucesso'
+    );
     process.exit(0);
   })
   .catch(error => {
@@ -329,4 +338,3 @@ main()
     console.error('❌ Erro ao executar script:', error);
     process.exit(1);
   });
-

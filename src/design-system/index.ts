@@ -66,9 +66,10 @@ export const createThemedStyles = (theme: any) => ({
   surface: theme?.colors?.surface || colors.empregado.surface,
   text: theme?.colors?.text || colors.empregado.text,
   textSecondary: theme?.colors?.textSecondary || colors.empregado.textSecondary,
-  textOnPrimary: theme?.colors?.text?.onPrimary || 
-                 theme?.colors?.surface || 
-                 colors.empregado.background,
+  textOnPrimary:
+    theme?.colors?.text?.onPrimary ||
+    theme?.colors?.surface ||
+    colors.empregado.background,
   border: theme?.colors?.border || colors.empregado.border,
   shadow: theme?.colors?.shadow || colors.empregado.shadow,
 

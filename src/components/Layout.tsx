@@ -40,18 +40,25 @@ const Sidebar = styled.nav<{ $collapsed: boolean; $theme?: any }>`
     props.$theme?.colors?.surface ||
     props.$theme?.colors?.background ||
     'transparent'};
-  border-right: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border-right: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   display: flex;
   flex-direction: column;
   transition: width 0.3s ease;
 `;
 
-const SidebarHeader = styled.div<{ bg: string; $collapsed: boolean; $theme?: any }>`
+const SidebarHeader = styled.div<{
+  bg: string;
+  $collapsed: boolean;
+  $theme?: any;
+}>`
   background: ${p => p.bg};
   color: ${props =>
     props.$theme?.colors?.text?.onPrimary ||
@@ -76,20 +83,24 @@ const SidebarContent = styled.div`
   padding: 1rem 0;
 `;
 
-const MenuItem = styled.a<{ $active: boolean; $collapsed: boolean; $theme?: any }>`
+const MenuItem = styled.a<{
+  $active: boolean;
+  $collapsed: boolean;
+  $theme?: any;
+}>`
   display: flex;
   align-items: center;
   padding: 0.6rem 1rem;
   color: ${p => {
     if (p.$active) {
-      return p.$theme?.colors?.primary ||
-             p.$theme?.accent ||
-             'inherit';
+      return p.$theme?.colors?.primary || p.$theme?.accent || 'inherit';
     }
-    return p.$theme?.colors?.text?.primary ||
-           p.$theme?.text?.primary ||
-           p.$theme?.colors?.text ||
-           'inherit';
+    return (
+      p.$theme?.colors?.text?.primary ||
+      p.$theme?.text?.primary ||
+      p.$theme?.colors?.text ||
+      'inherit'
+    );
   }};
   text-decoration: none;
   font-size: 0.9rem;
@@ -115,12 +126,15 @@ const MenuItem = styled.a<{ $active: boolean; $collapsed: boolean; $theme?: any 
 
 const ProfileSection = styled.div<{ $theme?: any }>`
   padding: 0.75rem 1.5rem;
-  border-top: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border-top: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
 
   .info {
     h1 {
@@ -193,12 +207,15 @@ const Header = styled.header<{ $theme?: any }>`
     props.$theme?.colors?.surface ||
     props.$theme?.colors?.background ||
     'transparent'};
-  border-bottom: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border-bottom: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   padding: 1rem 2rem;
   display: flex;
   align-items: center;
@@ -250,8 +267,8 @@ const ProfileButton = styled.button<{ $backgroundColor: string; $theme?: any }>`
   &:hover {
     transform: translateY(-2px);
     box-shadow: ${props => {
-      const shadowColor = props.$theme?.colors?.shadow ||
-                         props.$theme?.shadow?.color;
+      const shadowColor =
+        props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
       if (shadowColor && shadowColor.startsWith('#')) {
         const r = parseInt(shadowColor.slice(1, 3), 16);
         const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -308,7 +325,11 @@ export default function Layout({
   return (
     <Container>
       <Sidebar $collapsed={collapsed} $theme={theme}>
-        <SidebarHeader bg={selectedProfile.color} $collapsed={collapsed} $theme={theme}>
+        <SidebarHeader
+          bg={selectedProfile.color}
+          $collapsed={collapsed}
+          $theme={theme}
+        >
           <InfoDiv $collapsed={collapsed}>
             <h1>DOM</h1>
           </InfoDiv>

@@ -15,4 +15,3 @@ const LazyTimeClock = dynamic(() => import('../../pages/time-clock'), {
 }) as ComponentType<any>;
 
 export default LazyTimeClock;
-

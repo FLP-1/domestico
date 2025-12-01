@@ -19,6 +19,7 @@
 ### **1. Carregamento de Alertas**
 
 **ANTES:**
+
 ```typescript
 const [alerts, setAlerts] = useState<Alert[]>([]);
 const [loadingAlerts, setLoadingAlerts] = useState(true);
@@ -38,16 +39,19 @@ useEffect(() => {
 ```
 
 **DEPOIS:**
+
 ```typescript
-const { data: alertsData, loading: loadingAlerts, refetch: reloadAlerts } = useDataFetch(
-  () => apiClient.alerts.getAll(),
-  {
-    mapper: (apiData: any[]) => apiData.map((alerta: any) => {
+const {
+  data: alertsData,
+  loading: loadingAlerts,
+  refetch: reloadAlerts,
+} = useDataFetch(() => apiClient.alerts.getAll(), {
+  mapper: (apiData: any[]) =>
+    apiData.map((alerta: any) => {
       // ... mapeamento existente
     }),
-    onError: () => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
-  }
-);
+  onError: () => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
+});
 
 const [alerts, setAlerts] = useState<Alert[]>(alertsData || []);
 useEffect(() => {
@@ -58,6 +62,7 @@ useEffect(() => {
 ### **2. Criar Alerta**
 
 **ANTES:**
+
 ```typescript
 const handleCreateAlert = async (e: React.FormEvent) => {
   // ... validação
@@ -69,6 +74,7 @@ const handleCreateAlert = async (e: React.FormEvent) => {
 ```
 
 **DEPOIS:**
+
 ```typescript
 const { execute: createAlert } = useAsyncOperation({
   onSuccess: () => {
@@ -94,6 +100,7 @@ Similar ao criar, mas usando `apiClient.alerts.update(id, data)`
 ### **4. Toggle Status**
 
 **DEPOIS:**
+
 ```typescript
 const { execute: toggleStatus } = useAsyncOperation({
   onSuccess: () => {
@@ -111,4 +118,3 @@ const handleToggleAlertStatus = (id: string) => {
   });
 };
 ```
-

@@ -1,4 +1,5 @@
 # ✅ CHECKLIST: COMPLETAR ATUALIZAÇÕES NAS PÁGINAS RESTANTES
+
 ## Sistema DOM - Plano de Ação Detalhado
 
 **Data:** Janeiro 2025  
@@ -171,15 +172,15 @@
 
 ### **Termos a Buscar e Substituir:**
 
-| Termo Antigo (Remover) | Termo Novo (Adicionar) |
-|----------------------|------------------------|
-| "Integração automática" | "Ferramentas auxiliares" |
-| "Automatize eSocial" | "Facilite o eSocial" |
-| "Envio automático" | "Preparação de dados" |
-| "Conexão automática" | "Suporte ao processo" |
-| "API Real do eSocial" | "Templates e cálculos para eSocial" |
-| "Integração com eSocial" | "Ferramentas para eSocial" |
-| "Conectado" (badge verde) | "Ferramentas Disponíveis" |
+| Termo Antigo (Remover)    | Termo Novo (Adicionar)              |
+| ------------------------- | ----------------------------------- |
+| "Integração automática"   | "Ferramentas auxiliares"            |
+| "Automatize eSocial"      | "Facilite o eSocial"                |
+| "Envio automático"        | "Preparação de dados"               |
+| "Conexão automática"      | "Suporte ao processo"               |
+| "API Real do eSocial"     | "Templates e cálculos para eSocial" |
+| "Integração com eSocial"  | "Ferramentas para eSocial"          |
+| "Conectado" (badge verde) | "Ferramentas Disponíveis"           |
 
 ---
 
@@ -273,4 +274,3 @@
 
 **Última atualização:** Janeiro 2025  
 **Status:** ⏳ **CHECKLIST CRIADO - PRONTO PARA EXECUÇÃO**
-

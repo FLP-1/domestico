@@ -60,4 +60,3 @@ Para identificar o erro `f.div.withConfig.withConfig.b`, é necessário:
 4. Corrigir erros de JSX
 5. Executar build novamente para chegar à fase de prerendering
 6. Capturar e analisar o erro `withConfig.withConfig.b` quando aparecer
-

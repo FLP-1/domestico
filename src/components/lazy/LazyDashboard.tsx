@@ -15,4 +15,3 @@ const LazyDashboard = dynamic(() => import('../../pages/dashboard'), {
 }) as ComponentType<any>;
 
 export default LazyDashboard;
-

@@ -4,7 +4,7 @@ import styled, { keyframes } from 'styled-components';
 // Função para gerar keyframes dinamicamente baseado no tema
 const createSuccessPulse = (theme?: any) => {
   const primaryColor = theme?.colors?.primary || theme?.accent;
-  
+
   // Se não houver tema, usar shadow do tema ou transparent
   if (!primaryColor) {
     return keyframes`
@@ -22,9 +22,11 @@ const createSuccessPulse = (theme?: any) => {
       }
     `;
   }
-  
-  let r = 0, g = 0, b = 0;
-  
+
+  let r = 0,
+    g = 0,
+    b = 0;
+
   if (primaryColor.startsWith('#')) {
     r = parseInt(primaryColor.slice(1, 3), 16);
     g = parseInt(primaryColor.slice(3, 5), 16);
@@ -37,7 +39,7 @@ const createSuccessPulse = (theme?: any) => {
       b = parseInt(match[3], 10);
     }
   }
-  
+
   return keyframes`
     0% {
       transform: scale(1);
@@ -84,24 +86,26 @@ const ButtonContainer = styled.button<{
   border: none;
   background: ${props => {
     if (props.$isClockedIn) {
-      const errorColor = props.$theme?.colors?.status?.error?.background ||
-                        props.$theme?.status?.error?.background ||
-                        props.$theme?.colors?.error ||
-                        props.$theme?.colors?.accent ||
-                        'transparent';
-      const errorDark = props.$theme?.colors?.status?.error?.dark ||
-                       props.$theme?.status?.error?.dark ||
-                       props.$theme?.colors?.error ||
-                       errorColor;
+      const errorColor =
+        props.$theme?.colors?.status?.error?.background ||
+        props.$theme?.status?.error?.background ||
+        props.$theme?.colors?.error ||
+        props.$theme?.colors?.accent ||
+        'transparent';
+      const errorDark =
+        props.$theme?.colors?.status?.error?.dark ||
+        props.$theme?.status?.error?.dark ||
+        props.$theme?.colors?.error ||
+        errorColor;
       return `linear-gradient(135deg, ${errorColor}, ${errorDark})`;
     }
-    
+
     const primaryColor = props.$theme?.colors?.primary || 'transparent';
     const secondaryColor = props.$theme?.colors?.secondary || primaryColor;
     return `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`;
   }};
-  color: ${props => 
-    props.$theme?.colors?.text?.primary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
     props.$theme?.text?.primary ||
     props.$theme?.colors?.text ||
     props.$theme?.colors?.surface ||
@@ -212,11 +216,12 @@ const ButtonContainer = styled.button<{
       90deg,
       transparent,
       ${props => {
-        const textColor = props.$theme?.colors?.text?.primary || 
-                         props.$theme?.text?.primary ||
-                         props.$theme?.colors?.text ||
-                         props.$theme?.colors?.surface ||
-                         'currentColor';
+        const textColor =
+          props.$theme?.colors?.text?.primary ||
+          props.$theme?.text?.primary ||
+          props.$theme?.colors?.text ||
+          props.$theme?.colors?.surface ||
+          'currentColor';
         // Adiciona opacidade à cor
         if (textColor && textColor.startsWith('#')) {
           const r = parseInt(textColor.slice(1, 3), 16);

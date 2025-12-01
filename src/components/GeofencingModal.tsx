@@ -27,8 +27,8 @@ const ModalOverlay = styled.div<{ isOpen: boolean; $theme?: any }>`
   right: 0;
   bottom: 0;
   background-color: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -44,11 +44,10 @@ const ModalOverlay = styled.div<{ isOpen: boolean; $theme?: any }>`
 `;
 
 const ModalContent = styled.div<{ $theme?: any }>`
-  background: ${props => 
-    props.$theme?.colors?.background?.primary || 
-    props.$theme?.background?.primary || 
-    'transparent'
-  };
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
+    props.$theme?.background?.primary ||
+    'transparent'};
   border-radius: 12px;
   padding: 24px;
   max-width: 500px;
@@ -56,8 +55,8 @@ const ModalContent = styled.div<{ $theme?: any }>`
   max-height: 80vh;
   overflow-y: auto;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -74,21 +73,18 @@ const ModalHeader = styled.div<{ $theme?: any }>`
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid ${props => 
-    props.$theme?.colors?.border?.light || 
-    props.$theme?.border?.light || 
-    'transparent'
-  };
+  border-bottom: 1px solid
+    ${props =>
+      props.$theme?.colors?.border?.light ||
+      props.$theme?.border?.light ||
+      'transparent'};
 `;
 
 const ModalTitle = styled.h2<{ $theme?: any }>`
   font-size: 1.5rem;
   font-weight: 600;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark || 
-    'inherit'
-  };
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
   margin: 0;
 `;
 
@@ -97,55 +93,50 @@ const CloseButton = styled.button<{ $theme?: any }>`
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
-    props.$theme?.text?.secondary || 
-    'inherit'
-  };
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    'inherit'};
   padding: 4px;
 
   &:hover {
-    color: ${props => 
-      props.$theme?.colors?.text?.primary || 
-      props.$theme?.text?.primary || 
-      'inherit'
-    };
+    color: ${props =>
+      props.$theme?.colors?.text?.primary ||
+      props.$theme?.text?.primary ||
+      'inherit'};
   }
 `;
 
 const AlertBox = styled.div<{ $theme?: any }>`
-  background-color: ${props => 
-    props.$theme?.colors?.status?.warning?.background || 
-    props.$theme?.status?.warning?.background || 
-    'transparent'
-  };
-  border: 1px solid ${props => 
-    props.$theme?.colors?.status?.warning?.border || 
-    props.$theme?.status?.warning?.border || 
-    'transparent'
-  };
+  background-color: ${props =>
+    props.$theme?.colors?.status?.warning?.background ||
+    props.$theme?.status?.warning?.background ||
+    'transparent'};
+  border: 1px solid
+    ${props =>
+      props.$theme?.colors?.status?.warning?.border ||
+      props.$theme?.status?.warning?.border ||
+      'transparent'};
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 20px;
 `;
 
 const AlertTitle = styled.h3<{ $theme?: any }>`
-  color: ${props => 
-    props.$theme?.colors?.status?.warning?.text || 
-    props.$theme?.status?.warning?.text || 
-    'inherit'
-  };
+  color: ${props =>
+    props.$theme?.colors?.status?.warning?.text ||
+    props.$theme?.status?.warning?.text ||
+    'inherit'};
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0 0 8px 0;
 `;
 
 const AlertText = styled.p<{ $theme?: any }>`
-  color: ${props => 
-    props.$theme?.colors?.status?.warning?.text || 
-    props.$theme?.status?.warning?.text || 
-    'inherit'
-  };
+  color: ${props =>
+    props.$theme?.colors?.status?.warning?.text ||
+    props.$theme?.status?.warning?.text ||
+    'inherit'};
   margin: 0;
   font-size: 0.95rem;
 `;
@@ -158,38 +149,33 @@ const InfoGrid = styled.div<{ $theme?: any }>`
 `;
 
 const InfoItem = styled.div<{ $theme?: any }>`
-  background-color: ${props => 
-    props.$theme?.colors?.background?.secondary || 
-    props.$theme?.background?.secondary || 
-    'transparent'
-  };
+  background-color: ${props =>
+    props.$theme?.colors?.background?.secondary ||
+    props.$theme?.background?.secondary ||
+    'transparent'};
   padding: 12px;
   border-radius: 6px;
-  border: 1px solid ${props => 
-    props.$theme?.colors?.border?.light || 
-    props.$theme?.border?.light || 
-    'transparent'
-  };
+  border: 1px solid
+    ${props =>
+      props.$theme?.colors?.border?.light ||
+      props.$theme?.border?.light ||
+      'transparent'};
 `;
 
 const InfoLabel = styled.div<{ $theme?: any }>`
   font-size: 0.875rem;
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
-    props.$theme?.text?.secondary || 
-    'inherit'
-  };
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    'inherit'};
   font-weight: 500;
   margin-bottom: 4px;
 `;
 
 const InfoValue = styled.div<{ $theme?: any }>`
   font-size: 1rem;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark || 
-    'inherit'
-  };
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
   font-weight: 600;
 `;
 
@@ -201,11 +187,8 @@ const JustificativaLabel = styled.label<{ $theme?: any }>`
   display: block;
   font-size: 1rem;
   font-weight: 600;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark || 
-    'inherit'
-  };
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
   margin-bottom: 8px;
 `;
 
@@ -213,42 +196,37 @@ const JustificativaTextarea = styled.textarea<{ $theme?: any }>`
   width: 100%;
   min-height: 100px;
   padding: 12px;
-  border: 1px solid ${props => 
-    props.$theme?.colors?.border?.light || 
-    props.$theme?.border?.light || 
-    'transparent'
-  };
+  border: 1px solid
+    ${props =>
+      props.$theme?.colors?.border?.light ||
+      props.$theme?.border?.light ||
+      'transparent'};
   border-radius: 6px;
   font-size: 0.95rem;
   resize: vertical;
-  background: ${props => 
-    props.$theme?.colors?.background?.primary || 
-    props.$theme?.background?.primary || 
-    'transparent'
-  };
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark || 
-    'inherit'
-  };
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
+    props.$theme?.background?.primary ||
+    'transparent'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
 
   &:focus {
     outline: none;
-    border-color: ${props => 
-      props.$theme?.colors?.primary || 
-      props.$theme?.accent || 
-      'transparent'
-    };
-    box-shadow: 0 0 0 3px ${props => {
-      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
-      if (primaryColor && primaryColor.startsWith('#')) {
-        const r = parseInt(primaryColor.slice(1, 3), 16);
-        const g = parseInt(primaryColor.slice(3, 5), 16);
-        const b = parseInt(primaryColor.slice(5, 7), 16);
-        return `rgba(${r}, ${g}, ${b}, 0.1)`;
-      }
-      return 'transparent';
-    }};
+    border-color: ${props =>
+      props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'};
+    box-shadow: 0 0 0 3px
+      ${props => {
+        const primaryColor =
+          props.$theme?.colors?.primary || props.$theme?.accent;
+        if (primaryColor && primaryColor.startsWith('#')) {
+          const r = parseInt(primaryColor.slice(1, 3), 16);
+          const g = parseInt(primaryColor.slice(3, 5), 16);
+          const b = parseInt(primaryColor.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, 0.1)`;
+        }
+        return 'transparent';
+      }};
   }
 `;
 
@@ -258,7 +236,10 @@ const ButtonGroup = styled.div<{ $theme?: any }>`
   justify-content: flex-end;
 `;
 
-const Button = styled.button<{ variant: 'primary' | 'secondary'; $theme?: any }>`
+const Button = styled.button<{
+  variant: 'primary' | 'secondary';
+  $theme?: any;
+}>`
   padding: 12px 24px;
   border-radius: 6px;
   font-size: 1rem;
@@ -375,7 +356,9 @@ const GeofencingModal: React.FC<GeofencingModalProps> = ({
               </span>{' '}
               Precisão
             </InfoLabel>
-            <InfoValue $theme={theme}>{Math.round(coordenadas.precisao)}m</InfoValue>
+            <InfoValue $theme={theme}>
+              {Math.round(coordenadas.precisao)}m
+            </InfoValue>
           </InfoItem>
 
           <InfoItem $theme={theme}>

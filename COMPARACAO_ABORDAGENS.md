@@ -49,4 +49,3 @@ Qualidade: ✅✅✅ Excelente
 **Ambas são excelentes!**
 
 A diferença é apenas no padrão mais repetitivo (console statements). Se você preferir manter controle total em tudo, a abordagem pura é perfeita!
-

@@ -3,6 +3,7 @@
 ## 🎯 OBJETIVO ALCANÇADO
 
 Todos os valores hardcoded foram **ELIMINADOS** dos arquivos:
+
 - ✅ `src/pages/shopping-management.tsx`
 - ✅ `src/pages/communication.tsx`
 
@@ -11,7 +12,9 @@ Todos os valores hardcoded foram **ELIMINADOS** dos arquivos:
 ## 📊 O QUE FOI ELIMINADO
 
 ### **1. Espaçamento Hardcoded**
+
 **ANTES:**
+
 ```typescript
 gap: 1rem;
 margin-top: 2rem;
@@ -20,6 +23,7 @@ margin-bottom: 1.5rem;
 ```
 
 **DEPOIS:**
+
 ```typescript
 gap: ${getSpacing('md')};
 margin-top: ${getSpacing('xl')};
@@ -32,7 +36,9 @@ margin-bottom: ${getSpacing('lg')};
 ---
 
 ### **2. Font-size Hardcoded**
+
 **ANTES:**
+
 ```typescript
 font-size: 1.1rem;
 font-size: 0.9rem;
@@ -41,6 +47,7 @@ font-size: 2rem;
 ```
 
 **DEPOIS:**
+
 ```typescript
 font-size: ${getFontSize('lg')};
 font-size: ${getFontSize('sm')};
@@ -53,13 +60,16 @@ font-size: ${getSpacing('xl')}; // Para ícones
 ---
 
 ### **3. Border-radius Hardcoded**
+
 **ANTES:**
+
 ```typescript
 border-radius: 8px;
 borderRadius: '8px';
 ```
 
 **DEPOIS:**
+
 ```typescript
 border-radius: ${getBorderRadius('md')};
 ```
@@ -69,7 +79,9 @@ border-radius: ${getBorderRadius('md')};
 ---
 
 ### **4. Inline Styles Hardcoded**
+
 **ANTES:**
+
 ```typescript
 <h3 style={{ margin: '0 0 1rem 0', color: ... }}>
 <p style={{ margin: '0.5rem 0', fontSize: '0.9rem' }}>
@@ -78,6 +90,7 @@ border-radius: ${getBorderRadius('md')};
 ```
 
 **DEPOIS:**
+
 ```typescript
 <EstoqueSectionTitle $theme={theme}>
 <ListaDescricao $theme={theme}>
@@ -88,6 +101,7 @@ border-radius: ${getBorderRadius('md')};
 **Total eliminado:** ~13 ocorrências
 
 **Novos styled-components criados:**
+
 - `EstoqueSectionTitle`
 - `ListaDescricao`
 - `ModalActions`
@@ -105,7 +119,9 @@ border-radius: ${getBorderRadius('md')};
 ---
 
 ### **5. Cores Hardcoded em Fallbacks**
+
 **ANTES:**
+
 ```typescript
 background: ${props => getThemeColor(props.$theme, 'background.secondary', '#f5f5f5')};
 background: ${props => getThemeColor(props.$theme, 'background.primary', '#ffffff')};
@@ -116,6 +132,7 @@ background: ${props => getThemeColor(props.$theme, 'status.success.background', 
 ```
 
 **DEPOIS:**
+
 ```typescript
 background: ${props => getThemeColor(props.$theme, 'background.secondary', tokens.colors.surface.secondary)};
 background: ${props => getThemeColor(props.$theme, 'background.primary', tokens.colors.surface.primary)};
@@ -132,6 +149,7 @@ background: ${props => getThemeColor(props.$theme, 'status.success.background', 
 ## 📈 ESTATÍSTICAS FINAIS
 
 ### **shopping-management.tsx:**
+
 - ✅ Espaçamento: **15 ocorrências** eliminadas
 - ✅ Font-size: **5 ocorrências** eliminadas
 - ✅ Border-radius: **2 ocorrências** eliminadas
@@ -140,6 +158,7 @@ background: ${props => getThemeColor(props.$theme, 'status.success.background', 
 - ✅ **Total: 41 valores hardcoded eliminados**
 
 ### **communication.tsx:**
+
 - ✅ Espaçamento: **8 ocorrências** eliminadas
 - ✅ Font-size: **4 ocorrências** eliminadas
 - ✅ Border-radius: **0 ocorrências** (já estava correto)
@@ -152,7 +171,12 @@ background: ${props => getThemeColor(props.$theme, 'status.success.background', 
 ## 🎨 IMPORTS ADICIONADOS
 
 ```typescript
-import { tokens, getSpacing, getFontSize, getBorderRadius } from '../components/shared/tokens';
+import {
+  tokens,
+  getSpacing,
+  getFontSize,
+  getBorderRadius,
+} from '../components/shared/tokens';
 ```
 
 ---
@@ -208,4 +232,3 @@ grep -r "#[0-9a-fA-F]\{3,6\}" src/pages/shopping-management.tsx
 **Status:** ✅ **100% ELIMINADO**
 
 Todos os valores hardcoded foram substituídos por tokens centralizados do sistema de design. O código agora está completamente alinhado com o sistema de tokens e pronto para manutenção e escalabilidade.
-

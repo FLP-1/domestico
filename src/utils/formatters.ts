@@ -134,4 +134,3 @@ export const formatTimeWithSeconds = (date: Date | string): string => {
 export const formatDateISO = (date: Date | string): string => {
   return new Date(date).toISOString().split('T')[0];
 };
-

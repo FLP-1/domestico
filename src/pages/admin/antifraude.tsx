@@ -47,8 +47,8 @@ const StatCard = styled.div<{
   variant?: 'success' | 'warning' | 'danger' | 'info';
   $theme?: any;
 }>`
-  background: ${props => 
-    props.$theme?.colors?.background?.primary || 
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
     props.$theme?.background?.primary ||
     'transparent'};
   border-radius: 12px;
@@ -67,33 +67,43 @@ const StatCard = styled.div<{
     ${props => {
       switch (props.variant) {
         case 'success':
-          return props.$theme?.colors?.status?.success?.border ||
-                 props.$theme?.status?.success?.border ||
-                 'transparent';
+          return (
+            props.$theme?.colors?.status?.success?.border ||
+            props.$theme?.status?.success?.border ||
+            'transparent'
+          );
         case 'warning':
-          return props.$theme?.colors?.status?.warning?.border ||
-                 props.$theme?.status?.warning?.border ||
-                 'transparent';
+          return (
+            props.$theme?.colors?.status?.warning?.border ||
+            props.$theme?.status?.warning?.border ||
+            'transparent'
+          );
         case 'danger':
-          return props.$theme?.colors?.status?.error?.border ||
-                 props.$theme?.status?.error?.border ||
-                 'transparent';
+          return (
+            props.$theme?.colors?.status?.error?.border ||
+            props.$theme?.status?.error?.border ||
+            'transparent'
+          );
         case 'info':
-          return props.$theme?.colors?.status?.info?.border ||
-                 props.$theme?.status?.info?.border ||
-                 'transparent';
+          return (
+            props.$theme?.colors?.status?.info?.border ||
+            props.$theme?.status?.info?.border ||
+            'transparent'
+          );
         default:
-          return props.$theme?.colors?.border?.light || 
-                 props.$theme?.border?.light ||
-                 'transparent';
+          return (
+            props.$theme?.colors?.border?.light ||
+            props.$theme?.border?.light ||
+            'transparent'
+          );
       }
     }};
 `;
 
 const StatLabel = styled.div<{ $theme?: any }>`
   font-size: 0.875rem;
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
     'inherit'};
   margin-bottom: 0.5rem;
@@ -104,24 +114,22 @@ const StatLabel = styled.div<{ $theme?: any }>`
 const StatValue = styled.div<{ $theme?: any }>`
   font-size: 2rem;
   font-weight: 700;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
-    'inherit'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
 `;
 
 const StatSubtext = styled.div<{ $theme?: any }>`
   font-size: 0.75rem;
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
     'inherit'};
   margin-top: 0.25rem;
 `;
 
 const Section = styled.div<{ $theme?: any }>`
-  background: ${props => 
-    props.$theme?.colors?.background?.primary || 
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
     props.$theme?.background?.primary ||
     'transparent'};
   border-radius: 12px;
@@ -154,33 +162,31 @@ const Table = styled.table<{ $theme?: any }>`
 const Th = styled.th<{ $theme?: any }>`
   text-align: left;
   padding: 0.75rem;
-  background: ${props => 
-    props.$theme?.colors?.background?.secondary || 
+  background: ${props =>
+    props.$theme?.colors?.background?.secondary ||
     props.$theme?.background?.secondary ||
     'transparent'};
-  border-bottom: 2px solid ${props => 
-    props.$theme?.colors?.border?.light || 
-    props.$theme?.border?.light ||
-    'transparent'};
+  border-bottom: 2px solid
+    ${props =>
+      props.$theme?.colors?.border?.light ||
+      props.$theme?.border?.light ||
+      'transparent'};
   font-size: 0.875rem;
   font-weight: 600;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
-    'inherit'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
 `;
 
 const Td = styled.td<{ $theme?: any }>`
   padding: 0.75rem;
-  border-bottom: 1px solid ${props => 
-    props.$theme?.colors?.border?.light || 
-    props.$theme?.border?.light ||
-    'transparent'};
+  border-bottom: 1px solid
+    ${props =>
+      props.$theme?.colors?.border?.light ||
+      props.$theme?.border?.light ||
+      'transparent'};
   font-size: 0.875rem;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
-    'inherit'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
 `;
 
 const Badge = styled.span<{
@@ -195,49 +201,69 @@ const Badge = styled.span<{
   background: ${props => {
     switch (props.variant) {
       case 'success':
-        return props.$theme?.colors?.status?.success?.background ||
-               props.$theme?.status?.success?.background ||
-               'transparent';
+        return (
+          props.$theme?.colors?.status?.success?.background ||
+          props.$theme?.status?.success?.background ||
+          'transparent'
+        );
       case 'warning':
-        return props.$theme?.colors?.status?.warning?.background ||
-               props.$theme?.status?.warning?.background ||
-               'transparent';
+        return (
+          props.$theme?.colors?.status?.warning?.background ||
+          props.$theme?.status?.warning?.background ||
+          'transparent'
+        );
       case 'danger':
-        return props.$theme?.colors?.status?.error?.background ||
-               props.$theme?.status?.error?.background ||
-               'transparent';
+        return (
+          props.$theme?.colors?.status?.error?.background ||
+          props.$theme?.status?.error?.background ||
+          'transparent'
+        );
       case 'info':
-        return props.$theme?.colors?.status?.info?.background ||
-               props.$theme?.status?.info?.background ||
-               'transparent';
+        return (
+          props.$theme?.colors?.status?.info?.background ||
+          props.$theme?.status?.info?.background ||
+          'transparent'
+        );
       default:
-        return props.$theme?.colors?.background?.secondary || 
-               props.$theme?.background?.secondary ||
-               'transparent';
+        return (
+          props.$theme?.colors?.background?.secondary ||
+          props.$theme?.background?.secondary ||
+          'transparent'
+        );
     }
   }};
   color: ${props => {
     switch (props.variant) {
       case 'success':
-        return props.$theme?.colors?.status?.success?.text ||
-               props.$theme?.status?.success?.text ||
-               'inherit';
+        return (
+          props.$theme?.colors?.status?.success?.text ||
+          props.$theme?.status?.success?.text ||
+          'inherit'
+        );
       case 'warning':
-        return props.$theme?.colors?.status?.warning?.text ||
-               props.$theme?.status?.warning?.text ||
-               'inherit';
+        return (
+          props.$theme?.colors?.status?.warning?.text ||
+          props.$theme?.status?.warning?.text ||
+          'inherit'
+        );
       case 'danger':
-        return props.$theme?.colors?.status?.error?.text ||
-               props.$theme?.status?.error?.text ||
-               'inherit';
+        return (
+          props.$theme?.colors?.status?.error?.text ||
+          props.$theme?.status?.error?.text ||
+          'inherit'
+        );
       case 'info':
-        return props.$theme?.colors?.status?.info?.text ||
-               props.$theme?.status?.info?.text ||
-               'inherit';
+        return (
+          props.$theme?.colors?.status?.info?.text ||
+          props.$theme?.status?.info?.text ||
+          'inherit'
+        );
       default:
-        return props.$theme?.colors?.text?.dark || 
-               props.$theme?.text?.dark ||
-               'inherit';
+        return (
+          props.$theme?.colors?.text?.dark ||
+          props.$theme?.text?.dark ||
+          'inherit'
+        );
     }
   }};
 `;
@@ -250,11 +276,11 @@ const LoadingContainer = styled.div`
 `;
 
 const ErrorContainer = styled.div<{ $theme?: any }>`
-  background: ${props => 
+  background: ${props =>
     props.$theme?.colors?.status?.error?.background ||
     props.$theme?.status?.error?.background ||
     'transparent'};
-  color: ${props => 
+  color: ${props =>
     props.$theme?.colors?.status?.error?.text ||
     props.$theme?.status?.error?.text ||
     'inherit'};
@@ -443,7 +469,9 @@ export default function AntifaudeDashboard() {
         </StatsGrid>
 
         <Section $theme={theme}>
-          <SectionTitle $theme={theme}>Distribuição por Nível de Risco</SectionTitle>
+          <SectionTitle $theme={theme}>
+            Distribuição por Nível de Risco
+          </SectionTitle>
           <Table $theme={theme}>
             <thead>
               <tr>
@@ -468,7 +496,9 @@ export default function AntifaudeDashboard() {
                 return (
                   <tr key={item.nivel}>
                     <Td $theme={theme}>
-                      <Badge variant={variant} $theme={theme}>{item.nivel}</Badge>
+                      <Badge variant={variant} $theme={theme}>
+                        {item.nivel}
+                      </Badge>
                     </Td>
                     <Td $theme={theme}>{item.quantidade.toLocaleString()}</Td>
                     <Td $theme={theme}>{porcentagem}%</Td>
@@ -500,20 +530,36 @@ export default function AntifaudeDashboard() {
                   </Td>
                   <Td $theme={theme}>{ip.vezesVisto.toLocaleString()}</Td>
                   <Td $theme={theme}>
-                    {ip.isVPN && <Badge variant='warning' $theme={theme}>VPN</Badge>}
-                    {ip.isProxy && <Badge variant='warning' $theme={theme}>Proxy</Badge>}
+                    {ip.isVPN && (
+                      <Badge variant='warning' $theme={theme}>
+                        VPN
+                      </Badge>
+                    )}
+                    {ip.isProxy && (
+                      <Badge variant='warning' $theme={theme}>
+                        Proxy
+                      </Badge>
+                    )}
                     {ip.isDatacenter && (
-                      <Badge variant='info' $theme={theme}>Datacenter</Badge>
+                      <Badge variant='info' $theme={theme}>
+                        Datacenter
+                      </Badge>
                     )}
                     {!ip.isVPN && !ip.isProxy && !ip.isDatacenter && (
-                      <Badge variant='success' $theme={theme}>Normal</Badge>
+                      <Badge variant='success' $theme={theme}>
+                        Normal
+                      </Badge>
                     )}
                   </Td>
                   <Td $theme={theme}>
                     {ip.bloqueado ? (
-                      <Badge variant='danger' $theme={theme}>Bloqueado</Badge>
+                      <Badge variant='danger' $theme={theme}>
+                        Bloqueado
+                      </Badge>
                     ) : (
-                      <Badge variant='success' $theme={theme}>Permitido</Badge>
+                      <Badge variant='success' $theme={theme}>
+                        Permitido
+                      </Badge>
                     )}
                   </Td>
                 </tr>

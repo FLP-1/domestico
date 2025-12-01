@@ -32,6 +32,7 @@ if (distancia > 100) {
 ### 2. **Logs de Debug Adicionados**
 
 **Arquivos modificados:**
+
 - `src/pages/api/geocoding/reverse.ts` - Log das coordenadas recebidas
 - `src/hooks/useSmartGeolocation.ts` - Log das coordenadas capturadas
 
@@ -76,6 +77,7 @@ Ao capturar geolocalização, verifique os logs:
 ### 2. Verificar se Coordenadas Mudaram
 
 Se você mudou de local mas as coordenadas não mudaram, o problema pode ser:
+
 - GPS do dispositivo não está conseguindo precisão suficiente
 - Cache do navegador
 - Permissões de geolocalização
@@ -83,6 +85,7 @@ Se você mudou de local mas as coordenadas não mudaram, o problema pode ser:
 ### 3. Verificar Endereço Retornado
 
 Compare o endereço retornado pelo geocoding com o local real:
+
 - Se o endereço está errado mas as coordenadas estão corretas → problema no geocoding
 - Se as coordenadas estão erradas → problema na captura do GPS
 
@@ -108,4 +111,3 @@ Compare o endereço retornado pelo geocoding com o local real:
 3. ✅ **Verificar logs** para ver coordenadas exatas
 4. ✅ **Comparar com Google Maps** para validar coordenadas
 5. ✅ **Testar em dispositivo móvel** (GPS geralmente melhor que desktop)
-

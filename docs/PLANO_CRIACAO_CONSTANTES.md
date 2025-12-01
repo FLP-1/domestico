@@ -15,7 +15,7 @@ Centralizar todas as constantes duplicadas encontradas no código para melhorar 
 ```typescript
 /**
  * 📋 Status de Solicitações de Hora Extra Centralizados
- * 
+ *
  * Centraliza todos os status possíveis para solicitações de hora extra.
  */
 
@@ -25,12 +25,15 @@ export const OVERTIME_REQUEST_STATUSES = {
   REJECTED: 'REJEITADA',
 } as const;
 
-export type OvertimeRequestStatus = typeof OVERTIME_REQUEST_STATUSES[keyof typeof OVERTIME_REQUEST_STATUSES];
+export type OvertimeRequestStatus =
+  (typeof OVERTIME_REQUEST_STATUSES)[keyof typeof OVERTIME_REQUEST_STATUSES];
 
 /**
  * Obter label em português para um status
  */
-export function getOvertimeRequestStatusLabel(status: OvertimeRequestStatus): string {
+export function getOvertimeRequestStatusLabel(
+  status: OvertimeRequestStatus
+): string {
   switch (status) {
     case OVERTIME_REQUEST_STATUSES.PENDING:
       return 'Pendente';
@@ -46,12 +49,17 @@ export function getOvertimeRequestStatusLabel(status: OvertimeRequestStatus): st
 /**
  * Verificar se um status é válido
  */
-export function isValidOvertimeRequestStatus(status: string): status is OvertimeRequestStatus {
-  return Object.values(OVERTIME_REQUEST_STATUSES).includes(status as OvertimeRequestStatus);
+export function isValidOvertimeRequestStatus(
+  status: string
+): status is OvertimeRequestStatus {
+  return Object.values(OVERTIME_REQUEST_STATUSES).includes(
+    status as OvertimeRequestStatus
+  );
 }
 ```
 
 **Arquivos a migrar:**
+
 - `src/pages/time-clock.tsx`
 
 ---
@@ -63,7 +71,7 @@ export function isValidOvertimeRequestStatus(status: string): status is Overtime
 ```typescript
 /**
  * 📋 Status de eSocial Centralizados
- * 
+ *
  * Centraliza todos os status possíveis para eventos do eSocial.
  */
 
@@ -73,7 +81,8 @@ export const ESOCIAL_STATUSES = {
   SENT: 'ENVIADO',
 } as const;
 
-export type ESocialStatus = typeof ESOCIAL_STATUSES[keyof typeof ESOCIAL_STATUSES];
+export type ESocialStatus =
+  (typeof ESOCIAL_STATUSES)[keyof typeof ESOCIAL_STATUSES];
 
 /**
  * Obter label em português para um status
@@ -100,6 +109,7 @@ export function isValidESocialStatus(status: string): status is ESocialStatus {
 ```
 
 **Arquivos a migrar:**
+
 - `src/pages/esocial-domestico-completo.tsx`
 
 ---
@@ -111,7 +121,7 @@ export function isValidESocialStatus(status: string): status is ESocialStatus {
 ```typescript
 /**
  * 📋 Status de Pagamentos Centralizados
- * 
+ *
  * Centraliza todos os status possíveis para pagamentos.
  */
 
@@ -121,7 +131,8 @@ export const PAYMENT_STATUSES = {
   OVERDUE: 'VENCIDO',
 } as const;
 
-export type PaymentStatus = typeof PAYMENT_STATUSES[keyof typeof PAYMENT_STATUSES];
+export type PaymentStatus =
+  (typeof PAYMENT_STATUSES)[keyof typeof PAYMENT_STATUSES];
 
 /**
  * Obter label em português para um status
@@ -148,6 +159,7 @@ export function isValidPaymentStatus(status: string): status is PaymentStatus {
 ```
 
 **Arquivos a migrar:**
+
 - `src/pages/esocial-domestico-completo.tsx`
 
 ---
@@ -159,7 +171,7 @@ export function isValidPaymentStatus(status: string): status is PaymentStatus {
 ```typescript
 /**
  * 📋 Status de Tarefas Centralizados
- * 
+ *
  * Centraliza todos os status possíveis para tarefas.
  */
 
@@ -169,7 +181,7 @@ export const TASK_STATUSES = {
   COMPLETED: 'completed',
 } as const;
 
-export type TaskStatus = typeof TASK_STATUSES[keyof typeof TASK_STATUSES];
+export type TaskStatus = (typeof TASK_STATUSES)[keyof typeof TASK_STATUSES];
 
 /**
  * Obter label em português para um status
@@ -196,6 +208,7 @@ export function isValidTaskStatus(status: string): status is TaskStatus {
 ```
 
 **Arquivos a migrar:**
+
 - `src/pages/task-management.tsx`
 
 ---
@@ -207,7 +220,7 @@ export function isValidTaskStatus(status: string): status is TaskStatus {
 ```typescript
 /**
  * 📋 Prioridades de Tarefas Centralizadas
- * 
+ *
  * Centraliza todas as prioridades possíveis para tarefas.
  */
 
@@ -217,7 +230,8 @@ export const TASK_PRIORITIES = {
   LOW: 'low',
 } as const;
 
-export type TaskPriority = typeof TASK_PRIORITIES[keyof typeof TASK_PRIORITIES];
+export type TaskPriority =
+  (typeof TASK_PRIORITIES)[keyof typeof TASK_PRIORITIES];
 
 /**
  * Obter label em português para uma prioridade
@@ -244,6 +258,7 @@ export function isValidTaskPriority(priority: string): type is TaskPriority {
 ```
 
 **Arquivos a migrar:**
+
 - `src/pages/task-management.tsx`
 
 ---
@@ -255,7 +270,7 @@ export function isValidTaskPriority(priority: string): type is TaskPriority {
 ```typescript
 /**
  * 📋 Tipos de Arquivos Permitidos Centralizados
- * 
+ *
  * Centraliza todos os tipos de arquivos permitidos no sistema.
  */
 
@@ -264,35 +279,47 @@ export const ALLOWED_FILE_TYPES = {
    * Extensões de certificados digitais completas
    */
   CERTIFICATES: ['.pfx', '.p12', '.cer', '.crt', '.pem'] as const,
-  
+
   /**
    * Extensões de certificados digitais mínimas (apenas PFX/P12)
    */
   CERTIFICATES_MINIMAL: ['.pfx', '.p12'] as const,
-  
+
   /**
    * Extensões de documentos gerais
    */
   DOCUMENTS: ['.pdf', '.xml', '.json'] as const,
-  
+
   /**
    * Tipos de registros de ponto permitidos
    */
-  TIME_CLOCK_RECORDS: ['entrada', 'saida_almoco', 'retorno_almoco', 'saida', 'inicio_extra'] as const,
+  TIME_CLOCK_RECORDS: [
+    'entrada',
+    'saida_almoco',
+    'retorno_almoco',
+    'saida',
+    'inicio_extra',
+  ] as const,
 } as const;
 
 /**
  * Verificar se uma extensão de arquivo é permitida para certificados
  */
 export function isAllowedCertificateExtension(extension: string): boolean {
-  return ALLOWED_FILE_TYPES.CERTIFICATES.includes(extension.toLowerCase() as any);
+  return ALLOWED_FILE_TYPES.CERTIFICATES.includes(
+    extension.toLowerCase() as any
+  );
 }
 
 /**
  * Verificar se uma extensão de arquivo é permitida para certificados mínimos
  */
-export function isAllowedCertificateMinimalExtension(extension: string): boolean {
-  return ALLOWED_FILE_TYPES.CERTIFICATES_MINIMAL.includes(extension.toLowerCase() as any);
+export function isAllowedCertificateMinimalExtension(
+  extension: string
+): boolean {
+  return ALLOWED_FILE_TYPES.CERTIFICATES_MINIMAL.includes(
+    extension.toLowerCase() as any
+  );
 }
 
 /**
@@ -311,6 +338,7 @@ export function isAllowedTimeClockRecordType(type: string): boolean {
 ```
 
 **Arquivos a migrar:**
+
 - `src/components/CertificateUploadModal.tsx`
 - `src/components/EmployerModal.tsx`
 - `src/components/ProxyUploadModal.tsx`
@@ -321,10 +349,12 @@ export function isAllowedTimeClockRecordType(type: string): boolean {
 ## 📊 **ORDEM DE IMPLEMENTAÇÃO RECOMENDADA**
 
 ### **Fase 1: Alta Prioridade** 🔴
+
 1. ✅ Criar `overtimeRequestStatuses.ts`
 2. ✅ Migrar `time-clock.tsx`
 
 ### **Fase 2: Média Prioridade** 🟡
+
 3. ✅ Criar `esocialStatuses.ts`
 4. ✅ Criar `paymentStatuses.ts`
 5. ✅ Migrar `esocial-domestico-completo.tsx`
@@ -333,6 +363,7 @@ export function isAllowedTimeClockRecordType(type: string): boolean {
 8. ✅ Migrar `task-management.tsx`
 
 ### **Fase 3: Baixa Prioridade** 🟢
+
 9. ✅ Criar `allowedFileTypes.ts`
 10. ✅ Migrar componentes de upload
 
@@ -354,4 +385,3 @@ export function isAllowedTimeClockRecordType(type: string): boolean {
 - **Arquivos a criar:** 6 arquivos
 - **Arquivos a migrar:** ~6 arquivos
 - **Impacto:** 🟡 **MÉDIO** - Melhora qualidade do código
-

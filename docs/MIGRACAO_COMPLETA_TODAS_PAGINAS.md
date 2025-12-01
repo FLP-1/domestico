@@ -11,6 +11,7 @@ Todas as páginas principais foram migradas para usar o API Client centralizado.
 ### **1. alert-management.tsx** ✅
 
 **Funções migradas:**
+
 - ✅ Carregamento de alertas (`useDataFetch`)
 - ✅ Criar alerta (`useAsyncOperation` + `apiClient.alerts.create()`)
 - ✅ Atualizar alerta (`useAsyncOperation` + `apiClient.alerts.update()`)
@@ -24,6 +25,7 @@ Todas as páginas principais foram migradas para usar o API Client centralizado.
 ### **2. time-clock.tsx** ✅
 
 **Funções migradas:**
+
 - ✅ Carregamento de configuração (`apiClient.config.getSystem()`)
 - ✅ Login automático (`apiClient.auth.login()`)
 - ✅ Carregamento de dados do usuário (`apiClient.users.getCurrent()`)
@@ -43,6 +45,7 @@ Todas as páginas principais foram migradas para usar o API Client centralizado.
 ### **3. payroll-management.tsx** ✅
 
 **Funções migradas:**
+
 - ✅ Carregamento de funcionários (`apiClient.users.getAll()`)
 
 **Redução de código:** ~30% (de ~30 para ~20 linhas)
@@ -74,6 +77,7 @@ Todas as páginas principais foram migradas para usar o API Client centralizado.
 ### **1. Carregamento de Dados**
 
 **ANTES:**
+
 ```typescript
 const response = await fetch('/api/endpoint');
 const result = await response.json();
@@ -83,6 +87,7 @@ if (result.success) {
 ```
 
 **DEPOIS:**
+
 ```typescript
 const response = await apiClient.endpoint.get();
 if (response.success && response.data) {
@@ -93,6 +98,7 @@ if (response.success && response.data) {
 ### **2. Operações Assíncronas**
 
 **ANTES:**
+
 ```typescript
 try {
   const response = await fetch('/api/endpoint', {
@@ -110,10 +116,15 @@ try {
 ```
 
 **DEPOIS:**
+
 ```typescript
 const { execute } = useAsyncOperation({
-  onSuccess: () => { /* sucesso */ },
-  onError: () => { /* erro */ },
+  onSuccess: () => {
+    /* sucesso */
+  },
+  onError: () => {
+    /* erro */
+  },
 });
 
 execute(async () => {
@@ -124,20 +135,18 @@ execute(async () => {
 ### **3. Promise.all**
 
 **ANTES:**
+
 ```typescript
 const [r1, r2, r3] = await Promise.all([
   fetch('/api/endpoint1'),
   fetch('/api/endpoint2'),
   fetch('/api/endpoint3'),
 ]);
-const [d1, d2, d3] = await Promise.all([
-  r1.json(),
-  r2.json(),
-  r3.json(),
-]);
+const [d1, d2, d3] = await Promise.all([r1.json(), r2.json(), r3.json()]);
 ```
 
 **DEPOIS:**
+
 ```typescript
 const [r1, r2, r3] = await Promise.all([
   apiClient.endpoint1.get(),
@@ -164,4 +173,3 @@ const [r1, r2, r3] = await Promise.all([
 - Tratamento de erros padronizado em todas as páginas
 - Type safety garantido pelo TypeScript
 - Código mais limpo e fácil de manter
-

@@ -23,11 +23,15 @@ test.describe('Fluxo Completo de Upload de Documentos', () => {
     await expect(page.locator('h1, h2')).toContainText(/documento/i);
 
     // Procurar botão de upload
-    const uploadButton = page.locator('button:has-text("Upload"), button:has-text("Enviar"), input[type="file"]').first();
-    
+    const uploadButton = page
+      .locator(
+        'button:has-text("Upload"), button:has-text("Enviar"), input[type="file"]'
+      )
+      .first();
+
     if (await uploadButton.isVisible()) {
       // Se for input file, fazer upload
-      if (await uploadButton.getAttribute('type') === 'file') {
+      if ((await uploadButton.getAttribute('type')) === 'file') {
         // Criar arquivo de teste
         const fileInput = uploadButton;
         await fileInput.setInputFiles({
@@ -53,14 +57,21 @@ test.describe('Fluxo Completo de Upload de Documentos', () => {
     await page.waitForLoadState('networkidle');
 
     // Verificar se há lista de documentos ou mensagem de vazio
-    const documentList = page.locator('[data-testid="document-list"], .document-list, table').first();
-    const emptyState = page.locator('text=/nenhum documento|sem documentos/i').first();
+    const documentList = page
+      .locator('[data-testid="document-list"], .document-list, table')
+      .first();
+    const emptyState = page
+      .locator('text=/nenhum documento|sem documentos/i')
+      .first();
 
     // Deve ter lista OU estado vazio
-    const hasList = await documentList.isVisible({ timeout: 3000 }).catch(() => false);
-    const hasEmpty = await emptyState.isVisible({ timeout: 3000 }).catch(() => false);
+    const hasList = await documentList
+      .isVisible({ timeout: 3000 })
+      .catch(() => false);
+    const hasEmpty = await emptyState
+      .isVisible({ timeout: 3000 })
+      .catch(() => false);
 
     expect(hasList || hasEmpty).toBe(true);
   });
 });
-

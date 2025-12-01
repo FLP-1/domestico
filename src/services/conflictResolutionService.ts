@@ -45,95 +45,118 @@ export class ConflictResolutionService {
     try {
       // 1. Detectar conflitos
       const conflicts = this.detectConflicts(localData, remoteData);
-      
+
       if (conflicts.length === 0) {
         // Sem conflitos, sincronizar normalmente
-        return await this.syncWithoutConflicts(localData, remoteData, entityType, entityId);
+        return await this.syncWithoutConflicts(
+          localData,
+          remoteData,
+          entityType,
+          entityId
+        );
       }
-      
+
       // 2. Resolver conflitos automaticamente
       const resolutions = await this.resolveConflicts(conflicts, entityType);
-      
+
       // 3. Aplicar resoluções
       const mergedData = this.mergeData(localData, remoteData, resolutions);
-      
+
       // 4. Registrar conflitos no histórico
       await this.logConflicts(entityType, entityId, conflicts, resolutions);
-      
+
       return {
         success: true,
         conflicts: conflicts.length,
         resolved: resolutions,
-        data: mergedData
+        data: mergedData,
       };
     } catch (error: any) {
-      logger.error({ error, entityType, entityId }, 'Erro na sincronização com conflitos');
+      logger.error(
+        { error, entityType, entityId },
+        'Erro na sincronização com conflitos'
+      );
       return {
         success: false,
         conflicts: 0,
         resolved: [],
         data: null,
-        errors: [error.message || 'Erro desconhecido']
+        errors: [error.message || 'Erro desconhecido'],
       };
     }
   }
-  
+
   /**
    * Detecta conflitos entre dados locais e remotos
    */
   private detectConflicts(local: any, remote: any): Conflict[] {
     const conflicts: Conflict[] = [];
-    
+
     // Campos críticos que podem ter conflitos
-    const criticalFields = ['cpf', 'nome', 'salario', 'dataAdmissao', 'cargo', 'endereco'];
-    
+    const criticalFields = [
+      'cpf',
+      'nome',
+      'salario',
+      'dataAdmissao',
+      'cargo',
+      'endereco',
+    ];
+
     for (const field of criticalFields) {
       const localValue = this.getNestedValue(local, field);
       const remoteValue = this.getNestedValue(remote, field);
-      
-      if (localValue !== undefined && remoteValue !== undefined && 
-          this.valuesDiffer(localValue, remoteValue)) {
+
+      if (
+        localValue !== undefined &&
+        remoteValue !== undefined &&
+        this.valuesDiffer(localValue, remoteValue)
+      ) {
         conflicts.push({
           field,
           localValue,
           remoteValue,
-          localTimestamp: local.updatedAt ? new Date(local.updatedAt) : new Date(),
-          remoteTimestamp: remote.updatedAt ? new Date(remote.updatedAt) : new Date()
+          localTimestamp: local.updatedAt
+            ? new Date(local.updatedAt)
+            : new Date(),
+          remoteTimestamp: remote.updatedAt
+            ? new Date(remote.updatedAt)
+            : new Date(),
         });
       }
     }
-    
+
     return conflicts;
   }
-  
+
   /**
    * Verifica se valores diferem
    */
   private valuesDiffer(local: any, remote: any): boolean {
     if (local === remote) return false;
-    if (local === null || local === undefined) return remote !== null && remote !== undefined;
+    if (local === null || local === undefined)
+      return remote !== null && remote !== undefined;
     if (remote === null || remote === undefined) return true;
-    
+
     // Comparar datas
     if (local instanceof Date && remote instanceof Date) {
       return local.getTime() !== remote.getTime();
     }
-    
+
     // Comparar objetos
     if (typeof local === 'object' && typeof remote === 'object') {
       return JSON.stringify(local) !== JSON.stringify(remote);
     }
-    
+
     return local !== remote;
   }
-  
+
   /**
    * Obtém valor aninhado
    */
   private getNestedValue(obj: any, path: string): any {
     return path.split('.').reduce((current, prop) => current?.[prop], obj);
   }
-  
+
   /**
    * Resolve conflitos automaticamente
    */
@@ -142,24 +165,24 @@ export class ConflictResolutionService {
     entityType: string
   ): Promise<Resolution[]> {
     const resolutions: Resolution[] = [];
-    
+
     for (const conflict of conflicts) {
       // Estratégia: usar timestamp mais recente
       const useRemote = conflict.remoteTimestamp > conflict.localTimestamp;
-      
+
       // Campos críticos sempre preferem remoto (fonte de verdade)
       const criticalFields = ['cpf', 'nome'];
       const isCritical = criticalFields.includes(conflict.field);
-      
+
       let resolution: Resolution;
-      
+
       if (isCritical) {
         // Campos críticos sempre usam remoto
         resolution = {
           field: conflict.field,
           resolution: 'REMOTE',
           value: conflict.remoteValue,
-          reason: 'CAMPO_CRITICO_REMOTO'
+          reason: 'CAMPO_CRITICO_REMOTO',
         };
       } else if (useRemote) {
         // Usar remoto se mais recente
@@ -167,7 +190,7 @@ export class ConflictResolutionService {
           field: conflict.field,
           resolution: 'REMOTE',
           value: conflict.remoteValue,
-          reason: 'TIMESTAMP_REMOTO_MAIS_RECENTE'
+          reason: 'TIMESTAMP_REMOTO_MAIS_RECENTE',
         };
       } else {
         // Usar local se mais recente
@@ -175,37 +198,33 @@ export class ConflictResolutionService {
           field: conflict.field,
           resolution: 'LOCAL',
           value: conflict.localValue,
-          reason: 'TIMESTAMP_LOCAL_MAIS_RECENTE'
+          reason: 'TIMESTAMP_LOCAL_MAIS_RECENTE',
         };
       }
-      
+
       resolutions.push(resolution);
     }
-    
+
     return resolutions;
   }
-  
+
   /**
    * Mescla dados aplicando resoluções
    */
-  private mergeData(
-    local: any,
-    remote: any,
-    resolutions: Resolution[]
-  ): any {
+  private mergeData(local: any, remote: any, resolutions: Resolution[]): any {
     const merged = { ...local, ...remote };
-    
+
     for (const resolution of resolutions) {
       this.setNestedValue(merged, resolution.field, resolution.value);
     }
-    
+
     // Atualizar timestamp
     merged.updatedAt = new Date();
     merged.syncedAt = new Date();
-    
+
     return merged;
   }
-  
+
   /**
    * Define valor aninhado
    */
@@ -218,12 +237,12 @@ export class ConflictResolutionService {
       }
       return current[prop];
     }, obj);
-    
+
     if (last) {
       target[last] = value;
     }
   }
-  
+
   /**
    * Sincroniza sem conflitos
    */
@@ -238,17 +257,17 @@ export class ConflictResolutionService {
       ...local,
       ...remote,
       updatedAt: new Date(),
-      syncedAt: new Date()
+      syncedAt: new Date(),
     };
-    
+
     return {
       success: true,
       conflicts: 0,
       resolved: [],
-      data: syncedData
+      data: syncedData,
     };
   }
-  
+
   /**
    * Registra conflitos no histórico
    */
@@ -278,8 +297,8 @@ export class ConflictResolutionService {
                 conflicts: conflicts.map(c => ({
                   field: c.field,
                   localValue: c.localValue,
-                  remoteValue: c.remoteValue
-                }))
+                  remoteValue: c.remoteValue,
+                })),
               }
             : undefined,
           dadosNovos: resolutions.length
@@ -288,18 +307,21 @@ export class ConflictResolutionService {
                   field: r.field,
                   resolution: r.resolution,
                   reason: r.reason,
-                  value: r.value
-                }))
+                  value: r.value,
+                })),
               }
             : undefined,
           sucesso: true,
           erro: null,
           tipoLog: 'SINCRONIZACAO',
-          nivelSeveridade: conflicts.length > 0 ? 'AVISO' : 'INFO'
-        }
+          nivelSeveridade: conflicts.length > 0 ? 'AVISO' : 'INFO',
+        },
       });
     } catch (error) {
-      logger.error({ error, entityType, entityId }, 'Erro ao registrar conflitos');
+      logger.error(
+        { error, entityType, entityId },
+        'Erro ao registrar conflitos'
+      );
     }
   }
 }
@@ -327,4 +349,3 @@ export function resetConflictResolutionService(): void {
     conflictResolutionInstance = null;
   }
 }
-

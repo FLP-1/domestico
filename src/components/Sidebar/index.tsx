@@ -30,15 +30,17 @@ const SidebarContainer = styled.aside<{ $collapsed: boolean; $theme?: any }>`
   height: 100vh;
   width: ${props => (props.$collapsed ? '100px' : '280px')};
   background: ${props =>
-    props.$theme?.colors?.background?.primary || 
+    props.$theme?.colors?.background?.primary ||
     props.$theme?.background?.primary ||
     'transparent'};
   border-right: 1px solid
     ${props => {
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) || 
-             props.$theme?.border?.light ||
-             'transparent';
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
     }};
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1000;
@@ -60,10 +62,12 @@ const SidebarHeader = styled.div<{ $collapsed: boolean; $theme?: any }>`
   border-bottom: 1px solid
     ${props => {
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) || 
-             props.$theme?.border?.light ||
-             'transparent';
-    } }
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }}
   display: flex;
   align-items: center;
   justify-content: ${props =>
@@ -97,11 +101,8 @@ const SidebarTitle = styled.h2<{ $collapsed: boolean; $theme?: any }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
-    'inherit'
-  };
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
   margin: 0;
   opacity: ${props => (props.$collapsed ? 0 : 1)};
   transition: opacity 0.3s ease;
@@ -119,11 +120,10 @@ const ToggleButton = styled.button<{ $theme?: any }>`
   background: none;
   border: none;
   font-size: 1.5rem;
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
-    'inherit'
-  };
+    'inherit'};
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 8px;
@@ -131,7 +131,8 @@ const ToggleButton = styled.button<{ $theme?: any }>`
 
   &:hover {
     background: ${props => {
-      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -140,12 +141,11 @@ const ToggleButton = styled.button<{ $theme?: any }>`
       }
       return 'transparent';
     }};
-    color: ${props => 
-      props.$theme?.colors?.navigation?.primary || 
+    color: ${props =>
+      props.$theme?.colors?.navigation?.primary ||
       props.$theme?.colors?.primary ||
       props.$theme?.accent ||
-      'inherit'
-    };
+      'inherit'};
   }
 `;
 
@@ -169,11 +169,10 @@ const ProfileIconButton = styled.button<{ $collapsed: boolean; $theme?: any }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
-    'inherit'
-  };
+    'inherit'};
   font-size: 1.2rem;
   margin-left: auto;
   width: 32px;
@@ -181,7 +180,8 @@ const ProfileIconButton = styled.button<{ $collapsed: boolean; $theme?: any }>`
 
   &:hover {
     background: ${props => {
-      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -190,12 +190,11 @@ const ProfileIconButton = styled.button<{ $collapsed: boolean; $theme?: any }>`
       }
       return 'transparent';
     }};
-    color: ${props => 
-      props.$theme?.colors?.navigation?.primary || 
+    color: ${props =>
+      props.$theme?.colors?.navigation?.primary ||
       props.$theme?.colors?.primary ||
       props.$theme?.accent ||
-      'inherit'
-    };
+      'inherit'};
     transform: scale(1.1);
   }
 
@@ -217,18 +216,18 @@ const GroupIconButton = styled.button<{ $collapsed: boolean; $theme?: any }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
-    'inherit'
-  };
+    'inherit'};
   font-size: 1.2rem;
   width: 32px;
   height: 32px;
 
   &:hover {
     background: ${props => {
-      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -237,12 +236,11 @@ const GroupIconButton = styled.button<{ $collapsed: boolean; $theme?: any }>`
       }
       return 'transparent';
     }};
-    color: ${props => 
-      props.$theme?.colors?.navigation?.primary || 
+    color: ${props =>
+      props.$theme?.colors?.navigation?.primary ||
       props.$theme?.colors?.primary ||
       props.$theme?.accent ||
-      'inherit'
-    };
+      'inherit'};
     transform: scale(1.1);
   }
 
@@ -256,11 +254,11 @@ const GroupIconButton = styled.button<{ $collapsed: boolean; $theme?: any }>`
 
 const ProfileSection = styled.div<{ $theme?: any }>`
   padding: 1rem;
-  border-top: 1px solid ${props => 
-    props.$theme?.colors?.border?.light || 
-    props.$theme?.border?.light ||
-    'transparent'
-  };
+  border-top: 1px solid
+    ${props =>
+      props.$theme?.colors?.border?.light ||
+      props.$theme?.border?.light ||
+      'transparent'};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -287,29 +285,36 @@ const NavItem = styled.div<{
     props.$collapsed ? '1rem 0 1rem 1.5rem' : '0.75rem 1.5rem'};
   color: ${props => {
     if (props.$active) {
-      return props.$theme?.colors?.navigation?.primary || 
-             props.$theme?.colors?.primary ||
-             props.$theme?.accent ||
-             'inherit';
+      return (
+        props.$theme?.colors?.navigation?.primary ||
+        props.$theme?.colors?.primary ||
+        props.$theme?.accent ||
+        'inherit'
+      );
     }
-    return props.$theme?.colors?.text?.secondary || 
-           props.$theme?.text?.secondary ||
-           'inherit';
+    return (
+      props.$theme?.colors?.text?.secondary ||
+      props.$theme?.text?.secondary ||
+      'inherit'
+    );
   }};
   cursor: pointer;
   transition: all 0.3s ease;
   border-right: ${props => {
     if (props.$active) {
-      return `3px solid ${props.$theme?.colors?.navigation?.primary || 
-                         props.$theme?.colors?.primary ||
-                         props.$theme?.accent ||
-                         'transparent'}`;
+      return `3px solid ${
+        props.$theme?.colors?.navigation?.primary ||
+        props.$theme?.colors?.primary ||
+        props.$theme?.accent ||
+        'transparent'
+      }`;
     }
     return '3px solid transparent';
   }};
   background: ${props => {
     if (props.$active) {
-      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -327,7 +332,8 @@ const NavItem = styled.div<{
 
   &:hover {
     background: ${props => {
-      const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
       if (primaryColor && primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
         const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -336,12 +342,11 @@ const NavItem = styled.div<{
       }
       return 'transparent';
     }};
-    color: ${props => 
-      props.$theme?.colors?.navigation?.primary || 
+    color: ${props =>
+      props.$theme?.colors?.navigation?.primary ||
       props.$theme?.colors?.primary ||
       props.$theme?.accent ||
-      'inherit'
-    };
+      'inherit'};
   }
 
   .icon {
@@ -515,7 +520,12 @@ export default function Sidebar({
       <SidebarHeader $collapsed={collapsed} $theme={theme}>
         {collapsed ? (
           <>
-            <Logo src='/Logo.png' alt='Logo DOM' $collapsed={collapsed} $theme={theme} />
+            <Logo
+              src='/Logo.png'
+              alt='Logo DOM'
+              $collapsed={collapsed}
+              $theme={theme}
+            />
             <CollapsedToggleButton
               $theme={theme}
               onClick={onToggle}
@@ -527,7 +537,12 @@ export default function Sidebar({
         ) : (
           <>
             <LogoContainer>
-              <Logo src='/Logo.png' alt='Logo DOM' $collapsed={collapsed} $theme={theme} />
+              <Logo
+                src='/Logo.png'
+                alt='Logo DOM'
+                $collapsed={collapsed}
+                $theme={theme}
+              />
               <SidebarTitle $collapsed={collapsed} $theme={theme}>
                 DOM
               </SidebarTitle>

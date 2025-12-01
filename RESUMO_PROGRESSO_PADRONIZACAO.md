@@ -9,6 +9,7 @@
 ## ✅ CORREÇÕES CONCLUÍDAS
 
 ### **1. Acessibilidade (13 erros)** ✅ COMPLETO
+
 - ✅ Todos os elementos `<select>` agora têm `aria-label` e `title`
 - ✅ Labels associados corretamente via `id` e `htmlFor`
 - ✅ 0 erros de lint relacionados a acessibilidade
@@ -43,24 +44,26 @@
 
 ## 📈 ESTATÍSTICAS
 
-| Categoria | Quantidade |
-|-----------|------------|
-| **Arquivos corrigidos** | 3 |
-| **Arquivos verificados** | 9 |
-| **Cores hardcoded removidas** | ~15 |
-| **Acessos corrigidos** | ~10 |
-| **Erros de lint** | 0 |
+| Categoria                     | Quantidade |
+| ----------------------------- | ---------- |
+| **Arquivos corrigidos**       | 3          |
+| **Arquivos verificados**      | 9          |
+| **Cores hardcoded removidas** | ~15        |
+| **Acessos corrigidos**        | ~10        |
+| **Erros de lint**             | 0          |
 
 ---
 
 ## 🎯 PRÓXIMOS PASSOS
 
 ### **Continuar Padronização de Tema:**
+
 1. Verificar outros componentes com cores hardcoded
 2. Criar ESLint customizado para detectar cores hardcoded
 3. Documentar padrões de uso de tema
 
 ### **Migração de Componentes Legados:**
+
 1. Identificar todos os usos de componentes legados
 2. Migrar gradualmente para componentes unificados
 3. Deprecar componentes antigos
@@ -69,4 +72,3 @@
 
 **Última atualização:** Janeiro 2025  
 **Status:** ✅ Progresso constante com correções pontuais
-

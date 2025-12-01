@@ -125,6 +125,7 @@ Pode ser necessário atualizar ou fazer downgrade do styled-components.
 A implementação da solução combinada (ServerStyleSheet + withConfig + getServerSideProps) **deveria ter resolvido**, mas o erro persiste.
 
 Isso sugere que:
+
 1. Há uma causa raiz que ainda não foi identificada
 2. Pode haver um bug específico no Next.js 15.5.4 com styled-components
 3. Pode haver componentes ou configurações que não foram identificadas

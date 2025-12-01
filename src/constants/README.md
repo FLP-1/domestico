@@ -22,18 +22,18 @@ Este diretório contém todas as constantes centralizadas do sistema, eliminando
 ### Uso
 
 ```typescript
-import { 
-  OVERTIME_REQUEST_STATUSES, 
+import {
+  OVERTIME_REQUEST_STATUSES,
   type OvertimeRequestStatus,
   getOvertimeRequestStatusLabel,
   isValidOvertimeRequestStatus,
-  toOvertimeRequestStatus
+  toOvertimeRequestStatus,
 } from '@/src/constants/overtimeRequestStatuses';
 
 // Valores disponíveis
-OVERTIME_REQUEST_STATUSES.PENDING   // 'PENDENTE'
-OVERTIME_REQUEST_STATUSES.APPROVED  // 'APROVADA'
-OVERTIME_REQUEST_STATUSES.REJECTED  // 'REJEITADA'
+OVERTIME_REQUEST_STATUSES.PENDING; // 'PENDENTE'
+OVERTIME_REQUEST_STATUSES.APPROVED; // 'APROVADA'
+OVERTIME_REQUEST_STATUSES.REJECTED; // 'REJEITADA'
 
 // Tipo TypeScript
 const status: OvertimeRequestStatus = OVERTIME_REQUEST_STATUSES.PENDING;
@@ -65,18 +65,18 @@ const status = toOvertimeRequestStatus(apiResponse.status);
 ### Uso
 
 ```typescript
-import { 
-  ESOCIAL_STATUSES, 
+import {
+  ESOCIAL_STATUSES,
   type ESocialStatus,
   getESocialStatusLabel,
   isValidESocialStatus,
-  toESocialStatus
+  toESocialStatus,
 } from '@/src/constants/esocialStatuses';
 
 // Valores disponíveis
-ESOCIAL_STATUSES.PENDING   // 'PENDENTE'
-ESOCIAL_STATUSES.PROCESSED // 'PROCESSADO'
-ESOCIAL_STATUSES.SENT      // 'ENVIADO'
+ESOCIAL_STATUSES.PENDING; // 'PENDENTE'
+ESOCIAL_STATUSES.PROCESSED; // 'PROCESSADO'
+ESOCIAL_STATUSES.SENT; // 'ENVIADO'
 
 // Tipo TypeScript
 const status: ESocialStatus = ESOCIAL_STATUSES.PROCESSED;
@@ -100,18 +100,18 @@ const label = getESocialStatusLabel(status); // 'Processado'
 ### Uso
 
 ```typescript
-import { 
-  PAYMENT_STATUSES, 
+import {
+  PAYMENT_STATUSES,
   type PaymentStatus,
   getPaymentStatusLabel,
   isValidPaymentStatus,
-  toPaymentStatus
+  toPaymentStatus,
 } from '@/src/constants/paymentStatuses';
 
 // Valores disponíveis
-PAYMENT_STATUSES.PENDING // 'PENDENTE'
-PAYMENT_STATUSES.PAID    // 'PAGO'
-PAYMENT_STATUSES.OVERDUE // 'VENCIDO'
+PAYMENT_STATUSES.PENDING; // 'PENDENTE'
+PAYMENT_STATUSES.PAID; // 'PAGO'
+PAYMENT_STATUSES.OVERDUE; // 'VENCIDO'
 
 // Tipo TypeScript
 const status: PaymentStatus = PAYMENT_STATUSES.PENDING;
@@ -135,18 +135,18 @@ const label = getPaymentStatusLabel(status); // 'Pendente'
 ### Uso
 
 ```typescript
-import { 
-  TASK_STATUSES, 
+import {
+  TASK_STATUSES,
   type TaskStatus,
   getTaskStatusLabel,
   isValidTaskStatus,
-  toTaskStatus
+  toTaskStatus,
 } from '@/src/constants/taskStatuses';
 
 // Valores disponíveis
-TASK_STATUSES.TODO         // 'todo'
-TASK_STATUSES.IN_PROGRESS  // 'in-progress'
-TASK_STATUSES.COMPLETED    // 'completed'
+TASK_STATUSES.TODO; // 'todo'
+TASK_STATUSES.IN_PROGRESS; // 'in-progress'
+TASK_STATUSES.COMPLETED; // 'completed'
 
 // Tipo TypeScript
 const status: TaskStatus = TASK_STATUSES.TODO;
@@ -177,18 +177,18 @@ A API usa formato diferente (`'pending'`, `'in_progress'`, `'completed'`) enquan
 ### Uso
 
 ```typescript
-import { 
-  TASK_PRIORITIES, 
+import {
+  TASK_PRIORITIES,
   type TaskPriority,
   getTaskPriorityLabel,
   isValidTaskPriority,
-  toTaskPriority
+  toTaskPriority,
 } from '@/src/constants/taskPriorities';
 
 // Valores disponíveis
-TASK_PRIORITIES.HIGH   // 'high'
-TASK_PRIORITIES.MEDIUM // 'medium'
-TASK_PRIORITIES.LOW    // 'low'
+TASK_PRIORITIES.HIGH; // 'high'
+TASK_PRIORITIES.MEDIUM; // 'medium'
+TASK_PRIORITIES.LOW; // 'low'
 
 // Tipo TypeScript
 const priority: TaskPriority = TASK_PRIORITIES.HIGH;
@@ -212,20 +212,20 @@ const label = getTaskPriorityLabel(priority); // 'Alta'
 ### Uso
 
 ```typescript
-import { 
+import {
   ALLOWED_FILE_TYPES,
   isAllowedCertificateType,
   isAllowedCertificateMinimalType,
   isAllowedDocumentType,
   isValidTimeClockRecordType,
-  getFileExtension
+  getFileExtension,
 } from '@/src/constants/allowedFileTypes';
 
 // Tipos disponíveis
-ALLOWED_FILE_TYPES.CERTIFICATES        // ['.pfx', '.p12', '.cer', '.crt', '.pem']
-ALLOWED_FILE_TYPES.CERTIFICATES_MINIMAL // ['.pfx', '.p12']
-ALLOWED_FILE_TYPES.DOCUMENTS            // ['.pdf', '.xml', '.json']
-ALLOWED_FILE_TYPES.TIME_CLOCK_RECORDS  // ['entrada', 'saida_almoco', ...]
+ALLOWED_FILE_TYPES.CERTIFICATES; // ['.pfx', '.p12', '.cer', '.crt', '.pem']
+ALLOWED_FILE_TYPES.CERTIFICATES_MINIMAL; // ['.pfx', '.p12']
+ALLOWED_FILE_TYPES.DOCUMENTS; // ['.pdf', '.xml', '.json']
+ALLOWED_FILE_TYPES.TIME_CLOCK_RECORDS; // ['entrada', 'saida_almoco', ...]
 
 // Validar certificado completo
 if (isAllowedCertificateType(fileName)) {
@@ -319,7 +319,7 @@ Ao criar uma nova constante, siga este padrão:
 ```typescript
 /**
  * 📋 Descrição da constante
- * 
+ *
  * Explicação do propósito e uso.
  */
 
@@ -328,7 +328,8 @@ export const MINHA_CONSTANTE = {
   VALOR2: 'valor2',
 } as const;
 
-export type MinhaConstanteTipo = typeof MINHA_CONSTANTE[keyof typeof MINHA_CONSTANTE];
+export type MinhaConstanteTipo =
+  (typeof MINHA_CONSTANTE)[keyof typeof MINHA_CONSTANTE];
 
 /**
  * Obter label em português
@@ -347,7 +348,9 @@ export function getMinhaConstanteLabel(valor: MinhaConstanteTipo): string {
 /**
  * Verificar se é válido
  */
-export function isValidMinhaConstante(valor: string): valor is MinhaConstanteTipo {
+export function isValidMinhaConstante(
+  valor: string
+): valor is MinhaConstanteTipo {
   return Object.values(MINHA_CONSTANTE).includes(valor as MinhaConstanteTipo);
 }
 ```
@@ -376,4 +379,3 @@ Ao migrar código para usar constantes:
 ---
 
 **Última atualização:** Janeiro 2025
-

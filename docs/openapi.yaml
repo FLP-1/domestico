@@ -3,13 +3,13 @@ info:
   title: Sistema DOM API
   description: |
     API completa do Sistema DOM - Gestão Doméstica e Empresarial
-    
+
     ## Autenticação
     Todas as rotas protegidas requerem um token JWT no header `Authorization`.
-    
+
     ## Rate Limiting
     Diferentes endpoints têm diferentes limites de taxa. Verifique os headers de resposta para informações sobre rate limiting.
-    
+
     ## Códigos de Erro
     - 400: Bad Request - Dados inválidos ou ausentes
     - 401: Unauthorized - Token ausente ou inválido
@@ -67,12 +67,12 @@ paths:
                 cpf:
                   type: string
                   description: CPF do usuário (apenas números)
-                  example: "12345678901"
+                  example: '12345678901'
                 senha:
                   type: string
                   format: password
                   description: Senha do usuário
-                  example: "senha123"
+                  example: 'senha123'
                 locationData:
                   type: object
                   description: Dados de localização (opcional)
@@ -332,4 +332,3 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/RateLimitError'
-

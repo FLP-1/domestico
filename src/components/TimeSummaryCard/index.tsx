@@ -28,20 +28,25 @@ const SummaryCard = styled.div<{
     background: ${props => {
       switch (props.$variant) {
         case 'worked':
-          return props.$theme?.colors?.primary ||
-                 props.$theme?.accent ||
-                 'transparent';
+          return (
+            props.$theme?.colors?.primary ||
+            props.$theme?.accent ||
+            'transparent'
+          );
         case 'expected':
-          return props.$theme?.colors?.info ||
-                 props.$theme?.colors?.primary ||
-                 'transparent';
+          return (
+            props.$theme?.colors?.info ||
+            props.$theme?.colors?.primary ||
+            'transparent'
+          );
         case 'difference':
-          return props.$theme?.colors?.warning ||
-                 'transparent';
+          return props.$theme?.colors?.warning || 'transparent';
         default:
-          return props.$theme?.colors?.primary ||
-                 props.$theme?.accent ||
-                 'transparent';
+          return (
+            props.$theme?.colors?.primary ||
+            props.$theme?.accent ||
+            'transparent'
+          );
       }
     }};
   }
@@ -52,12 +57,15 @@ const TimeRow = styled.div<{ $theme?: any }>`
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0;
-  border-bottom: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border-bottom: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
 
   &:last-child {
     border-bottom: none;
@@ -85,15 +93,19 @@ const TimeValue = styled.span<{
       case 'worked':
         return props.$theme.colors.primary;
       case 'expected':
-        return props.$theme?.colors?.info ||
-               props.$theme?.colors?.primary ||
-               props.$theme?.accent ||
-               'inherit';
+        return (
+          props.$theme?.colors?.info ||
+          props.$theme?.colors?.primary ||
+          props.$theme?.accent ||
+          'inherit'
+        );
       case 'difference':
-        return props.$theme?.colors?.warning ||
-               props.$theme?.colors?.status?.warning?.text ||
-               props.$theme?.status?.warning?.text ||
-               'inherit';
+        return (
+          props.$theme?.colors?.warning ||
+          props.$theme?.colors?.status?.warning?.text ||
+          props.$theme?.status?.warning?.text ||
+          'inherit'
+        );
       default:
         return props.$theme.colors.text;
     }
@@ -108,15 +120,19 @@ const DifferenceIndicator = styled.span<{ $positive: boolean; $theme?: any }>`
   font-weight: 600;
   color: ${props => {
     if (props.$positive) {
-      return props.$theme?.colors?.success ||
-             props.$theme?.colors?.status?.success?.text ||
-             props.$theme?.status?.success?.text ||
-             'inherit';
+      return (
+        props.$theme?.colors?.success ||
+        props.$theme?.colors?.status?.success?.text ||
+        props.$theme?.status?.success?.text ||
+        'inherit'
+      );
     }
-    return props.$theme?.colors?.status?.error?.text ||
-           props.$theme?.status?.error?.text ||
-           props.$theme?.colors?.error ||
-           'inherit';
+    return (
+      props.$theme?.colors?.status?.error?.text ||
+      props.$theme?.status?.error?.text ||
+      props.$theme?.colors?.error ||
+      'inherit'
+    );
   }};
   margin-left: 0.5rem;
 `;

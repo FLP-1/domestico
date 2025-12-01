@@ -5,7 +5,12 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { useGeofencingTheme } from '../../hooks/useGeofencingTheme';
 import { geofencingColors } from '../../design-system/tokens/geofencing-colors';
-import { UnifiedCard, UnifiedBadge, UnifiedMetaInfo, UnifiedButton } from '../../components/unified';
+import {
+  UnifiedCard,
+  UnifiedBadge,
+  UnifiedMetaInfo,
+  UnifiedButton,
+} from '../../components/unified';
 import { Label } from '../../components/FormComponents';
 import PageContainer from '../../components/PageContainer';
 import PageHeader from '../../components/PageHeader';
@@ -41,7 +46,14 @@ interface LocalTrabalho {
 const Coordinates = styled.div<{ $theme?: Theme }>`
   background: ${props => {
     const background = props.$theme?.colors?.background;
-    return (typeof background === 'object' && background && (background as any).secondary) || (typeof background === 'string' ? background : geofencingColors.background.secondary);
+    return (
+      (typeof background === 'object' &&
+        background &&
+        (background as any).secondary) ||
+      (typeof background === 'string'
+        ? background
+        : geofencingColors.background.secondary)
+    );
   }};
   padding: 10px;
   border-radius: 5px;
@@ -103,8 +115,13 @@ const Modal = styled.div<{ $show: boolean; $theme?: Theme }>`
   width: 100%;
   height: 100%;
   background: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        (typeof (props.$theme as any)?.shadow === 'object' && (props.$theme as any)?.shadow && 'color' in (props.$theme as any).shadow ? String(((props.$theme as any).shadow as any).color) : null);
+    const shadowColor =
+      props.$theme?.colors?.shadow ||
+      (typeof (props.$theme as any)?.shadow === 'object' &&
+      (props.$theme as any)?.shadow &&
+      'color' in (props.$theme as any).shadow
+        ? String(((props.$theme as any).shadow as any).color)
+        : null);
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -139,7 +156,10 @@ const ModalTitle = styled.h2<{ $theme?: Theme }>`
   margin: 0;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.primary) || geofencingColors.text.primary;
+    return (
+      (text && typeof text === 'object' && text.primary) ||
+      geofencingColors.text.primary
+    );
   }};
 `;
 
@@ -150,7 +170,10 @@ const CloseButton = styled.button<{ $theme?: Theme }>`
   cursor: pointer;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || geofencingColors.text.secondary;
+    return (
+      (text && typeof text === 'object' && text.secondary) ||
+      geofencingColors.text.secondary
+    );
   }};
 `;
 
@@ -171,7 +194,11 @@ const Input = styled.input<{ $theme?: Theme }>`
   border: 1px solid
     ${props => {
       const border = props.$theme?.colors?.border;
-      if (typeof border === 'object' && border !== null && 'primary' in border) {
+      if (
+        typeof border === 'object' &&
+        border !== null &&
+        'primary' in border
+      ) {
         return border.primary;
       }
       return geofencingColors.border.primary;
@@ -196,7 +223,11 @@ const Select = styled.select<{ $theme?: Theme }>`
   border: 1px solid
     ${props => {
       const border = props.$theme?.colors?.border;
-      if (typeof border === 'object' && border !== null && 'primary' in border) {
+      if (
+        typeof border === 'object' &&
+        border !== null &&
+        'primary' in border
+      ) {
         return border.primary;
       }
       return geofencingColors.border.primary;
@@ -221,18 +252,27 @@ const Loading = styled.div<{ $theme?: Theme }>`
   padding: 40px;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || geofencingColors.text.secondary;
+    return (
+      (text && typeof text === 'object' && text.secondary) ||
+      geofencingColors.text.secondary
+    );
   }};
 `;
 
 const Error = styled.div<{ $theme?: Theme }>`
   background: ${props => {
     const error = props.$theme?.colors?.status?.error;
-    return (error && typeof error === 'object' && error.background) || geofencingColors.status.error.background;
+    return (
+      (error && typeof error === 'object' && error.background) ||
+      geofencingColors.status.error.background
+    );
   }};
   color: ${props => {
     const error = props.$theme?.colors?.status?.error;
-    return (error && typeof error === 'object' && error.text) || geofencingColors.status.error.text;
+    return (
+      (error && typeof error === 'object' && error.text) ||
+      geofencingColors.status.error.text
+    );
   }};
   padding: 15px;
   border-radius: 5px;
@@ -247,7 +287,10 @@ const EmptyState = styled.div<{ $theme?: Theme }>`
 const EmptyStateTitle = styled.h3<{ $theme?: Theme }>`
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.primary) || geofencingColors.text.primary;
+    return (
+      (text && typeof text === 'object' && text.primary) ||
+      geofencingColors.text.primary
+    );
   }};
   margin: 0 0 10px 0;
 `;
@@ -255,7 +298,10 @@ const EmptyStateTitle = styled.h3<{ $theme?: Theme }>`
 const EmptyStateText = styled.p<{ $theme?: Theme }>`
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || geofencingColors.text.secondary;
+    return (
+      (text && typeof text === 'object' && text.secondary) ||
+      geofencingColors.text.secondary
+    );
   }};
   margin: 0;
 `;
@@ -398,7 +444,9 @@ export default function LocaisTrabalho() {
   if (themeLoading || !theme) {
     return (
       <PageContainer>
-        <Loading $theme={theme || { colors: { text: { secondary: 'inherit' } } }}>
+        <Loading
+          $theme={theme || { colors: { text: { secondary: 'inherit' } } }}
+        >
           Carregando tema...
         </Loading>
       </PageContainer>
@@ -425,13 +473,13 @@ export default function LocaisTrabalho() {
             Locais de Trabalho
           </>
         }
-        variant="inline"
+        variant='inline'
         actions={
           <UnifiedButton
             $theme={theme}
             onClick={openModal}
-            $variant="primary"
-            $size="medium"
+            $variant='primary'
+            $size='medium'
           >
             <span role='img' aria-label='plus'>
               ➕
@@ -466,9 +514,9 @@ export default function LocaisTrabalho() {
             title={local.nome}
             footer={
               <FooterActions>
-                <UnifiedBadge 
-                  variant={local.ativo ? 'success' : 'error'} 
-                  size="sm" 
+                <UnifiedBadge
+                  variant={local.ativo ? 'success' : 'error'}
+                  size='sm'
                   theme={theme}
                 >
                   {local.ativo ? 'Ativo' : 'Inativo'}
@@ -497,19 +545,19 @@ export default function LocaisTrabalho() {
                 { label: 'Endereço', value: local.endereco },
                 { label: 'Grupo', value: local.grupo.nome },
                 { label: 'Raio', value: `${local.raio}m` },
-                { 
-                  label: 'Coordenadas', 
+                {
+                  label: 'Coordenadas',
                   value: (
                     <Coordinates $theme={theme}>
                       Lat: {local.latitude.toFixed(8)}
                       <br />
                       Lon: {local.longitude.toFixed(8)}
                     </Coordinates>
-                  )
+                  ),
                 },
               ]}
-              variant="grid"
-              size="sm"
+              variant='grid'
+              size='sm'
               theme={theme}
             />
           </UnifiedCard>

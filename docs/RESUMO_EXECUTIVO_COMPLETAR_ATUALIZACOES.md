@@ -1,4 +1,5 @@
 # 📋 RESUMO EXECUTIVO: O QUE PRECISA PARA COMPLETAR AS ATUALIZAÇÕES
+
 ## Sistema DOM - Plano de Ação Prático
 
 **Data:** Janeiro 2025  
@@ -37,10 +38,11 @@
 
 ```tsx
 // ANTES (linha ~606):
-subtitle="Gestão completa de funcionários domésticos e folha de pagamento"
+subtitle = 'Gestão completa de funcionários domésticos e folha de pagamento';
 
 // DEPOIS:
-subtitle="Templates, cálculos e validações para facilitar o processo eSocial. Gestão completa de funcionários domésticos e folha de pagamento."
+subtitle =
+  'Templates, cálculos e validações para facilitar o processo eSocial. Gestão completa de funcionários domésticos e folha de pagamento.';
 ```
 
 ```tsx
@@ -170,14 +172,14 @@ grep -r "API Real do eSocial" src/
 
 ### **Substituições Necessárias:**
 
-| Buscar | Substituir por |
-|--------|----------------|
-| "Integração automática" | "Ferramentas auxiliares" |
-| "Automatize eSocial" | "Facilite o eSocial" |
-| "Envio automático" | "Preparação de dados" |
-| "Conexão automática" | "Suporte ao processo" |
-| "API Real do eSocial" | "Templates e cálculos para eSocial" |
-| "Conectado" (badge verde) | "Ferramentas Disponíveis" |
+| Buscar                    | Substituir por                      |
+| ------------------------- | ----------------------------------- |
+| "Integração automática"   | "Ferramentas auxiliares"            |
+| "Automatize eSocial"      | "Facilite o eSocial"                |
+| "Envio automático"        | "Preparação de dados"               |
+| "Conexão automática"      | "Suporte ao processo"               |
+| "API Real do eSocial"     | "Templates e cálculos para eSocial" |
+| "Conectado" (badge verde) | "Ferramentas Disponíveis"           |
 
 ---
 
@@ -245,4 +247,3 @@ Após completar:
 
 **Última atualização:** Janeiro 2025  
 **Status:** ✅ **PLANO PRONTO - PRONTO PARA EXECUÇÃO**
-

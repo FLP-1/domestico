@@ -12,10 +12,12 @@
 ## ⚠️ Observação Importante
 
 O log do build mostra erros em arquivos `.ts`, mas os arquivos reais são `.tsx`:
+
 - `alertTypes.ts` (no log) vs `alertTypes.tsx` (arquivo real)
 - `shoppingCategories.ts` (no log) vs `shoppingCategories.tsx` (arquivo real)
 
 Isso pode indicar:
+
 - Cache do ESLint/TypeScript
 - Arquivos `.ts` antigos que precisam ser removidos
 - Configuração do parser do ESLint
@@ -34,4 +36,3 @@ Isso pode indicar:
 1. Limpar cache do Next.js e ESLint
 2. Verificar se há arquivos `.ts` duplicados
 3. Continuar corrigindo os erros restantes
-

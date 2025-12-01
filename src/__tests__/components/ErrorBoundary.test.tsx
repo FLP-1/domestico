@@ -39,9 +39,7 @@ describe('ErrorBoundary', () => {
     );
 
     expect(screen.getByText(/Ops! Algo deu errado/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/Ocorreu um erro inesperado/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Ocorreu um erro inesperado/i)).toBeInTheDocument();
   });
 
   it('deve ter botão de tentar novamente', () => {
@@ -104,4 +102,3 @@ describe('ErrorBoundary', () => {
     expect(onError.mock.calls[0][1]).toHaveProperty('componentStack');
   });
 });
-

@@ -55,7 +55,9 @@ describe('DAEValidationService', () => {
 
   describe('validateDAEPDF', () => {
     it('deve retornar erro se arquivo não for PDF', async () => {
-      const file = new File(['content'], 'document.txt', { type: 'text/plain' });
+      const file = new File(['content'], 'document.txt', {
+        type: 'text/plain',
+      });
 
       const result = await service.validateDAEPDF(file);
 
@@ -354,4 +356,3 @@ describe('GovBRTokenManager', () => {
     });
   });
 });
-

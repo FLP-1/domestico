@@ -178,4 +178,3 @@ export function initSentry(config?: SentryConfig): void {
     console.warn('Failed to initialize Sentry:', err);
   }
 }
-

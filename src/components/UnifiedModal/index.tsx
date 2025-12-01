@@ -33,8 +33,8 @@ const Overlay = styled.div<{ $isOpen: boolean; $theme?: any }>`
   right: 0;
   bottom: 0;
   background: ${props => {
-    const overlayColor = props.$theme?.colors?.overlay ||
-                        props.$theme?.overlay?.background;
+    const overlayColor =
+      props.$theme?.colors?.overlay || props.$theme?.overlay?.background;
     if (overlayColor && overlayColor.startsWith('#')) {
       const r = parseInt(overlayColor.slice(1, 3), 16);
       const g = parseInt(overlayColor.slice(3, 5), 16);
@@ -74,8 +74,8 @@ const Container = styled.div<{
     }
   }};
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                       props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -122,12 +122,15 @@ const Container = styled.div<{
 
 const Header = styled.div<{ $theme?: any }>`
   padding: 1.5rem 1.5rem 0 1.5rem;
-  border-bottom: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border-bottom: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -209,12 +212,15 @@ const Body = styled.div<{ $theme?: any }>`
 
 const Footer = styled.div<{ $theme?: any }>`
   padding: 0 1.5rem 1.5rem 1.5rem;
-  border-top: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border-top: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   display: flex;
   gap: 0.75rem;
   justify-content: flex-end;
@@ -330,12 +336,15 @@ export const ModalBodyComponent = styled.div<{ $theme?: any }>`
 
 export const ModalHeaderComponent = styled.div<{ $theme?: any }>`
   padding: 1.5rem 1.5rem 0 1.5rem;
-  border-bottom: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border-bottom: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -349,12 +358,15 @@ export const ModalHeaderComponent = styled.div<{ $theme?: any }>`
 
 export const ModalFooterComponent = styled.div<{ $theme?: any }>`
   padding: 0 1.5rem 1.5rem 1.5rem;
-  border-top: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border-top: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   display: flex;
   gap: 0.75rem;
   justify-content: flex-end;

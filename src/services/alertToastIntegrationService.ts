@@ -60,7 +60,9 @@ export class AlertToastIntegrationService {
           destinatarios: data.usuarioId ? [data.usuarioId] : [],
           canal: 'toast',
           sucesso: true,
-          valorGatilho: data.valorGatilho ? JSON.parse(JSON.stringify(data.valorGatilho)) : null,
+          valorGatilho: data.valorGatilho
+            ? JSON.parse(JSON.stringify(data.valorGatilho))
+            : null,
         },
       });
 
@@ -180,4 +182,3 @@ export class AlertToastIntegrationService {
     return true;
   }
 }
-

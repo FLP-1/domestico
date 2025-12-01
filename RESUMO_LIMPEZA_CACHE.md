@@ -3,7 +3,7 @@
 ## 🧹 **ARQUIVOS REMOVIDOS**
 
 1. ✅ **`.next/`** - Cache do Next.js
-2. ✅ **`node_modules/.cache/`** - Cache do Node.js  
+2. ✅ **`node_modules/.cache/`** - Cache do Node.js
 3. ✅ **`tsconfig.tsbuildinfo`** - Cache do TypeScript
 
 ## 📝 **SCRIPTS CRIADOS**
@@ -13,11 +13,13 @@
 ## 🎯 **PRÓXIMOS PASSOS**
 
 ### **Opção 1: Executar Script Criado**
+
 ```powershell
 .\executar-build-limpo.ps1
 ```
 
 ### **Opção 2: Executar Manualmente**
+
 ```powershell
 # Limpar cache
 Remove-Item -Path ".next" -Recurse -Force -ErrorAction SilentlyContinue
@@ -32,4 +34,3 @@ npm run build
 
 **Status:** ✅ Cache limpo  
 **Próximo:** Executar build e analisar erros
-

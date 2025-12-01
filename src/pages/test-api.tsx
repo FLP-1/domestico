@@ -15,10 +15,12 @@ const Title = styled.h1`
 
 const Result = styled.p`
   color: ${props => getThemeColor(props.theme, 'text.secondary', 'inherit')};
-  background: ${props => getThemeColor(props.theme, 'background.secondary', 'transparent')};
+  background: ${props =>
+    getThemeColor(props.theme, 'background.secondary', 'transparent')};
   padding: 12px;
   border-radius: 4px;
-  border-left: 4px solid ${props => getThemeColor(props.theme, 'primary', 'transparent')};
+  border-left: 4px solid
+    ${props => getThemeColor(props.theme, 'primary', 'transparent')};
 `;
 
 export default function TestAPI() {
@@ -46,7 +48,8 @@ export default function TestAPI() {
         const data = await response.json();
         setResult(`Status: ${response.status} - ${data.message || 'OK'}`);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro desconhecido';
         setResult(`Erro: ${errorMessage}`);
       }
     };

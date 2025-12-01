@@ -82,45 +82,125 @@ const StatusIndicator = styled.div<{ $status: string; $theme?: Theme }>`
   background: ${props => {
     switch (props.$status) {
       case 'online':
-        return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'background' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).background) : null) ||
-               (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'background' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).background) : null) ||
-               props.$theme?.colors?.success ||
-               'transparent';
+        return (
+          (typeof props.$theme?.colors?.status?.success === 'object' &&
+          props.$theme?.colors?.status?.success &&
+          'background' in props.$theme.colors.status.success
+            ? String((props.$theme.colors.status.success as any).background)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.success === 'object' &&
+          (props.$theme as any)?.status?.success &&
+          'background' in (props.$theme as any).status.success
+            ? String(((props.$theme as any).status.success as any).background)
+            : null) ||
+          props.$theme?.colors?.success ||
+          'transparent'
+        );
       case 'warning':
-        return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'background' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).background) : null) ||
-               (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'background' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).background) : null) ||
-               props.$theme?.colors?.warning ||
-               'transparent';
+        return (
+          (typeof props.$theme?.colors?.status?.warning === 'object' &&
+          props.$theme?.colors?.status?.warning &&
+          'background' in props.$theme.colors.status.warning
+            ? String((props.$theme.colors.status.warning as any).background)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.warning === 'object' &&
+          (props.$theme as any)?.status?.warning &&
+          'background' in (props.$theme as any).status.warning
+            ? String(((props.$theme as any).status.warning as any).background)
+            : null) ||
+          props.$theme?.colors?.warning ||
+          'transparent'
+        );
       case 'error':
-        return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'background' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).background) : null) ||
-               (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'background' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).background) : null) ||
-               props.$theme?.colors?.error ||
-               'transparent';
+        return (
+          (typeof props.$theme?.colors?.status?.error === 'object' &&
+          props.$theme?.colors?.status?.error &&
+          'background' in props.$theme.colors.status.error
+            ? String((props.$theme.colors.status.error as any).background)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.error === 'object' &&
+          (props.$theme as any)?.status?.error &&
+          'background' in (props.$theme as any).status.error
+            ? String(((props.$theme as any).status.error as any).background)
+            : null) ||
+          props.$theme?.colors?.error ||
+          'transparent'
+        );
       default:
-        return (typeof props.$theme?.colors?.status?.info === 'object' && props.$theme?.colors?.status?.info && 'background' in props.$theme.colors.status.info ? String((props.$theme.colors.status.info as any).background) : null) ||
-               (typeof (props.$theme as any)?.status?.info === 'object' && (props.$theme as any)?.status?.info && 'background' in (props.$theme as any).status.info ? String(((props.$theme as any).status.info as any).background) : null) ||
-               props.$theme?.colors?.info ||
-               'transparent';
+        return (
+          (typeof props.$theme?.colors?.status?.info === 'object' &&
+          props.$theme?.colors?.status?.info &&
+          'background' in props.$theme.colors.status.info
+            ? String((props.$theme.colors.status.info as any).background)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.info === 'object' &&
+          (props.$theme as any)?.status?.info &&
+          'background' in (props.$theme as any).status.info
+            ? String(((props.$theme as any).status.info as any).background)
+            : null) ||
+          props.$theme?.colors?.info ||
+          'transparent'
+        );
     }
   }};
   color: ${props => {
     switch (props.$status) {
       case 'online':
-        return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'text' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).text) : null) ||
-               (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'text' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).text) : null) ||
-               'inherit';
+        return (
+          (typeof props.$theme?.colors?.status?.success === 'object' &&
+          props.$theme?.colors?.status?.success &&
+          'text' in props.$theme.colors.status.success
+            ? String((props.$theme.colors.status.success as any).text)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.success === 'object' &&
+          (props.$theme as any)?.status?.success &&
+          'text' in (props.$theme as any).status.success
+            ? String(((props.$theme as any).status.success as any).text)
+            : null) ||
+          'inherit'
+        );
       case 'warning':
-        return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'text' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).text) : null) ||
-               (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'text' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).text) : null) ||
-               'inherit';
+        return (
+          (typeof props.$theme?.colors?.status?.warning === 'object' &&
+          props.$theme?.colors?.status?.warning &&
+          'text' in props.$theme.colors.status.warning
+            ? String((props.$theme.colors.status.warning as any).text)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.warning === 'object' &&
+          (props.$theme as any)?.status?.warning &&
+          'text' in (props.$theme as any).status.warning
+            ? String(((props.$theme as any).status.warning as any).text)
+            : null) ||
+          'inherit'
+        );
       case 'error':
-        return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'text' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).text) : null) ||
-               (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'text' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).text) : null) ||
-               'inherit';
+        return (
+          (typeof props.$theme?.colors?.status?.error === 'object' &&
+          props.$theme?.colors?.status?.error &&
+          'text' in props.$theme.colors.status.error
+            ? String((props.$theme.colors.status.error as any).text)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.error === 'object' &&
+          (props.$theme as any)?.status?.error &&
+          'text' in (props.$theme as any).status.error
+            ? String(((props.$theme as any).status.error as any).text)
+            : null) ||
+          'inherit'
+        );
       default:
-        return (typeof props.$theme?.colors?.status?.info === 'object' && props.$theme?.colors?.status?.info && 'text' in props.$theme.colors.status.info ? String((props.$theme.colors.status.info as any).text) : null) ||
-               (typeof (props.$theme as any)?.status?.info === 'object' && (props.$theme as any)?.status?.info && 'text' in (props.$theme as any).status.info ? String(((props.$theme as any).status.info as any).text) : null) ||
-               'inherit';
+        return (
+          (typeof props.$theme?.colors?.status?.info === 'object' &&
+          props.$theme?.colors?.status?.info &&
+          'text' in props.$theme.colors.status.info
+            ? String((props.$theme.colors.status.info as any).text)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.info === 'object' &&
+          (props.$theme as any)?.status?.info &&
+          'text' in (props.$theme as any).status.info
+            ? String(((props.$theme as any).status.info as any).text)
+            : null) ||
+          'inherit'
+        );
     }
   }};
   animation: ${props => (props.$status === 'online' ? pulse : 'none')} 2s
@@ -149,8 +229,8 @@ const MetricTitle = styled.h3`
 const MetricValue = styled.div<{ $theme?: Theme }>`
   font-size: 2.5rem;
   font-weight: 700;
-  color: ${props => 
-    props.$theme?.colors?.primary || 
+  color: ${props =>
+    props.$theme?.colors?.primary ||
     (props.$theme as any)?.accent ||
     'inherit'};
   margin-bottom: 0.5rem;
@@ -158,8 +238,8 @@ const MetricValue = styled.div<{ $theme?: Theme }>`
 
 const MetricSubtext = styled.div<{ $theme?: any }>`
   font-size: 0.9rem;
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
     'inherit'};
 `;
@@ -169,10 +249,8 @@ const MetricSubtext = styled.div<{ $theme?: any }>`
 const ChartTitle = styled.h3<{ $theme?: any }>`
   font-size: 1.3rem;
   font-weight: 600;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
-    'inherit'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
   margin: 0 0 1.5rem 0;
   display: flex;
   align-items: center;
@@ -193,26 +271,64 @@ const ActivityItem = styled.div<{ $type: string; $theme?: Theme }>`
   gap: 1rem;
   padding: 1rem;
   border-radius: 8px;
-  background: ${props => 
-    (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) || 
-    (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
+  background: ${props =>
+    (typeof props.$theme?.colors?.background === 'object' &&
+    props.$theme?.colors?.background &&
+    'primary' in props.$theme.colors.background
+      ? String((props.$theme.colors.background as any).primary)
+      : null) ||
+    (typeof (props.$theme as any)?.background === 'object' &&
+    (props.$theme as any)?.background &&
+    'primary' in (props.$theme as any).background
+      ? String(((props.$theme as any).background as any).primary)
+      : null) ||
     'transparent'};
   border-left: 4px solid
     ${props => {
       switch (props.$type) {
         case 'success':
-          return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'border' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).border) : null) ||
-                 (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'border' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).border) : null) ||
-                 props.$theme?.colors?.success ||
-                 'transparent';
+          return (
+            (typeof props.$theme?.colors?.status?.success === 'object' &&
+            props.$theme?.colors?.status?.success &&
+            'border' in props.$theme.colors.status.success
+              ? String((props.$theme.colors.status.success as any).border)
+              : null) ||
+            (typeof (props.$theme as any)?.status?.success === 'object' &&
+            (props.$theme as any)?.status?.success &&
+            'border' in (props.$theme as any).status.success
+              ? String(((props.$theme as any).status.success as any).border)
+              : null) ||
+            props.$theme?.colors?.success ||
+            'transparent'
+          );
         case 'error':
-          return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'border' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).border) : null) ||
-                 (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'border' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).border) : null) ||
-                 'transparent';
+          return (
+            (typeof props.$theme?.colors?.status?.error === 'object' &&
+            props.$theme?.colors?.status?.error &&
+            'border' in props.$theme.colors.status.error
+              ? String((props.$theme.colors.status.error as any).border)
+              : null) ||
+            (typeof (props.$theme as any)?.status?.error === 'object' &&
+            (props.$theme as any)?.status?.error &&
+            'border' in (props.$theme as any).status.error
+              ? String(((props.$theme as any).status.error as any).border)
+              : null) ||
+            'transparent'
+          );
         case 'warning':
-          return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'border' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).border) : null) ||
-                 (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'border' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).border) : null) ||
-                 'transparent';
+          return (
+            (typeof props.$theme?.colors?.status?.warning === 'object' &&
+            props.$theme?.colors?.status?.warning &&
+            'border' in props.$theme.colors.status.warning
+              ? String((props.$theme.colors.status.warning as any).border)
+              : null) ||
+            (typeof (props.$theme as any)?.status?.warning === 'object' &&
+            (props.$theme as any)?.status?.warning &&
+            'border' in (props.$theme as any).status.warning
+              ? String(((props.$theme as any).status.warning as any).border)
+              : null) ||
+            'transparent'
+          );
         default:
           return 'transparent';
       }
@@ -222,7 +338,15 @@ const ActivityItem = styled.div<{ $type: string; $theme?: Theme }>`
   &:hover {
     transform: translateX(5px);
     box-shadow: ${props => {
-      const shadowColor = props.$theme?.colors?.shadow || (typeof (props.$theme as any)?.shadow === 'string' ? (props.$theme as any).shadow : (typeof (props.$theme as any)?.shadow === 'object' && (props.$theme as any)?.shadow && 'color' in (props.$theme as any).shadow ? String(((props.$theme as any).shadow as any).color) : null));
+      const shadowColor =
+        props.$theme?.colors?.shadow ||
+        (typeof (props.$theme as any)?.shadow === 'string'
+          ? (props.$theme as any).shadow
+          : typeof (props.$theme as any)?.shadow === 'object' &&
+              (props.$theme as any)?.shadow &&
+              'color' in (props.$theme as any).shadow
+            ? String(((props.$theme as any).shadow as any).color)
+            : null);
       if (shadowColor && shadowColor.startsWith('rgba')) {
         const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
         if (match) {
@@ -243,16 +367,32 @@ const ActivityIcon = styled.div<{ $theme?: any }>`
   justify-content: center;
   border-radius: 50%;
   background: ${props => {
-    const bgColor = (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'primary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).primary) : null) || (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null);
+    const bgColor =
+      (typeof props.$theme?.colors?.background === 'object' &&
+      props.$theme?.colors?.background &&
+      'primary' in props.$theme.colors.background
+        ? String((props.$theme.colors.background as any).primary)
+        : null) ||
+      (typeof (props.$theme as any)?.background === 'object' &&
+      (props.$theme as any)?.background &&
+      'primary' in (props.$theme as any).background
+        ? String(((props.$theme as any).background as any).primary)
+        : null);
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
       const b = parseInt(bgColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.9)`;
     }
-    return props.$theme?.colors?.background?.primary || 
-           (typeof (props.$theme as any)?.background === 'object' && (props.$theme as any)?.background && 'primary' in (props.$theme as any).background ? String(((props.$theme as any).background as any).primary) : null) ||
-           'transparent';
+    return (
+      props.$theme?.colors?.background?.primary ||
+      (typeof (props.$theme as any)?.background === 'object' &&
+      (props.$theme as any)?.background &&
+      'primary' in (props.$theme as any).background
+        ? String(((props.$theme as any).background as any).primary)
+        : null) ||
+      'transparent'
+    );
   }};
 `;
 
@@ -262,25 +402,23 @@ const ActivityContent = styled.div`
 
 const ActivityTitle = styled.div<{ $theme?: any }>`
   font-weight: 600;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
-    'inherit'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
   margin-bottom: 0.25rem;
 `;
 
 const ActivityDescription = styled.div<{ $theme?: any }>`
   font-size: 0.9rem;
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
     'inherit'};
 `;
 
 const ActivityTime = styled.div<{ $theme?: any }>`
   font-size: 0.8rem;
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
     'inherit'};
   text-align: right;
@@ -296,21 +434,61 @@ const AlertBanner = styled.div<{ $type: string; $theme?: Theme }>`
   background: ${props => {
     switch (props.$type) {
       case 'warning':
-        return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'background' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).background) : null) ||
-               (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'background' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).background) : null) ||
-               'transparent';
+        return (
+          (typeof props.$theme?.colors?.status?.warning === 'object' &&
+          props.$theme?.colors?.status?.warning &&
+          'background' in props.$theme.colors.status.warning
+            ? String((props.$theme.colors.status.warning as any).background)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.warning === 'object' &&
+          (props.$theme as any)?.status?.warning &&
+          'background' in (props.$theme as any).status.warning
+            ? String(((props.$theme as any).status.warning as any).background)
+            : null) ||
+          'transparent'
+        );
       case 'error':
-        return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'background' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).background) : null) ||
-               (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'background' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).background) : null) ||
-               'transparent';
+        return (
+          (typeof props.$theme?.colors?.status?.error === 'object' &&
+          props.$theme?.colors?.status?.error &&
+          'background' in props.$theme.colors.status.error
+            ? String((props.$theme.colors.status.error as any).background)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.error === 'object' &&
+          (props.$theme as any)?.status?.error &&
+          'background' in (props.$theme as any).status.error
+            ? String(((props.$theme as any).status.error as any).background)
+            : null) ||
+          'transparent'
+        );
       case 'success':
-        return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'background' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).background) : null) ||
-               (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'background' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).background) : null) ||
-               'transparent';
+        return (
+          (typeof props.$theme?.colors?.status?.success === 'object' &&
+          props.$theme?.colors?.status?.success &&
+          'background' in props.$theme.colors.status.success
+            ? String((props.$theme.colors.status.success as any).background)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.success === 'object' &&
+          (props.$theme as any)?.status?.success &&
+          'background' in (props.$theme as any).status.success
+            ? String(((props.$theme as any).status.success as any).background)
+            : null) ||
+          'transparent'
+        );
       case 'info':
-        return (typeof props.$theme?.colors?.status?.info === 'object' && props.$theme?.colors?.status?.info && 'background' in props.$theme.colors.status.info ? String((props.$theme.colors.status.info as any).background) : null) ||
-               (typeof (props.$theme as any)?.status?.info === 'object' && (props.$theme as any)?.status?.info && 'background' in (props.$theme as any).status.info ? String(((props.$theme as any).status.info as any).background) : null) ||
-               'transparent';
+        return (
+          (typeof props.$theme?.colors?.status?.info === 'object' &&
+          props.$theme?.colors?.status?.info &&
+          'background' in props.$theme.colors.status.info
+            ? String((props.$theme.colors.status.info as any).background)
+            : null) ||
+          (typeof (props.$theme as any)?.status?.info === 'object' &&
+          (props.$theme as any)?.status?.info &&
+          'background' in (props.$theme as any).status.info
+            ? String(((props.$theme as any).status.info as any).background)
+            : null) ||
+          'transparent'
+        );
       default:
         return 'transparent';
     }
@@ -319,21 +497,61 @@ const AlertBanner = styled.div<{ $type: string; $theme?: Theme }>`
     ${props => {
       switch (props.$type) {
         case 'warning':
-          return (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'border' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).border) : null) ||
-                 (typeof (props.$theme as any)?.status?.warning === 'object' && (props.$theme as any)?.status?.warning && 'border' in (props.$theme as any).status.warning ? String(((props.$theme as any).status.warning as any).border) : null) ||
-                 'transparent';
+          return (
+            (typeof props.$theme?.colors?.status?.warning === 'object' &&
+            props.$theme?.colors?.status?.warning &&
+            'border' in props.$theme.colors.status.warning
+              ? String((props.$theme.colors.status.warning as any).border)
+              : null) ||
+            (typeof (props.$theme as any)?.status?.warning === 'object' &&
+            (props.$theme as any)?.status?.warning &&
+            'border' in (props.$theme as any).status.warning
+              ? String(((props.$theme as any).status.warning as any).border)
+              : null) ||
+            'transparent'
+          );
         case 'error':
-          return (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'border' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).border) : null) ||
-                 (typeof (props.$theme as any)?.status?.error === 'object' && (props.$theme as any)?.status?.error && 'border' in (props.$theme as any).status.error ? String(((props.$theme as any).status.error as any).border) : null) ||
-                 'transparent';
+          return (
+            (typeof props.$theme?.colors?.status?.error === 'object' &&
+            props.$theme?.colors?.status?.error &&
+            'border' in props.$theme.colors.status.error
+              ? String((props.$theme.colors.status.error as any).border)
+              : null) ||
+            (typeof (props.$theme as any)?.status?.error === 'object' &&
+            (props.$theme as any)?.status?.error &&
+            'border' in (props.$theme as any).status.error
+              ? String(((props.$theme as any).status.error as any).border)
+              : null) ||
+            'transparent'
+          );
         case 'success':
-          return (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'border' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).border) : null) ||
-                 (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'border' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).border) : null) ||
-                 'transparent';
+          return (
+            (typeof props.$theme?.colors?.status?.success === 'object' &&
+            props.$theme?.colors?.status?.success &&
+            'border' in props.$theme.colors.status.success
+              ? String((props.$theme.colors.status.success as any).border)
+              : null) ||
+            (typeof (props.$theme as any)?.status?.success === 'object' &&
+            (props.$theme as any)?.status?.success &&
+            'border' in (props.$theme as any).status.success
+              ? String(((props.$theme as any).status.success as any).border)
+              : null) ||
+            'transparent'
+          );
         case 'info':
-          return (typeof props.$theme?.colors?.status?.info === 'object' && props.$theme?.colors?.status?.info && 'border' in props.$theme.colors.status.info ? String((props.$theme.colors.status.info as any).border) : null) ||
-                 (typeof (props.$theme as any)?.status?.info === 'object' && (props.$theme as any)?.status?.info && 'border' in (props.$theme as any).status.info ? String(((props.$theme as any).status.info as any).border) : null) ||
-                 'transparent';
+          return (
+            (typeof props.$theme?.colors?.status?.info === 'object' &&
+            props.$theme?.colors?.status?.info &&
+            'border' in props.$theme.colors.status.info
+              ? String((props.$theme.colors.status.info as any).border)
+              : null) ||
+            (typeof (props.$theme as any)?.status?.info === 'object' &&
+            (props.$theme as any)?.status?.info &&
+            'border' in (props.$theme as any).status.info
+              ? String(((props.$theme as any).status.info as any).border)
+              : null) ||
+            'transparent'
+          );
         default:
           return 'transparent';
       }
@@ -485,8 +703,8 @@ const MonitoringDashboard: React.FC = () => {
     <PageContainer
       $theme={theme}
       sidebarCollapsed={collapsed}
-      variant="dashboard"
-      background="solid"
+      variant='dashboard'
+      background='solid'
       animation={true}
     >
       <Sidebar
@@ -513,8 +731,8 @@ const MonitoringDashboard: React.FC = () => {
             Monitoramento
           </>
         }
-        subtitle="Acompanhe o status e performance do sistema eSocial"
-        variant="inline"
+        subtitle='Acompanhe o status e performance do sistema eSocial'
+        variant='inline'
         actions={
           <OptimizedFlexContainer>
             <OptimizedStatusIndicator $status={systemStatus} $theme={theme}>
@@ -527,135 +745,147 @@ const MonitoringDashboard: React.FC = () => {
               $disabled={isLoading}
               $size='medium'
             >
-              <AccessibleEmoji emoji={isLoading ? '⏳' : '🔄'} label={isLoading ? 'Carregando' : 'Atualizar'} /> Atualizar
+              <AccessibleEmoji
+                emoji={isLoading ? '⏳' : '🔄'}
+                label={isLoading ? 'Carregando' : 'Atualizar'}
+              />{' '}
+              Atualizar
             </UnifiedButton>
           </OptimizedFlexContainer>
         }
         animation={true}
       />
-      
+
       {/* Alertas */}
       {alerts.map((alert: any, index: any) => (
-          <AlertBanner key={index} $type={alert.type} $theme={theme}>
-            <AlertIcon>{alert.icon}</AlertIcon>
-            <AlertText $theme={theme}>{alert.text}</AlertText>
-          </AlertBanner>
-        ))}
+        <AlertBanner key={index} $type={alert.type} $theme={theme}>
+          <AlertIcon>{alert.icon}</AlertIcon>
+          <AlertText $theme={theme}>{alert.text}</AlertText>
+        </AlertBanner>
+      ))}
 
-        {/* Métricas Principais */}
-        <DashboardGrid>
-          <UnifiedCard
-            theme={theme}
-            variant='default'
-            size='lg'
-            status='info'
-            icon={<AccessibleEmoji emoji='📤' label='Exportar' />}
-            title='Eventos Enviados'
-          >
-            <MetricValue $theme={theme}>
-              {metrics.eventosEnviados.toLocaleString()}
-            </MetricValue>
-            <MetricSubtext $theme={theme}>
-              Total de eventos enviados para eSocial
-            </MetricSubtext>
-          </UnifiedCard>
-
-          <UnifiedCard
-            theme={theme}
-            variant='default'
-            size='lg'
-            status='success'
-            icon={<AccessibleEmoji emoji='✅' label='Sucesso' />}
-            title='Eventos Processados'
-          >
-            <MetricValue $theme={theme}>
-              {metrics.eventosProcessados.toLocaleString()}
-            </MetricValue>
-            <MetricSubtext $theme={theme}>Eventos processados com sucesso</MetricSubtext>
-          </UnifiedCard>
-
-          <UnifiedCard
-            theme={theme}
-            variant='default'
-            size='lg'
-            status='error'
-            icon={<AccessibleEmoji emoji='❌' label='Erro' />}
-            title='Eventos com Erro'
-          >
-            <MetricValue $theme={theme}>
-              {metrics.eventosComErro.toLocaleString()}
-            </MetricValue>
-            <MetricSubtext $theme={theme}>Eventos que falharam no processamento</MetricSubtext>
-          </UnifiedCard>
-
-          <UnifiedCard
-            theme={theme}
-            variant='default'
-            size='lg'
-            status='info'
-            icon={<AccessibleEmoji emoji='🔗' label='Link' />}
-            title='Webhooks Ativos'
-          >
-            <MetricValue $theme={theme}>{metrics.webhooksAtivos}</MetricValue>
-            <MetricSubtext $theme={theme}>Webhooks configurados e funcionando</MetricSubtext>
-          </UnifiedCard>
-
-          <UnifiedCard
-            theme={theme}
-            variant='default'
-            size='lg'
-            status='success'
-            icon={<AccessibleEmoji emoji='💾' label='Armazenar' />}
-            title='Backups Realizados'
-          >
-            <MetricValue $theme={theme}>
-              {metrics.backupsRealizados}
-            </MetricValue>
-            <MetricSubtext $theme={theme}>Backups executados com sucesso</MetricSubtext>
-          </UnifiedCard>
-
-          <UnifiedCard
-            theme={theme}
-            variant='default'
-            size='lg'
-            status='info'
-            icon={<AccessibleEmoji emoji='📋' label='Checklist' />}
-            title='Logs de Auditoria'
-          >
-            <MetricValue $theme={theme}>
-              {metrics.logsAuditoria.toLocaleString()}
-            </MetricValue>
-            <MetricSubtext $theme={theme}>Logs gerados nos últimos 30 dias</MetricSubtext>
-          </UnifiedCard>
-        </DashboardGrid>
-
-        {/* Atividade Recente */}
+      {/* Métricas Principais */}
+      <DashboardGrid>
         <UnifiedCard
           theme={theme}
           variant='default'
           size='lg'
-          icon={<AccessibleEmoji emoji='🕒' label='Tempo' />}
-          title='Atividade Recente'
+          status='info'
+          icon={<AccessibleEmoji emoji='📤' label='Exportar' />}
+          title='Eventos Enviados'
         >
-          <ActivityList>
-            {recentActivity.map(activity => (
-              <ActivityItem
-                key={activity.id}
-                $type={activity.type}
-                $theme={theme}
-              >
-                <ActivityIcon $theme={theme}>{activity.icon}</ActivityIcon>
-                <ActivityContent>
-                  <ActivityTitle $theme={theme}>{activity.title}</ActivityTitle>
-                  <ActivityDescription $theme={theme}>
-                    {activity.description}
-                  </ActivityDescription>
-                </ActivityContent>
-                <ActivityTime $theme={theme}>{activity.time}</ActivityTime>
-              </ActivityItem>
-            ))}
-          </ActivityList>
+          <MetricValue $theme={theme}>
+            {metrics.eventosEnviados.toLocaleString()}
+          </MetricValue>
+          <MetricSubtext $theme={theme}>
+            Total de eventos enviados para eSocial
+          </MetricSubtext>
         </UnifiedCard>
+
+        <UnifiedCard
+          theme={theme}
+          variant='default'
+          size='lg'
+          status='success'
+          icon={<AccessibleEmoji emoji='✅' label='Sucesso' />}
+          title='Eventos Processados'
+        >
+          <MetricValue $theme={theme}>
+            {metrics.eventosProcessados.toLocaleString()}
+          </MetricValue>
+          <MetricSubtext $theme={theme}>
+            Eventos processados com sucesso
+          </MetricSubtext>
+        </UnifiedCard>
+
+        <UnifiedCard
+          theme={theme}
+          variant='default'
+          size='lg'
+          status='error'
+          icon={<AccessibleEmoji emoji='❌' label='Erro' />}
+          title='Eventos com Erro'
+        >
+          <MetricValue $theme={theme}>
+            {metrics.eventosComErro.toLocaleString()}
+          </MetricValue>
+          <MetricSubtext $theme={theme}>
+            Eventos que falharam no processamento
+          </MetricSubtext>
+        </UnifiedCard>
+
+        <UnifiedCard
+          theme={theme}
+          variant='default'
+          size='lg'
+          status='info'
+          icon={<AccessibleEmoji emoji='🔗' label='Link' />}
+          title='Webhooks Ativos'
+        >
+          <MetricValue $theme={theme}>{metrics.webhooksAtivos}</MetricValue>
+          <MetricSubtext $theme={theme}>
+            Webhooks configurados e funcionando
+          </MetricSubtext>
+        </UnifiedCard>
+
+        <UnifiedCard
+          theme={theme}
+          variant='default'
+          size='lg'
+          status='success'
+          icon={<AccessibleEmoji emoji='💾' label='Armazenar' />}
+          title='Backups Realizados'
+        >
+          <MetricValue $theme={theme}>{metrics.backupsRealizados}</MetricValue>
+          <MetricSubtext $theme={theme}>
+            Backups executados com sucesso
+          </MetricSubtext>
+        </UnifiedCard>
+
+        <UnifiedCard
+          theme={theme}
+          variant='default'
+          size='lg'
+          status='info'
+          icon={<AccessibleEmoji emoji='📋' label='Checklist' />}
+          title='Logs de Auditoria'
+        >
+          <MetricValue $theme={theme}>
+            {metrics.logsAuditoria.toLocaleString()}
+          </MetricValue>
+          <MetricSubtext $theme={theme}>
+            Logs gerados nos últimos 30 dias
+          </MetricSubtext>
+        </UnifiedCard>
+      </DashboardGrid>
+
+      {/* Atividade Recente */}
+      <UnifiedCard
+        theme={theme}
+        variant='default'
+        size='lg'
+        icon={<AccessibleEmoji emoji='🕒' label='Tempo' />}
+        title='Atividade Recente'
+      >
+        <ActivityList>
+          {recentActivity.map(activity => (
+            <ActivityItem
+              key={activity.id}
+              $type={activity.type}
+              $theme={theme}
+            >
+              <ActivityIcon $theme={theme}>{activity.icon}</ActivityIcon>
+              <ActivityContent>
+                <ActivityTitle $theme={theme}>{activity.title}</ActivityTitle>
+                <ActivityDescription $theme={theme}>
+                  {activity.description}
+                </ActivityDescription>
+              </ActivityContent>
+              <ActivityTime $theme={theme}>{activity.time}</ActivityTime>
+            </ActivityItem>
+          ))}
+        </ActivityList>
+      </UnifiedCard>
     </PageContainer>
   );
 };

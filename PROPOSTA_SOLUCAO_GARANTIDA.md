@@ -3,11 +3,13 @@
 ## 📊 **ANÁLISE DO ERRO ATUAL**
 
 ### **Progresso Alcançado:**
+
 - ✅ Erro de duplicação `dynamic` - **CORRIGIDO**
 - ✅ Build compilou: `✓ Compiled successfully in 12.2s`
 - ❌ Erro no prerendering: `f.div.withConfig.withConfig.b`
 
 ### **Erro Atual:**
+
 - **Página:** `/esocial-domestico-completo`
 - **Tipo:** Duplicação de `withConfig`
 - **Fase:** Prerendering (não é mais compilação!)
@@ -37,12 +39,14 @@
 **Objetivo:** Resolver o erro específico que está bloqueando o build
 
 **Passos:**
+
 1. Identificar EXATAMENTE qual componente tem `withConfig` duplicado
 2. Corrigir diretamente
 3. Executar build para validar
 4. Se passar, continuar para Etapa 2
 
 **Vantagens:**
+
 - ✅ Rápido (15-30 min)
 - ✅ Valida a solução antes de continuar
 - ✅ Evita refatorar arquivos que podem ter o mesmo problema
@@ -54,11 +58,13 @@
 **Objetivo:** Refatorar arquivos para garantir qualidade
 
 **Passos:**
+
 1. Se o build passar, continuar refatoração sistemática
 2. Identificar padrões similares
 3. Corrigir arquivo por arquivo
 
 **Vantagens:**
+
 - ✅ Garante qualidade completa
 - ✅ Progresso mensurável
 - ✅ Zero rework
@@ -73,6 +79,7 @@
 2. **Depois:** Continuar Auto-Fix + Refatoração
 
 **Por quê?**
+
 - ✅ Mais eficiente
 - ✅ Valida solução antes de continuar
 - ✅ Evita retrabalho
@@ -85,6 +92,7 @@
 2. Pode demorar mais mas garante qualidade
 
 **Por quê?**
+
 - ✅ Abordagem sistemática
 - ⚠️ Mas pode levar mais tempo se o erro for estrutural
 
@@ -96,4 +104,3 @@
 2. **Auto-Fix + Refatoração:** Continuar refatoração sistemática agora
 
 Qual faz mais sentido para você?
-

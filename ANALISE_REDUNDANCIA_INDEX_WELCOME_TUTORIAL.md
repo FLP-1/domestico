@@ -9,6 +9,7 @@
 ## 💭 RACIOCÍNIO / 🤔 ANÁLISE CRÍTICA
 
 ### **ENTENDIMENTO:**
+
 Duas páginas públicas que parecem ter propósitos similares: apresentar o sistema DOM.
 
 ---
@@ -16,14 +17,17 @@ Duas páginas públicas que parecem ter propósitos similares: apresentar o sist
 ## 🔍 SUPOSIÇÕES QUESTIONADAS
 
 ### **1. Suposição: "São redundantes porque ambas apresentam o sistema"**
+
 - ⚠️ **PARCIALMENTE CORRETO:** Ambas apresentam o sistema, mas com propósitos diferentes
 - ✅ **Realidade:** Propósitos distintos identificados
 
 ### **2. Suposição: "Unificar sempre é melhor"**
+
 - ❌ **INCORRETO:** Unificar pode piorar a experiência do usuário
 - ✅ **Realidade:** Depende do propósito e do fluxo do usuário
 
 ### **3. Suposição: "Duas páginas confundem o usuário"**
+
 - ⚠️ **DEPENDE:** Pode confundir se não houver clareza, mas pode melhorar se houver propósito claro
 
 ---
@@ -33,12 +37,14 @@ Duas páginas públicas que parecem ter propósitos similares: apresentar o sist
 ### **`index.tsx` (/) - Landing Page**
 
 **Propósito:**
+
 - ✅ **Landing page pública** (marketing/apresentação)
 - ✅ **Primeira impressão** para visitantes não autenticados
 - ✅ **Conversão:** "Começar Agora" → `/login`
 - ✅ **Informação:** Apresenta features e benefícios
 
 **Características:**
+
 - Hero section com CTA principal
 - Seção de features (6 cards clicáveis)
 - Seção de benefícios
@@ -47,6 +53,7 @@ Duas páginas públicas que parecem ter propósitos similares: apresentar o sist
 - **Navegação:** Botão "Saiba Mais" → `/welcome-tutorial`
 
 **Quando é usada:**
+
 - Visitante acessa o domínio raiz
 - Primeira visita ao site
 - Marketing/externa
@@ -56,12 +63,14 @@ Duas páginas públicas que parecem ter propósitos similares: apresentar o sist
 ### **`welcome-tutorial.tsx` (/welcome-tutorial) - Tutorial Interativo**
 
 **Propósito:**
+
 - ✅ **Tutorial interativo** para novos usuários
 - ✅ **Onboarding** após login/cadastro
 - ✅ **Educação:** Ensina como usar o sistema
 - ✅ **Navegação guiada:** Slides com progresso
 
 **Características:**
+
 - 3 estados: `welcome` → `tutorial` → `completion`
 - 7 slides educativos (Dashboard, Time Clock, Tasks, etc.)
 - Barra de progresso
@@ -70,6 +79,7 @@ Duas páginas públicas que parecem ter propósitos similares: apresentar o sist
 - **Navegação:** Finaliza → `/dashboard`
 
 **Quando é usada:**
+
 - Após login/cadastro (onboarding)
 - Usuário clica "Saiba Mais" na landing page
 - Usuário quer revisar o tutorial
@@ -79,6 +89,7 @@ Duas páginas públicas que parecem ter propósitos similares: apresentar o sist
 ## ⚖️ COMPARAÇÃO DIRETA
 
 ### **Semelhanças:**
+
 - ✅ Ambas apresentam o sistema DOM
 - ✅ Ambas têm hero section com logo
 - ✅ Ambas mencionam features principais
@@ -87,15 +98,15 @@ Duas páginas públicas que parecem ter propósitos similares: apresentar o sist
 
 ### **Diferenças Críticas:**
 
-| Aspecto | `index.tsx` (/) | `welcome-tutorial.tsx` |
-|---------|----------------|------------------------|
-| **Propósito** | Marketing/Landing | Onboarding/Tutorial |
-| **Público** | Visitantes externos | Usuários novos |
-| **Interatividade** | Estática (cards clicáveis) | Interativa (slides, progresso) |
-| **Profundidade** | Visão geral | Detalhada (7 slides) |
-| **Fluxo** | `/` → `/login` | `/welcome-tutorial` → `/dashboard` |
-| **Contexto** | Antes do login | Após login/cadastro |
-| **Duração** | Leitura rápida | Tutorial completo (5-10 min) |
+| Aspecto            | `index.tsx` (/)            | `welcome-tutorial.tsx`             |
+| ------------------ | -------------------------- | ---------------------------------- |
+| **Propósito**      | Marketing/Landing          | Onboarding/Tutorial                |
+| **Público**        | Visitantes externos        | Usuários novos                     |
+| **Interatividade** | Estática (cards clicáveis) | Interativa (slides, progresso)     |
+| **Profundidade**   | Visão geral                | Detalhada (7 slides)               |
+| **Fluxo**          | `/` → `/login`             | `/welcome-tutorial` → `/dashboard` |
+| **Contexto**       | Antes do login             | Após login/cadastro                |
+| **Duração**        | Leitura rápida             | Tutorial completo (5-10 min)       |
 
 ---
 
@@ -128,11 +139,13 @@ Duas páginas públicas que parecem ter propósitos similares: apresentar o sist
 ### **OPÇÃO A: Manter Separadas** ✅ **RECOMENDADA**
 
 **Abordagem:**
+
 - Manter `/` como landing page
 - Manter `/welcome-tutorial` como tutorial
 - Melhorar integração entre elas
 
 **Prós:**
+
 - ✅ **Separação de responsabilidades clara**
 - ✅ **Cada página otimizada para seu propósito**
 - ✅ **Melhor SEO** (duas páginas indexáveis)
@@ -141,6 +154,7 @@ Duas páginas públicas que parecem ter propósitos similares: apresentar o sist
 - ✅ **Não confunde** (propósitos claros)
 
 **Contras:**
+
 - ⚠️ Alguma duplicação de conteúdo (mas com propósitos diferentes)
 - ⚠️ Manutenção de duas páginas
 
@@ -152,15 +166,18 @@ Duas páginas públicas que parecem ter propósitos similares: apresentar o sist
 ### **OPÇÃO B: Unificar em `/`** ❌ **NÃO RECOMENDADA**
 
 **Abordagem:**
+
 - Remover `/welcome-tutorial`
 - Adicionar tutorial na landing page
 - Tornar `/` responsável por ambos os propósitos
 
 **Prós:**
+
 - ✅ Uma página menos para manter
 - ✅ Menos rotas
 
 **Contras:**
+
 - ❌ **Conflito de propósitos:** Landing page não deve ser tutorial
 - ❌ **Pior SEO:** Uma página fazendo duas coisas
 - ❌ **Pior UX:** Landing page fica muito longa
@@ -176,14 +193,17 @@ Duas páginas públicas que parecem ter propósitos similares: apresentar o sist
 ### **OPÇÃO C: Unificar em `/welcome-tutorial`** ❌ **NÃO RECOMENDADA**
 
 **Abordagem:**
+
 - Remover `/`
 - Tornar `/welcome-tutorial` a página inicial
 - Redirecionar `/` → `/welcome-tutorial`
 
 **Prós:**
+
 - ✅ Uma página menos
 
 **Contras:**
+
 - ❌ **Pior para marketing:** Tutorial não é landing page
 - ❌ **Pior conversão:** Visitante não quer tutorial antes de conhecer
 - ❌ **Pior SEO:** Landing page é importante para SEO
@@ -197,16 +217,19 @@ Duas páginas públicas que parecem ter propósitos similares: apresentar o sist
 ### **OPÇÃO D: Melhorar Integração** ⚠️ **CONSIDERAR**
 
 **Abordagem:**
+
 - Manter ambas separadas
 - Melhorar navegação entre elas
 - Reduzir duplicação de conteúdo (reutilizar componentes)
 
 **Prós:**
+
 - ✅ Mantém propósitos claros
 - ✅ Melhora experiência
 - ✅ Reduz duplicação de código (não de propósito)
 
 **Contras:**
+
 - ⚠️ Requer refatoração (mas menor)
 
 **Custo:** Médio  
@@ -292,6 +315,7 @@ Duas páginas públicas que parecem ter propósitos similares: apresentar o sist
 ### **✅ RECOMENDAÇÃO: MANTER SEPARADAS**
 
 **Justificativa:**
+
 - Propósitos diferentes (marketing vs onboarding)
 - Públicos diferentes (visitantes vs usuários)
 - Fluxos diferentes (pré-login vs pós-login)
@@ -300,11 +324,13 @@ Duas páginas públicas que parecem ter propósitos similares: apresentar o sist
 - Princípios de design respeitados
 
 **Melhorias Opcionais:**
+
 - Reduzir duplicação de código (componentes compartilhados)
 - Melhorar navegação entre páginas
 - Otimizar conteúdo de cada uma
 
 **Não unificar porque:**
+
 - Pioraria experiência do usuário
 - Conflito de propósitos
 - Violaria princípios de design
@@ -313,4 +339,3 @@ Duas páginas públicas que parecem ter propósitos similares: apresentar o sist
 
 **Última atualização:** 08/01/2025  
 **Decisão:** ✅ **MANTER SEPARADAS** (com melhorias opcionais)
-

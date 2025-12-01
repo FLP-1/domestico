@@ -31,7 +31,8 @@ export default async function handler(
       if (!listaId || !nome || !categoria || !quantidade || !unidade) {
         return res.status(400).json({
           success: false,
-          error: 'Campos obrigatórios: listaId, nome, categoria, quantidade, unidade',
+          error:
+            'Campos obrigatórios: listaId, nome, categoria, quantidade, unidade',
         });
       }
 
@@ -66,7 +67,11 @@ export default async function handler(
           });
         }
 
-        const result = await service.marcarItemComprado(itemId, compradoPor, precoReal);
+        const result = await service.marcarItemComprado(
+          itemId,
+          compradoPor,
+          precoReal
+        );
 
         if (!result.success) {
           return res.status(400).json(result);
@@ -90,4 +95,3 @@ export default async function handler(
     });
   }
 }
-

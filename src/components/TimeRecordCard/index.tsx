@@ -73,7 +73,7 @@ const TimeRecordContainer = styled.div<{
 `;
 
 const TimeDisplay = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -91,25 +91,35 @@ const TimeDisplay = styled.div.withConfig({
     color: ${props => {
       switch (props.$status) {
         case 'completed':
-          return props.$theme?.colors?.primary || props.$theme?.accent || 'inherit';
+          return (
+            props.$theme?.colors?.primary || props.$theme?.accent || 'inherit'
+          );
         case 'pending':
-          return props.$theme?.colors?.status?.warning?.text || 
-                 props.$theme?.status?.warning?.text ||
-                 'inherit';
+          return (
+            props.$theme?.colors?.status?.warning?.text ||
+            props.$theme?.status?.warning?.text ||
+            'inherit'
+          );
         case 'available':
-          return props.$theme?.colors?.text?.primary || 
-                 props.$theme?.text?.primary ||
-                 props.$theme?.colors?.text ||
-                 'inherit';
+          return (
+            props.$theme?.colors?.text?.primary ||
+            props.$theme?.text?.primary ||
+            props.$theme?.colors?.text ||
+            'inherit'
+          );
         case 'disabled':
-          return props.$theme?.colors?.text?.secondary || 
-                 props.$theme?.text?.secondary ||
-                 'inherit';
+          return (
+            props.$theme?.colors?.text?.secondary ||
+            props.$theme?.text?.secondary ||
+            'inherit'
+          );
         default:
-          return props.$theme?.colors?.text?.dark || 
-                 props.$theme?.text?.dark ||
-                 props.$theme?.colors?.text ||
-                 'inherit';
+          return (
+            props.$theme?.colors?.text?.dark ||
+            props.$theme?.text?.dark ||
+            props.$theme?.colors?.text ||
+            'inherit'
+          );
       }
     }};
     line-height: 1.2;
@@ -121,23 +131,33 @@ const TimeDisplay = styled.div.withConfig({
     color: ${props => {
       switch (props.$status) {
         case 'completed':
-          return props.$theme?.colors?.primary || props.$theme?.accent || 'inherit';
+          return (
+            props.$theme?.colors?.primary || props.$theme?.accent || 'inherit'
+          );
         case 'pending':
-          return props.$theme?.colors?.status?.warning?.text || 
-                 props.$theme?.status?.warning?.text ||
-                 'inherit';
+          return (
+            props.$theme?.colors?.status?.warning?.text ||
+            props.$theme?.status?.warning?.text ||
+            'inherit'
+          );
         case 'available':
-          return props.$theme?.colors?.text?.dark || 
-                 props.$theme?.text?.dark ||
-                 'inherit';
+          return (
+            props.$theme?.colors?.text?.dark ||
+            props.$theme?.text?.dark ||
+            'inherit'
+          );
         case 'disabled':
-          return props.$theme?.colors?.text?.secondary || 
-                 props.$theme?.text?.secondary ||
-                 'inherit';
+          return (
+            props.$theme?.colors?.text?.secondary ||
+            props.$theme?.text?.secondary ||
+            'inherit'
+          );
         default:
-          return props.$theme?.colors?.text?.dark || 
-                 props.$theme?.text?.dark ||
-                 'inherit';
+          return (
+            props.$theme?.colors?.text?.dark ||
+            props.$theme?.text?.dark ||
+            'inherit'
+          );
       }
     }};
     text-transform: uppercase;
@@ -165,19 +185,27 @@ const StatusIndicator = styled.div<{
   background: ${props => {
     switch (props.$status) {
       case 'completed':
-        return props.$theme?.colors?.primary || props.$theme?.accent || 'transparent';
+        return (
+          props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'
+        );
       case 'pending':
-        return props.$theme?.colors?.status?.warning?.background || 
-               props.$theme?.status?.warning?.background ||
-               'transparent';
+        return (
+          props.$theme?.colors?.status?.warning?.background ||
+          props.$theme?.status?.warning?.background ||
+          'transparent'
+        );
       case 'available':
-        return props.$theme?.colors?.status?.success?.background || 
-               props.$theme?.status?.success?.background ||
-               'transparent';
+        return (
+          props.$theme?.colors?.status?.success?.background ||
+          props.$theme?.status?.success?.background ||
+          'transparent'
+        );
       case 'disabled':
-        return props.$theme?.colors?.background?.secondary || 
-               props.$theme?.background?.secondary ||
-               'transparent';
+        return (
+          props.$theme?.colors?.background?.secondary ||
+          props.$theme?.background?.secondary ||
+          'transparent'
+        );
       default:
         return 'transparent';
     }
@@ -185,21 +213,29 @@ const StatusIndicator = styled.div<{
   color: ${props => {
     switch (props.$status) {
       case 'completed':
-        return props.$theme?.colors?.text?.primary || 
-               props.$theme?.text?.primary ||
-               'inherit';
+        return (
+          props.$theme?.colors?.text?.primary ||
+          props.$theme?.text?.primary ||
+          'inherit'
+        );
       case 'pending':
-        return props.$theme?.colors?.status?.warning?.text || 
-               props.$theme?.status?.warning?.text ||
-               'inherit';
+        return (
+          props.$theme?.colors?.status?.warning?.text ||
+          props.$theme?.status?.warning?.text ||
+          'inherit'
+        );
       case 'available':
-        return props.$theme?.colors?.status?.success?.text || 
-               props.$theme?.status?.success?.text ||
-               'inherit';
+        return (
+          props.$theme?.colors?.status?.success?.text ||
+          props.$theme?.status?.success?.text ||
+          'inherit'
+        );
       default:
-        return props.$theme?.colors?.text?.dark || 
-               props.$theme?.text?.dark ||
-               'inherit';
+        return (
+          props.$theme?.colors?.text?.dark ||
+          props.$theme?.text?.dark ||
+          'inherit'
+        );
     }
   }};
   text-transform: uppercase;
@@ -207,7 +243,7 @@ const StatusIndicator = styled.div<{
 `;
 
 const LocationInfo = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -222,32 +258,37 @@ const LocationInfo = styled.div.withConfig({
       const b = parseInt(primaryColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.1)`;
     }
-    return props.$theme?.colors?.background?.secondary || 
-           props.$theme?.background?.secondary ||
-           'transparent';
+    return (
+      props.$theme?.colors?.background?.secondary ||
+      props.$theme?.background?.secondary ||
+      'transparent'
+    );
   }};
   border-radius: 8px;
-  border: 1px solid ${props => {
-    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
-    if (primaryColor && primaryColor.startsWith('#')) {
-      const r = parseInt(primaryColor.slice(1, 3), 16);
-      const g = parseInt(primaryColor.slice(3, 5), 16);
-      const b = parseInt(primaryColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.2)`;
-    }
-    return props.$theme?.colors?.border?.light || 
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      return (
+        props.$theme?.colors?.border?.light ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
 
   .location-text {
     font-size: 0.8rem;
-    color: ${props => 
-      props.$theme?.colors?.text?.secondary || 
+    color: ${props =>
+      props.$theme?.colors?.text?.secondary ||
       props.$theme?.text?.secondary ||
       props.$theme?.colors?.textSecondary ||
-      'inherit'
-    };
+      'inherit'};
     margin: 0 0 0.25rem 0;
     display: flex;
     align-items: center;
@@ -256,12 +297,11 @@ const LocationInfo = styled.div.withConfig({
 
   .wifi-text {
     font-size: 0.8rem;
-    color: ${props => 
-      props.$theme?.colors?.text?.secondary || 
+    color: ${props =>
+      props.$theme?.colors?.text?.secondary ||
       props.$theme?.text?.secondary ||
       props.$theme?.colors?.textSecondary ||
-      'inherit'
-    };
+      'inherit'};
     margin: 0;
     display: flex;
     align-items: center;
@@ -270,50 +310,47 @@ const LocationInfo = styled.div.withConfig({
 `;
 
 const ObservationSection = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: any }>`
   margin-top: 1rem;
   padding: 0.75rem;
-  background: ${props => 
-    props.$theme?.colors?.background?.secondary || 
+  background: ${props =>
+    props.$theme?.colors?.background?.secondary ||
     props.$theme?.background?.secondary ||
-    'transparent'
-  };
+    'transparent'};
   border-radius: 8px;
-  border: 1px solid ${props => 
-    props.$theme?.colors?.border?.light || 
-    props.$theme?.border?.light ||
-    'transparent'
-  };
+  border: 1px solid
+    ${props =>
+      props.$theme?.colors?.border?.light ||
+      props.$theme?.border?.light ||
+      'transparent'};
 
   .observation-label {
     font-size: 0.8rem;
     font-weight: 600;
-    color: ${props => 
-      props.$theme?.colors?.text?.dark || 
+    color: ${props =>
+      props.$theme?.colors?.text?.dark ||
       props.$theme?.text?.dark ||
-      'inherit'
-    };
+      'inherit'};
     margin: 0 0 0.5rem 0;
   }
 
   .observation-text {
     font-size: 0.8rem;
-    color: ${props => 
-      props.$theme?.colors?.text?.secondary || 
+    color: ${props =>
+      props.$theme?.colors?.text?.secondary ||
       props.$theme?.text?.secondary ||
-      'inherit'
-    };
+      'inherit'};
     margin: 0;
     font-style: italic;
   }
 `;
 
 const ApprovalBadge = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -451,7 +488,7 @@ export const TimeRecordCard: React.FC<TimeRecordCardProps> = memo(
         actionName,
         $criticalAction,
       });
-      
+
       if (!clickable || !onClick) {
         logger.geo(`⚠️ handleClick bloqueado:`, {
           clickable,
@@ -477,7 +514,10 @@ export const TimeRecordCard: React.FC<TimeRecordCardProps> = memo(
           try {
             await captureLocation();
           } catch (error) {
-            logger.warn(`⚠️ Erro ao capturar localização antes do registro:`, error);
+            logger.warn(
+              `⚠️ Erro ao capturar localização antes do registro:`,
+              error
+            );
             // Continuar mesmo se a captura falhar
           }
 
@@ -494,7 +534,8 @@ export const TimeRecordCard: React.FC<TimeRecordCardProps> = memo(
           onClick();
         }
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro desconhecido';
         logger.error(`❌ Erro em handleClick:`, errorMessage, error);
         throw error;
       } finally {

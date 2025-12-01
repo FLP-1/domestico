@@ -7,16 +7,16 @@
 import { ESocialErrorCode, isRetryableError } from './esocialErrorTypes';
 
 export enum CircuitState {
-  CLOSED = 'CLOSED',     // Funcionando normalmente
-  OPEN = 'OPEN',         // Bloqueado após muitas falhas
-  HALF_OPEN = 'HALF_OPEN' // Testando se recuperou
+  CLOSED = 'CLOSED', // Funcionando normalmente
+  OPEN = 'OPEN', // Bloqueado após muitas falhas
+  HALF_OPEN = 'HALF_OPEN', // Testando se recuperou
 }
 
 export interface CircuitBreakerConfig {
-  failureThreshold?: number;      // Falhas antes de abrir (padrão: 5)
-  timeout?: number;               // Tempo em ms antes de tentar novamente (padrão: 60000)
-  resetTimeout?: number;          // Tempo em ms para resetar (padrão: 300000)
-  monitoringWindow?: number;       // Janela de monitoramento em ms (padrão: 60000)
+  failureThreshold?: number; // Falhas antes de abrir (padrão: 5)
+  timeout?: number; // Tempo em ms antes de tentar novamente (padrão: 60000)
+  resetTimeout?: number; // Tempo em ms para resetar (padrão: 300000)
+  monitoringWindow?: number; // Janela de monitoramento em ms (padrão: 60000)
 }
 
 export interface CircuitBreakerStats {
@@ -38,21 +38,21 @@ export class ESocialCircuitBreaker {
   private lastFailureTime: Date | null = null;
   private lastSuccessTime: Date | null = null;
   private totalRequests: number = 0;
-  
+
   private readonly failureThreshold: number;
   private readonly timeout: number;
   private readonly resetTimeout: number;
   private readonly monitoringWindow: number;
-  
+
   private alertCreated: boolean = false;
-  
+
   constructor(config: CircuitBreakerConfig = {}) {
     this.failureThreshold = config.failureThreshold ?? 5;
     this.timeout = config.timeout ?? 60000; // 1 minuto
     this.resetTimeout = config.resetTimeout ?? 300000; // 5 minutos
     this.monitoringWindow = config.monitoringWindow ?? 60000; // 1 minuto
   }
-  
+
   /**
    * Executa operação com proteção do Circuit Breaker
    */
@@ -61,7 +61,7 @@ export class ESocialCircuitBreaker {
     operationName: string = 'operation'
   ): Promise<T> {
     this.totalRequests++;
-    
+
     // Verificar estado atual
     if (this.state === CircuitState.OPEN) {
       if (this.shouldAttemptReset()) {
@@ -70,7 +70,7 @@ export class ESocialCircuitBreaker {
         throw this.createUnavailableError();
       }
     }
-    
+
     try {
       const result = await operation();
       this.onSuccess();
@@ -80,14 +80,14 @@ export class ESocialCircuitBreaker {
       throw error;
     }
   }
-  
+
   /**
    * Registra sucesso
    */
   private onSuccess(): void {
     this.successes++;
     this.lastSuccessTime = new Date();
-    
+
     if (this.state === CircuitState.HALF_OPEN) {
       // Se estava testando e funcionou, fechar
       this.state = CircuitState.CLOSED;
@@ -100,19 +100,19 @@ export class ESocialCircuitBreaker {
       }
     }
   }
-  
+
   /**
    * Registra falha
    */
   private onFailure(error: any, operationName: string): void {
     this.failures++;
     this.lastFailureTime = new Date();
-    
+
     // Só contar como falha se for retryable
     if (!isRetryableError(error?.error || error?.code)) {
       return; // Erros não retryable não contam para o circuit breaker
     }
-    
+
     if (this.state === CircuitState.HALF_OPEN) {
       // Se estava testando e falhou, abrir novamente
       this.state = CircuitState.OPEN;
@@ -124,17 +124,17 @@ export class ESocialCircuitBreaker {
       }
     }
   }
-  
+
   /**
    * Verifica se deve tentar resetar
    */
   private shouldAttemptReset(): boolean {
     if (!this.lastFailureTime) return false;
-    
+
     const elapsed = Date.now() - this.lastFailureTime.getTime();
     return elapsed >= this.timeout;
   }
-  
+
   /**
    * Cria erro de indisponibilidade
    */
@@ -147,20 +147,22 @@ export class ESocialCircuitBreaker {
     error.retryAfter = this.timeout;
     return error;
   }
-  
+
   /**
    * Cria alerta de indisponibilidade (apenas uma vez)
    */
-  private async createUnavailabilityAlert(operationName: string): Promise<void> {
+  private async createUnavailabilityAlert(
+    operationName: string
+  ): Promise<void> {
     if (this.alertCreated) return;
-    
+
     this.alertCreated = true;
-    
+
     // Criar alerta no sistema (será implementado com integração de alertas)
     try {
       // Importação dinâmica para evitar dependência circular
       const { prisma } = await import('../lib/prisma');
-      
+
       // Buscar usuários ativos que usam eSocial
       const usuarios = await prisma.usuario.findMany({
         where: {
@@ -168,14 +170,14 @@ export class ESocialCircuitBreaker {
           perfis: {
             some: {
               perfil: {
-                codigo: 'EMPREGADOR'
-              }
-            }
-          }
+                codigo: 'EMPREGADOR',
+              },
+            },
+          },
         },
-        select: { id: true }
+        select: { id: true },
       });
-      
+
       // Criar alerta para cada usuário
       for (const usuario of usuarios) {
         await prisma.alerta.create({
@@ -191,8 +193,9 @@ export class ESocialCircuitBreaker {
             recorrente: false,
             notificarEmail: true,
             notificarPush: true,
-            textoNotificacao: '⚠️ eSocial temporariamente indisponível. Tentaremos novamente automaticamente.'
-          }
+            textoNotificacao:
+              '⚠️ eSocial temporariamente indisponível. Tentaremos novamente automaticamente.',
+          },
         });
       }
     } catch (error) {
@@ -200,7 +203,7 @@ export class ESocialCircuitBreaker {
       console.error('Erro ao criar alerta de indisponibilidade:', error);
     }
   }
-  
+
   /**
    * Obtém estatísticas do Circuit Breaker
    */
@@ -211,10 +214,10 @@ export class ESocialCircuitBreaker {
       successes: this.successes,
       lastFailureTime: this.lastFailureTime,
       lastSuccessTime: this.lastSuccessTime,
-      totalRequests: this.totalRequests
+      totalRequests: this.totalRequests,
     };
   }
-  
+
   /**
    * Reseta o Circuit Breaker manualmente
    */
@@ -226,14 +229,14 @@ export class ESocialCircuitBreaker {
     this.lastSuccessTime = null;
     this.alertCreated = false;
   }
-  
+
   /**
    * Verifica se está aberto (bloqueado)
    */
   isOpen(): boolean {
     return this.state === CircuitState.OPEN;
   }
-  
+
   /**
    * Verifica se está fechado (funcionando)
    */
@@ -267,4 +270,3 @@ export function resetESocialCircuitBreaker(): void {
     circuitBreakerInstance.reset();
   }
 }
-

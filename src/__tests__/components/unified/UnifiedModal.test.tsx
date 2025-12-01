@@ -51,7 +51,7 @@ describe('UnifiedModal', () => {
       <UnifiedModal
         isOpen={true}
         onClose={mockOnClose}
-        title="Título do Modal"
+        title='Título do Modal'
         $theme={mockTheme}
       >
         <div>Conteúdo</div>
@@ -66,7 +66,7 @@ describe('UnifiedModal', () => {
       <UnifiedModal
         isOpen={true}
         onClose={mockOnClose}
-        title="Título"
+        title='Título'
         showCloseButton={true}
         $theme={mockTheme}
       >
@@ -110,7 +110,7 @@ describe('UnifiedModal', () => {
   it('não deve chamar onClose ao clicar no conteúdo do modal', () => {
     const { container } = render(
       <UnifiedModal isOpen={true} onClose={mockOnClose} $theme={mockTheme}>
-        <div data-testid="modal-content">Conteúdo</div>
+        <div data-testid='modal-content'>Conteúdo</div>
       </UnifiedModal>
     );
 
@@ -140,7 +140,7 @@ describe('UnifiedModal', () => {
       <UnifiedModal
         isOpen={true}
         onClose={mockOnClose}
-        variant="default"
+        variant='default'
         $theme={mockTheme}
       >
         <div>Default</div>
@@ -151,7 +151,7 @@ describe('UnifiedModal', () => {
       <UnifiedModal
         isOpen={true}
         onClose={mockOnClose}
-        variant="compact"
+        variant='compact'
         $theme={mockTheme}
       >
         <div>Compact</div>
@@ -167,7 +167,7 @@ describe('UnifiedModal', () => {
       <UnifiedModal
         isOpen={true}
         onClose={mockOnClose}
-        maxWidth="800px"
+        maxWidth='800px'
         $theme={mockTheme}
       >
         <div>Conteúdo</div>
@@ -183,7 +183,7 @@ describe('UnifiedModal', () => {
       <UnifiedModal
         isOpen={true}
         onClose={mockOnClose}
-        aria-label="Modal de teste"
+        aria-label='Modal de teste'
         $theme={mockTheme}
       >
         <div>Conteúdo</div>

@@ -29,7 +29,10 @@ export class CertificateService {
   /**
    * Carrega e valida o certificado digital PFX a partir de um arquivo enviado (navegador)
    */
-  async loadCertificate(certificateFile?: File, password?: string): Promise<CertificateInfo> {
+  async loadCertificate(
+    certificateFile?: File,
+    password?: string
+  ): Promise<CertificateInfo> {
     if (!certificateFile) {
       throw new Error(
         'Certificado não fornecido. Use o upload de arquivo ou configure o caminho no ambiente.'
@@ -46,7 +49,10 @@ export class CertificateService {
     }
 
     const arrayBuffer = await certificateFile.arrayBuffer();
-    return this.loadCertificateFromBytes(new Uint8Array(arrayBuffer), filePassword);
+    return this.loadCertificateFromBytes(
+      new Uint8Array(arrayBuffer),
+      filePassword
+    );
   }
 
   /**
@@ -57,7 +63,9 @@ export class CertificateService {
     password?: string
   ): Promise<CertificateInfo> {
     if (typeof window !== 'undefined') {
-      throw new Error('Carregar certificado pelo caminho só é permitido no servidor.');
+      throw new Error(
+        'Carregar certificado pelo caminho só é permitido no servidor.'
+      );
     }
 
     const fs = require('fs') as typeof import('fs');
@@ -73,7 +81,9 @@ export class CertificateService {
       : path.join(process.cwd(), configuredPath);
 
     if (!fs.existsSync(resolvedPath)) {
-      throw new Error(`Arquivo de certificado não encontrado em ${resolvedPath}`);
+      throw new Error(
+        `Arquivo de certificado não encontrado em ${resolvedPath}`
+      );
     }
 
     const certificatePassword = password ?? ESOCIAL_CONFIG.certificate.password;
@@ -82,7 +92,10 @@ export class CertificateService {
     }
 
     const fileBuffer = fs.readFileSync(resolvedPath);
-    return this.loadCertificateFromBytes(new Uint8Array(fileBuffer), certificatePassword);
+    return this.loadCertificateFromBytes(
+      new Uint8Array(fileBuffer),
+      certificatePassword
+    );
   }
 
   /**
@@ -131,7 +144,9 @@ export class CertificateService {
 
       this.certificate = certificates[0];
       this.certificatePem = forge.pki.certificateToPem(this.certificate);
-      this.certificatePemChain = certificates.map(cert => forge.pki.certificateToPem(cert));
+      this.certificatePemChain = certificates.map(cert =>
+        forge.pki.certificateToPem(cert)
+      );
 
       if (!this.certificate) {
         throw new Error('Falha ao extrair certificado do arquivo PFX');

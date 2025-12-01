@@ -21,10 +21,11 @@ const StatusContainer = styled.div<{
   $theme?: any;
 }>`
   background: ${props => {
-    const bg = props.$theme?.colors?.background?.primary ||
-                props.$theme?.background?.primary ||
-                props.$theme?.colors?.surface ||
-                props.$theme?.colors?.background;
+    const bg =
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary ||
+      props.$theme?.colors?.surface ||
+      props.$theme?.colors?.background;
     if (bg && bg.startsWith('#')) {
       const r = parseInt(bg.slice(1, 3), 16);
       const g = parseInt(bg.slice(3, 5), 16);
@@ -37,8 +38,8 @@ const StatusContainer = styled.div<{
   border-radius: 16px;
   padding: 1.5rem;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -47,17 +48,18 @@ const StatusContainer = styled.div<{
     }
     return props.$theme?.shadows?.md || 'none';
   }};
-  border: 1px solid ${props => {
-    const primaryColor = props.$theme?.colors?.primary ||
-                         props.$theme?.accent;
-    if (primaryColor && primaryColor.startsWith('#')) {
-      const r = parseInt(primaryColor.slice(1, 3), 16);
-      const g = parseInt(primaryColor.slice(3, 5), 16);
-      const b = parseInt(primaryColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.1)`;
-    }
-    return 'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.1)`;
+      }
+      return 'transparent';
+    }};
   text-align: center;
   animation: ${fadeIn} 0.6s ease-out;
   min-width: 300px;
@@ -66,8 +68,8 @@ const StatusContainer = styled.div<{
   &:hover {
     transform: translateY(-2px);
     box-shadow: ${props => {
-      const shadowColor = props.$theme?.colors?.shadow ||
-                          props.$theme?.shadow?.color;
+      const shadowColor =
+        props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
       if (shadowColor && shadowColor.startsWith('#')) {
         const r = parseInt(shadowColor.slice(1, 3), 16);
         const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -90,29 +92,35 @@ const StatusIcon = styled.div<{
       switch (props.$status) {
         case 'in':
         case 'success':
-          return props.$theme?.colors?.primary ||
-                 props.$theme?.accent ||
-                 'inherit';
+          return (
+            props.$theme?.colors?.primary || props.$theme?.accent || 'inherit'
+          );
         case 'out':
-          return props.$theme?.colors?.status?.error?.background ||
-                 props.$theme?.status?.error?.background ||
-                 props.$theme?.colors?.error ||
-                 'inherit';
+          return (
+            props.$theme?.colors?.status?.error?.background ||
+            props.$theme?.status?.error?.background ||
+            props.$theme?.colors?.error ||
+            'inherit'
+          );
         case 'break':
         case 'warning':
-          return props.$theme?.colors?.status?.warning?.background ||
-                 props.$theme?.status?.warning?.background ||
-                 props.$theme?.colors?.warning ||
-                 'inherit';
+          return (
+            props.$theme?.colors?.status?.warning?.background ||
+            props.$theme?.status?.warning?.background ||
+            props.$theme?.colors?.warning ||
+            'inherit'
+          );
         case 'info':
-          return props.$theme?.colors?.text?.secondary ||
-                 props.$theme?.text?.secondary ||
-                 props.$theme?.colors?.text ||
-                 'inherit';
+          return (
+            props.$theme?.colors?.text?.secondary ||
+            props.$theme?.text?.secondary ||
+            props.$theme?.colors?.text ||
+            'inherit'
+          );
         default:
-          return props.$theme?.colors?.primary ||
-                 props.$theme?.accent ||
-                 'inherit';
+          return (
+            props.$theme?.colors?.primary || props.$theme?.accent || 'inherit'
+          );
       }
     }
 
@@ -190,7 +198,9 @@ export const StatusCard: React.FC<StatusCardProps> = ({
 
       {time && <StatusTime $theme={theme}>{time}</StatusTime>}
 
-      {description && <StatusDescription $theme={theme}>{description}</StatusDescription>}
+      {description && (
+        <StatusDescription $theme={theme}>{description}</StatusDescription>
+      )}
 
       {children}
     </StatusContainer>

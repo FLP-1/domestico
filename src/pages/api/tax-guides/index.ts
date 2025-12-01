@@ -126,7 +126,9 @@ async function updateTaxGuide(req: NextApiRequest, res: NextApiResponse) {
     const updateData = req.body;
 
     if (!id) {
-      return res.status(400).json({ success: false, error: 'ID é obrigatório' });
+      return res
+        .status(400)
+        .json({ success: false, error: 'ID é obrigatório' });
     }
 
     const taxGuide = await prisma.guiaImposto.update({
@@ -162,7 +164,9 @@ async function deleteTaxGuide(req: NextApiRequest, res: NextApiResponse) {
     const { id } = req.query;
 
     if (!id) {
-      return res.status(400).json({ success: false, error: 'ID é obrigatório' });
+      return res
+        .status(400)
+        .json({ success: false, error: 'ID é obrigatório' });
     }
 
     await prisma.guiaImposto.delete({

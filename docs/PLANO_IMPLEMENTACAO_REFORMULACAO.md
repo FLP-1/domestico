@@ -1,4 +1,5 @@
 # 🎯 PLANO DE IMPLEMENTAÇÃO: REFORMULAÇÃO SIMPLIFICADA
+
 ## Sistema DOM - Implementação Incremental e Eficiente
 
 **Data:** Janeiro 2025  
@@ -12,11 +13,13 @@
 ### ENTENDIMENTO
 
 **Objetivo:**
+
 - ✅ Reformular funcionalidades genéricas em diferenciais específicos
 - ✅ Eliminar redundância na arquitetura
 - ✅ Manter simplicidade e eficiência
 
 **Estratégia:**
+
 - 🔄 Implementação incremental (uma funcionalidade por vez)
 - 🔄 Reutilizar modelos existentes quando possível
 - 🔄 Criar novos modelos apenas quando necessário
@@ -31,11 +34,13 @@
 **Objetivo:** Transformar comunicação genérica em comunicação contextual específica
 
 **Análise do Schema Atual:**
+
 - ✅ `Mensagem` existe (para conversas)
 - ✅ `MensagemHistorico` existe (para histórico de toasts)
 - ✅ `Notificacao` existe (para notificações)
 
 **Decisão Arquitetural:**
+
 - 🔄 **Reutilizar `Mensagem`** para comunicação contextual
 - 🔄 **Adicionar campos** para contexto (contextoTipo, contextoId)
 - 🔄 **Integrar com alertas** (alertaId)
@@ -53,12 +58,12 @@ model Mensagem {
   remetenteId    String
   conteudo       String
   tipo           String            @db.VarChar(50)
-  
+
   // NOVO: Campos para integração com alertas
   origem         String?           @db.VarChar(50) // 'ALERTA', 'ACAO', 'SISTEMA', 'USUARIO'
   alertaId       String?           // Se veio de um alerta
   exibidaToast   Boolean           @default(false) // Se já foi exibida como Toast
-  
+
   // Campos existentes...
   respostaParaId String?
   lida           Boolean           @default(false)
@@ -68,7 +73,7 @@ model Mensagem {
   criadoEm       DateTime          @default(now())
   atualizadoEm   DateTime          @updatedAt
   excluidaEm     DateTime?
-  
+
   conversa       Conversa?         @relation(fields: [conversaId], references: [id], onDelete: Cascade)
   remetente      Usuario           @relation(fields: [remetenteId], references: [id], onDelete: Cascade)
   alerta         Alerta?           @relation(fields: [alertaId], references: [id]) // NOVO
@@ -88,6 +93,7 @@ model Mensagem {
 ```
 
 **Vantagens:**
+
 - ✅ Reutiliza modelo existente
 - ✅ Não cria redundância
 - ✅ Mantém compatibilidade com conversas existentes
@@ -100,10 +106,12 @@ model Mensagem {
 **Objetivo:** Transformar lista de compras genérica em gestão inteligente de suprimentos
 
 **Análise do Schema Atual:**
+
 - ✅ `ListaCompras` existe
 - ✅ `ItemCompra` existe
 
 **Decisão Arquitetural:**
+
 - 🔄 **Reutilizar modelos existentes**
 - 🔄 **Adicionar campos** para inteligência (vinculação com tarefas, estoque)
 - 🔄 **Criar modelo `EstoqueDomestico`** apenas se necessário
@@ -117,12 +125,12 @@ model ListaCompras {
   usuarioId         String
   nome              String                         @db.VarChar(255)
   categoria         String                         @db.VarChar(100)
-  
+
   // NOVO: Campos para inteligência
   tipoServico       String?                        @db.VarChar(50) // 'LIMPEZA', 'COZINHA', 'ORGANIZACAO', 'MANUTENCAO'
   vinculadaTarefa   String?                        // ID da tarefa relacionada
   templateId         String?                        // ID do template usado
-  
+
   // Campos existentes...
   descricao         String?
   totalItens        Int                            @default(0)
@@ -133,12 +141,12 @@ model ListaCompras {
   concluida         Boolean                        @default(false)
   criadoEm          DateTime                       @default(now())
   atualizadoEm      DateTime                       @updatedAt
-  
+
   usuario           Usuario                        @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   itens             ItemCompra[]
   compartilhamentos ListaComprasCompartilhamento[]
   template          TemplateLista?                 @relation(fields: [templateId], references: [id]) // NOVO
-  
+
   @@index([usuarioId])
   @@index([categoria])
   @@index([tipoServico]) // NOVO
@@ -155,9 +163,9 @@ model TemplateLista {
   itensPadrao     Json     // Array de itens padrão
   ativo           Boolean  @default(true)
   criadoEm        DateTime @default(now())
-  
+
   listas          ListaCompras[]
-  
+
   @@index([tipoServico])
   @@index([ativo])
   @@map("templates_lista")
@@ -176,9 +184,9 @@ model EstoqueDomestico {
   ultimoUso       DateTime?
   fornecedorPreferido String? @db.VarChar(255)
   precoMedio      Decimal? @db.Decimal(10, 2)
-  
+
   usuario         Usuario  @relation(fields: [usuarioId], references: [id])
-  
+
   @@unique([usuarioId, itemNome])
   @@index([usuarioId])
   @@index([categoria])
@@ -194,10 +202,12 @@ model EstoqueDomestico {
 **Objetivo:** Transformar armazenamento genérico em sistema especializado em documentos trabalhistas
 
 **Análise do Schema Atual:**
+
 - ✅ `Documento` existe
 - ✅ `DocumentoCompartilhamento` existe
 
 **Decisão Arquitetural:**
+
 - 🔄 **Reutilizar modelo `Documento` existente**
 - 🔄 **Adicionar campos** para documentos trabalhistas específicos
 - 🔄 **Criar modelo `ChecklistDocumentos`** para compliance
@@ -213,13 +223,13 @@ model Documento {
   descricao         String?
   categoria         String                      @db.VarChar(100)
   tipo              String                      @db.VarChar(50)
-  
+
   // NOVO: Campos para documentos trabalhistas
   tipoTrabalhista   String?                     @db.VarChar(50) // 'CTPS', 'RG', 'CPF', 'COMP_RESIDENCIA', 'CERTIDAO', 'ASO', 'BANCO'
   numero            String?                     @db.VarChar(100) // Número do documento
   emissao           DateTime?                   // Data de emissão
   validade          DateTime?                   // Data de validade (se aplicável)
-  
+
   // Campos existentes...
   tamanho           Int
   caminhoArquivo    String
@@ -234,17 +244,17 @@ model Documento {
   tags              String[]
   esocialPronto     Boolean                     @default(false)
   backupCriado      Boolean                     @default(false)
-  
+
   // NOVO: Campos para integração
   assinadoDigital   Boolean                     @default(false)
   assinaturaHash    String?                     @db.VarChar(255)
-  
+
   criadoEm          DateTime                    @default(now())
   atualizadoEm      DateTime                    @updatedAt
   usuario           Usuario                     @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   compartilhamentos DocumentoCompartilhamento[]
   vinculacoes       DocumentoVinculacao[]        // NOVO
-  
+
   @@index([usuarioId])
   @@index([categoria])
   @@index([tipoTrabalhista]) // NOVO
@@ -260,9 +270,9 @@ model DocumentoVinculacao {
   vinculacaoTipo String   @db.VarChar(50) // 'ESOCIAL', 'FOLHA', 'TAREFA'
   vinculacaoId    String
   criadoEm        DateTime @default(now())
-  
+
   documento       Documento @relation(fields: [documentoId], references: [id], onDelete: Cascade)
-  
+
   @@unique([documentoId, vinculacaoTipo, vinculacaoId])
   @@index([documentoId])
   @@index([vinculacaoTipo, vinculacaoId])
@@ -280,9 +290,9 @@ model ChecklistDocumentos {
   completoEm      DateTime?
   criadoEm        DateTime @default(now())
   atualizadoEm    DateTime @updatedAt
-  
+
   usuario         Usuario  @relation(fields: [usuarioId], references: [id])
-  
+
   @@unique([usuarioId, perfilId])
   @@index([usuarioId])
   @@index([completo])
@@ -370,4 +380,3 @@ model ChecklistDocumentos {
 
 **Última atualização:** Janeiro 2025  
 **Status:** 🚀 **PLANO CRIADO - PRONTO PARA IMPLEMENTAÇÃO**
-

@@ -1,6 +1,6 @@
 /**
  * 📋 Status de Pagamentos Centralizados
- * 
+ *
  * Centraliza todos os status possíveis para pagamentos e guias fiscais.
  */
 
@@ -10,7 +10,8 @@ export const PAYMENT_STATUSES = {
   OVERDUE: 'VENCIDO',
 } as const;
 
-export type PaymentStatus = typeof PAYMENT_STATUSES[keyof typeof PAYMENT_STATUSES];
+export type PaymentStatus =
+  (typeof PAYMENT_STATUSES)[keyof typeof PAYMENT_STATUSES];
 
 /**
  * Obter label em português para um status
@@ -45,4 +46,3 @@ export function toPaymentStatus(status: string): PaymentStatus {
   }
   return PAYMENT_STATUSES.PENDING;
 }
-

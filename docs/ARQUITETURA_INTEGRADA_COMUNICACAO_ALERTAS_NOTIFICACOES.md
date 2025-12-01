@@ -1,4 +1,5 @@
 # 🏗️ ARQUITETURA INTEGRADA: COMUNICAÇÃO, ALERTAS E NOTIFICAÇÕES
+
 ## Sistema DOM - Integração Inteligente sem Perda de Funcionalidades
 
 **Data:** Janeiro 2025  
@@ -23,11 +24,13 @@
 > **"Cada funcionalidade tem um propósito específico. Integre, não substitua."**
 
 **Arquitetura:**
+
 - ✅ **Alertas:** Configuração e regras automáticas
 - ✅ **Notificações:** Exibição instantânea de eventos
 - ✅ **Comunicação Contextual:** Interação bidirecional com contexto
 
 **Integração:**
+
 - 🔗 Alertas **disparam** notificações
 - 🔗 Alertas **criam** mensagens contextuais
 - 🔗 Comunicação contextual **gera** notificações
@@ -40,11 +43,13 @@
 ### **1. 🚨 GESTÃO DE ALERTAS** (Mantida e Aprimorada)
 
 **O que é:**
+
 - Sistema de **configuração** de alertas automáticos
 - Baseado em **condições específicas**
 - **Regras de negócio** configuráveis
 
 **Funcionalidades:**
+
 - ✅ Criação de alertas personalizados
 - ✅ Configuração de condições
 - ✅ Definição de frequência
@@ -53,6 +58,7 @@
 - ✅ Histórico de disparos
 
 **Exemplos:**
+
 - 📄 Documento vencendo em 7 dias
 - ⏰ Tarefa não concluída no prazo
 - 💰 Pagamento próximo do vencimento
@@ -65,11 +71,13 @@
 ### **2. 🔔 NOTIFICAÇÕES** (Mantida e Aprimorada)
 
 **O que é:**
+
 - Sistema de **exibição instantânea** de mensagens
 - **Tempo real** para o usuário
 - **Feedback imediato** de ações
 
 **Funcionalidades:**
+
 - ✅ Exibição em tempo real (Toast)
 - ✅ Diferentes tipos (sucesso, erro, aviso, info)
 - ✅ Posicionamento configurável
@@ -77,6 +85,7 @@
 - ✅ Histórico de notificações
 
 **Exemplos:**
+
 - ✅ "Login realizado com sucesso!"
 - ❌ "Erro ao salvar documento"
 - ⚠️ "Alerta: Documento vencendo"
@@ -89,17 +98,20 @@
 ### **3. 💬 COMUNICAÇÃO CONTEXTUAL** (Nova - Integrada)
 
 **O que é:**
+
 - Sistema de **mensagens vinculadas** a contexto específico
 - **Interação bidirecional** (não apenas notificação)
 - **Histórico contextual** completo
 
 **Funcionalidades:**
+
 - ✅ Mensagens vinculadas a ponto, tarefa, documento, folha
 - ✅ Templates de comunicação
 - ✅ Histórico contextual
 - ✅ Interação bidirecional
 
 **Exemplos:**
+
 - Mensagem quando ponto é registrado
 - Chat dentro de tarefa específica
 - Discussão sobre documento para eSocial
@@ -171,6 +183,7 @@
 5. **Histórico:** Tudo registrado no histórico contextual do documento
 
 **Resultado:**
+
 - ✅ Usuário vê notificação instantânea (Toast)
 - ✅ Pode acessar comunicação contextual do documento
 - ✅ Histórico completo preservado
@@ -189,6 +202,7 @@
 5. **Histórico:** Tudo registrado no histórico contextual do ponto
 
 **Resultado:**
+
 - ✅ Usuário vê notificação instantânea (Toast)
 - ✅ Pode acessar comunicação contextual do ponto
 - ✅ Histórico completo preservado
@@ -208,6 +222,7 @@
 6. **Histórico:** Tudo registrado no histórico contextual da tarefa
 
 **Resultado:**
+
 - ✅ Usuário vê notificação instantânea (Toast)
 - ✅ Pode interagir na comunicação contextual da tarefa
 - ✅ Histórico completo preservado
@@ -232,15 +247,15 @@ model Alerta {
   status           String            @db.VarChar(50)
   condicoes        Json?
   // ... campos existentes ...
-  
+
   // ✅ NOVO: Vinculação com comunicação contextual
   criarMensagemContextual Boolean @default(true)
   templateMensagemId     String?
-  
+
   usuario          Usuario?          @relation(fields: [usuarioId], references: [id])
   historico        AlertaHistorico[]
   templateMensagem TemplateMensagem? @relation(fields: [templateMensagemId], references: [id])
-  
+
   @@index([usuarioId])
   @@map("alertas")
 }
@@ -255,18 +270,18 @@ model MensagemContextual {
   destinatarioId  String?
   conteudo        String   @db.Text
   tipo            String   @db.VarChar(20) // 'TEXTO', 'TEMPLATE', 'ALERTA', 'NOTIFICACAO'
-  
+
   // ✅ NOVO: Vinculação com alertas
   alertaId        String?
   notificacaoId   String?
-  
+
   lida            Boolean  @default(false)
   criadoEm        DateTime @default(now())
-  
+
   usuario         Usuario  @relation(fields: [usuarioId], references: [id])
   alerta          Alerta?  @relation(fields: [alertaId], references: [id])
   notificacao     Notificacao? @relation(fields: [notificacaoId], references: [id])
-  
+
   @@index([usuarioId])
   @@index([contextoTipo, contextoId])
   @@index([alertaId])
@@ -282,21 +297,21 @@ model Notificacao {
   titulo          String?  @db.VarChar(255)
   mensagem        String   @db.Text
   origem          String   @db.VarChar(50) // 'ALERTA', 'COMUNICACAO', 'SISTEMA', 'ACAO'
-  
+
   // ✅ NOVO: Vinculação com alertas e comunicação
   alertaId        String?
   mensagemContextualId String?
-  
+
   exibida         Boolean  @default(false)
   exibidaEm       DateTime?
   lida            Boolean  @default(false)
   lidaEm          DateTime?
   criadoEm        DateTime @default(now())
-  
+
   usuario         Usuario  @relation(fields: [usuarioId], references: [id])
   alerta          Alerta?  @relation(fields: [alertaId], references: [id])
   mensagemContextual MensagemContextual? @relation(fields: [mensagemContextualId], references: [id])
-  
+
   @@index([usuarioId])
   @@index([tipo])
   @@index([alertaId])
@@ -319,24 +334,28 @@ class IntegratedNotificationService {
   async processEvent(event: SystemEvent) {
     // 1. Verificar alertas configurados
     const alertas = await this.checkAlerts(event);
-    
+
     // 2. Para cada alerta ativo
     for (const alerta of alertas) {
       // 2.1. Disparar notificação (Toast)
       const notificacao = await this.createNotification(alerta, event);
-      
+
       // 2.2. Criar mensagem contextual (se configurado)
       if (alerta.criarMensagemContextual) {
-        const mensagem = await this.createContextualMessage(alerta, event, notificacao);
+        const mensagem = await this.createContextualMessage(
+          alerta,
+          event,
+          notificacao
+        );
       }
     }
-    
+
     // 3. Verificar se precisa de comunicação contextual mesmo sem alerta
     if (this.needsContextualCommunication(event)) {
       await this.createContextualMessage(null, event, null);
     }
   }
-  
+
   /**
    * Criar notificação (Toast)
    */
@@ -352,16 +371,15 @@ class IntegratedNotificationService {
         alertaId: alerta.id,
       },
     });
-    
+
     // Exibir Toast
-    toast[this.mapTypeToToastType(notificacao.tipo)](
-      notificacao.mensagem,
-      { title: notificacao.titulo }
-    );
-    
+    toast[this.mapTypeToToastType(notificacao.tipo)](notificacao.mensagem, {
+      title: notificacao.titulo,
+    });
+
     return notificacao;
   }
-  
+
   /**
    * Criar mensagem contextual
    */
@@ -382,7 +400,7 @@ class IntegratedNotificationService {
         notificacaoId: notificacao?.id,
       },
     });
-    
+
     return mensagem;
   }
 }
@@ -401,6 +419,7 @@ Alerta → Notificação (Toast)
 ```
 
 **Problemas:**
+
 - ❌ Notificações desaparecem
 - ❌ Sem histórico contextual
 - ❌ Sem interação bidirecional
@@ -419,6 +438,7 @@ Alerta → Notificação (Toast) → Mensagem Contextual
 ```
 
 **Benefícios:**
+
 - ✅ Notificações instantâneas (Toast)
 - ✅ Histórico contextual completo
 - ✅ Interação bidirecional possível
@@ -469,4 +489,3 @@ Alerta → Notificação (Toast) → Mensagem Contextual
 
 **Última atualização:** Janeiro 2025  
 **Status:** 💡 **ARQUITETURA INTEGRADA - PRONTA PARA IMPLEMENTAÇÃO**
-

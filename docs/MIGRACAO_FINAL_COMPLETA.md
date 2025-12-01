@@ -11,6 +11,7 @@ Todas as páginas principais foram completamente migradas para usar o API Client
 ### **1. API Client - Adicionado Status HTTP**
 
 **Mudança:**
+
 ```typescript
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -35,6 +36,7 @@ export interface ApiResponse<T = any> {
 4. ✅ **Corrigido acesso a dados** - Todos os acessos agora usam `response.data` corretamente
 
 **Antes:**
+
 ```typescript
 const response = await fetch('/api/endpoint');
 const result = await response.json();
@@ -44,6 +46,7 @@ if (result.success) {
 ```
 
 **Depois:**
+
 ```typescript
 const response = await apiClient.endpoint.get();
 if (response.success && response.data) {
@@ -106,8 +109,12 @@ if (response.success && response.data) {
 
 ```typescript
 const { execute } = useAsyncOperation({
-  onSuccess: () => { /* sucesso */ },
-  onError: () => { /* erro */ },
+  onSuccess: () => {
+    /* sucesso */
+  },
+  onError: () => {
+    /* erro */
+  },
 });
 
 execute(async () => {
@@ -160,4 +167,3 @@ if (!response.success) {
 - A documentação está completa e atualizada
 
 **Migração 100% completa! 🎉**
-

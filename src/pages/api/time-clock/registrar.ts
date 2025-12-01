@@ -172,7 +172,7 @@ async function atualizarResumoHoras(usuarioId: string, data: Date) {
       dataHora: Date;
     };
 
-    registros.forEach((registro) => {
+    registros.forEach(registro => {
       const reg = registro as unknown as RegistroPonto;
       const dataHora = reg.dataHora;
       switch (reg.tipo) {
@@ -196,7 +196,7 @@ async function atualizarResumoHoras(usuarioId: string, data: Date) {
       const entradaDate = entrada as Date;
       const saidaDate = saida as Date;
       const tempoTotal = saidaDate.getTime() - entradaDate.getTime();
-      
+
       let tempoAlmoco = 0;
       if (saidaAlmoco !== null && retornoAlmoco !== null) {
         const saidaAlmocoDate = saidaAlmoco as Date;

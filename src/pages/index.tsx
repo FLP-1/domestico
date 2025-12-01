@@ -4,7 +4,11 @@ import dynamic from 'next/dynamic';
 import { GetServerSideProps } from 'next';
 import styled, { keyframes } from 'styled-components';
 import Image from 'next/image';
-import { UnifiedButton, UnifiedCard, UnifiedBadge } from '../components/unified';
+import {
+  UnifiedButton,
+  UnifiedCard,
+  UnifiedBadge,
+} from '../components/unified';
 import { ContentGrid } from '../components/shared/page-components';
 import { formatDate } from '../utils/formatters';
 
@@ -227,7 +231,9 @@ const FeaturesGrid = styled(ContentGrid)`
 
 const FeatureCard = styled(UnifiedCard)`
   height: 100%;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   animation: ${fadeIn} 0.6s ease-out;
   animation-fill-mode: both;
 
@@ -306,7 +312,9 @@ const BenefitItem = styled.div`
   background: ${publicColors.surface};
   border-radius: 16px;
   box-shadow: 0 4px 20px ${addOpacity(publicColors.shadow, 0.1)};
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   animation: ${slideInLeft} 0.6s ease-out;
   animation-fill-mode: both;
 
@@ -600,8 +608,8 @@ export default function Home() {
           <LogoContainer>
             <LogoImage>
               <Image
-                src="/Logo.png"
-                alt="Logo Sistema DOM"
+                src='/Logo.png'
+                alt='Logo Sistema DOM'
                 width={80}
                 height={80}
                 priority
@@ -621,15 +629,15 @@ export default function Home() {
 
           <CTAButtons>
             <UnifiedButton
-              $variant="primary"
-              $size="xl"
+              $variant='primary'
+              $size='xl'
               onClick={handleGetStarted}
             >
               Começar Agora
             </UnifiedButton>
             <UnifiedButton
-              $variant="ghost"
-              $size="xl"
+              $variant='ghost'
+              $size='xl'
               onClick={handleLearnMore}
             >
               Saiba Mais
@@ -662,16 +670,16 @@ export default function Home() {
         <SectionContainer>
           <SectionTitle>Funcionalidades Principais</SectionTitle>
           <SectionSubtitle>
-            Tudo que você precisa para gerenciar sua casa de forma inteligente
-            e eficiente em um só lugar.
+            Tudo que você precisa para gerenciar sua casa de forma inteligente e
+            eficiente em um só lugar.
           </SectionSubtitle>
 
           <FeaturesGrid>
-            {features.map((feature) => (
+            {features.map(feature => (
               <FeatureCard
                 key={feature.id}
-                variant="elevated"
-                size="lg"
+                variant='elevated'
+                size='lg'
                 onClick={() => {
                   if (feature.id === 'time-clock') {
                     router.push('/time-clock');
@@ -737,8 +745,8 @@ export default function Home() {
           </CTAText>
           <CTAButtons>
             <UnifiedButton
-              $variant="primary"
-              $size="xl"
+              $variant='primary'
+              $size='xl'
               onClick={handleGetStarted}
             >
               Criar Conta Gratuita
@@ -752,9 +760,7 @@ export default function Home() {
         <FooterText>
           Sistema DOM © {new Date().getFullYear()} - Gestão Doméstica Completa
         </FooterText>
-        <FooterTextWithMargin>
-          Hoje é {formattedDate}
-        </FooterTextWithMargin>
+        <FooterTextWithMargin>Hoje é {formattedDate}</FooterTextWithMargin>
       </Footer>
     </PageContainer>
   );

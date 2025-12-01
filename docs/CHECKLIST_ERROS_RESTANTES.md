@@ -16,14 +16,17 @@
 ## Erros de Tipo TypeScript
 
 ### 1. `src/pages/diagnostico-geolocalizacao.tsx:361`
+
 **Erro:** `Type '{ text: { primary: string; secondary: string; dark: string; medium: string; light: string; }; background: { primary: string; secondary: string; }; border: { light: string; primary: string; }; navigation: { ...; }; ... 10 more ...; info?: string | undefined; }' has no properties in common with type 'Theme'.`
 
 **Causa:** Linha 167 está desestruturando apenas `colors` do `useTheme`:
+
 ```typescript
 const { colors: theme } = useTheme(currentProfile?.role.toLowerCase());
 ```
 
 **Solução:** Ajustar para retornar objeto `Theme` completo:
+
 ```typescript
 const themeObject = useTheme(currentProfile?.role.toLowerCase());
 const theme: Theme = { colors: themeObject.colors } as Theme;
@@ -36,6 +39,7 @@ const theme: Theme = { colors: themeObject.colors } as Theme;
 ## Warnings de ESLint
 
 ### 1. `src/pages/_app.tsx:239:6`
+
 **Warning:** `React Hook useCallback has a missing dependency: 'router.pathname'. Either include it or remove the dependency array.`
 
 **Status:** ⏳ Pendente
@@ -45,6 +49,7 @@ const theme: Theme = { colors: themeObject.colors } as Theme;
 ## Erros de Runtime (Next.js)
 
 ### 1. Build Manifest ausente
+
 **Erro:** `ENOENT: no such file or directory, open 'E:\DOM\.next\build-manifest.json'`
 
 **Causa:** Build não foi completado devido a erros de TypeScript
@@ -114,12 +119,14 @@ const theme: Theme = { colors: themeObject.colors } as Theme;
 Para todos os arquivos afetados, aplicar uma das seguintes correções:
 
 **Opção 1 (Recomendada):** Converter para objeto Theme completo
+
 ```typescript
 const themeObject = useTheme(currentProfile?.role.toLowerCase());
 const theme: Theme = { colors: themeObject.colors } as Theme;
 ```
 
 **Opção 2:** Usar diretamente o objeto retornado (se o componente aceitar ProfileTheme)
+
 ```typescript
 const themeObject = useTheme(currentProfile?.role.toLowerCase());
 // Usar themeObject diretamente se o componente aceitar
@@ -132,4 +139,3 @@ const themeObject = useTheme(currentProfile?.role.toLowerCase());
 - O erro de build manifest é consequência dos erros de TypeScript
 - Após corrigir os erros TypeScript, o build deve gerar os arquivos de manifest automaticamente
 - Verificar se há outros arquivos usando padrão similar de `useTheme`
-

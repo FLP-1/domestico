@@ -10,11 +10,13 @@
 ## ✅ **O QUE FOI EXECUTADO**
 
 ### **1. Auto-Fix ESLint**
+
 - ✅ Comando: `npm run lint:fix`
 - ✅ Status: Executado com sucesso
 - ⚠️ Observação: ESLint está configurado como `ignoreDuringBuilds: true` no `next.config.js`
 
 ### **2. Build para Mapear Erros**
+
 - ✅ Build executado
 - 📄 Output salvo em: `build-output.txt`
 
@@ -27,11 +29,13 @@
 **Erro:** `Property 'accent' does not exist on type 'Theme'.`
 
 **Erro Reportado:**
+
 ```typescript
 const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
 ```
 
 **Status Atual do Arquivo:**
+
 - ✅ O arquivo já está usando `getThemeColor(props.$theme, 'colors.primary', 'transparent');`
 - ⚠️ Isso sugere que o arquivo foi corrigido mas o cache do build pode estar desatualizado
 
@@ -40,6 +44,7 @@ const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
 ## 🎯 **PRÓXIMOS PASSOS**
 
 ### **Opção 1: Limpar Cache e Re-executar Build**
+
 ```bash
 # Limpar cache do Next.js
 rm -rf .next
@@ -50,6 +55,7 @@ npm run build
 ```
 
 ### **Opção 2: Continuar com Refatoração Arquivo por Arquivo**
+
 - Começar pelos arquivos identificados no build
 - Validar cada correção
 - Continuar sistematicamente
@@ -74,4 +80,3 @@ npm run build
 
 **Status:** ✅ Etapa 1 Concluída  
 **Próximo:** Limpar cache e executar novo build, ou começar refatoração arquivo por arquivo
-

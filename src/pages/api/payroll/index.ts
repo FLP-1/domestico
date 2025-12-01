@@ -144,7 +144,9 @@ async function updatePayroll(req: NextApiRequest, res: NextApiResponse) {
     const updateData = req.body;
 
     if (!id) {
-      return res.status(400).json({ success: false, error: 'ID é obrigatório' });
+      return res
+        .status(400)
+        .json({ success: false, error: 'ID é obrigatório' });
     }
 
     const payroll = await prisma.folhaPagamento.update({
@@ -180,19 +182,19 @@ async function deletePayroll(req: NextApiRequest, res: NextApiResponse) {
     const { id } = req.query;
 
     if (!id) {
-      return res.status(400).json({ success: false, error: 'ID é obrigatório' });
+      return res
+        .status(400)
+        .json({ success: false, error: 'ID é obrigatório' });
     }
 
     await prisma.folhaPagamento.delete({
       where: { id: id as string },
     });
 
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: 'Folha de pagamento excluída com sucesso',
-      });
+    return res.status(200).json({
+      success: true,
+      message: 'Folha de pagamento excluída com sucesso',
+    });
   } catch (error: any) {
     console.error('Erro ao excluir folha de pagamento:', error);
     return res.status(500).json({

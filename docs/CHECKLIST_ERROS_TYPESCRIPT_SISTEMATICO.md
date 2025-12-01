@@ -8,22 +8,27 @@
 ## 🎯 Padrões de Erros Identificados
 
 ### Padrão 1: Props `$theme` faltantes em styled components
+
 **Sintoma:** `Property '$theme' does not exist on type 'ThemedStyledProps<...>'`  
 **Solução:** Adicionar `$theme?: any` ao tipo do styled component
 
 ### Padrão 2: Props `$variant` faltantes em styled components
+
 **Sintoma:** `Property '$variant' does not exist on type 'ThemedStyledProps<...>'`  
 **Solução:** Adicionar `$variant?: string` ao tipo do styled component
 
 ### Padrão 3: Acesso a propriedades que podem ser string ou objeto
+
 **Sintoma:** `Property 'X' does not exist on type 'string | { ... }'`  
 **Solução:** Usar type guards antes de acessar propriedades
 
 ### Padrão 4: Imports faltantes
+
 **Sintoma:** `Cannot find name 'X'`  
 **Solução:** Adicionar import correto
 
 ### Padrão 5: Props de componentes unified incorretas
+
 **Sintoma:** `Property '$variant' does not exist on type 'UnifiedXProps'`  
 **Solução:** Usar props sem `$` (ex: `variant` em vez de `$variant`)
 
@@ -32,6 +37,7 @@
 ## ✅ Erros Corrigidos
 
 ### Fase 1: Correções Básicas
+
 - [x] `ContextualChat/index.tsx` - `selectedProfile` → `currentProfile`
 - [x] `ContextualChat/index.tsx` - Props do `UnifiedButton`
 - [x] `EmptyState/index.tsx` - Import `defaultColors` → `DEFAULT_COLORS`
@@ -57,6 +63,7 @@
 ## 🔄 Erros Atuais (Em Correção)
 
 ### Erro #19: `$theme` faltante em styled component
+
 **Arquivo:** A ser identificado no próximo build  
 **Status:** ⏳ Em correção
 
@@ -76,4 +83,3 @@
 2. Identificar próximo erro
 3. Aplicar correção apropriada
 4. Repetir até build passar
-

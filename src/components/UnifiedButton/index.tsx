@@ -6,7 +6,7 @@ import { logger } from '../../utils/logger';
 
 // Styled Components
 const ButtonContainer = styled.button.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     if (prop === 'className' || prop === 'children') return true;
     const propName = prop as string;
     return !propName.startsWith('$');
@@ -102,10 +102,16 @@ const ButtonContainer = styled.button.withConfig({
 
   /* Variant styles */
   ${props => {
-    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent || 'transparent';
+    const primaryColor =
+      props.$theme?.colors?.primary || props.$theme?.accent || 'transparent';
     const secondaryColor = props.$theme?.colors?.secondary || 'transparent';
-    const textColor = props.$theme?.colors?.text?.primary || props.$theme?.text?.primary || props.$theme?.colors?.text || 'inherit';
-    const textDarkColor = props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit';
+    const textColor =
+      props.$theme?.colors?.text?.primary ||
+      props.$theme?.text?.primary ||
+      props.$theme?.colors?.text ||
+      'inherit';
+    const textDarkColor =
+      props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit';
 
     switch (props.$variant) {
       case 'primary':

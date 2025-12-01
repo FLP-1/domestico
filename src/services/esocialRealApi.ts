@@ -20,7 +20,7 @@ import {
   isRetryableError,
   getErrorMessage,
   getRequiredAction,
-  ESocialErrorCode
+  ESocialErrorCode,
 } from './esocialErrorTypes';
 import { getESocialCircuitBreaker } from './esocialCircuitBreaker';
 import { getESocialOfflineCache } from './esocialOfflineCache';
@@ -43,7 +43,10 @@ const sanitizeErrorDetails = (input: any, depth = 0): any => {
 
   if (Array.isArray(input)) {
     if (input.length > 20) {
-      return [...input.slice(0, 5).map(item => sanitizeErrorDetails(item, depth + 1)), `...(${input.length - 5} more)`];
+      return [
+        ...input.slice(0, 5).map(item => sanitizeErrorDetails(item, depth + 1)),
+        `...(${input.length - 5} more)`,
+      ];
     }
     return input.map(item => sanitizeErrorDetails(item, depth + 1));
   }
@@ -54,7 +57,8 @@ const sanitizeErrorDetails = (input: any, depth = 0): any => {
       const lowerKey = key.toLowerCase();
       if (
         (typeof Buffer !== 'undefined' && Buffer.isBuffer(value)) ||
-        ((value as any)?.type === 'Buffer' && Array.isArray((value as any)?.data))
+        ((value as any)?.type === 'Buffer' &&
+          Array.isArray((value as any)?.data))
       ) {
         sanitized[key] = '<buffer>';
       } else if (value instanceof ArrayBuffer || ArrayBuffer.isView(value)) {
@@ -101,7 +105,7 @@ export class ESocialRealApiService {
   private certificateService: CertificateService;
   private httpClient: AxiosInstance;
   private isInitialized: boolean = false;
-  
+
   // Componentes reutilizáveis centralizados
   private circuitBreaker = getESocialCircuitBreaker();
   private cache = getESocialOfflineCache();
@@ -197,7 +201,7 @@ export class ESocialRealApiService {
       if (!this.certificateService.isCertificateValid()) {
         throw new Error('Certificado digital não carregado ou inválido');
       }
-      
+
       // ✅ Validação preventiva (buscar certificado no banco se tiver ID)
       // TODO: Integrar com CertificatePreventiveValidationService quando certificado tiver ID
       // Gerar token de autenticação
@@ -228,24 +232,34 @@ export class ESocialRealApiService {
       throw new Error('Serviço eSocial real deve ser executado no servidor.');
     }
 
-    const resolvedPath = this.resolveCertificatePath(this.config.certificatePath);
-    const certificatePassword = this.config.certificatePassword || ESOCIAL_CONFIG.certificate.password;
+    const resolvedPath = this.resolveCertificatePath(
+      this.config.certificatePath
+    );
+    const certificatePassword =
+      this.config.certificatePassword || ESOCIAL_CONFIG.certificate.password;
 
     if (!certificatePassword) {
       throw new Error('Senha do certificado eSocial não configurada.');
     }
 
     if (typeof window !== 'undefined') {
-      throw new Error('Verificação de arquivo de certificado só é permitida no servidor.');
+      throw new Error(
+        'Verificação de arquivo de certificado só é permitida no servidor.'
+      );
     }
 
     const fs = require('fs') as typeof import('fs');
     if (!fs.existsSync(resolvedPath)) {
-      throw new Error(`Arquivo de certificado eSocial não encontrado em ${resolvedPath}`);
+      throw new Error(
+        `Arquivo de certificado eSocial não encontrado em ${resolvedPath}`
+      );
     }
 
     try {
-      await this.certificateService.loadCertificateFromPath(resolvedPath, certificatePassword);
+      await this.certificateService.loadCertificateFromPath(
+        resolvedPath,
+        certificatePassword
+      );
 
       const info = this.certificateService.getCertificateInfo();
       logger.info(
@@ -273,7 +287,9 @@ export class ESocialRealApiService {
     }
 
     if (!this.certificateService.isCertificateValid()) {
-      throw new Error('Certificado eSocial inválido após tentativa de carregamento.');
+      throw new Error(
+        'Certificado eSocial inválido após tentativa de carregamento.'
+      );
     }
   }
 
@@ -282,7 +298,9 @@ export class ESocialRealApiService {
    */
   private resolveCertificatePath(configuredPath?: string): string {
     if (typeof window !== 'undefined') {
-      throw new Error('Resolução de caminho de certificado só é permitida no servidor.');
+      throw new Error(
+        'Resolução de caminho de certificado só é permitida no servidor.'
+      );
     }
 
     const path = require('path') as typeof import('path');
@@ -311,7 +329,8 @@ export class ESocialRealApiService {
     };
 
     const certificatePem = this.certificateService.getCertificatePem();
-    const certificatePemChain = this.certificateService.getCertificatePemChain();
+    const certificatePemChain =
+      this.certificateService.getCertificatePemChain();
     const privateKeyPem = this.certificateService.getPrivateKeyPem();
 
     if (certificatePem && privateKeyPem) {
@@ -326,7 +345,9 @@ export class ESocialRealApiService {
       const passphrase = this.certificateService.getCertificatePassword();
 
       if (!pfxBytes || !passphrase) {
-        throw new Error('Certificado não carregado corretamente para autenticação.');
+        throw new Error(
+          'Certificado não carregado corretamente para autenticação.'
+        );
       }
 
       agentOptions.pfx = Buffer.from(pfxBytes);
@@ -355,10 +376,12 @@ export class ESocialRealApiService {
    */
   private buildSoapEnvelope(body: string): string {
     const ambiente =
-      this.config.environment === 'producao' || ESOCIAL_CONFIG.environment === 'producao'
+      this.config.environment === 'producao' ||
+      ESOCIAL_CONFIG.environment === 'producao'
         ? '1'
         : '2';
-    const transmissor = this.config.softwareHouse?.cnpj || this.config.empregadorCpf;
+    const transmissor =
+      this.config.softwareHouse?.cnpj || this.config.empregadorCpf;
 
     return `<?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.esocial.gov.br/ws/">
@@ -381,20 +404,25 @@ export class ESocialRealApiService {
   private getDomesticoServiceConfig(
     key: 'consultaEmpregador' | 'consultaEventos' | 'consultaIdentificador'
   ): { url: string; namespace: string; action: string } {
-    const env = this.config.environment === 'producao' ? 'producao' : 'homologacao';
+    const env =
+      this.config.environment === 'producao' ? 'producao' : 'homologacao';
     const domesticoConfig = ESOCIAL_CONFIG.urls?.domestico?.[env] as Record<
       string,
       { url: string; namespace: string; action: string } | string | undefined
     >;
 
     if (!domesticoConfig) {
-      throw new Error(`Configuração de URLs eSocial Doméstico não encontrada para ${env}`);
+      throw new Error(
+        `Configuração de URLs eSocial Doméstico não encontrada para ${env}`
+      );
     }
 
     const target = domesticoConfig[key];
 
     if (!target || typeof target === 'string') {
-      throw new Error(`Serviço eSocial Doméstico '${key}' não configurado adequadamente.`);
+      throw new Error(
+        `Serviço eSocial Doméstico '${key}' não configurado adequadamente.`
+      );
     }
 
     return target;
@@ -423,7 +451,8 @@ export class ESocialRealApiService {
       transformResponse: res => res, // evitar parse automático
     };
 
-    const response: AxiosResponse<string> = await this.httpClient.request(axiosConfig);
+    const response: AxiosResponse<string> =
+      await this.httpClient.request(axiosConfig);
 
     const parsed = await parseStringPromise(response.data, {
       explicitArray: false,
@@ -524,7 +553,7 @@ export class ESocialRealApiService {
    */
   async consultarDadosEmpregador(): Promise<ESocialStructuredResponse> {
     const cacheKey = `empregador_${this.config.empregadorCpf}`;
-    
+
     try {
       await this.ensureCertificateLoaded();
       // Verificar se o certificado está carregado
@@ -537,48 +566,51 @@ export class ESocialRealApiService {
           retryable: false,
           requiresAction: getRequiredAction(errorCode),
           timestamp: new Date(),
-          source: 'CERTIFICATE'
+          source: 'CERTIFICATE',
         } as ESocialErrorResponse;
       }
-      
+
       // Usar cache com fallback
       const cacheResult = await this.cache.getWithFallback(
         cacheKey,
         'empregador',
         async () => {
           return await this.circuitBreaker.execute(async () => {
-            const result = await this.retryService.executeWithRetry(async () => {
-              const serviceConfig = this.getDomesticoServiceConfig('consultaEmpregador');
-              const body = `<ns:ConsultarIdentificadorCadastro xmlns:ns="${serviceConfig.namespace}">
+            const result = await this.retryService.executeWithRetry(
+              async () => {
+                const serviceConfig =
+                  this.getDomesticoServiceConfig('consultaEmpregador');
+                const body = `<ns:ConsultarIdentificadorCadastro xmlns:ns="${serviceConfig.namespace}">
   <ns:cpfCnpjEmpregador>${this.config.empregadorCpf}</ns:cpfCnpjEmpregador>
 </ns:ConsultarIdentificadorCadastro>`;
 
-              const parsed = await this.sendSoapRequest({
-                url: serviceConfig.url,
-                namespace: serviceConfig.namespace,
-                action: serviceConfig.action,
-                body,
-              });
+                const parsed = await this.sendSoapRequest({
+                  url: serviceConfig.url,
+                  namespace: serviceConfig.namespace,
+                  action: serviceConfig.action,
+                  body,
+                });
 
-              const extracted = this.extractSoapData(
-                parsed,
-                'ConsultarIdentificadorCadastroResponse'
-              );
+                const extracted = this.extractSoapData(
+                  parsed,
+                  'ConsultarIdentificadorCadastroResponse'
+                );
 
-              return {
-                data: this.processEmpregadorResponse(extracted || parsed),
-              };
-            });
+                return {
+                  data: this.processEmpregadorResponse(extracted || parsed),
+                };
+              }
+            );
             return result.data;
           }, 'consultarDadosEmpregador');
         }
       );
-      
+
       return {
         success: true,
         data: cacheResult.data,
         source: cacheResult.source === 'CACHE' ? 'CACHE' : 'ESOCIAL_API',
-        timestamp: new Date()
+        timestamp: new Date(),
       } as ESocialSuccessResponse;
     } catch (error: any) {
       const errorCode = classifyESocialError(error);
@@ -590,7 +622,7 @@ export class ESocialRealApiService {
         retryable: isRetryableError(errorCode),
         requiresAction: getRequiredAction(errorCode),
         timestamp: new Date(),
-        source: error.code?.includes('CERT') ? 'CERTIFICATE' : 'NETWORK'
+        source: error.code?.includes('CERT') ? 'CERTIFICATE' : 'NETWORK',
       } as ESocialErrorResponse;
     }
   }
@@ -601,7 +633,7 @@ export class ESocialRealApiService {
    */
   async consultarDadosEmpregados(): Promise<ESocialStructuredResponse<any[]>> {
     const cacheKey = `empregados_${this.config.empregadorCpf}`;
-    
+
     try {
       await this.ensureCertificateLoaded();
       // Verificar se o certificado está carregado
@@ -614,48 +646,54 @@ export class ESocialRealApiService {
           retryable: false,
           requiresAction: getRequiredAction(errorCode),
           timestamp: new Date(),
-          source: 'CERTIFICATE'
+          source: 'CERTIFICATE',
         } as ESocialErrorResponse;
       }
-      
+
       // Usar cache com fallback
       const cacheResult = await this.cache.getWithFallback(
         cacheKey,
         'empregados',
         async () => {
           return await this.circuitBreaker.execute(async () => {
-            const result = await this.retryService.executeWithRetry(async () => {
-              const serviceConfig = this.getDomesticoServiceConfig('consultaEventos');
-              const body = `<ns:ConsultarEventos xmlns:ns="${serviceConfig.namespace}">
+            const result = await this.retryService.executeWithRetry(
+              async () => {
+                const serviceConfig =
+                  this.getDomesticoServiceConfig('consultaEventos');
+                const body = `<ns:ConsultarEventos xmlns:ns="${serviceConfig.namespace}">
   <ns:cpfCnpjEmpregador>${this.config.empregadorCpf}</ns:cpfCnpjEmpregador>
   <ns:tipoEvento>S-2200</ns:tipoEvento>
 </ns:ConsultarEventos>`;
 
-              const parsed = await this.sendSoapRequest({
-                url: serviceConfig.url,
-                namespace: serviceConfig.namespace,
-                action: serviceConfig.action,
-                body,
-              });
+                const parsed = await this.sendSoapRequest({
+                  url: serviceConfig.url,
+                  namespace: serviceConfig.namespace,
+                  action: serviceConfig.action,
+                  body,
+                });
 
-              const extracted = this.extractSoapData(parsed, 'ConsultarEventosResponse');
+                const extracted = this.extractSoapData(
+                  parsed,
+                  'ConsultarEventosResponse'
+                );
 
-              return {
-                data: this.processEmpregadosResponse(extracted || parsed),
-              };
-            });
+                return {
+                  data: this.processEmpregadosResponse(extracted || parsed),
+                };
+              }
+            );
             // Garantir que retornamos um array diretamente
             const data = result.data;
             return Array.isArray(data) ? data : (data as any).data || [];
           }, 'consultarDadosEmpregados');
         }
       );
-      
+
       return {
         success: true,
         data: cacheResult.data,
         source: cacheResult.source === 'CACHE' ? 'CACHE' : 'ESOCIAL_API',
-        timestamp: new Date()
+        timestamp: new Date(),
       } as ESocialSuccessResponse<any[]>;
     } catch (error: any) {
       const errorCode = classifyESocialError(error);
@@ -667,7 +705,7 @@ export class ESocialRealApiService {
         retryable: isRetryableError(errorCode),
         requiresAction: getRequiredAction(errorCode),
         timestamp: new Date(),
-        source: error.code?.includes('CERT') ? 'CERTIFICATE' : 'NETWORK'
+        source: error.code?.includes('CERT') ? 'CERTIFICATE' : 'NETWORK',
       } as ESocialErrorResponse;
     }
   }
@@ -678,7 +716,7 @@ export class ESocialRealApiService {
    */
   async consultarEventosEnviados(): Promise<ESocialStructuredResponse<any[]>> {
     const cacheKey = `eventos_${this.config.empregadorCpf}`;
-    
+
     try {
       await this.ensureCertificateLoaded();
       // Verificar se o certificado está carregado
@@ -691,35 +729,41 @@ export class ESocialRealApiService {
           retryable: false,
           requiresAction: getRequiredAction(errorCode),
           timestamp: new Date(),
-          source: 'CERTIFICATE'
+          source: 'CERTIFICATE',
         } as ESocialErrorResponse;
       }
-      
+
       // Usar cache com fallback (TTL menor para eventos - 1 hora)
       const cacheResult = await this.cache.getWithFallback(
         cacheKey,
         'eventos',
         async () => {
           return await this.circuitBreaker.execute(async () => {
-            const result = await this.retryService.executeWithRetry(async () => {
-              const serviceConfig = this.getDomesticoServiceConfig('consultaEventos');
-              const body = `<ns:ConsultarEventos xmlns:ns="${serviceConfig.namespace}">
+            const result = await this.retryService.executeWithRetry(
+              async () => {
+                const serviceConfig =
+                  this.getDomesticoServiceConfig('consultaEventos');
+                const body = `<ns:ConsultarEventos xmlns:ns="${serviceConfig.namespace}">
   <ns:cpfCnpjEmpregador>${this.config.empregadorCpf}</ns:cpfCnpjEmpregador>
 </ns:ConsultarEventos>`;
 
-              const parsed = await this.sendSoapRequest({
-                url: serviceConfig.url,
-                namespace: serviceConfig.namespace,
-                action: serviceConfig.action,
-                body,
-              });
+                const parsed = await this.sendSoapRequest({
+                  url: serviceConfig.url,
+                  namespace: serviceConfig.namespace,
+                  action: serviceConfig.action,
+                  body,
+                });
 
-              const extracted = this.extractSoapData(parsed, 'ConsultarEventosResponse');
+                const extracted = this.extractSoapData(
+                  parsed,
+                  'ConsultarEventosResponse'
+                );
 
-              return {
-                data: this.processEventosResponse(extracted || parsed),
-              };
-            });
+                return {
+                  data: this.processEventosResponse(extracted || parsed),
+                };
+              }
+            );
             // Garantir que retornamos um array diretamente
             const data = result.data;
             return Array.isArray(data) ? data : (data as any).data || [];
@@ -727,12 +771,12 @@ export class ESocialRealApiService {
         },
         60 * 60 * 1000 // 1 hora
       );
-      
+
       return {
         success: true,
         data: cacheResult.data,
         source: cacheResult.source === 'CACHE' ? 'CACHE' : 'ESOCIAL_API',
-        timestamp: new Date()
+        timestamp: new Date(),
       } as ESocialSuccessResponse<any[]>;
     } catch (error: any) {
       const errorCode = classifyESocialError(error);
@@ -744,7 +788,7 @@ export class ESocialRealApiService {
         retryable: isRetryableError(errorCode),
         requiresAction: getRequiredAction(errorCode),
         timestamp: new Date(),
-        source: error.code?.includes('CERT') ? 'CERTIFICATE' : 'NETWORK'
+        source: error.code?.includes('CERT') ? 'CERTIFICATE' : 'NETWORK',
       } as ESocialErrorResponse;
     }
   }
@@ -860,7 +904,10 @@ export class ESocialRealApiService {
    */
   private processEmpregadorResponse(data: any): any {
     try {
-      if (!data || (typeof data === 'object' && Object.keys(data).length === 0)) {
+      if (
+        !data ||
+        (typeof data === 'object' && Object.keys(data).length === 0)
+      ) {
         throw new Error('Resposta vazia da API eSocial');
       }
 
@@ -879,7 +926,9 @@ export class ESocialRealApiService {
         ultimaAtualizacao: new Date().toISOString(),
       };
     } catch (error) {
-      throw new Error(`Erro ao processar dados do empregador: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+      throw new Error(
+        `Erro ao processar dados do empregador: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
+      );
     }
   }
   /**
@@ -898,10 +947,7 @@ export class ESocialRealApiService {
         data?.eventos ||
         data;
 
-      const eventos =
-        payload?.eventos?.evento ||
-        payload?.evento ||
-        payload;
+      const eventos = payload?.eventos?.evento || payload?.evento || payload;
 
       if (Array.isArray(eventos)) {
         return eventos.map(emp => ({
@@ -926,7 +972,7 @@ export class ESocialRealApiService {
           ...emp,
           cpf: emp.cpf || emp.cpfTrab || '',
           nome: emp.nome || emp.nmTrab || '',
-          situacao: emp.situacao || emp.status || 'ATIVO'
+          situacao: emp.situacao || emp.status || 'ATIVO',
         }));
       }
 
@@ -943,7 +989,9 @@ export class ESocialRealApiService {
       }
       return [data];
     } catch (error) {
-      throw new Error(`Erro ao processar dados dos empregados: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+      throw new Error(
+        `Erro ao processar dados dos empregados: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
+      );
     }
   }
   /**
@@ -962,10 +1010,7 @@ export class ESocialRealApiService {
         data?.eventos ||
         data;
 
-      const eventos =
-        payload?.eventos?.evento ||
-        payload?.evento ||
-        payload;
+      const eventos = payload?.eventos?.evento || payload?.evento || payload;
 
       if (Array.isArray(eventos)) {
         return eventos.map(evento => ({
@@ -993,7 +1038,7 @@ export class ESocialRealApiService {
           id: evento.id || evento.idEvento || '',
           tipo: evento.tipo || evento.tpEvento || '',
           status: evento.status || evento.cdRetorno || 'PENDENTE',
-          protocolo: evento.protocolo || evento.protocoloEnvio || ''
+          protocolo: evento.protocolo || evento.protocoloEnvio || '',
         }));
       }
 
@@ -1011,7 +1056,9 @@ export class ESocialRealApiService {
       }
       return [data];
     } catch (error) {
-      throw new Error(`Erro ao processar eventos enviados: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+      throw new Error(
+        `Erro ao processar eventos enviados: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
+      );
     }
   }
   /**

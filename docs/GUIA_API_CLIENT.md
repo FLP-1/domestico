@@ -90,18 +90,21 @@ import { useMessages } from '@/hooks/useMessages';
 
 const { showError, keys } = useMessages();
 
-const { data: alerts, loading, error, refetch } = useDataFetch(
-  () => apiClient.alerts.getAll(),
-  {
-    mapper: (apiData) => apiData.map(alert => ({
+const {
+  data: alerts,
+  loading,
+  error,
+  refetch,
+} = useDataFetch(() => apiClient.alerts.getAll(), {
+  mapper: apiData =>
+    apiData.map(alert => ({
       // transformação dos dados
       id: alert.id,
       title: alert.title,
       // ...
     })),
-    onError: (error) => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
-  }
-);
+  onError: error => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
+});
 ```
 
 ### **useAsyncOperation - Para Operações**
@@ -113,7 +116,7 @@ import { useMessages } from '@/hooks/useMessages';
 
 const { showSuccess, showError, keys } = useMessages();
 const { execute, loading } = useAsyncOperation({
-  onError: (error) => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
+  onError: error => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
 });
 
 const handleCreateAlert = execute(async () => {
@@ -130,6 +133,7 @@ const handleCreateAlert = execute(async () => {
 ## 📚 **APIS DISPONÍVEIS**
 
 ### **Alertas**
+
 - `apiClient.alerts.getAll(params?)`
 - `apiClient.alerts.getById(id)`
 - `apiClient.alerts.create(data)`
@@ -138,6 +142,7 @@ const handleCreateAlert = execute(async () => {
 - `apiClient.alerts.toggleStatus(id, status)`
 
 ### **Usuários**
+
 - `apiClient.users.getAll(params?)`
 - `apiClient.users.getById(id)`
 - `apiClient.users.create(data)`
@@ -145,6 +150,7 @@ const handleCreateAlert = execute(async () => {
 - `apiClient.users.delete(id)`
 
 ### **Time Clock**
+
 - `apiClient.timeClock.getRecords(params?)`
 - `apiClient.timeClock.register(data)`
 - `apiClient.timeClock.getSummary()`
@@ -156,12 +162,14 @@ const handleCreateAlert = execute(async () => {
 - `apiClient.timeClock.getPayroll()`
 
 ### **Autenticação**
+
 - `apiClient.auth.login(credentials)`
 - `apiClient.auth.logout()`
 - `apiClient.auth.register(data)`
 - `apiClient.auth.getCurrentUser()`
 
 ### **Configuração**
+
 - `apiClient.config.getSystem()`
 - `apiClient.config.getTheme()`
 
@@ -216,4 +224,3 @@ apiClient.get('/api/endpoint', {
 ## 🔄 **MIGRAÇÃO**
 
 Veja `docs/EXEMPLO_MIGRACAO_API_CLIENT.md` para exemplos práticos de migração.
-

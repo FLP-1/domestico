@@ -126,7 +126,9 @@ async function updateUserType(req: NextApiRequest, res: NextApiResponse) {
     const updateData = req.body;
 
     if (!id) {
-      return res.status(400).json({ success: false, error: 'ID é obrigatório' });
+      return res
+        .status(400)
+        .json({ success: false, error: 'ID é obrigatório' });
     }
 
     const userType = await prisma.perfil.update({
@@ -152,7 +154,9 @@ async function deleteUserType(req: NextApiRequest, res: NextApiResponse) {
     const { id } = req.query;
 
     if (!id) {
-      return res.status(400).json({ success: false, error: 'ID é obrigatório' });
+      return res
+        .status(400)
+        .json({ success: false, error: 'ID é obrigatório' });
     }
 
     await prisma.perfil.delete({

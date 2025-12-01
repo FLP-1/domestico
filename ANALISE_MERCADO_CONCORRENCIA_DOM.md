@@ -49,18 +49,21 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 ### Tamanho do Mercado (TAM/SAM/SOM)
 
 **TAM (Total Addressable Market):**
+
 - **População brasileira**: ~215 milhões
 - **Domicílios**: ~75 milhões
 - **Domicílios com trabalho doméstico**: ~6,5 milhões (8,7%)
 - **Potencial teórico**: 6,5 milhões de domicílios
 
 **SAM (Serviceable Available Market):**
+
 - **Domicílios com acesso à internet**: ~5,2 milhões (80% dos 6,5M)
 - **Domicílios com smartphone**: ~4,8 milhões (92% dos 5,2M)
 - **Domicílios com renda para assinatura**: ~2,4 milhões (50% dos 4,8M)
 - **Mercado disponível**: 2,4 milhões de domicílios
 
 **SOM (Serviceable Obtainable Market):**
+
 - **Penetração realista (3 anos)**: 0,5% do SAM
 - **Mercado obtível**: ~12.000 domicílios
 - **Com crescimento**: 1% em 5 anos = ~24.000 domicílios
@@ -68,18 +71,21 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 ### Segmentação do Mercado
 
 **Segmento 1: Empregadores de Trabalho Doméstico (60% do mercado)**
+
 - **Perfil**: Famílias de classe média/alta
 - **Necessidade**: Gestão de folha, ponto, documentos
 - **Valor percebido**: Conformidade legal, organização
 - **Tamanho**: ~1,4 milhões de domicílios (SAM)
 
 **Segmento 2: Trabalhadores Domésticos (30% do mercado)**
+
 - **Perfil**: Trabalhadores formais e informais
 - **Necessidade**: Controle de ponto, documentos, direitos
 - **Valor percebido**: Organização pessoal, segurança
 - **Tamanho**: ~720.000 trabalhadores (SAM)
 
 **Segmento 3: Famílias Organizadas (10% do mercado)**
+
 - **Perfil**: Famílias que querem organização doméstica
 - **Necessidade**: Tarefas, compras, comunicação
 - **Valor percebido**: Eficiência, qualidade de vida
@@ -88,21 +94,25 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 ### Tendências de Mercado
 
 **Crescimento do Trabalho Doméstico Formal:**
+
 - ✅ Aumento da formalização (eSocial obrigatório)
 - ✅ Maior conscientização sobre direitos trabalhistas
 - ✅ Necessidade de gestão profissional
 
 **Digitalização:**
+
 - ✅ Aumento do uso de smartphones
 - ✅ Maior confiança em apps e sistemas
 - ✅ Necessidade de soluções digitais
 
 **Compliance Legal:**
+
 - ✅ eSocial obrigatório para domésticos
 - ✅ LGPD exigindo cuidados com dados
 - ✅ Necessidade de sistemas conformes
 
 **Tendências Negativas:**
+
 - ⚠️ Crise econômica pode reduzir contratações
 - ⚠️ Informalidade ainda alta (~70%)
 - ⚠️ Resistência a mudanças tecnológicas
@@ -116,11 +126,13 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 #### 1. **Sistemas de Folha de Pagamento para Domésticos**
 
 **Concorrentes:**
+
 - **Doméstica Legal** (domesticalegal.com.br)
 - **Contratar Doméstica** (contratardomestica.com.br)
 - **Folha Doméstica** (folhadomestica.com.br)
 
 **Análise:**
+
 - ✅ Foco específico em trabalho doméstico
 - ✅ Integração com eSocial
 - ⚠️ Interface geralmente mais simples
@@ -128,6 +140,7 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 - ⚠️ Foco apenas em folha de pagamento
 
 **Diferenciais do DOM:**
+
 - ✅ Gestão completa (não só folha)
 - ✅ Sistema anti-fraude robusto
 - ✅ Interface moderna e intuitiva
@@ -137,11 +150,13 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 #### 2. **Plataformas de Gestão Doméstica Geral**
 
 **Concorrentes:**
+
 - **Tody** (todyapp.com) - Gestão de tarefas domésticas
 - **Homey** (homey.app) - Automação residencial
 - **Any.do** (any.do) - Listas e tarefas
 
 **Análise:**
+
 - ✅ Foco em organização doméstica
 - ✅ Interface moderna
 - ⚠️ Não focam em trabalho doméstico
@@ -149,6 +164,7 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 - ⚠️ Funcionalidades limitadas
 
 **Diferenciais do DOM:**
+
 - ✅ Foco específico em trabalho doméstico
 - ✅ Integração eSocial completa
 - ✅ Gestão financeira integrada
@@ -157,11 +173,13 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 #### 3. **Sistemas de RH para Pequenas Empresas**
 
 **Concorrentes:**
+
 - **TOTVS RH** (totvs.com)
 - **Senior RH** (senior.com.br)
 - **Folha Fácil** (folhafacil.com.br)
 
 **Análise:**
+
 - ✅ Sistemas robustos e completos
 - ✅ Integração eSocial
 - ⚠️ Focados em empresas (não domicílios)
@@ -169,6 +187,7 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 - ⚠️ Preços altos
 
 **Diferenciais do DOM:**
+
 - ✅ Focado em domicílios
 - ✅ Interface simplificada
 - ✅ Preços acessíveis
@@ -177,24 +196,26 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 ### Concorrentes Indiretos
 
 **Planilhas Excel:**
+
 - ⚠️ Uso generalizado
 - ⚠️ Gratuitas (aparentemente)
 - ⚠️ Sem integração
 - ⚠️ Propensas a erros
 
 **Soluções Manuais:**
+
 - ⚠️ Papel e caneta
 - ⚠️ Sem automação
 - ⚠️ Trabalhoso
 
 ### Matriz de Concorrência
 
-| Concorrente | Foco | Preço Mensal | Integração eSocial | Anti-Fraude | Gestão Completa | Interface |
-| ----------- | ---- | ------------ | ----------------- | ----------- | --------------- | --------- |
-| **DOM** | Doméstico | R$ 29,90-79,90 | ✅ Completa | ✅ Robusto | ✅ Sim | ✅ Moderna |
-| Doméstica Legal | Doméstico | R$ 19,90-49,90 | ✅ Sim | ❌ Básico | ⚠️ Parcial | ⚠️ Simples |
-| Tody | Geral | R$ 0-4,99 | ❌ Não | ❌ Não | ⚠️ Tarefas | ✅ Moderna |
-| TOTVS RH | Empresas | R$ 200+ | ✅ Sim | ⚠️ Básico | ✅ Sim | ⚠️ Complexa |
+| Concorrente     | Foco      | Preço Mensal   | Integração eSocial | Anti-Fraude | Gestão Completa | Interface   |
+| --------------- | --------- | -------------- | ------------------ | ----------- | --------------- | ----------- |
+| **DOM**         | Doméstico | R$ 29,90-79,90 | ✅ Completa        | ✅ Robusto  | ✅ Sim          | ✅ Moderna  |
+| Doméstica Legal | Doméstico | R$ 19,90-49,90 | ✅ Sim             | ❌ Básico   | ⚠️ Parcial      | ⚠️ Simples  |
+| Tody            | Geral     | R$ 0-4,99      | ❌ Não             | ❌ Não      | ⚠️ Tarefas      | ✅ Moderna  |
+| TOTVS RH        | Empresas  | R$ 200+        | ✅ Sim             | ⚠️ Básico   | ✅ Sim          | ⚠️ Complexa |
 
 ### Vantagens Competitivas do DOM
 
@@ -297,6 +318,7 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 **"Empoderar famílias e trabalhadores domésticos através de tecnologia que facilita a gestão, garante direitos e promove relações trabalhistas justas e profissionais."**
 
 **Impacto Esperado:**
+
 - ✅ Redução de informalidade no trabalho doméstico
 - ✅ Melhor gestão e organização doméstica
 - ✅ Conformidade legal facilitada
@@ -344,6 +366,7 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 ### Personas
 
 **Persona 1: Maria (Empregadora)**
+
 - **Idade**: 45 anos
 - **Renda**: R$ 15.000/mês
 - **Necessidade**: Gestão de folha, ponto, documentos
@@ -351,6 +374,7 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 - **Ganhos**: Organização, conformidade, tranquilidade
 
 **Persona 2: João (Trabalhador Doméstico)**
+
 - **Idade**: 35 anos
 - **Renda**: R$ 1.500/mês
 - **Necessidade**: Controle de ponto, documentos, direitos
@@ -358,6 +382,7 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 - **Ganhos**: Segurança, organização, direitos garantidos
 
 **Persona 3: Família Silva (Família)**
+
 - **Idade**: 30-40 anos
 - **Renda**: R$ 10.000/mês
 - **Necessidade**: Organização doméstica, tarefas, compras
@@ -386,12 +411,14 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 ### Cores e Identidade Visual
 
 **Cores por Perfil:**
+
 - **Empregado**: Azul (#29ABE2) - Confiança, profissionalismo
 - **Empregador**: Vermelho (#E74C3C) - Autoridade, liderança
 - **Família**: Roxo (#9B59B6) - Harmonia, união
 - **Administrador**: Cinza (#34495E) - Neutralidade, controle
 
 **Cores Gerais:**
+
 - **Primária**: Azul (#29ABE2)
 - **Secundária**: Verde (#27AE60) - Sucesso, crescimento
 - **Atenção**: Laranja (#F39C12) - Alerta, atenção
@@ -503,6 +530,7 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 ### Estratégia de Diferenciação
 
 **Foco em:**
+
 1. **Especialização**: Único focado 100% em trabalho doméstico
 2. **Tecnologia**: Stack moderna e interface intuitiva
 3. **Segurança**: Sistema anti-fraude robusto
@@ -511,6 +539,7 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 ### Estratégia de Preço
 
 **Posicionamento:** Premium acessível
+
 - **Não o mais barato**: Foco em valor, não preço
 - **Não o mais caro**: Acessível ao mercado-alvo
 - **Diferenciação**: Valor superior justifica preço
@@ -518,6 +547,7 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 ### Estratégia de Distribuição
 
 **Canais:**
+
 1. **Direto**: Site próprio, vendas online
 2. **Parceiros**: Escritórios contábeis, empresas de RH
 3. **Marketplace**: App stores, marketplaces de software
@@ -561,4 +591,3 @@ O mercado de gestão doméstica e trabalho doméstico no Brasil apresenta oportu
 ---
 
 **Próximo arquivo:** `ESTRATEGIAS_PROJECOES_DOM.md`
-

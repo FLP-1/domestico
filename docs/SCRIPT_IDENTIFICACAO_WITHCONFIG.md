@@ -9,12 +9,14 @@ Criar uma rotina/código para identificar especificamente onde está ocorrendo o
 O erro `f.div.withConfig.withConfig.b` indica duplicação de `withConfig`. O script busca por:
 
 ### Padrão 1: Duplicação Direta
+
 ```typescript
 // ❌ ERRADO
 const Component = styled.div.withConfig({...}).withConfig({...})`
 ```
 
 ### Padrão 2: Extensão de Componente que Já Tem withConfig
+
 ```typescript
 // ❌ ERRADO
 const NewComponent = styled(UnifiedCard).withConfig({...})`
@@ -22,6 +24,7 @@ const NewComponent = styled(UnifiedCard).withConfig({...})`
 ```
 
 ### Padrão 3: Extensão de Componente Local que Já Tem withConfig
+
 ```typescript
 // No mesmo arquivo:
 const BaseComponent = styled.div.withConfig({...})`
@@ -32,23 +35,28 @@ const ExtendedComponent = styled(BaseComponent).withConfig({...})` // ❌ ERRADO
 ## 📝 Scripts Criados
 
 ### 1. `scripts/find-duplicate-withconfig.ps1`
+
 Script PowerShell completo com múltiplos padrões de busca.
 
 ### 2. `scripts/find-duplicate-withconfig-simple.ps1`
+
 Versão simplificada focada nos padrões mais comuns.
 
 ### 3. `scripts/analyze-withconfig-chains.ts`
+
 Script TypeScript para análise mais profunda (requer ts-node).
 
 ## 🚀 Como Usar
 
 ### PowerShell (Windows):
+
 ```powershell
 cd E:\DOM
 .\scripts\find-duplicate-withconfig-simple.ps1
 ```
 
 ### Verificar Resultados:
+
 ```powershell
 Get-Content withconfig-issues.json | ConvertFrom-Json
 ```
@@ -72,6 +80,7 @@ Esses componentes NÃO devem ser estendidos com `.withConfig()`:
 Quando encontrar um componente que estende um dos acima e adiciona `withConfig`:
 
 **ANTES (❌ ERRADO):**
+
 ```typescript
 const MyCard = styled(UnifiedCard).withConfig({
   shouldForwardProp: (prop) => !prop.startsWith('$')
@@ -79,6 +88,7 @@ const MyCard = styled(UnifiedCard).withConfig({
 ```
 
 **DEPOIS (✅ CORRETO):**
+
 ```typescript
 const MyCard = styled(UnifiedCard)`
 // withConfig já está no UnifiedCard, não precisa adicionar novamente
@@ -88,4 +98,3 @@ const MyCard = styled(UnifiedCard)`
 
 - ✅ Script criado
 - ⏳ Aguardando execução e resultados
-

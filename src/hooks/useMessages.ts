@@ -1,19 +1,19 @@
 /**
  * 🎯 Hook Unificado para Mensagens
- * 
+ *
  * Integra o sistema de mensagens com o sistema i18n e useAlertManager
  * para fornecer uma API unificada e fácil de usar.
- * 
+ *
  * USO:
  * ```typescript
  * const { showSuccess, showError, showWarning, showInfo, t } = useMessages();
- * 
+ *
  * // Mensagem simples
  * showSuccess('success.registro_criado');
- * 
+ *
  * // Mensagem com parâmetros
  * showSuccess('success.item_adicionado', { nome: 'Item 1' });
- * 
+ *
  * // Tradução direta
  * const texto = t('common.save');
  * ```
@@ -115,25 +115,38 @@ export function useMessages(): UseMessagesReturn {
         'success.lista_excluida': TEMP_MESSAGES.SUCCESS.LISTA_EXCLUIDA,
         'success.item_adicionado': TEMP_MESSAGES.SUCCESS.ITEM_ADICIONADO_LISTA,
         'success.item_removido': TEMP_MESSAGES.SUCCESS.ITEM_REMOVIDO_LISTA,
-        'success.solicitacao_enviada': TEMP_MESSAGES.SUCCESS_EXTENDED.SOLICITACAO_HORA_EXTRA,
-        'success.transferencia_realizada': TEMP_MESSAGES.SUCCESS_EXTENDED.TRANSFERENCIA_FOLHA,
-        'success.pagamento_processando': TEMP_MESSAGES.SUCCESS_EXTENDED.PAGAMENTO_PROCESSANDO,
-        'success.cadastro_sucesso': TEMP_MESSAGES.SUCCESS_EXTENDED.CADASTRO_SUCESSO,
-        
+        'success.solicitacao_enviada':
+          TEMP_MESSAGES.SUCCESS_EXTENDED.SOLICITACAO_HORA_EXTRA,
+        'success.transferencia_realizada':
+          TEMP_MESSAGES.SUCCESS_EXTENDED.TRANSFERENCIA_FOLHA,
+        'success.pagamento_processando':
+          TEMP_MESSAGES.SUCCESS_EXTENDED.PAGAMENTO_PROCESSANDO,
+        'success.cadastro_sucesso':
+          TEMP_MESSAGES.SUCCESS_EXTENDED.CADASTRO_SUCESSO,
+
         // Erros
         'error.sessao_expirada': TEMP_MESSAGES.ERROR.SESSAO_EXPIRADA,
-        'error.corrigir_erros_formulario': TEMP_MESSAGES.ERROR.CORRIGIR_ERROS_FORMULARIO,
+        'error.corrigir_erros_formulario':
+          TEMP_MESSAGES.ERROR.CORRIGIR_ERROS_FORMULARIO,
         'error.erro_cadastro': TEMP_MESSAGES.ERROR.ERRO_CADASTRO,
-        'error.erro_carregar_alertas': TEMP_MESSAGES.ERROR.ERRO_CARREGAR_ALERTAS,
-        'error.erro_carregar_funcionarios': TEMP_MESSAGES.ERROR.ERRO_CARREGAR_FUNCIONARIOS,
-        
+        'error.erro_carregar_alertas':
+          TEMP_MESSAGES.ERROR.ERRO_CARREGAR_ALERTAS,
+        'error.erro_carregar_funcionarios':
+          TEMP_MESSAGES.ERROR.ERRO_CARREGAR_FUNCIONARIOS,
+
         // Info
-        'info.notificacoes_desenvolvimento': TEMP_MESSAGES.INFO.NOTIFICACOES_DESENVOLVIMENTO,
-        'info.compartilhamento_desenvolvimento': TEMP_MESSAGES.INFO.COMPARTILHAMENTO_DESENVOLVIMENTO,
-        'info.funcionalidade_desenvolvimento': TEMP_MESSAGES.INFO.FUNCIONALIDADE_DESENVOLVIMENTO,
-        'info.detalhes_desenvolvimento': TEMP_MESSAGES.INFO.DETALHES_DESENVOLVIMENTO,
-        'info.edicao_desenvolvimento': TEMP_MESSAGES.INFO.EDICAO_DESENVOLVIMENTO,
-        'info.detalhes_registro_desenvolvimento': TEMP_MESSAGES.INFO.DETALHES_REGISTRO_DESENVOLVIMENTO,
+        'info.notificacoes_desenvolvimento':
+          TEMP_MESSAGES.INFO.NOTIFICACOES_DESENVOLVIMENTO,
+        'info.compartilhamento_desenvolvimento':
+          TEMP_MESSAGES.INFO.COMPARTILHAMENTO_DESENVOLVIMENTO,
+        'info.funcionalidade_desenvolvimento':
+          TEMP_MESSAGES.INFO.FUNCIONALIDADE_DESENVOLVIMENTO,
+        'info.detalhes_desenvolvimento':
+          TEMP_MESSAGES.INFO.DETALHES_DESENVOLVIMENTO,
+        'info.edicao_desenvolvimento':
+          TEMP_MESSAGES.INFO.EDICAO_DESENVOLVIMENTO,
+        'info.detalhes_registro_desenvolvimento':
+          TEMP_MESSAGES.INFO.DETALHES_REGISTRO_DESENVOLVIMENTO,
       };
 
       if (tempMessageMap[key]) {
@@ -208,4 +221,3 @@ export function useMessages(): UseMessagesReturn {
     keys: MESSAGE_KEYS,
   };
 }
-

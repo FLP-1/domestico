@@ -247,14 +247,14 @@ const WelcomeSection = memo(
     // ✅ Geolocalização inteligente para localização ATUAL (não registros antigos)
     // ❌ REMOVIDO: Não usar captureLocation aqui para evitar vulnerabilidade de antifraude
     // A localização só deve ser atualizada através de ações críticas validadas (ex: registro de ponto)
-    const {
-      isCapturing,
-    } = useSmartGeolocation(getGeolocationConfig('welcomeSection'));
+    const { isCapturing } = useSmartGeolocation(
+      getGeolocationConfig('welcomeSection')
+    );
 
     // ✅ Localização atual do contexto (não de registros antigos)
     // Esta localização só é atualizada através de ações críticas validadas pelo sistema antifraude
     const { lastLocation: currentLocation } = useGeolocationContext();
-    
+
     // ✅ Estados devem ser declarados ANTES de serem usados em useEffect
     const [currentTime, setCurrentTime] = useState(new Date());
     const [isClient, setIsClient] = useState(false);

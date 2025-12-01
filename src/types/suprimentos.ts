@@ -3,7 +3,11 @@
  * Sistema DOM - Centralização de Tipos
  */
 
-import type { TipoServico, CategoriaItem, UnidadeMedida } from '../services/suprimentosService';
+import type {
+  TipoServico,
+  CategoriaItem,
+  UnidadeMedida,
+} from '../services/suprimentosService';
 
 export interface ListaSuprimentos {
   id: string;
@@ -70,4 +74,3 @@ export interface Tarefa {
   title: string;
   status: string;
 }
-

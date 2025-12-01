@@ -1,7 +1,7 @@
 /**
  * Serviço de Comunicação Contextual Simplificado
  * Sistema DOM - Arquitetura sem Redundância
- * 
+ *
  * Princípio: Uma mensagem contextual serve para tudo:
  * - Histórico de comunicação
  * - Notificações (Toast é apenas visualização)
@@ -82,12 +82,13 @@ class CommunicationService {
       // Exibir Toast se solicitado (apenas visualização - não armazena)
       if (input.exibirToast) {
         const tipoToast = input.tipoToast || 'info';
-        const titulo = input.alertaId && mensagem.alerta 
-          ? mensagem.alerta.titulo 
-          : undefined;
+        const titulo =
+          input.alertaId && mensagem.alerta
+            ? mensagem.alerta.titulo
+            : undefined;
 
         // Concatenar título com conteúdo (react-toastify não suporta title separado)
-        const mensagemToast = titulo 
+        const mensagemToast = titulo
           ? `${titulo}: ${input.conteudo}`
           : input.conteudo;
 
@@ -286,36 +287,39 @@ class CommunicationService {
   /**
    * Converter prioridade de alerta para tipo de Toast
    */
-  private prioridadeParaTipoToast(prioridade: string): 'success' | 'error' | 'warning' | 'info' {
+  private prioridadeParaTipoToast(
+    prioridade: string
+  ): 'success' | 'error' | 'warning' | 'info' {
     const prioridadeLower = prioridade.toLowerCase();
-    
+
     if (prioridadeLower === 'urgente' || prioridadeLower === 'alta') {
       return 'error';
     }
-    
+
     if (prioridadeLower === 'media' || prioridadeLower === 'média') {
       return 'warning';
     }
-    
+
     if (prioridadeLower === 'baixa') {
       return 'info';
     }
-    
+
     return 'info';
   }
 
   /**
    * Contar mensagens não lidas por contexto
    */
-  async contarNaoLidas(usuarioId: string, contextoTipo?: ContextoTipo, contextoId?: string) {
+  async contarNaoLidas(
+    usuarioId: string,
+    contextoTipo?: ContextoTipo,
+    contextoId?: string
+  ) {
     try {
       const where: any = {
         conversaId: null,
         lida: false,
-        OR: [
-          { remetenteId: usuarioId },
-          { destinatarioId: usuarioId },
-        ],
+        OR: [{ remetenteId: usuarioId }, { destinatarioId: usuarioId }],
       };
 
       if (contextoTipo) {
@@ -338,4 +342,3 @@ class CommunicationService {
 
 export const communicationService = new CommunicationService();
 export default communicationService;
-

@@ -44,17 +44,27 @@ export const createTwilioEmailTemplate = (
 ) => {
   // Usar variáveis de ambiente quando disponíveis, fallback para cores padrão
   const primaryColor = process.env.NEXT_PUBLIC_EMAIL_PRIMARY_COLOR || '#29abe2';
-  const primaryDarkColor = process.env.NEXT_PUBLIC_EMAIL_PRIMARY_DARK_COLOR || '#1e8bc3';
-  const backgroundColor = process.env.NEXT_PUBLIC_EMAIL_BACKGROUND_COLOR || '#f4f4f4';
+  const primaryDarkColor =
+    process.env.NEXT_PUBLIC_EMAIL_PRIMARY_DARK_COLOR || '#1e8bc3';
+  const backgroundColor =
+    process.env.NEXT_PUBLIC_EMAIL_BACKGROUND_COLOR || '#f4f4f4';
   const textColor = process.env.NEXT_PUBLIC_EMAIL_TEXT_COLOR || '#333';
-  const textSecondaryColor = process.env.NEXT_PUBLIC_EMAIL_TEXT_SECONDARY_COLOR || '#666';
-  const footerBgColor = process.env.NEXT_PUBLIC_EMAIL_FOOTER_BG_COLOR || '#2c3e50';
-  const warningBgColor = process.env.NEXT_PUBLIC_EMAIL_WARNING_BG_COLOR || '#fff3cd';
-  const warningBorderColor = process.env.NEXT_PUBLIC_EMAIL_WARNING_BORDER_COLOR || '#ffeaa7';
-  const warningTextColor = process.env.NEXT_PUBLIC_EMAIL_WARNING_TEXT_COLOR || '#856404';
-  const successBgColor = process.env.NEXT_PUBLIC_EMAIL_SUCCESS_BG_COLOR || '#d4edda';
-  const successBorderColor = process.env.NEXT_PUBLIC_EMAIL_SUCCESS_BORDER_COLOR || '#c3e6cb';
-  const successTextColor = process.env.NEXT_PUBLIC_EMAIL_SUCCESS_TEXT_COLOR || '#155724';
+  const textSecondaryColor =
+    process.env.NEXT_PUBLIC_EMAIL_TEXT_SECONDARY_COLOR || '#666';
+  const footerBgColor =
+    process.env.NEXT_PUBLIC_EMAIL_FOOTER_BG_COLOR || '#2c3e50';
+  const warningBgColor =
+    process.env.NEXT_PUBLIC_EMAIL_WARNING_BG_COLOR || '#fff3cd';
+  const warningBorderColor =
+    process.env.NEXT_PUBLIC_EMAIL_WARNING_BORDER_COLOR || '#ffeaa7';
+  const warningTextColor =
+    process.env.NEXT_PUBLIC_EMAIL_WARNING_TEXT_COLOR || '#856404';
+  const successBgColor =
+    process.env.NEXT_PUBLIC_EMAIL_SUCCESS_BG_COLOR || '#d4edda';
+  const successBorderColor =
+    process.env.NEXT_PUBLIC_EMAIL_SUCCESS_BORDER_COLOR || '#c3e6cb';
+  const successTextColor =
+    process.env.NEXT_PUBLIC_EMAIL_SUCCESS_TEXT_COLOR || '#155724';
 
   return {
     to: '', // Será definido na chamada

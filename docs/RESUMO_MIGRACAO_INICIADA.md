@@ -6,7 +6,7 @@
 
 1. ✅ **Imports adicionados**
    - `apiClient` importado
-   - `useDataFetch` importado  
+   - `useDataFetch` importado
    - `useAsyncOperation` importado
 
 2. ✅ **Constantes migradas**
@@ -32,4 +32,3 @@
 
 A migração foi iniciada com sucesso. O arquivo já tem a estrutura base pronta.
 As próximas migrações podem ser feitas gradualmente, testando cada função.
-

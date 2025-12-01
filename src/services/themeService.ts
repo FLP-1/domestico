@@ -76,16 +76,16 @@ export async function getThemeForProfile(
   profileCode?: string
 ): Promise<Theme | null> {
   const cacheKey = profileCode || 'default';
-  
+
   try {
     // Verifica cache
     const cached = themeCache.get(cacheKey);
     const timestamp = cacheTimestamps.get(cacheKey);
-    
+
     if (cached && timestamp && Date.now() - timestamp < CACHE_TTL) {
       return cached;
     }
-    
+
     // 1. Buscar de Perfil + ConfiguracaoPerfil
     if (profileCode) {
       const profileTheme = await getThemeFromProfile(profileCode);
@@ -95,7 +95,7 @@ export async function getThemeForProfile(
         return profileTheme;
       }
     }
-    
+
     // 2. Buscar de TemaVisual ativo
     const visualTheme = await getThemeFromTemaVisual();
     if (visualTheme) {
@@ -103,7 +103,7 @@ export async function getThemeForProfile(
       cacheTimestamps.set(cacheKey, Date.now());
       return visualTheme;
     }
-    
+
     // 3. Buscar de ConfiguracaoSistema
     const systemTheme = await getThemeFromSystemConfig();
     if (systemTheme) {
@@ -111,7 +111,7 @@ export async function getThemeForProfile(
       cacheTimestamps.set(cacheKey, Date.now());
       return systemTheme;
     }
-    
+
     // 4. Buscar de variáveis de ambiente
     const envTheme = getThemeFromEnv();
     if (envTheme) {
@@ -119,7 +119,7 @@ export async function getThemeForProfile(
       cacheTimestamps.set(cacheKey, Date.now());
       return envTheme;
     }
-    
+
     // 5. Retornar null (não hardcoded)
     return null;
   } catch (error: unknown) {
@@ -139,18 +139,18 @@ async function getThemeFromProfile(profileCode: string): Promise<Theme | null> {
         configuracoes: {
           where: {
             chave: 'colors',
-            ativo: true
-          }
-        }
-      }
+            ativo: true,
+          },
+        },
+      },
     });
-    
+
     if (!perfil) return null;
-    
+
     // Buscar configuração de cores do perfil
     const colorConfig = perfil.configuracoes.find(c => c.chave === 'colors');
     let colors: any = null;
-    
+
     if (colorConfig) {
       try {
         colors = JSON.parse(colorConfig.valor);
@@ -158,17 +158,17 @@ async function getThemeFromProfile(profileCode: string): Promise<Theme | null> {
         logger.error({ error }, 'Erro ao parsear cores do perfil');
       }
     }
-    
+
     // Se não tem configuração, gerar tema a partir da cor do perfil
     if (!colors && perfil.cor) {
       colors = generateThemeFromPrimaryColor(perfil.cor);
     }
-    
+
     if (!colors) return null;
-    
+
     const validatedColors = validateColors(colors);
     if (!validatedColors) return null;
-    
+
     return {
       colors: validatedColors,
       // Outros campos podem ser buscados de ConfiguracaoPerfil se necessário
@@ -185,20 +185,20 @@ async function getThemeFromProfile(profileCode: string): Promise<Theme | null> {
 async function getThemeFromTemaVisual(): Promise<Theme | null> {
   try {
     const temaAtivo = await prisma.temaVisual.findFirst({
-      where: { ativo: true }
+      where: { ativo: true },
     });
-    
+
     if (!temaAtivo) return null;
-    
+
     const validatedColors = validateColors(temaAtivo.cores as any);
     if (!validatedColors) return null;
-    
+
     return {
       colors: validatedColors,
       typography: temaAtivo.tipografia as any,
       spacing: temaAtivo.espacamentos as any,
       shadows: temaAtivo.sombras as any,
-      borders: temaAtivo.bordas as any
+      borders: temaAtivo.bordas as any,
     };
   } catch (error) {
     logger.error({ error }, 'Erro ao buscar TemaVisual');
@@ -213,19 +213,19 @@ async function getThemeFromSystemConfig(): Promise<Theme | null> {
   try {
     const config = await prisma.configuracaoSistema.findFirst({
       where: {
-        chave: 'theme.colors'
-      }
+        chave: 'theme.colors',
+      },
     });
-    
+
     if (!config) return null;
-    
+
     try {
       const colors = JSON.parse(config.valor);
       const validatedColors = validateColors(colors);
       if (!validatedColors) return null;
-      
+
       return {
-        colors: validatedColors
+        colors: validatedColors,
       };
     } catch (error) {
       logger.error({ error }, 'Erro ao parsear cores do sistema');
@@ -244,11 +244,11 @@ function getThemeFromEnv(): Theme | null {
   const primary = process.env.NEXT_PUBLIC_THEME_PRIMARY;
   const secondary = process.env.NEXT_PUBLIC_THEME_SECONDARY;
   const background = process.env.NEXT_PUBLIC_THEME_BACKGROUND;
-  
+
   if (!primary || !secondary || !background) {
     return null;
   }
-  
+
   return {
     colors: {
       primary,
@@ -262,8 +262,8 @@ function getThemeFromEnv(): Theme | null {
       success: process.env.NEXT_PUBLIC_THEME_SUCCESS,
       warning: process.env.NEXT_PUBLIC_THEME_WARNING,
       error: process.env.NEXT_PUBLIC_THEME_ERROR,
-      info: process.env.NEXT_PUBLIC_THEME_INFO
-    }
+      info: process.env.NEXT_PUBLIC_THEME_INFO,
+    },
   };
 }
 
@@ -272,29 +272,43 @@ function getThemeFromEnv(): Theme | null {
  * ✅ Retorna null se cores obrigatórias não forem válidas (não hardcoded)
  */
 function validateColors(colors: any): Theme['colors'] | null {
-  const isValidHex = (color: string) => color && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
-  const isValidRgba = (color: string) => color && /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d.]+)?\)$/.test(color);
+  const isValidHex = (color: string) =>
+    color && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
+  const isValidRgba = (color: string) =>
+    color && /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d.]+)?\)$/.test(color);
   const fallback = DEFAULT_THEME.colors;
-  
+
   // Cores obrigatórias - se não forem válidas, retornar null
-  if (!isValidHex(colors.primary) || !isValidHex(colors.secondary) || !isValidHex(colors.background)) {
+  if (
+    !isValidHex(colors.primary) ||
+    !isValidHex(colors.secondary) ||
+    !isValidHex(colors.background)
+  ) {
     return null;
   }
-  
+
   return {
     primary: colors.primary,
     secondary: colors.secondary,
     background: colors.background,
     surface: isValidHex(colors.surface) ? colors.surface : fallback.surface,
     text: isValidHex(colors.text) ? colors.text : fallback.text,
-    textSecondary: isValidHex(colors.textSecondary) ? colors.textSecondary : fallback.textSecondary,
+    textSecondary: isValidHex(colors.textSecondary)
+      ? colors.textSecondary
+      : fallback.textSecondary,
     border: isValidHex(colors.border) ? colors.border : fallback.border,
-    shadow: isValidHex(colors.shadow) || isValidRgba(colors.shadow) ? colors.shadow : fallback.shadow,
-    accent: colors.accent && isValidHex(colors.accent) ? colors.accent : undefined,
-    success: colors.success && isValidHex(colors.success) ? colors.success : undefined,
-    warning: colors.warning && isValidHex(colors.warning) ? colors.warning : undefined,
+    shadow:
+      isValidHex(colors.shadow) || isValidRgba(colors.shadow)
+        ? colors.shadow
+        : fallback.shadow,
+    accent:
+      colors.accent && isValidHex(colors.accent) ? colors.accent : undefined,
+    success:
+      colors.success && isValidHex(colors.success) ? colors.success : undefined,
+    warning:
+      colors.warning && isValidHex(colors.warning) ? colors.warning : undefined,
     error: colors.error && isValidHex(colors.error) ? colors.error : undefined,
-    info: colors.info && isValidHex(colors.info) ? colors.info : undefined
+    info: colors.info && isValidHex(colors.info) ? colors.info : undefined,
   };
 }
 
@@ -306,28 +320,28 @@ function generateThemeFromPrimaryColor(primaryColor: string): any {
   if (!/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(primaryColor)) {
     return null;
   }
-  
+
   // Gerar cor secundária (mais clara)
   const secondary = lightenColor(primaryColor, 20);
-  
+
   // Gerar background a partir da primária (muito claro)
   const background = lightenColor(primaryColor, 95);
-  
+
   // Gerar surface a partir da primária (90% claro)
   const surface = lightenColor(primaryColor, 90);
-  
+
   // Gerar text a partir da primária (escurecido)
   const text = darkenColor(primaryColor, 80);
-  
+
   // Gerar textSecondary a partir da primária (60% escuro)
   const textSecondary = darkenColor(primaryColor, 60);
-  
+
   // Gerar border a partir da primária (85% claro)
   const border = lightenColor(primaryColor, 85);
-  
+
   // Gerar shadow a partir da primária com opacidade
   const shadow = hexToRgba(primaryColor, 0.1);
-  
+
   return {
     primary: primaryColor,
     secondary,
@@ -336,7 +350,7 @@ function generateThemeFromPrimaryColor(primaryColor: string): any {
     text,
     textSecondary,
     border,
-    shadow
+    shadow,
   };
 }
 
@@ -345,10 +359,13 @@ function generateThemeFromPrimaryColor(primaryColor: string): any {
  */
 function darkenColor(hex: string, percent: number): string {
   const num = parseInt(hex.replace('#', ''), 16);
-  const r = Math.max(0, (num >> 16) - Math.round(255 * percent / 100));
-  const g = Math.max(0, ((num >> 8) & 0x00FF) - Math.round(255 * percent / 100));
-  const b = Math.max(0, (num & 0x0000FF) - Math.round(255 * percent / 100));
-  
+  const r = Math.max(0, (num >> 16) - Math.round((255 * percent) / 100));
+  const g = Math.max(
+    0,
+    ((num >> 8) & 0x00ff) - Math.round((255 * percent) / 100)
+  );
+  const b = Math.max(0, (num & 0x0000ff) - Math.round((255 * percent) / 100));
+
   return `#${(0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1)}`;
 }
 
@@ -368,10 +385,13 @@ function hexToRgba(hex: string, opacity: number): string {
  */
 function lightenColor(hex: string, percent: number): string {
   const num = parseInt(hex.replace('#', ''), 16);
-  const r = Math.min(255, (num >> 16) + Math.round(255 * percent / 100));
-  const g = Math.min(255, ((num >> 8) & 0x00FF) + Math.round(255 * percent / 100));
-  const b = Math.min(255, (num & 0x0000FF) + Math.round(255 * percent / 100));
-  
+  const r = Math.min(255, (num >> 16) + Math.round((255 * percent) / 100));
+  const g = Math.min(
+    255,
+    ((num >> 8) & 0x00ff) + Math.round((255 * percent) / 100)
+  );
+  const b = Math.min(255, (num & 0x0000ff) + Math.round((255 * percent) / 100));
+
   return `#${(0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1)}`;
 }
 

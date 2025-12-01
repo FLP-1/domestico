@@ -66,7 +66,10 @@ function buildResult(
 // ========================================
 
 const ValidationService = {
-  async validateUserCreation(cpf: string, email: string): Promise<UserValidationResult> {
+  async validateUserCreation(
+    cpf: string,
+    email: string
+  ): Promise<UserValidationResult> {
     const loggerContext = logger.child({
       module: 'ValidationService',
       action: 'validateUserCreation',
@@ -91,7 +94,10 @@ const ValidationService = {
     }
 
     if (errors.length > 0) {
-      loggerContext.debug({ normalizedCpf, normalizedEmail, errors }, 'Validação básica falhou');
+      loggerContext.debug(
+        { normalizedCpf, normalizedEmail, errors },
+        'Validação básica falhou'
+      );
       return buildResult(errors, warnings);
     }
 
@@ -255,7 +261,9 @@ const ValidationService = {
     if (!usuarioId && normalizedCpf) {
       usuarioId = await findUserIdByCpf(normalizedCpf);
       if (!usuarioId) {
-        warnings.push('Usuário ainda não cadastrado; associação será validada após criação');
+        warnings.push(
+          'Usuário ainda não cadastrado; associação será validada após criação'
+        );
       }
     }
 
@@ -303,7 +311,7 @@ const ValidationService = {
           });
 
           const temMesmoPerfil = usuarioPerfis.some(
-            (up) => up.perfil.codigo?.toUpperCase() === perfilCodigo
+            up => up.perfil.codigo?.toUpperCase() === perfilCodigo
           );
 
           if (temMesmoPerfil && usuarioGrupos.length > 0) {
@@ -328,7 +336,7 @@ const ValidationService = {
       });
 
       const hasAnotherEmployer = employers.some(
-        (entry) => !usuarioId || entry.usuarioId !== usuarioId
+        entry => !usuarioId || entry.usuarioId !== usuarioId
       );
 
       if (hasAnotherEmployer) {
@@ -495,7 +503,7 @@ const ValidationService = {
       });
 
       const hasAnotherEmployer = employers.some(
-        (entry) => !usuarioId || entry.usuarioId !== usuarioId
+        entry => !usuarioId || entry.usuarioId !== usuarioId
       );
 
       if (hasAnotherEmployer) {
@@ -603,7 +611,7 @@ const ValidationService = {
 
             // Verificar se o mesmo CPF já está no grupo com o mesmo perfil
             const mesmoPerfilNoGrupo = usuarioPerfis.some(
-              (up) => up.perfil.codigo?.toUpperCase() === perfilCodigo
+              up => up.perfil.codigo?.toUpperCase() === perfilCodigo
             );
 
             // REGRA: Empregado pode ter o mesmo perfil em múltiplos grupos
@@ -679,109 +687,119 @@ export class DAEValidationService {
         return {
           valid: false,
           error: 'FORMATO_INVALIDO',
-          message: 'Arquivo deve ser PDF'
+          message: 'Arquivo deve ser PDF',
         };
       }
-      
+
       // 2. Validar tamanho (máximo 5MB)
       const MAX_SIZE = 5 * 1024 * 1024; // 5MB
       if (file.size > MAX_SIZE) {
         return {
           valid: false,
           error: 'TAMANHO_INVALIDO',
-          message: `PDF muito grande (máximo ${MAX_SIZE / 1024 / 1024}MB)`
+          message: `PDF muito grande (máximo ${MAX_SIZE / 1024 / 1024}MB)`,
         };
       }
-      
+
       // 3. Validar tamanho mínimo (deve ter conteúdo)
       const MIN_SIZE = 1024; // 1KB
       if (file.size < MIN_SIZE) {
         return {
           valid: false,
           error: 'ARQUIVO_VAZIO',
-          message: 'PDF parece estar vazio ou corrompido'
+          message: 'PDF parece estar vazio ou corrompido',
         };
       }
-      
+
       // 4. Extrair e validar conteúdo
       const pdfData = await this.extractDAEData(file);
-      
+
       // 5. Validar campos obrigatórios
-      const requiredFields = ['valores', 'vencimento', 'mesReferencia', 'anoReferencia'];
+      const requiredFields = [
+        'valores',
+        'vencimento',
+        'mesReferencia',
+        'anoReferencia',
+      ];
       for (const field of requiredFields) {
         if (!pdfData[field]) {
           return {
             valid: false,
             error: 'CAMPOS_FALTANDO',
-            message: `Campo obrigatório ausente: ${field}`
+            message: `Campo obrigatório ausente: ${field}`,
           };
         }
       }
-      
+
       // 6. Validar valores numéricos
       if (!pdfData.valores || pdfData.valores.total <= 0) {
         return {
           valid: false,
           error: 'VALOR_INVALIDO',
-          message: 'Valor total deve ser maior que zero'
+          message: 'Valor total deve ser maior que zero',
         };
       }
-      
+
       // 7. Validar data de vencimento
       const vencimento = new Date(pdfData.vencimento);
       if (isNaN(vencimento.getTime())) {
         return {
           valid: false,
           error: 'DATA_INVALIDA',
-          message: 'Data de vencimento inválida'
+          message: 'Data de vencimento inválida',
         };
       }
-      
+
       // 8. Validar mês/ano de referência
       if (pdfData.mesReferencia < 1 || pdfData.mesReferencia > 12) {
         return {
           valid: false,
           error: 'MES_INVALIDO',
-          message: 'Mês de referência inválido (deve ser entre 1 e 12)'
+          message: 'Mês de referência inválido (deve ser entre 1 e 12)',
         };
       }
-      
-      if (pdfData.anoReferencia < 2020 || pdfData.anoReferencia > new Date().getFullYear() + 1) {
+
+      if (
+        pdfData.anoReferencia < 2020 ||
+        pdfData.anoReferencia > new Date().getFullYear() + 1
+      ) {
         return {
           valid: false,
           error: 'ANO_INVALIDO',
-          message: 'Ano de referência inválido'
+          message: 'Ano de referência inválido',
         };
       }
-      
+
       // 9. Validar soma dos valores
-      const soma = (pdfData.valores.INSS || 0) + 
-                   (pdfData.valores.FGTS || 0) + 
-                   (pdfData.valores.IRRF || 0);
+      const soma =
+        (pdfData.valores.INSS || 0) +
+        (pdfData.valores.FGTS || 0) +
+        (pdfData.valores.IRRF || 0);
       const diferenca = Math.abs(soma - pdfData.valores.total);
-      if (diferenca > 0.01) { // Tolerância de 1 centavo
+      if (diferenca > 0.01) {
+        // Tolerância de 1 centavo
         return {
           valid: false,
           error: 'VALORES_INCONSISTENTES',
-          message: `Soma dos valores (R$ ${soma.toFixed(2)}) não confere com total (R$ ${pdfData.valores.total.toFixed(2)})`
+          message: `Soma dos valores (R$ ${soma.toFixed(2)}) não confere com total (R$ ${pdfData.valores.total.toFixed(2)})`,
         };
       }
-      
+
       return {
         valid: true,
         message: 'DAE validada com sucesso',
-        data: pdfData
+        data: pdfData,
       };
     } catch (error: any) {
       logger.error({ error }, 'Erro ao validar DAE');
       return {
         valid: false,
         error: 'ERRO_PROCESSAMENTO',
-        message: `Erro ao processar PDF: ${error.message || 'Erro desconhecido'}`
+        message: `Erro ao processar PDF: ${error.message || 'Erro desconhecido'}`,
       };
     }
   }
-  
+
   /**
    * Extrai dados da DAE do PDF
    */
@@ -789,15 +807,15 @@ export class DAEValidationService {
     // TODO: Implementar extração real com pdf-parse ou similar
     // Por enquanto, retorna estrutura esperada
     // Em produção, usar biblioteca como pdf-parse
-    
+
     try {
       // Simular leitura do PDF
       const arrayBuffer = await file.arrayBuffer();
-      
+
       // Em produção, usar:
       // const pdfParse = require('pdf-parse');
       // const pdfText = await pdfParse(arrayBuffer);
-      
+
       // Por enquanto, retornar estrutura para validação
       // A extração real será implementada quando biblioteca estiver disponível
       return {
@@ -807,13 +825,15 @@ export class DAEValidationService {
           INSS: null,
           FGTS: null,
           IRRF: null,
-          total: null
+          total: null,
         },
         vencimento: null,
-        codigoBarras: null
+        codigoBarras: null,
       };
     } catch (error) {
-      throw new Error(`Erro ao extrair dados do PDF: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+      throw new Error(
+        `Erro ao extrair dados do PDF: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
+      );
     }
   }
 }
@@ -848,59 +868,59 @@ export class CertificatePreventiveValidationService {
     try {
       // 1. Buscar certificado no banco
       const cert = await prisma.certificadoDigital.findUnique({
-        where: { id: certificateId }
+        where: { id: certificateId },
       });
-      
+
       if (!cert) {
         return {
           valid: false,
           error: 'CERTIFICADO_NAO_ENCONTRADO',
-          message: 'Certificado não encontrado no banco de dados'
+          message: 'Certificado não encontrado no banco de dados',
         };
       }
-      
+
       // 2. Verificar se está ativo
       if (!cert.ativo) {
         return {
           valid: false,
           error: 'CERTIFICADO_INATIVO',
-          message: 'Certificado está inativo. Ative para continuar usando.'
+          message: 'Certificado está inativo. Ative para continuar usando.',
         };
       }
-      
+
       // 3. Verificar se foi revogado
       if (cert.revogado) {
         return {
           valid: false,
           error: 'CERTIFICADO_REVOGADO',
-          message: `Certificado foi revogado${cert.motivoRevogacao ? `: ${cert.motivoRevogacao}` : ''}`
+          message: `Certificado foi revogado${cert.motivoRevogacao ? `: ${cert.motivoRevogacao}` : ''}`,
         };
       }
-      
+
       // 4. Verificar vencimento
       const now = new Date();
       const expiresAt = new Date(cert.dataValidade);
       const daysUntilExpiry = Math.ceil(
         (expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
       );
-      
+
       if (daysUntilExpiry < 0) {
         return {
           valid: false,
           error: 'CERTIFICADO_EXPIRADO',
           message: 'Certificado expirado. Renove para continuar usando.',
-          daysUntilExpiry
+          daysUntilExpiry,
         };
       }
-      
+
       // 5. Verificar se está próximo do vencimento (criar alerta se necessário)
       if (daysUntilExpiry <= 30 && cert.alertaVencimento) {
         await this.createExpiryAlert(cert.id, daysUntilExpiry);
       }
-      
+
       // 6. Verificar revogação (consultar CRL se disponível)
       // TODO: Implementar verificação de CRL quando necessário
-      
+
       return {
         valid: true,
         message: 'Certificado válido',
@@ -909,19 +929,19 @@ export class CertificatePreventiveValidationService {
           id: cert.id,
           nome: cert.nome,
           dataValidade: cert.dataValidade,
-          revogado: false
-        }
+          revogado: false,
+        },
       };
     } catch (error: any) {
       logger.error({ error, certificateId }, 'Erro ao validar certificado');
       return {
         valid: false,
         error: 'ERRO_VALIDACAO',
-        message: `Erro ao validar certificado: ${error.message || 'Erro desconhecido'}`
+        message: `Erro ao validar certificado: ${error.message || 'Erro desconhecido'}`,
       };
     }
   }
-  
+
   /**
    * Cria alerta de vencimento próximo
    */
@@ -935,12 +955,12 @@ export class CertificatePreventiveValidationService {
         select: {
           usuarioId: true,
           nome: true,
-          alertaVencimento: true
-        }
+          alertaVencimento: true,
+        },
       });
-      
+
       if (!cert) return;
-      
+
       const usuarioId = cert.usuarioId;
       if (!usuarioId) {
         logger.warn(
@@ -949,7 +969,7 @@ export class CertificatePreventiveValidationService {
         );
         return;
       }
-      
+
       // Verificar se já existe alerta ativo
       const existingAlert = await prisma.alerta.findFirst({
         where: {
@@ -958,21 +978,21 @@ export class CertificatePreventiveValidationService {
           status: 'ATIVO',
           condicoes: {
             path: ['certificateId'],
-            equals: certificateId
-          }
-        }
+            equals: certificateId,
+          },
+        },
       });
-      
+
       if (existingAlert) {
         // Atualizar alerta existente
         await prisma.alerta.update({
-        where: { id: existingAlert.id },
+          where: { id: existingAlert.id },
           data: {
             titulo: `Certificado vence em ${daysUntilExpiry} dias`,
             descricao: `O certificado "${cert.nome}" vence em ${daysUntilExpiry} dias. Renove para evitar interrupção do serviço.`,
             prioridade: daysUntilExpiry <= 7 ? 'URGENTE' : 'ALTA',
-            dataAlerta: new Date()
-          }
+            dataAlerta: new Date(),
+          },
         });
       } else {
         // Criar novo alerta
@@ -992,13 +1012,16 @@ export class CertificatePreventiveValidationService {
             textoNotificacao: `⚠️ Certificado vence em ${daysUntilExpiry} dias!`,
             condicoes: {
               certificateId,
-              daysUntilExpiry
-            }
-          }
+              daysUntilExpiry,
+            },
+          },
         });
       }
     } catch (error) {
-      logger.error({ error, certificateId }, 'Erro ao criar alerta de vencimento');
+      logger.error(
+        { error, certificateId },
+        'Erro ao criar alerta de vencimento'
+      );
     }
   }
 }
@@ -1031,21 +1054,21 @@ export class GovBRTokenManager {
   private accessToken: string | null = null;
   private expiresAt: Date | null = null;
   private userId: string | null = null;
-  
+
   /**
    * Obtém token válido (renova se necessário)
    */
   async getValidToken(userId: string): Promise<string> {
     this.userId = userId;
-    
+
     // 1. Carregar tokens do banco
     await this.loadTokensFromDB(userId);
-    
+
     // 2. Verificar se token está válido
     if (this.accessToken && this.expiresAt && new Date() < this.expiresAt) {
       return this.accessToken;
     }
-    
+
     // 3. Renovar token se refreshToken disponível
     if (this.refreshToken) {
       await this.refreshAccessToken();
@@ -1053,10 +1076,10 @@ export class GovBRTokenManager {
         return this.accessToken;
       }
     }
-    
+
     throw new Error('Token não disponível. Faça login novamente no gov.br.');
   }
-  
+
   /**
    * Carrega tokens do banco de dados
    */
@@ -1068,7 +1091,7 @@ export class GovBRTokenManager {
       this.expiresAt = cached.expiresAt;
     }
   }
-  
+
   /**
    * Renova access token usando refresh token
    */
@@ -1076,24 +1099,24 @@ export class GovBRTokenManager {
     if (!this.refreshToken || !this.userId) {
       throw new Error('Refresh token não disponível');
     }
-    
+
     try {
       const response = await fetch('/api/auth/govbr/refresh', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken: this.refreshToken })
+        body: JSON.stringify({ refreshToken: this.refreshToken }),
       });
-      
+
       if (!response.ok) {
         throw new Error('Falha ao renovar token');
       }
-      
+
       const data = await response.json();
-      
+
       this.accessToken = data.accessToken;
       this.refreshToken = data.refreshToken || this.refreshToken;
       this.expiresAt = new Date(data.expiresAt);
-      
+
       // Salvar no banco
       await this.saveTokensToDB();
     } catch (error: any) {
@@ -1101,39 +1124,41 @@ export class GovBRTokenManager {
       throw error;
     }
   }
-  
+
   /**
    * Salva tokens no banco de dados
    */
   private async saveTokensToDB(): Promise<void> {
     if (!this.userId) return;
-    
+
     govbrTokenCache.set(this.userId, {
       accessToken: this.accessToken,
       refreshToken: this.refreshToken,
       expiresAt: this.expiresAt,
     });
   }
-  
+
   /**
    * Valida token antes de operação eSocial
    */
-  async validateBeforeOperation(userId: string): Promise<GovBRTokenValidationResult> {
+  async validateBeforeOperation(
+    userId: string
+  ): Promise<GovBRTokenValidationResult> {
     try {
       const token = await this.getValidToken(userId);
-      
+
       // Verificar token com gov.br
       const validation = await this.verifyTokenWithGovBR(token);
-      
+
       if (!validation.valid) {
         return {
           valid: false,
           error: validation.error,
           message: validation.message,
-          requiresRefresh: true
+          requiresRefresh: true,
         };
       }
-      
+
       return {
         valid: true,
         message: 'Token válido',
@@ -1142,49 +1167,51 @@ export class GovBRTokenManager {
           refreshToken: this.refreshToken || '',
           expiresAt: this.expiresAt || new Date(),
           tokenType: 'Bearer',
-          scope: 'openid profile email'
-        }
+          scope: 'openid profile email',
+        },
       };
     } catch (error: any) {
       return {
         valid: false,
         error: 'TOKEN_INVALIDO',
         message: error.message || 'Token inválido. Faça login novamente.',
-        requiresRefresh: true
+        requiresRefresh: true,
       };
     }
   }
-  
+
   /**
    * Verifica token com gov.br
    */
-  private async verifyTokenWithGovBR(token: string): Promise<{ valid: boolean; error?: string; message: string }> {
+  private async verifyTokenWithGovBR(
+    token: string
+  ): Promise<{ valid: boolean; error?: string; message: string }> {
     try {
       const response = await fetch('https://sso.acesso.gov.br/userinfo', {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
-      
+
       if (!response.ok) {
         return {
           valid: false,
           error: 'TOKEN_INVALIDO',
-          message: 'Token gov.br inválido ou expirado'
+          message: 'Token gov.br inválido ou expirado',
         };
       }
-      
+
       const userInfo = await response.json();
-      
+
       return {
         valid: true,
-        message: 'Token válido'
+        message: 'Token válido',
       };
     } catch (error: any) {
       return {
         valid: false,
         error: 'ERRO_VERIFICACAO',
-        message: `Erro ao verificar token: ${error.message || 'Erro desconhecido'}`
+        message: `Erro ao verificar token: ${error.message || 'Erro desconhecido'}`,
       };
     }
   }
@@ -1195,7 +1222,8 @@ export class GovBRTokenManager {
 // ========================================
 
 let daeValidationInstance: DAEValidationService | null = null;
-let certificateValidationInstance: CertificatePreventiveValidationService | null = null;
+let certificateValidationInstance: CertificatePreventiveValidationService | null =
+  null;
 let govbrTokenManagerInstance: GovBRTokenManager | null = null;
 
 /**
@@ -1213,7 +1241,8 @@ export function getDAEValidationService(): DAEValidationService {
  */
 export function getCertificatePreventiveValidationService(): CertificatePreventiveValidationService {
   if (!certificateValidationInstance) {
-    certificateValidationInstance = new CertificatePreventiveValidationService();
+    certificateValidationInstance =
+      new CertificatePreventiveValidationService();
   }
   return certificateValidationInstance;
 }

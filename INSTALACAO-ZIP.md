@@ -11,6 +11,7 @@ Este arquivo ZIP contém o projeto completo DOM (Doméstico) versão 2.4.0, incl
 - ✅ Scripts e utilitários
 
 **NÃO inclui:**
+
 - ❌ `node_modules` (instalar com `npm install`)
 - ❌ `.next` (gerado no build)
 - ❌ `.git` (histórico git)
@@ -105,6 +106,7 @@ npm run db:seed          # Popula banco com dados iniciais
 ## 📚 Documentação Adicional
 
 Consulte a pasta `docs/` para documentação detalhada sobre:
+
 - Estratégias e planos
 - Guias de padronização
 - Documentação técnica
@@ -126,6 +128,7 @@ Versão atual: **v2.4.0**
 ## 🆘 Suporte
 
 Em caso de problemas:
+
 1. Verifique os logs do console
 2. Consulte a documentação em `docs/`
 3. Verifique se todas as dependências estão instaladas
@@ -135,4 +138,3 @@ Em caso de problemas:
 
 **DOM v2.4.0** - Sistema de Gestão Doméstica  
 Desenvolvido por FLP Business Strategy
-

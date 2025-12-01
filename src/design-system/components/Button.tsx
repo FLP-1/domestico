@@ -219,7 +219,11 @@ const StyledButton = styled.button<{
           height: 16px;
           border: 2px solid ${(() => {
             const textColor = themedStyles.textOnPrimary || themedStyles.text;
-            if (textColor && typeof textColor === 'string' && textColor.startsWith('#')) {
+            if (
+              textColor &&
+              typeof textColor === 'string' &&
+              textColor.startsWith('#')
+            ) {
               const r = parseInt(textColor.slice(1, 3), 16);
               const g = parseInt(textColor.slice(3, 5), 16);
               const b = parseInt(textColor.slice(5, 7), 16);

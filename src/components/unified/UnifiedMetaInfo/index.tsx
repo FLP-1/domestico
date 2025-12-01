@@ -64,19 +64,26 @@ const MetaInfoContainer = styled.div<{
         return 'flex';
     }
   }};
-  flex-direction: ${props => (props.$variant === 'vertical' ? 'column' : 'row')};
+  flex-direction: ${props =>
+    props.$variant === 'vertical' ? 'column' : 'row'};
   grid-template-columns: ${props =>
-    props.$variant === 'grid' ? 'repeat(auto-fit, minmax(200px, 1fr))' : 'none'};
+    props.$variant === 'grid'
+      ? 'repeat(auto-fit, minmax(200px, 1fr))'
+      : 'none'};
   gap: ${props => (props.$variant === 'horizontal' ? '1rem' : '0.5rem')};
   flex-wrap: wrap;
   padding: ${props => (props.$showSeparators ? '0.5rem 0' : '0')};
   border-bottom: ${props => {
     if (!props.$showSeparators) return 'none';
     const border = props.$theme?.colors?.border;
-    const borderColor = (typeof border === 'string' ? border : (border && typeof border === 'object' && (border as any).primary)) || defaultColors.border;
+    const borderColor =
+      (typeof border === 'string'
+        ? border
+        : border && typeof border === 'object' && (border as any).primary) ||
+      defaultColors.border;
     return `1px solid ${borderColor}`;
   }};
-  
+
   &:last-child {
     border-bottom: none;
   }
@@ -88,7 +95,8 @@ const MetaInfoItem = styled.div<{
   $variant: UnifiedMetaInfoProps['variant'];
 }>`
   display: flex;
-  align-items: ${props => (props.$variant === 'horizontal' ? 'center' : 'flex-start')};
+  align-items: ${props =>
+    props.$variant === 'horizontal' ? 'center' : 'flex-start'};
   gap: 0.5rem;
   font-size: ${props => {
     switch (props.$size) {
@@ -102,7 +110,10 @@ const MetaInfoItem = styled.div<{
   }};
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+    return (
+      (text && typeof text === 'object' && text.secondary) ||
+      defaultColors.text.secondary
+    );
   }};
   line-height: 1.5;
 `;
@@ -113,9 +124,12 @@ const MetaInfoLabel = styled.span<{
   font-weight: 500;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+    return (
+      (text && typeof text === 'object' && text.secondary) ||
+      defaultColors.text.secondary
+    );
   }};
-  
+
   &::after {
     content: ':';
     margin-right: 0.25rem;
@@ -128,7 +142,10 @@ const MetaInfoValue = styled.span<{
   font-weight: 600;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+    return (
+      (text && typeof text === 'object' && text.primary) ||
+      defaultColors.text.primary
+    );
   }};
 `;
 
@@ -140,9 +157,9 @@ const MetaInfoIcon = styled.span`
 
 /**
  * Componente genérico de Meta Info reutilizável
- * 
+ *
  * Substitui: MetaInfo, DocumentInfo, ListMeta, InfoItem duplicados
- * 
+ *
  * @example
  * ```tsx
  * // Meta info vertical
@@ -153,7 +170,7 @@ const MetaInfoIcon = styled.span`
  *   ]}
  *   variant="vertical"
  * />
- * 
+ *
  * // Meta info horizontal
  * <UnifiedMetaInfo
  *   items={[
@@ -163,7 +180,7 @@ const MetaInfoIcon = styled.span`
  *   variant="horizontal"
  *   size="sm"
  * />
- * 
+ *
  * // Meta info em grid
  * <UnifiedMetaInfo
  *   items={items}
@@ -204,4 +221,3 @@ export const UnifiedMetaInfo: React.FC<UnifiedMetaInfoProps> = ({
     </MetaInfoContainer>
   );
 };
-

@@ -12,8 +12,9 @@ interface GroupSelectorProps {
 
 const SelectorContainer = styled.div<{ $theme?: any }>`
   background: ${props => {
-    const bgColor = props.$theme?.colors?.background?.primary ||
-                    props.$theme?.background?.primary;
+    const bgColor =
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary;
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
@@ -27,8 +28,8 @@ const SelectorContainer = styled.div<{ $theme?: any }>`
   padding: 1rem;
   margin-bottom: 1rem;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -37,18 +38,20 @@ const SelectorContainer = styled.div<{ $theme?: any }>`
     }
     return props.$theme?.shadows?.md || 'none';
   }};
-  border: 1px solid ${props => {
-    const primaryColor = props.$theme?.navigation?.primary ||
-                         props.$theme?.colors?.primary ||
-                         props.$theme?.accent;
-    if (primaryColor && primaryColor.startsWith('#')) {
-      const r = parseInt(primaryColor.slice(1, 3), 16);
-      const g = parseInt(primaryColor.slice(3, 5), 16);
-      const b = parseInt(primaryColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.2)`;
-    }
-    return 'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const primaryColor =
+        props.$theme?.navigation?.primary ||
+        props.$theme?.colors?.primary ||
+        props.$theme?.accent;
+      if (primaryColor && primaryColor.startsWith('#')) {
+        const r = parseInt(primaryColor.slice(1, 3), 16);
+        const g = parseInt(primaryColor.slice(3, 5), 16);
+        const b = parseInt(primaryColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.2)`;
+      }
+      return 'transparent';
+    }};
 `;
 
 const SelectorHeader = styled.div<{ $theme?: any }>`
@@ -79,7 +82,11 @@ const GroupList = styled.div<{ $theme?: any }>`
   gap: 0.5rem;
 `;
 
-const GroupOption = styled.button<{ $selected: boolean; $color: string; $theme?: any }>`
+const GroupOption = styled.button<{
+  $selected: boolean;
+  $color: string;
+  $theme?: any;
+}>`
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -93,10 +100,12 @@ const GroupOption = styled.button<{ $selected: boolean; $color: string; $theme?:
       const b = parseInt(props.$color.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.15)`;
     }
-    return props.$theme?.colors?.background?.secondary ||
-           props.$theme?.background?.secondary ||
-           props.$theme?.colors?.background?.primary ||
-           'transparent';
+    return (
+      props.$theme?.colors?.background?.secondary ||
+      props.$theme?.background?.secondary ||
+      props.$theme?.colors?.background?.primary ||
+      'transparent'
+    );
   }};
   cursor: pointer;
   transition: all 0.3s ease;
@@ -112,9 +121,11 @@ const GroupOption = styled.button<{ $selected: boolean; $color: string; $theme?:
         return `rgba(${r}, ${g}, ${b}, 0.25)`;
       }
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) ||
-             props.$theme?.border?.light ||
-             'transparent';
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
     }};
     transform: translateY(-1px);
   }
@@ -201,10 +212,11 @@ const ErrorState = styled.div<{ $theme?: any }>`
     props.$theme?.status?.error?.background ||
     'transparent'};
   border-radius: 8px;
-  border: 1px solid ${props =>
-    props.$theme?.colors?.status?.error?.border ||
-    props.$theme?.status?.error?.border ||
-    'transparent'};
+  border: 1px solid
+    ${props =>
+      props.$theme?.colors?.status?.error?.border ||
+      props.$theme?.status?.error?.border ||
+      'transparent'};
 `;
 
 const GroupSelector: React.FC<GroupSelectorProps> = ({

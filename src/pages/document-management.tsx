@@ -8,7 +8,13 @@ import { useAlertManager } from '../hooks/useAlertManager';
 import styled from 'styled-components';
 import FilterSection from '../components/FilterSection';
 import { FormGroup, Input, Label, Select } from '../components/FormComponents';
-import { UnifiedButton, UnifiedModal, UnifiedBadge, UnifiedMetaInfo, UnifiedProgressBar } from '../components/unified';
+import {
+  UnifiedButton,
+  UnifiedModal,
+  UnifiedBadge,
+  UnifiedMetaInfo,
+  UnifiedProgressBar,
+} from '../components/unified';
 import PageContainer from '../components/PageContainer';
 import PageHeader from '../components/PageHeader';
 import Sidebar from '../components/Sidebar';
@@ -16,7 +22,11 @@ import TopBar from '../components/TopBar';
 import WelcomeSection from '../components/WelcomeSection';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
-import { getThemeColor, getStatusColor, addOpacity } from '../utils/themeHelpers';
+import {
+  getThemeColor,
+  getStatusColor,
+  addOpacity,
+} from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
 import { getTextSecondary } from '../utils/themeTypeGuards';
 import { UnifiedCard } from '../components/unified';
@@ -31,11 +41,14 @@ import DataList, {
 } from '../components/DataList';
 import ContextualChat from '../components/ContextualChat';
 import ESocialTemplatesGuide from '../components/ESocialTemplatesGuide';
-import { getDocumentTrabalhistaService, TipoDocumentoTrabalhista } from '../services/documentTrabalhistaService';
-import { 
-  TIPOS_DOCUMENTOS_TRABALHISTAS, 
+import {
+  getDocumentTrabalhistaService,
+  TipoDocumentoTrabalhista,
+} from '../services/documentTrabalhistaService';
+import {
+  TIPOS_DOCUMENTOS_TRABALHISTAS,
   getTipoDocumentoInfo,
-  getTiposObrigatorios 
+  getTiposObrigatorios,
 } from '../constants/documentosTrabalhistas';
 import { formatDate } from '../utils/formatters';
 
@@ -63,7 +76,7 @@ interface DocumentoTrabalhista {
 // UploadSection removido - usar UnifiedCard com wrapper para drag & drop
 const UploadCardWrapper = styled.div<{ $theme: Theme; $isDragOver: boolean }>`
   margin-bottom: 2rem;
-  
+
   /* Sobrescrever estilos do UnifiedCard para drag & drop */
   > div {
     border: 2px dashed
@@ -72,7 +85,11 @@ const UploadCardWrapper = styled.div<{ $theme: Theme; $isDragOver: boolean }>`
           ? getThemeColor(props.$theme, 'primary', 'transparent')
           : (() => {
               const border = props.$theme?.colors?.border;
-              return getThemeColor(props.$theme, 'border.primary', 'transparent');
+              return getThemeColor(
+                props.$theme,
+                'border.primary',
+                'transparent'
+              );
             })()} !important;
     text-align: center;
     cursor: pointer;
@@ -144,17 +161,24 @@ const DocumentForm = styled.form`
 // TextArea mantido - usar tokens para cores (sem hardcoded)
 const TextArea = styled.textarea<{ $theme: Theme }>`
   padding: 0.75rem;
-  border: 2px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return getThemeColor(props.$theme, 'border.primary', 'transparent');
-  }};
+  border: 2px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return getThemeColor(props.$theme, 'border.primary', 'transparent');
+    }};
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    const surfaceColor = (typeof surface === 'object' && surface && (surface as any).primary) || (typeof surface === 'string' ? surface : null);
-    return surfaceColor || getThemeColor(props.$theme, 'background.primary', 'transparent') || getThemeColor(props.$theme, 'surface.primary', 'transparent');
+    const surfaceColor =
+      (typeof surface === 'object' && surface && (surface as any).primary) ||
+      (typeof surface === 'string' ? surface : null);
+    return (
+      surfaceColor ||
+      getThemeColor(props.$theme, 'background.primary', 'transparent') ||
+      getThemeColor(props.$theme, 'surface.primary', 'transparent')
+    );
   }};
   resize: vertical;
   min-height: 100px;
@@ -163,14 +187,24 @@ const TextArea = styled.textarea<{ $theme: Theme }>`
     outline: none;
     border-color: ${props => {
       const border = props.$theme?.colors?.border;
-      const borderFocus = (typeof border === 'object' && border && (border as any).focus) || null;
-      return getThemeColor(props.$theme, 'primary', 'transparent') || borderFocus || 'transparent';
+      const borderFocus =
+        (typeof border === 'object' && border && (border as any).focus) || null;
+      return (
+        getThemeColor(props.$theme, 'primary', 'transparent') ||
+        borderFocus ||
+        'transparent'
+      );
     }};
     box-shadow: 0 0 0 3px
       ${props => {
         const border = props.$theme?.colors?.border;
-        const borderFocus = (typeof border === 'object' && border && (border as any).focus) || null;
-        const color = getThemeColor(props.$theme, 'primary', 'transparent') || borderFocus || 'transparent';
+        const borderFocus =
+          (typeof border === 'object' && border && (border as any).focus) ||
+          null;
+        const color =
+          getThemeColor(props.$theme, 'primary', 'transparent') ||
+          borderFocus ||
+          'transparent';
         // Converter para rgba com opacidade
         const hexMatch = color.match(/^#([A-Fa-f\d]{6})$/);
         if (hexMatch) {
@@ -230,7 +264,7 @@ const DocumentTitle = styled.h3<{ $theme?: Theme }>`
   margin: 0 0 0.5rem 0;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-      return getThemeColor(props.$theme, 'text.primary', 'inherit');
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
 `;
 
@@ -238,32 +272,46 @@ const DocumentSubtitle = styled.p<{ $theme?: Theme }>`
   margin: 0 0 1rem 0;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-      return getThemeColor(props.$theme, 'text.secondary', 'inherit');
+    return getThemeColor(props.$theme, 'text.secondary', 'inherit');
   }};
 `;
 
 // Styled Components para Checklist e eSocial Badge
-const ESocialBadge: React.ComponentType<any> = styled(UnifiedBadge)<{ $pronto?: boolean; $theme?: Theme }>`
+const ESocialBadge: React.ComponentType<any> = styled(UnifiedBadge)<{
+  $pronto?: boolean;
+  $theme?: Theme;
+}>`
   /* Estilos específicos se necessário */
 `;
 
-const ChecklistSection: React.ComponentType<any> = styled.div<{ $theme?: Theme }>`
+const ChecklistSection: React.ComponentType<any> = styled.div<{
+  $theme?: Theme;
+}>`
   margin-top: 2rem;
   padding: 1.5rem;
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    return (typeof surface === 'object' && surface && (surface as any).secondary) ||
-           (typeof surface === 'string' ? surface : null) ||
-           (typeof props.$theme?.colors?.background === 'object' && props.$theme?.colors?.background && 'secondary' in props.$theme.colors.background ? String((props.$theme.colors.background as any).secondary) : null) ||
-           'transparent';
+    return (
+      (typeof surface === 'object' && surface && (surface as any).secondary) ||
+      (typeof surface === 'string' ? surface : null) ||
+      (typeof props.$theme?.colors?.background === 'object' &&
+      props.$theme?.colors?.background &&
+      'secondary' in props.$theme.colors.background
+        ? String((props.$theme.colors.background as any).secondary)
+        : null) ||
+      'transparent'
+    );
   }};
   border-radius: 8px;
-  border: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border && (border as any).primary) || 
-           (typeof border === 'string' ? border : null) ||
-           'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border && (border as any).primary) ||
+        (typeof border === 'string' ? border : null) ||
+        'transparent'
+      );
+    }};
 `;
 
 const ChecklistTitle: React.ComponentType<any> = styled.h3<{ $theme?: Theme }>`
@@ -271,7 +319,7 @@ const ChecklistTitle: React.ComponentType<any> = styled.h3<{ $theme?: Theme }>`
   font-weight: 600;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-      return getThemeColor(props.$theme, 'text.primary', 'inherit');
+    return getThemeColor(props.$theme, 'text.primary', 'inherit');
   }};
   margin: 0 0 1rem 0;
   display: flex;
@@ -316,7 +364,10 @@ const ChecklistItemSubtext = styled.div<{ $theme?: Theme }>`
   color: ${props => getTextSecondary(props.$theme)};
 `;
 
-const ChecklistItem: React.ComponentType<any> = styled.div<{ $theme?: Theme; $completo?: boolean }>`
+const ChecklistItem: React.ComponentType<any> = styled.div<{
+  $theme?: Theme;
+  $completo?: boolean;
+}>`
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -324,8 +375,17 @@ const ChecklistItem: React.ComponentType<any> = styled.div<{ $theme?: Theme; $co
   border-radius: 8px;
   background: ${props => {
     if (props.$completo) {
-      const success = (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'background' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).background) : null) ||
-                     (typeof (props.$theme as any)?.status?.success === 'object' && (props.$theme as any)?.status?.success && 'background' in (props.$theme as any).status.success ? String(((props.$theme as any).status.success as any).background) : null);
+      const success =
+        (typeof props.$theme?.colors?.status?.success === 'object' &&
+        props.$theme?.colors?.status?.success &&
+        'background' in props.$theme.colors.status.success
+          ? String((props.$theme.colors.status.success as any).background)
+          : null) ||
+        (typeof (props.$theme as any)?.status?.success === 'object' &&
+        (props.$theme as any)?.status?.success &&
+        'background' in (props.$theme as any).status.success
+          ? String(((props.$theme as any).status.success as any).background)
+          : null);
       if (success && success.startsWith('#')) {
         const r = parseInt(success.slice(1, 3), 16);
         const g = parseInt(success.slice(3, 5), 16);
@@ -335,16 +395,21 @@ const ChecklistItem: React.ComponentType<any> = styled.div<{ $theme?: Theme; $co
       return success || 'transparent';
     }
     const surface = props.$theme?.colors?.surface;
-    return (typeof surface === 'object' && surface && (surface as any).primary) || 
-           (typeof surface === 'string' ? surface : null) ||
-           'transparent';
+    return (
+      (typeof surface === 'object' && surface && (surface as any).primary) ||
+      (typeof surface === 'string' ? surface : null) ||
+      'transparent'
+    );
   }};
-  border: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border && (border as any).light) || 
-           (typeof border === 'string' ? border : null) ||
-           'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border && (border as any).light) ||
+        (typeof border === 'string' ? border : null) ||
+        'transparent'
+      );
+    }};
 `;
 
 export default function DocumentManagement() {
@@ -355,8 +420,11 @@ export default function DocumentManagement() {
   const [modalType, setUnifiedModalType] = useState<'view' | 'edit' | 'upload'>(
     'view'
   );
-  const [selectedDocument, setSelectedDocument] = useState<DocumentoTrabalhista | null>(null);
-  const [selectedDocumentIdForChat, setSelectedDocumentIdForChat] = useState<string | null>(null);
+  const [selectedDocument, setSelectedDocument] =
+    useState<DocumentoTrabalhista | null>(null);
+  const [selectedDocumentIdForChat, setSelectedDocumentIdForChat] = useState<
+    string | null
+  >(null);
   const [showTemplatesGuide, setShowTemplatesGuide] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -453,15 +521,26 @@ export default function DocumentManagement() {
       width: '120px',
       render: (item: DataListItem) => {
         const validade = (item as any).validade;
-        if (!validade) return <NoValidityText $theme={theme}>Sem validade</NoValidityText>;
+        if (!validade)
+          return <NoValidityText $theme={theme}>Sem validade</NoValidityText>;
         const dataValidade = new Date(validade);
         const hoje = new Date();
-        const diasRestantes = Math.ceil((dataValidade.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));
-        
+        const diasRestantes = Math.ceil(
+          (dataValidade.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24)
+        );
+
         if (diasRestantes < 0) {
-          return <UnifiedBadge variant="error" theme={theme}>Vencido</UnifiedBadge>;
+          return (
+            <UnifiedBadge variant='error' theme={theme}>
+              Vencido
+            </UnifiedBadge>
+          );
         } else if (diasRestantes <= 30) {
-          return <UnifiedBadge variant="warning" theme={theme}>{diasRestantes} dias</UnifiedBadge>;
+          return (
+            <UnifiedBadge variant='warning' theme={theme}>
+              {diasRestantes} dias
+            </UnifiedBadge>
+          );
         }
         return <span>{formatDate(dataValidade)}</span>;
       },
@@ -479,11 +558,17 @@ export default function DocumentManagement() {
         >
           {(item as any).esocialPronto ? (
             <>
-              <span role="img" aria-label="Pronto">✅</span> Pronto
+              <span role='img' aria-label='Pronto'>
+                ✅
+              </span>{' '}
+              Pronto
             </>
           ) : (
             <>
-              <span role="img" aria-label="Pendente">⏳</span> Pendente
+              <span role='img' aria-label='Pendente'>
+                ⏳
+              </span>{' '}
+              Pendente
             </>
           )}
         </ESocialBadge>
@@ -496,17 +581,23 @@ export default function DocumentManagement() {
       render: (item: DataListItem) => {
         const validado = (item as any).validado;
         return (
-          <UnifiedBadge 
+          <UnifiedBadge
             variant={validado ? 'success' : 'secondary'}
             theme={theme}
           >
             {validado ? (
               <>
-                <span role="img" aria-label="Validado">✅</span> Validado
+                <span role='img' aria-label='Validado'>
+                  ✅
+                </span>{' '}
+                Validado
               </>
             ) : (
               <>
-                <span role="img" aria-label="Pendente">⏳</span> Pendente
+                <span role='img' aria-label='Pendente'>
+                  ⏳
+                </span>{' '}
+                Pendente
               </>
             )}
           </UnifiedBadge>
@@ -535,13 +626,18 @@ export default function DocumentManagement() {
       variant: 'primary' as const,
       onClick: async (item: DataListItem) => {
         try {
-          const response = await fetch(`/api/documents/trabalhistas?id=${item.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ esocialPronto: true }),
-          });
+          const response = await fetch(
+            `/api/documents/trabalhistas?id=${item.id}`,
+            {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ esocialPronto: true }),
+            }
+          );
           if (response.ok) {
-            alertManager.showSuccess('Documento marcado como pronto para eSocial!');
+            alertManager.showSuccess(
+              'Documento marcado como pronto para eSocial!'
+            );
             loadDocumentos();
           }
         } catch (error) {
@@ -563,31 +659,37 @@ export default function DocumentManagement() {
 
     try {
       setLoading(true);
-      const response = await fetch(`/api/documents/trabalhistas?usuarioId=${currentProfile.id}`);
+      const response = await fetch(
+        `/api/documents/trabalhistas?usuarioId=${currentProfile.id}`
+      );
       const documentosData = await response.json();
-      
+
       if (Array.isArray(documentosData)) {
-        setDocuments(documentosData.map((doc: any) => ({
-          id: doc.id,
-          tipo: doc.tipo,
-          nome: doc.nome,
-          numero: doc.numero,
-          orgaoEmissor: doc.orgaoEmissor,
-          emissao: doc.emissao,
-          validade: doc.validade,
-          esocialPronto: doc.esocialPronto,
-          esocialEnviado: doc.esocialEnviado,
-          validado: doc.validado,
-          validadoEm: doc.validadoEm,
-          validadoPor: doc.validadoPor,
-          observacoes: doc.observacoes,
-          caminhoArquivo: doc.caminhoArquivo,
-          criadoEm: doc.criadoEm,
-        })));
+        setDocuments(
+          documentosData.map((doc: any) => ({
+            id: doc.id,
+            tipo: doc.tipo,
+            nome: doc.nome,
+            numero: doc.numero,
+            orgaoEmissor: doc.orgaoEmissor,
+            emissao: doc.emissao,
+            validade: doc.validade,
+            esocialPronto: doc.esocialPronto,
+            esocialEnviado: doc.esocialEnviado,
+            validado: doc.validado,
+            validadoEm: doc.validadoEm,
+            validadoPor: doc.validadoPor,
+            observacoes: doc.observacoes,
+            caminhoArquivo: doc.caminhoArquivo,
+            criadoEm: doc.criadoEm,
+          }))
+        );
       }
 
       // Carregar checklist
-      const checklistResponse = await fetch(`/api/documents/checklist?usuarioId=${currentProfile.id}`);
+      const checklistResponse = await fetch(
+        `/api/documents/checklist?usuarioId=${currentProfile.id}`
+      );
       const checklistData = await checklistResponse.json();
       if (checklistData) {
         setChecklist(checklistData);
@@ -665,8 +767,12 @@ export default function DocumentManagement() {
           nome: newDocument.nome,
           numero: newDocument.numero || undefined,
           orgaoEmissor: newDocument.orgaoEmissor || undefined,
-          emissao: newDocument.emissao ? new Date(newDocument.emissao).toISOString() : undefined,
-          validade: newDocument.validade ? new Date(newDocument.validade).toISOString() : undefined,
+          emissao: newDocument.emissao
+            ? new Date(newDocument.emissao).toISOString()
+            : undefined,
+          validade: newDocument.validade
+            ? new Date(newDocument.validade).toISOString()
+            : undefined,
           caminhoArquivo,
           observacoes: newDocument.observacoes || undefined,
         }),
@@ -731,13 +837,24 @@ export default function DocumentManagement() {
         doc.numero?.toLowerCase().includes(filters.search.toLowerCase());
 
       const matchesTipo = !filters.tipo || doc.tipo === filters.tipo;
-      const matchesCategoria = !filters.categoria || getTipoInfo(doc.tipo).categoria === filters.categoria;
+      const matchesCategoria =
+        !filters.categoria ||
+        getTipoInfo(doc.tipo).categoria === filters.categoria;
       const matchesESocial = !filters.esocialPronto || doc.esocialPronto;
 
-      const matchesVencimento = !filters.proximosVencimento || 
-        (doc.validade && new Date(doc.validade) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000));
+      const matchesVencimento =
+        !filters.proximosVencimento ||
+        (doc.validade &&
+          new Date(doc.validade) <=
+            new Date(Date.now() + 30 * 24 * 60 * 60 * 1000));
 
-      return matchesSearch && matchesTipo && matchesCategoria && matchesESocial && matchesVencimento;
+      return (
+        matchesSearch &&
+        matchesTipo &&
+        matchesCategoria &&
+        matchesESocial &&
+        matchesVencimento
+      );
     });
   };
 
@@ -755,7 +872,14 @@ export default function DocumentManagement() {
           userAvatar={currentProfile?.avatar || 'U'}
           userName={currentProfile?.name || 'Usuário'}
           userRole={currentProfile?.role || 'Usuário'}
-          notificationCount={documents.filter(doc => doc.validade && new Date(doc.validade) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)).length}
+          notificationCount={
+            documents.filter(
+              doc =>
+                doc.validade &&
+                new Date(doc.validade) <=
+                  new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+            ).length
+          }
           onNotificationClick={() =>
             alertManager.showInfo('Notificações em desenvolvimento')
           }
@@ -768,11 +892,12 @@ export default function DocumentManagement() {
         subtitle='Gestão especializada de documentos trabalhistas domésticos. Templates, validações e integração com eSocial.'
         actions={
           <UnifiedButton
-            $variant="secondary"
+            $variant='secondary'
             $theme={theme}
             onClick={() => setShowTemplatesGuide(true)}
           >
-            <AccessibleEmoji emoji="📚" label="Guias" /> Templates e Guias eSocial
+            <AccessibleEmoji emoji='📚' label='Guias' /> Templates e Guias
+            eSocial
           </UnifiedButton>
         }
       />
@@ -783,33 +908,40 @@ export default function DocumentManagement() {
           <ChecklistTitle $theme={theme}>
             Checklist de Documentos Obrigatórios
             {checklist.completo && (
-              <BadgeWithMargin variant="success" theme={theme}>
-                <span role="img" aria-label="Completo">✅</span> Completo
+              <BadgeWithMargin variant='success' theme={theme}>
+                <span role='img' aria-label='Completo'>
+                  ✅
+                </span>{' '}
+                Completo
               </BadgeWithMargin>
             )}
           </ChecklistTitle>
           <ChecklistGrid>
             {getTiposObrigatorios().map(tipoDoc => {
-                const status = getChecklistStatus(tipoDoc.tipo);
-                return (
-                  <ChecklistItem key={tipoDoc.tipo} $theme={theme} $completo={status.completo}>
-                    <AccessibleEmoji emoji={tipoDoc.icon} label={tipoDoc.nome} />
-                    <FlexContainer>
-                      <ChecklistItemName>{tipoDoc.nome}</ChecklistItemName>
-                      {tipoDoc.esocialRequerido && (
-                        <ChecklistItemSubtext $theme={theme}>
-                          Requerido para eSocial
-                        </ChecklistItemSubtext>
-                      )}
-                    </FlexContainer>
-                    {status.completo ? (
-                      <AccessibleEmoji emoji="✅" label="Completo" />
-                    ) : (
-                      <AccessibleEmoji emoji="⏳" label="Pendente" />
+              const status = getChecklistStatus(tipoDoc.tipo);
+              return (
+                <ChecklistItem
+                  key={tipoDoc.tipo}
+                  $theme={theme}
+                  $completo={status.completo}
+                >
+                  <AccessibleEmoji emoji={tipoDoc.icon} label={tipoDoc.nome} />
+                  <FlexContainer>
+                    <ChecklistItemName>{tipoDoc.nome}</ChecklistItemName>
+                    {tipoDoc.esocialRequerido && (
+                      <ChecklistItemSubtext $theme={theme}>
+                        Requerido para eSocial
+                      </ChecklistItemSubtext>
                     )}
-                  </ChecklistItem>
-                );
-              })}
+                  </FlexContainer>
+                  {status.completo ? (
+                    <AccessibleEmoji emoji='✅' label='Completo' />
+                  ) : (
+                    <AccessibleEmoji emoji='⏳' label='Pendente' />
+                  )}
+                </ChecklistItem>
+              );
+            })}
           </ChecklistGrid>
         </ChecklistSection>
       )}
@@ -884,7 +1016,9 @@ export default function DocumentManagement() {
             >
               <option value=''>Todos</option>
               {TIPOS_DOCUMENTOS_TRABALHISTAS.map(tipo => (
-                <option key={tipo.tipo} value={tipo.tipo}>{tipo.nome}</option>
+                <option key={tipo.tipo} value={tipo.tipo}>
+                  {tipo.nome}
+                </option>
               ))}
             </Select>
           </FormGroup>
@@ -990,24 +1124,35 @@ export default function DocumentManagement() {
               <FormGroup>
                 <ESocialBadge
                   $pronto={selectedDocument.esocialPronto}
-                  variant={selectedDocument.esocialPronto ? 'success' : 'secondary'}
+                  variant={
+                    selectedDocument.esocialPronto ? 'success' : 'secondary'
+                  }
                   theme={theme}
                 >
                   {selectedDocument.esocialPronto ? (
                     <>
-                      <span role="img" aria-label="Pronto">✅</span> Pronto para eSocial
+                      <span role='img' aria-label='Pronto'>
+                        ✅
+                      </span>{' '}
+                      Pronto para eSocial
                     </>
                   ) : (
                     <>
-                      <span role="img" aria-label="Pendente">⏳</span> Pendente para eSocial
+                      <span role='img' aria-label='Pendente'>
+                        ⏳
+                      </span>{' '}
+                      Pendente para eSocial
                     </>
                   )}
                 </ESocialBadge>
               </FormGroup>
               {selectedDocument.validado && (
                 <FormGroup>
-                  <UnifiedBadge variant="success" theme={theme}>
-                    <span role="img" aria-label="Validado">✅</span> Validado
+                  <UnifiedBadge variant='success' theme={theme}>
+                    <span role='img' aria-label='Validado'>
+                      ✅
+                    </span>{' '}
+                    Validado
                   </UnifiedBadge>
                 </FormGroup>
               )}
@@ -1038,7 +1183,9 @@ export default function DocumentManagement() {
                   required
                 >
                   {TIPOS_DOCUMENTOS_TRABALHISTAS.map(tipo => (
-                    <option key={tipo.tipo} value={tipo.tipo}>{tipo.nome}</option>
+                    <option key={tipo.tipo} value={tipo.tipo}>
+                      {tipo.nome}
+                    </option>
                   ))}
                 </Select>
               </FormGroup>
@@ -1065,7 +1212,10 @@ export default function DocumentManagement() {
                   type='text'
                   value={newDocument.numero}
                   onChange={e =>
-                    setNewDocument(prev => ({ ...prev, numero: e.target.value }))
+                    setNewDocument(prev => ({
+                      ...prev,
+                      numero: e.target.value,
+                    }))
                   }
                   placeholder='Número do documento'
                 />
@@ -1077,7 +1227,10 @@ export default function DocumentManagement() {
                   type='text'
                   value={newDocument.orgaoEmissor}
                   onChange={e =>
-                    setNewDocument(prev => ({ ...prev, orgaoEmissor: e.target.value }))
+                    setNewDocument(prev => ({
+                      ...prev,
+                      orgaoEmissor: e.target.value,
+                    }))
                   }
                   placeholder='Ex: SSP, Receita Federal'
                 />
@@ -1092,7 +1245,10 @@ export default function DocumentManagement() {
                   type='date'
                   value={newDocument.emissao}
                   onChange={e =>
-                    setNewDocument(prev => ({ ...prev, emissao: e.target.value }))
+                    setNewDocument(prev => ({
+                      ...prev,
+                      emissao: e.target.value,
+                    }))
                   }
                 />
               </FormGroup>
@@ -1103,7 +1259,10 @@ export default function DocumentManagement() {
                   type='date'
                   value={newDocument.validade}
                   onChange={e =>
-                    setNewDocument(prev => ({ ...prev, validade: e.target.value }))
+                    setNewDocument(prev => ({
+                      ...prev,
+                      validade: e.target.value,
+                    }))
                   }
                 />
               </FormGroup>
@@ -1127,9 +1286,9 @@ export default function DocumentManagement() {
             {modalType === 'upload' && uploadProgress < 100 && (
               <UploadProgressContainer>
                 <OptimizedLabel>Progresso do Upload</OptimizedLabel>
-                <UnifiedProgressBar 
-                  value={uploadProgress} 
-                  variant="primary" 
+                <UnifiedProgressBar
+                  value={uploadProgress}
+                  variant='primary'
                   theme={theme}
                   showLabel
                   label={`${uploadProgress}% concluído`}
@@ -1164,10 +1323,10 @@ export default function DocumentManagement() {
           $theme={theme}
         >
           <ContextualChat
-            contextoTipo="DOCUMENTO"
+            contextoTipo='DOCUMENTO'
             contextoId={selectedDocumentIdForChat}
             titulo={`Comunicação sobre este Documento`}
-            altura="500px"
+            altura='500px'
             onMensagemEnviada={() => {
               loadDocumentos();
             }}
@@ -1180,9 +1339,9 @@ export default function DocumentManagement() {
         <UnifiedModal
           isOpen={showTemplatesGuide}
           onClose={() => setShowTemplatesGuide(false)}
-          title="Templates e Guias para eSocial"
+          title='Templates e Guias para eSocial'
           $theme={theme}
-          maxWidth="1000px"
+          maxWidth='1000px'
         >
           <ESocialTemplatesGuide theme={theme} />
         </UnifiedModal>

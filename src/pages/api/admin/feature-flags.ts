@@ -1,5 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { setFeatureFlag, isFeatureEnabled, getAllFeatureFlags } from '../../../lib/featureFlags';
+import {
+  setFeatureFlag,
+  isFeatureEnabled,
+  getAllFeatureFlags,
+} from '../../../lib/featureFlags';
 import { verifyToken } from '../../../lib/auth';
 
 /**
@@ -38,10 +42,20 @@ export default async function handler(
 
     if (req.method === 'POST') {
       // Criar ou atualizar feature flag
-      const { key, enabled, userId, profileId, groupId, description, metadata } = req.body;
+      const {
+        key,
+        enabled,
+        userId,
+        profileId,
+        groupId,
+        description,
+        metadata,
+      } = req.body;
 
       if (!key || typeof enabled !== 'boolean') {
-        return res.status(400).json({ error: 'key e enabled são obrigatórios' });
+        return res
+          .status(400)
+          .json({ error: 'key e enabled são obrigatórios' });
       }
 
       await setFeatureFlag(key, enabled, {
@@ -78,4 +92,3 @@ export default async function handler(
     return res.status(500).json({ error: 'Erro interno do servidor' });
   }
 }
-

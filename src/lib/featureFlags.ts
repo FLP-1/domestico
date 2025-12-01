@@ -137,7 +137,7 @@ export async function isFeatureEnabled(
   }
 
   // Buscar valor padrão da configuração
-  const defaultConfig = DEFAULT_FEATURE_FLAGS.find((f) => f.key === key);
+  const defaultConfig = DEFAULT_FEATURE_FLAGS.find(f => f.key === key);
   if (defaultConfig?.defaultValue !== undefined) {
     return defaultConfig.defaultValue;
   }
@@ -270,4 +270,3 @@ export async function initializeDefaultFeatureFlags(): Promise<void> {
     // console.error('Erro ao inicializar feature flags padrão:', error);
   }
 }
-

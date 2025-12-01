@@ -17,8 +17,8 @@ const ModalOverlay = styled.div<{ isOpen: boolean; $theme?: any }>`
   right: 0;
   bottom: 0;
   background-color: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -34,8 +34,8 @@ const ModalOverlay = styled.div<{ isOpen: boolean; $theme?: any }>`
 `;
 
 const ModalContent = styled.div<{ $theme?: any }>`
-  background: ${props => 
-    props.$theme?.colors?.background?.primary || 
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
     props.$theme?.background?.primary ||
     props.$theme?.colors?.surface ||
     'transparent'};
@@ -46,8 +46,8 @@ const ModalContent = styled.div<{ $theme?: any }>`
   max-height: 80vh;
   overflow-y: auto;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -64,19 +64,22 @@ const ModalHeader = styled.div<{ $theme?: any }>`
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) || 
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border-bottom: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
 `;
 
 const ModalTitle = styled.h2<{ $theme?: any }>`
   font-size: 1.5rem;
   font-weight: 600;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
     props.$theme?.text?.dark ||
     props.$theme?.colors?.text ||
     'inherit'};
@@ -88,16 +91,16 @@ const CloseButton = styled.button<{ $theme?: any }>`
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
     props.$theme?.colors?.text ||
     'inherit'};
   padding: 4px;
 
   &:hover {
-    color: ${props => 
-      props.$theme?.colors?.text?.primary || 
+    color: ${props =>
+      props.$theme?.colors?.text?.primary ||
       props.$theme?.text?.primary ||
       props.$theme?.colors?.text ||
       'inherit'};
@@ -117,30 +120,38 @@ const GroupItem = styled.button<{ selected?: boolean; $theme?: any }>`
   border: 2px solid
     ${props => {
       if (props.selected) {
-        return props.$theme?.colors?.navigation?.active || 
-               props.$theme?.navigation?.active ||
-               props.$theme?.colors?.primary ||
-               props.$theme?.accent ||
-               'transparent';
+        return (
+          props.$theme?.colors?.navigation?.active ||
+          props.$theme?.navigation?.active ||
+          props.$theme?.colors?.primary ||
+          props.$theme?.accent ||
+          'transparent'
+        );
       }
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) || 
-             props.$theme?.border?.light ||
-             'transparent';
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
     }};
   border-radius: 8px;
   background: ${props => {
     if (props.selected) {
-      return props.$theme?.colors?.background?.light ||
-             props.$theme?.background?.light ||
-             props.$theme?.colors?.background?.secondary ||
-             props.$theme?.colors?.background?.primary ||
-             'transparent';
+      return (
+        props.$theme?.colors?.background?.light ||
+        props.$theme?.background?.light ||
+        props.$theme?.colors?.background?.secondary ||
+        props.$theme?.colors?.background?.primary ||
+        'transparent'
+      );
     }
-    return props.$theme?.colors?.background?.primary || 
-           props.$theme?.background?.primary ||
-           props.$theme?.colors?.surface ||
-           'transparent';
+    return (
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary ||
+      props.$theme?.colors?.surface ||
+      'transparent'
+    );
   }};
   cursor: pointer;
   transition: all 0.2s;
@@ -148,13 +159,13 @@ const GroupItem = styled.button<{ selected?: boolean; $theme?: any }>`
   width: 100%;
 
   &:hover {
-    border-color: ${props => 
-      props.$theme?.colors?.navigation?.active || 
+    border-color: ${props =>
+      props.$theme?.colors?.navigation?.active ||
       props.$theme?.navigation?.active ||
       props.$theme?.colors?.primary ||
       props.$theme?.accent ||
       'transparent'};
-    background: ${props => 
+    background: ${props =>
       props.$theme?.colors?.background?.light ||
       props.$theme?.background?.light ||
       props.$theme?.colors?.background?.secondary ||
@@ -182,8 +193,8 @@ const GroupInfo = styled.div<{ $theme?: any }>`
 const GroupName = styled.h3<{ $theme?: any }>`
   font-size: 1.1rem;
   font-weight: 600;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
     props.$theme?.text?.dark ||
     props.$theme?.colors?.text?.primary ||
     props.$theme?.colors?.text ||
@@ -193,8 +204,8 @@ const GroupName = styled.h3<{ $theme?: any }>`
 
 const GroupDescription = styled.p<{ $theme?: any }>`
   font-size: 0.9rem;
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
     props.$theme?.colors?.text ||
     'inherit'};
@@ -203,8 +214,8 @@ const GroupDescription = styled.p<{ $theme?: any }>`
 
 const GroupType = styled.span<{ $theme?: any }>`
   font-size: 0.8rem;
-  color: ${props => 
-    props.$theme?.colors?.text?.muted || 
+  color: ${props =>
+    props.$theme?.colors?.text?.muted ||
     props.$theme?.text?.muted ||
     props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
@@ -215,14 +226,14 @@ const GroupType = styled.span<{ $theme?: any }>`
 `;
 
 const SelectButton = styled.button<{ $theme?: any }>`
-  background-color: ${props => 
-    props.$theme?.colors?.navigation?.active || 
+  background-color: ${props =>
+    props.$theme?.colors?.navigation?.active ||
     props.$theme?.navigation?.active ||
     props.$theme?.colors?.primary ||
     props.$theme?.accent ||
     'transparent'};
-  color: ${props => 
-    props.$theme?.colors?.text?.primary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.primary ||
     props.$theme?.text?.primary ||
     props.$theme?.colors?.text ||
     props.$theme?.colors?.surface ||
@@ -237,8 +248,8 @@ const SelectButton = styled.button<{ $theme?: any }>`
   width: 100%;
 
   &:hover {
-    background-color: ${props => 
-      props.$theme?.navigation?.primary || 
+    background-color: ${props =>
+      props.$theme?.navigation?.primary ||
       props.$theme?.colors?.navigation?.primary ||
       props.$theme?.colors?.primary ||
       props.$theme?.accent ||
@@ -246,8 +257,8 @@ const SelectButton = styled.button<{ $theme?: any }>`
   }
 
   &:disabled {
-    background-color: ${props => 
-      props.$theme?.text?.muted || 
+    background-color: ${props =>
+      props.$theme?.text?.muted ||
       props.$theme?.colors?.text?.disabled ||
       props.$theme?.colors?.text?.secondary ||
       props.$theme?.text?.secondary ||

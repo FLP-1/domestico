@@ -1,4 +1,5 @@
 # 🎯 PLANO DE AÇÃO: MELHORIA DA PROPOSTA DE VALOR E FUNCIONALIDADES
+
 ## Sistema DOM - Estratégia de Reposicionamento
 
 **Data:** Janeiro 2025  
@@ -62,18 +63,23 @@ Reposicionar o Sistema DOM como **a plataforma líder em gestão de trabalho dom
 **Ação:** Criar nova proposta de valor focada em diferenciais
 
 **ANTES:**
+
 > "Solução completa para gestão doméstica que revoluciona a forma como você organiza sua casa."
 
 **DEPOIS (Opção A - Técnica):**
+
 > "Plataforma especializada em gestão de trabalho doméstico que automatiza a integração com eSocial, garante segurança anti-fraude nos registros de ponto e facilita a comunicação entre empregadores e empregados domésticos."
 
 **DEPOIS (Opção B - Benefício):**
+
 > "Automatize suas obrigações trabalhistas domésticoSocial e proteja-se contra fraudes em registros de ponto. Tudo em uma plataforma simples e segura para empregadores domésticos."
 
 **DEPOIS (Opção C - Emocional):**
+
 > "Tranquilidade para empregadores domésticos. Automatize o eSocial, proteja-se contra fraudes e tenha controle total do trabalho doméstico em uma única plataforma."
 
 **Implementação:**
+
 - [ ] Escolher proposta (recomendado: Opção B)
 - [ ] Atualizar README.md
 - [ ] Atualizar página inicial (index.tsx)
@@ -81,6 +87,7 @@ Reposicionar o Sistema DOM como **a plataforma líder em gestão de trabalho dom
 - [ ] Atualizar materiais de marketing
 
 **Critérios de Sucesso:**
+
 - ✅ Proposta menciona eSocial + anti-fraude
 - ✅ Público-alvo específico (empregadores domésticos)
 - ✅ Benefício claro e mensurável
@@ -93,21 +100,26 @@ Reposicionar o Sistema DOM como **a plataforma líder em gestão de trabalho dom
 **Ação:** Personalizar proposta de valor para cada perfil de usuário
 
 **Para Empregadores:**
+
 > "Automatize o eSocial e proteja-se contra fraudes. Controle total do trabalho doméstico em uma plataforma segura."
 
 **Para Empregados:**
+
 > "Registre seu ponto com segurança e tenha histórico completo. Transparência e proteção para trabalhadores domésticos."
 
 **Para Famílias:**
+
 > "Organize sua casa com gestão de tarefas, documentos e compras. Tudo integrado com o trabalho doméstico."
 
 **Implementação:**
+
 - [ ] Criar componente `ValueProposition` por perfil
 - [ ] Atualizar página de login com proposta por perfil
 - [ ] Atualizar dashboard com proposta contextual
 - [ ] Criar landing pages específicas por perfil
 
 **Critérios de Sucesso:**
+
 - ✅ Cada perfil vê proposta relevante
 - ✅ Mensagem clara e específica
 - ✅ Benefício direto para o perfil
@@ -139,12 +151,14 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 ```
 
 **Implementação:**
+
 - [ ] Reorganizar README.md com nova estrutura
 - [ ] Criar página `/features` com hierarquia clara
 - [ ] Atualizar página de planos com funcionalidades destacadas
 - [ ] Criar comparação de funcionalidades por plano
 
 **Critérios de Sucesso:**
+
 - ✅ Diferenciais aparecem primeiro
 - ✅ Funcionalidades genéricas são complementares
 - ✅ Hierarquia clara de valor
@@ -159,6 +173,7 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 #### **2.1. Reposicionar Comunicação Unificada**
 
 **Problema Atual:**
+
 - Competindo com WhatsApp
 - Usuários não vão migrar
 - Não é diferencial
@@ -166,21 +181,25 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 **Solução: Comunicação Contextual**
 
 **Nova Proposta:**
+
 > "Comunicação integrada ao trabalho. Chat dentro de tarefas, documentos e registros de ponto. Tudo contextual e organizado."
 
 **Melhorias Técnicas:**
+
 - [ ] Chat dentro de tarefas (não standalone)
 - [ ] Mensagens vinculadas a documentos
 - [ ] Notificações contextuais (ex: "Nova mensagem na tarefa X")
 - [ ] Histórico integrado com ações do sistema
 
 **Implementação:**
+
 - [ ] Refatorar componente de comunicação
 - [ ] Integrar chat com tarefas e documentos
 - [ ] Criar notificações contextuais
 - [ ] Atualizar documentação
 
 **Critérios de Sucesso:**
+
 - ✅ Comunicação não compete com WhatsApp
 - ✅ Valor agregado ao contexto do trabalho
 - ✅ Usuários veem utilidade real
@@ -190,6 +209,7 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 #### **2.2. Melhorar Gestão de Documentos**
 
 **Problema Atual:**
+
 - Não compete com Google Drive
 - Muito genérico
 - Não diferenciado
@@ -197,9 +217,11 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 **Solução: Documentos Especializados em Trabalho Doméstico**
 
 **Nova Proposta:**
+
 > "Documentos específicos para trabalho doméstico. Templates de contratos, CTPS, guias de impostos e integração automática com eSocial."
 
 **Melhorias Técnicas:**
+
 - [ ] Templates específicos:
   - Contrato de trabalho doméstico
   - Termo de rescisão
@@ -215,12 +237,14 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
   - Obrigações fiscais
 
 **Implementação:**
+
 - [ ] Criar templates de documentos
 - [ ] Integrar com eSocial para geração automática
 - [ ] Criar sistema de alertas específicos
 - [ ] Atualizar interface de documentos
 
 **Critérios de Sucesso:**
+
 - ✅ Templates específicos disponíveis
 - ✅ Integração com eSocial funcional
 - ✅ Alertas relevantes para trabalho doméstico
@@ -231,6 +255,7 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 #### **2.3. Melhorar Gestão de Compras**
 
 **Problema Atual:**
+
 - Muito genérico
 - Não diferenciado
 - Não agrega valor único
@@ -238,9 +263,11 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 **Solução: Compras Inteligentes para Casa**
 
 **Nova Proposta:**
+
 > "Compras inteligentes para sua casa. Listas compartilhadas, comparação de preços e integração com delivery. Economize tempo e dinheiro."
 
 **Melhorias Técnicas:**
+
 - [ ] Integração com delivery:
   - Lista → Pedido automático (iFood, etc.)
   - Histórico de compras
@@ -255,12 +282,14 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
   - Permissões por item
 
 **Implementação:**
+
 - [ ] Pesquisar APIs de delivery disponíveis
 - [ ] Implementar comparação de preços básica
 - [ ] Melhorar sistema de listas compartilhadas
 - [ ] Criar integração com delivery (fase 2)
 
 **Critérios de Sucesso:**
+
 - ✅ Integração com delivery funcional
 - ✅ Comparação de preços útil
 - ✅ Valor diferenciado vs. apps genéricos
@@ -270,6 +299,7 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 #### **2.4. Melhorar Dashboard Inteligente**
 
 **Problema Atual:**
+
 - Muito genérico
 - Não diferenciado
 - Métricas não específicas
@@ -277,9 +307,11 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 **Solução: Dashboard Especializado em Trabalho Doméstico**
 
 **Nova Proposta:**
+
 > "Dashboard especializado em trabalho doméstico. Métricas de horas trabalhadas, produtividade, custos e compliance com eSocial."
 
 **Melhorias Técnicas:**
+
 - [ ] Métricas específicas:
   - Horas trabalhadas por tarefa
   - Produtividade doméstica
@@ -296,12 +328,14 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
   - Horas extras não aprovadas
 
 **Implementação:**
+
 - [ ] Criar widgets especializados
 - [ ] Implementar métricas específicas
 - [ ] Criar sistema de alertas inteligentes
 - [ ] Atualizar dashboard principal
 
 **Critérios de Sucesso:**
+
 - ✅ Métricas específicas de trabalho doméstico
 - ✅ Widgets relevantes e úteis
 - ✅ Alertas inteligentes funcionais
@@ -317,37 +351,42 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 #### **3.1. Revisar Estrutura de Preços**
 
 **Problema Atual:**
+
 - Preços podem estar baixos demais (eSocial é valioso)
 - Falta plano intermediário
 - Parceria Master sem preço
 
 **Nova Estrutura Recomendada:**
 
-| Plano | Preço Mensal | Preço Anual | Diferenciais |
-|-------|--------------|-------------|--------------|
-| **Free** | R$ 0 | R$ 0 | 15 dias grátis, básico |
-| **Lar Doce Lar** | R$ 29,90 | R$ 299 (2 meses grátis) | Tarefas + Documentos |
-| **Super Doméstica** | R$ 49,90 | R$ 499 (2 meses grátis) | + Gestão Financeira |
-| **Ultra Pro** | **R$ 99,90** ⬆️ | **R$ 999** ⬆️ (2 meses grátis) | **+ eSocial + Anti-Fraude** |
-| **Parceria Master** | R$ 199,90+ | Personalizado | White label + Customização |
+| Plano               | Preço Mensal    | Preço Anual                    | Diferenciais                |
+| ------------------- | --------------- | ------------------------------ | --------------------------- |
+| **Free**            | R$ 0            | R$ 0                           | 15 dias grátis, básico      |
+| **Lar Doce Lar**    | R$ 29,90        | R$ 299 (2 meses grátis)        | Tarefas + Documentos        |
+| **Super Doméstica** | R$ 49,90        | R$ 499 (2 meses grátis)        | + Gestão Financeira         |
+| **Ultra Pro**       | **R$ 99,90** ⬆️ | **R$ 999** ⬆️ (2 meses grátis) | **+ eSocial + Anti-Fraude** |
+| **Parceria Master** | R$ 199,90+      | Personalizado                  | White label + Customização  |
 
 **Mudanças:**
+
 - ⬆️ Ultra Pro: R$ 79,90 → **R$ 99,90** (+25%)
 - ➕ Novo plano intermediário: R$ 59,90 (opcional)
 - 💰 Parceria Master: Preço mínimo R$ 199,90/mês
 
 **Justificativa:**
+
 - eSocial é valioso (economiza horas de trabalho)
 - Anti-fraude protege contra perdas financeiras
 - Preço ainda competitivo vs. concorrentes
 
 **Implementação:**
+
 - [ ] Atualizar `subscription-plans.tsx`
 - [ ] Atualizar página de preços
 - [ ] Criar comparação de planos
 - [ ] Atualizar materiais de marketing
 
 **Critérios de Sucesso:**
+
 - ✅ Preços refletem valor real
 - ✅ Estrutura clara e compreensível
 - ✅ Competitivo vs. mercado
@@ -360,22 +399,24 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 
 **Estrutura:**
 
-| Funcionalidade | Free | Lar Doce Lar | Super Doméstica | Ultra Pro |
-|----------------|------|--------------|-----------------|-----------|
-| **eSocial Oficial** | ❌ | ❌ | ❌ | ✅ |
-| **Anti-Fraude Ponto** | ⚠️ Limitado | ⚠️ Limitado | ⚠️ Limitado | ✅ Completo |
-| **Gestão Financeira** | ❌ | ❌ | ✅ | ✅ |
-| **Tarefas** | ⚠️ 5 tarefas | ✅ Ilimitado | ✅ Ilimitado | ✅ Ilimitado |
-| **Documentos** | ⚠️ 50MB | ⚠️ 100MB | ⚠️ 500MB | ✅ Ilimitado |
-| **Suporte** | Comunidade | Email | Email + Chat | Prioritário |
+| Funcionalidade        | Free         | Lar Doce Lar | Super Doméstica | Ultra Pro    |
+| --------------------- | ------------ | ------------ | --------------- | ------------ |
+| **eSocial Oficial**   | ❌           | ❌           | ❌              | ✅           |
+| **Anti-Fraude Ponto** | ⚠️ Limitado  | ⚠️ Limitado  | ⚠️ Limitado     | ✅ Completo  |
+| **Gestão Financeira** | ❌           | ❌           | ✅              | ✅           |
+| **Tarefas**           | ⚠️ 5 tarefas | ✅ Ilimitado | ✅ Ilimitado    | ✅ Ilimitado |
+| **Documentos**        | ⚠️ 50MB      | ⚠️ 100MB     | ⚠️ 500MB        | ✅ Ilimitado |
+| **Suporte**           | Comunidade   | Email        | Email + Chat    | Prioritário  |
 
 **Implementação:**
+
 - [ ] Criar componente `PlanComparison`
 - [ ] Adicionar à página de planos
 - [ ] Destacar diferenciais do Ultra Pro
 - [ ] Criar call-to-action claro
 
 **Critérios de Sucesso:**
+
 - ✅ Comparação clara e visual
 - ✅ Diferenciais destacados
 - ✅ Facilita escolha do plano
@@ -400,12 +441,14 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 5. **Tela 5:** Tour pelo dashboard
 
 **Implementação:**
+
 - [ ] Refatorar `welcome-tutorial.tsx`
 - [ ] Criar fluxo de onboarding por perfil
 - [ ] Adicionar demonstrações interativas
 - [ ] Criar sistema de progresso
 
 **Critérios de Sucesso:**
+
 - ✅ Onboarding foca em diferenciais
 - ✅ Usuário entende valor rapidamente
 - ✅ Taxa de conclusão > 80%
@@ -429,12 +472,14 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 ```
 
 **Implementação:**
+
 - [ ] Criar página `/features`
 - [ ] Criar subpáginas por funcionalidade
 - [ ] Adicionar screenshots e vídeos
 - [ ] Criar comparação com concorrentes
 
 **Critérios de Sucesso:**
+
 - ✅ Página completa e informativa
 - ✅ Diferenciais bem explicados
 - ✅ Facilita conversão
@@ -472,12 +517,14 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
    - CTA por plano
 
 **Implementação:**
+
 - [ ] Criar/refatorar landing page
 - [ ] Adicionar elementos acima
 - [ ] Otimizar para conversão
 - [ ] Testar A/B diferentes versões
 
 **Critérios de Sucesso:**
+
 - ✅ Proposta de valor clara
 - ✅ Diferenciais destacados
 - ✅ Taxa de conversão > 5%
@@ -492,17 +539,20 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 #### **5.1. Criar Materiais de Marketing**
 
 **Ações:**
+
 - [ ] Criar one-pager focado em diferenciais
 - [ ] Criar apresentação comercial
 - [ ] Criar vídeo demonstrativo (eSocial + Anti-Fraude)
 - [ ] Criar cases de sucesso
 
 **Conteúdo Focado:**
+
 - eSocial: "Automatize suas obrigações trabalhistas"
 - Anti-Fraude: "Proteja-se contra fraudes em registros de ponto"
 - Gestão Financeira: "Controle total dos custos trabalhistas"
 
 **Critérios de Sucesso:**
+
 - ✅ Materiais focados em diferenciais
 - ✅ Mensagem clara e direta
 - ✅ Facilita vendas
@@ -512,17 +562,20 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 #### **5.2. Estratégia de Conteúdo**
 
 **Ações:**
+
 - [ ] Blog posts sobre eSocial doméstico
 - [ ] Guias sobre anti-fraude
 - [ ] Tutoriais de gestão financeira
 - [ ] Comparações com concorrentes
 
 **Temas Principais:**
+
 - "Como automatizar o eSocial doméstico"
 - "Proteja-se contra fraudes em ponto"
 - "Guia completo de gestão de trabalho doméstico"
 
 **Critérios de Sucesso:**
+
 - ✅ Conteúdo educativo e valioso
 - ✅ Posiciona como especialista
 - ✅ Gera tráfego qualificado
@@ -532,26 +585,31 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 ## 📊 CRONOGRAMA DE IMPLEMENTAÇÃO
 
 ### **Sprint 1 (Semana 1-2): Reposicionamento**
+
 - ✅ Fase 1.1: Reformular proposta de valor
 - ✅ Fase 1.2: Criar propostas por perfil
 - ✅ Fase 1.3: Reformular descrição de funcionalidades
 
 ### **Sprint 2 (Semana 3-4): Reposicionamento Funcionalidades**
+
 - ✅ Fase 2.1: Reposicionar comunicação
 - ✅ Fase 2.2: Melhorar gestão de documentos
 - ✅ Fase 2.3: Melhorar gestão de compras
 
 ### **Sprint 3 (Semana 5): Preços e Dashboard**
+
 - ✅ Fase 3.1: Revisar estrutura de preços
 - ✅ Fase 3.2: Criar comparação de planos
 - ✅ Fase 2.4: Melhorar dashboard
 
 ### **Sprint 4 (Semana 6-7): Melhorias Técnicas**
+
 - ✅ Fase 4.1: Melhorar onboarding
 - ✅ Fase 4.2: Criar página de recursos
 - ✅ Fase 4.3: Melhorar landing page
 
 ### **Sprint 5 (Contínuo): Marketing**
+
 - ✅ Fase 5.1: Criar materiais de marketing
 - ✅ Fase 5.2: Estratégia de conteúdo
 
@@ -589,6 +647,7 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 ## ✅ CHECKLIST DE IMPLEMENTAÇÃO
 
 ### **Fase 1: Reposicionamento**
+
 - [ ] Reformular proposta de valor principal
 - [ ] Criar propostas por perfil
 - [ ] Reformular descrição de funcionalidades
@@ -596,24 +655,28 @@ FUNCIONALIDADES ADICIONAIS (Nice to Have)
 - [ ] Atualizar página inicial
 
 ### **Fase 2: Reposicionamento Funcionalidades**
+
 - [ ] Reposicionar comunicação contextual
 - [ ] Melhorar gestão de documentos especializada
 - [ ] Melhorar gestão de compras inteligente
 - [ ] Melhorar dashboard especializado
 
 ### **Fase 3: Ajuste de Preços**
+
 - [ ] Revisar estrutura de preços
 - [ ] Criar comparação de planos
 - [ ] Atualizar página de planos
 - [ ] Atualizar materiais de marketing
 
 ### **Fase 4: Melhorias Técnicas**
+
 - [ ] Melhorar onboarding
 - [ ] Criar página de recursos
 - [ ] Melhorar landing page
 - [ ] Criar componentes especializados
 
 ### **Fase 5: Marketing**
+
 - [ ] Criar materiais de marketing
 - [ ] Estratégia de conteúdo
 - [ ] Criar vídeos demonstrativos
@@ -646,4 +709,3 @@ Este plano visa **reposicionar o Sistema DOM** focando em seus **diferenciais co
 
 **Última atualização:** Janeiro 2025  
 **Status:** ✅ **PLANO PRONTO PARA IMPLEMENTAÇÃO**
-

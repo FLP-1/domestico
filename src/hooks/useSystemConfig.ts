@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
-import { loadSystemConfig, SystemConfig, DEFAULT_CONFIG } from '../config/centralized-config';
+import {
+  loadSystemConfig,
+  SystemConfig,
+  DEFAULT_CONFIG,
+} from '../config/centralized-config';
 
 // Configurações padrão que sempre estarão disponíveis
 // Usar DEFAULT_CONFIG do centralized-config em vez de duplicar valores

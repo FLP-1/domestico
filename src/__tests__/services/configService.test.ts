@@ -242,9 +242,9 @@ describe('Funções Utilitárias', () => {
         ativo: true,
       };
 
-      (prisma.configuracaoGeolocalizacao.findFirst as jest.Mock).mockResolvedValue(
-        userConfig
-      );
+      (
+        prisma.configuracaoGeolocalizacao.findFirst as jest.Mock
+      ).mockResolvedValue(userConfig);
 
       const config = await getGeolocationConfigForUser('user-id');
 
@@ -257,7 +257,7 @@ describe('Funções Utilitárias', () => {
       (prisma.configuracaoGeolocalizacao.findFirst as jest.Mock)
         .mockResolvedValueOnce(null) // Primeira chamada (usuário)
         .mockResolvedValueOnce(null); // Segunda chamada (grupo)
-      
+
       (prisma.usuario.findUnique as jest.Mock).mockResolvedValue({
         id: 'user-id',
         gruposUsuario: [
@@ -268,10 +268,10 @@ describe('Funções Utilitárias', () => {
           },
         ],
       });
-      
-      (prisma.configuracaoGeolocalizacao.findFirst as jest.Mock).mockResolvedValueOnce(
-        null
-      );
+
+      (
+        prisma.configuracaoGeolocalizacao.findFirst as jest.Mock
+      ).mockResolvedValueOnce(null);
 
       const mockConfig = {
         geolocation: {
@@ -396,7 +396,8 @@ describe('Funções Utilitárias', () => {
           geocoding: {
             nominatim: 'https://nominatim.openstreetmap.org/reverse',
             opencage: 'https://api.opencagedata.com/geocode/v1/json',
-            bigdatacloud: 'https://api.bigdatacloud.net/data/reverse-geocode-client',
+            bigdatacloud:
+              'https://api.bigdatacloud.net/data/reverse-geocode-client',
             positionstack: 'https://api.positionstack.com/v1/reverse',
           },
         },
@@ -410,4 +411,3 @@ describe('Funções Utilitárias', () => {
     });
   });
 });
-

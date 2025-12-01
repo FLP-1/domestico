@@ -92,7 +92,9 @@ export class MessageHistoryService {
         params.append('offset', options.offset.toString());
       }
 
-      const response = await fetch(`/api/messages/history?${params.toString()}`);
+      const response = await fetch(
+        `/api/messages/history?${params.toString()}`
+      );
       const result = await response.json();
 
       if (!result.success) {
@@ -124,7 +126,9 @@ export class MessageHistoryService {
 
         const result = await response.json();
         if (!result.success) {
-          throw new Error(result.error || 'Erro ao marcar mensagens como lidas');
+          throw new Error(
+            result.error || 'Erro ao marcar mensagens como lidas'
+          );
         }
         return;
       }

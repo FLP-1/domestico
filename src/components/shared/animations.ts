@@ -1,6 +1,6 @@
 /**
  * 🎬 ANIMAÇÕES CENTRALIZADAS
- * 
+ *
  * Este arquivo centraliza todas as animações reutilizáveis do projeto.
  * Elimina duplicação e garante consistência visual.
  *
@@ -343,4 +343,3 @@ export const createAnimation = (
 ) => {
   return `${keyframe} ${animationDurations[duration]} ${animationTimings[timing]}`;
 };
-

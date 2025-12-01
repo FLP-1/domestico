@@ -43,16 +43,20 @@ const ProfileModal = styled.div<{ $isOpen: boolean; $theme?: any }>`
 
 const ProfileModalContent = styled.div<{ $theme?: any }>`
   background: ${props => {
-    const bgColor = props.$theme?.colors?.background?.primary || props.$theme?.background?.primary;
+    const bgColor =
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary;
     if (bgColor && bgColor.startsWith('#')) {
       const r = parseInt(bgColor.slice(1, 3), 16);
       const g = parseInt(bgColor.slice(3, 5), 16);
       const b = parseInt(bgColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.98)`;
     }
-    return props.$theme?.colors?.background?.primary || 
-           props.$theme?.background?.primary ||
-           'transparent';
+    return (
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary ||
+      'transparent'
+    );
   }};
   backdrop-filter: blur(20px);
   border-radius: 24px;
@@ -78,9 +82,11 @@ const ProfileModalContent = styled.div<{ $theme?: any }>`
       const b = parseInt(primaryColor.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, 0.3)`;
     }
-    return props.$theme?.colors?.border?.light || 
-           props.$theme?.border?.light ||
-           'transparent';
+    return (
+      props.$theme?.colors?.border?.light ||
+      props.$theme?.border?.light ||
+      'transparent'
+    );
   }};
   animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 
@@ -112,9 +118,11 @@ const ProfileModalContent = styled.div<{ $theme?: any }>`
     border-bottom: 2px solid
       ${props => {
         const border = props.$theme?.colors?.border;
-        return (typeof border === 'object' && border?.light) || 
-               props.$theme?.border?.light ||
-               'transparent';
+        return (
+          (typeof border === 'object' && border?.light) ||
+          props.$theme?.border?.light ||
+          'transparent'
+        );
       }};
     padding-bottom: 1.5rem;
 
@@ -122,11 +130,10 @@ const ProfileModalContent = styled.div<{ $theme?: any }>`
       font-family: 'Montserrat', sans-serif;
       font-size: 1.75rem;
       font-weight: 700;
-      color: ${props => 
-        props.$theme?.colors?.text?.dark || 
+      color: ${props =>
+        props.$theme?.colors?.text?.dark ||
         props.$theme?.text?.dark ||
-        'inherit'
-      };
+        'inherit'};
       margin: 0;
       display: flex;
       align-items: center;
@@ -137,32 +144,30 @@ const ProfileModalContent = styled.div<{ $theme?: any }>`
       font-family: 'Montserrat', sans-serif;
       font-size: 1.5rem;
       font-weight: 800;
-      color: ${props => 
-        props.$theme?.colors?.navigation?.primary || 
+      color: ${props =>
+        props.$theme?.colors?.navigation?.primary ||
         props.$theme?.colors?.primary ||
         props.$theme?.accent ||
-        'inherit'
-      };
+        'inherit'};
       margin: 0.5rem 0 0.25rem 0;
       background: linear-gradient(
         135deg,
-        ${props => 
-          props.$theme?.colors?.navigation?.primary || 
+        ${props =>
+          props.$theme?.colors?.navigation?.primary ||
           props.$theme?.colors?.primary ||
           props.$theme?.accent ||
-          'transparent'
-        },
-        ${props => 
+          'transparent'},
+        ${props =>
           props.$theme?.colors?.secondary ||
           props.$theme?.accent ||
-          'transparent'
-        }
+          'transparent'}
       );
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       text-shadow: ${props => {
-        const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
+        const primaryColor =
+          props.$theme?.colors?.primary || props.$theme?.accent;
         if (primaryColor && primaryColor.startsWith('#')) {
           const r = parseInt(primaryColor.slice(1, 3), 16);
           const g = parseInt(primaryColor.slice(3, 5), 16);
@@ -176,27 +181,25 @@ const ProfileModalContent = styled.div<{ $theme?: any }>`
     .user-name {
       font-family: 'Roboto', sans-serif;
       font-size: 1rem;
-      color: ${props => 
-        props.$theme?.colors?.text?.secondary || 
+      color: ${props =>
+        props.$theme?.colors?.text?.secondary ||
         props.$theme?.text?.secondary ||
-        'inherit'
-      };
+        'inherit'};
       margin: 0;
       font-weight: 500;
     }
 
     .close-button {
       background: ${props =>
-        props.$theme?.colors?.background?.secondary || 
+        props.$theme?.colors?.background?.secondary ||
         props.$theme?.background?.secondary ||
         'transparent'};
       border: none;
       font-size: 1.25rem;
-      color: ${props => 
-        props.$theme?.colors?.text?.secondary || 
+      color: ${props =>
+        props.$theme?.colors?.text?.secondary ||
         props.$theme?.text?.secondary ||
-        'inherit'
-      };
+        'inherit'};
       cursor: pointer;
       padding: 0.75rem;
       border-radius: 12px;
@@ -207,14 +210,13 @@ const ProfileModalContent = styled.div<{ $theme?: any }>`
 
       &:hover {
         background: ${props =>
-          props.$theme?.colors?.background?.secondary || 
+          props.$theme?.colors?.background?.secondary ||
           props.$theme?.background?.secondary ||
           'transparent'};
-        color: ${props => 
-          props.$theme?.colors?.text?.primary || 
+        color: ${props =>
+          props.$theme?.colors?.text?.primary ||
           props.$theme?.text?.primary ||
-          'inherit'
-        };
+          'inherit'};
         transform: scale(1.05);
         opacity: 0.9;
       }
@@ -231,17 +233,20 @@ const ProfileList = styled.div<{ $theme?: any }>`
 const ModalSubtitle = styled.p<{ $theme?: any }>`
   font-family: 'Roboto', sans-serif;
   font-size: 1rem;
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
-    'inherit'
-  };
+    'inherit'};
   margin: 0 0 1.5rem 0;
   text-align: center;
   line-height: 1.5;
 `;
 
-const ProfileItem = styled.div<{ $isSelected: boolean; $color: string; $theme?: any }>`
+const ProfileItem = styled.div<{
+  $isSelected: boolean;
+  $color: string;
+  $theme?: any;
+}>`
   display: flex;
   align-items: center;
   padding: 1.25rem;
@@ -373,11 +378,10 @@ const ProfileItem = styled.div<{ $isSelected: boolean; $color: string; $theme?: 
       font-family: 'Montserrat', sans-serif;
       font-size: 1.125rem;
       font-weight: 700;
-      color: ${props => 
-        props.$theme?.colors?.text?.dark || 
+      color: ${props =>
+        props.$theme?.colors?.text?.dark ||
         props.$theme?.text?.dark ||
-        'inherit'
-      };
+        'inherit'};
       margin: 0;
       transition: color 0.3s ease;
     }

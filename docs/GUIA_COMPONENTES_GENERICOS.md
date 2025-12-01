@@ -11,6 +11,7 @@ Este documento descreve os componentes genéricos criados para substituir elemen
 **Substitui:** `StatusBadge`, `VersionBadge`, `PermissionBadge`, `DueDateBadge`, `CategoryBadge`
 
 **Uso:**
+
 ```tsx
 import { UnifiedBadge } from '@/components/unified';
 
@@ -33,8 +34,8 @@ import { UnifiedBadge } from '@/components/unified';
 </UnifiedBadge>
 
 // Badge clicável
-<UnifiedBadge 
-  variant="info" 
+<UnifiedBadge
+  variant="info"
   onClick={() => console.log('clicado')}
 >
   Clique aqui
@@ -42,6 +43,7 @@ import { UnifiedBadge } from '@/components/unified';
 ```
 
 **Props:**
+
 - `variant`: 'success' | 'warning' | 'error' | 'info' | 'primary' | 'secondary' | 'neutral'
 - `size`: 'sm' | 'md' | 'lg'
 - `outline`: boolean
@@ -56,6 +58,7 @@ import { UnifiedBadge } from '@/components/unified';
 **Substitui:** `ProgressBar`, `ProgressFill` duplicados
 
 **Uso:**
+
 ```tsx
 import { UnifiedProgressBar } from '@/components/unified';
 
@@ -63,23 +66,24 @@ import { UnifiedProgressBar } from '@/components/unified';
 <UnifiedProgressBar value={75} />
 
 // Com variante e label
-<UnifiedProgressBar 
-  value={60} 
-  variant="success" 
-  showLabel 
+<UnifiedProgressBar
+  value={60}
+  variant="success"
+  showLabel
   size="lg"
 />
 
 // Com animação e cor customizada
-<UnifiedProgressBar 
-  value={45} 
-  customColor="#9b59b6" 
+<UnifiedProgressBar
+  value={45}
+  customColor="#9b59b6"
   animated
   label="Carregando..."
 />
 ```
 
 **Props:**
+
 - `value`: number (0-100)
 - `size`: 'sm' | 'md' | 'lg'
 - `variant`: 'primary' | 'success' | 'warning' | 'error' | 'info'
@@ -95,6 +99,7 @@ import { UnifiedProgressBar } from '@/components/unified';
 **Substitui:** `Tab`, `TabButton`, `ColumnHeader` duplicados
 
 **Uso:**
+
 ```tsx
 import { UnifiedTabs } from '@/components/unified';
 
@@ -130,6 +135,7 @@ import { UnifiedTabs } from '@/components/unified';
 ```
 
 **Props:**
+
 - `tabs`: TabItem[]
 - `activeTab`: string
 - `onTabChange`: (tabId: string) => void
@@ -137,6 +143,7 @@ import { UnifiedTabs } from '@/components/unified';
 - `variant`: 'default' | 'pills' | 'underline'
 
 **TabItem:**
+
 - `id`: string
 - `label`: string
 - `icon`: ReactNode (opcional)
@@ -150,6 +157,7 @@ import { UnifiedTabs } from '@/components/unified';
 **Substitui:** `MetaInfo`, `DocumentInfo`, `ListMeta`, `InfoItem` duplicados
 
 **Uso:**
+
 ```tsx
 import { UnifiedMetaInfo } from '@/components/unified';
 
@@ -181,12 +189,14 @@ import { UnifiedMetaInfo } from '@/components/unified';
 ```
 
 **Props:**
+
 - `items`: MetaInfoItem[]
 - `size`: 'sm' | 'md' | 'lg'
 - `variant`: 'horizontal' | 'vertical' | 'grid'
 - `showSeparators`: boolean
 
 **MetaInfoItem:**
+
 - `label`: string
 - `value`: ReactNode
 - `icon`: ReactNode (opcional)
@@ -198,6 +208,7 @@ import { UnifiedMetaInfo } from '@/components/unified';
 ### Exemplo 1: StatusBadge → UnifiedBadge
 
 **Antes:**
+
 ```tsx
 const StatusBadge = styled.span<{ $status: string; $theme?: Theme }>`
   padding: 0.5rem 1rem;
@@ -218,24 +229,26 @@ const StatusBadge = styled.span<{ $status: string; $theme?: Theme }>`
 `;
 
 // Uso
-<StatusBadge $status="active" $theme={theme}>
+<StatusBadge $status='active' $theme={theme}>
   Ativo
-</StatusBadge>
+</StatusBadge>;
 ```
 
 **Depois:**
+
 ```tsx
 import { UnifiedBadge } from '@/components/unified';
 
 // Uso
-<UnifiedBadge variant="success" theme={theme}>
+<UnifiedBadge variant='success' theme={theme}>
   Ativo
-</UnifiedBadge>
+</UnifiedBadge>;
 ```
 
 ### Exemplo 2: ProgressBar → UnifiedProgressBar
 
 **Antes:**
+
 ```tsx
 const ProgressBar = styled.div<{ $theme?: Theme }>`
   width: 100%;
@@ -256,20 +269,22 @@ const ProgressFill = styled.div<{ $progress: number; $theme?: Theme }>`
 // Uso
 <ProgressBar $theme={theme}>
   <ProgressFill $progress={75} $theme={theme} />
-</ProgressBar>
+</ProgressBar>;
 ```
 
 **Depois:**
+
 ```tsx
 import { UnifiedProgressBar } from '@/components/unified';
 
 // Uso
-<UnifiedProgressBar value={75} theme={theme} />
+<UnifiedProgressBar value={75} theme={theme} />;
 ```
 
 ### Exemplo 3: Tabs → UnifiedTabs
 
 **Antes:**
+
 ```tsx
 const TabButton = styled.button<{ $active?: boolean; $theme?: Theme }>`
   padding: 1rem 2rem;
@@ -282,12 +297,17 @@ const TabButton = styled.button<{ $active?: boolean; $theme?: Theme }>`
 `;
 
 // Uso
-<TabButton $active={activeTab === 'tab1'} $theme={theme} onClick={() => setActiveTab('tab1')}>
+<TabButton
+  $active={activeTab === 'tab1'}
+  $theme={theme}
+  onClick={() => setActiveTab('tab1')}
+>
   Tab 1
-</TabButton>
+</TabButton>;
 ```
 
 **Depois:**
+
 ```tsx
 import { UnifiedTabs } from '@/components/unified';
 
@@ -300,7 +320,7 @@ import { UnifiedTabs } from '@/components/unified';
   activeTab={activeTab}
   onTabChange={setActiveTab}
   theme={theme}
-/>
+/>;
 ```
 
 ---
@@ -346,4 +366,3 @@ Para cada arquivo com componentes duplicados:
 2. Migrar componentes duplicados em `src/components/`
 3. Atualizar documentação de componentes
 4. Adicionar testes unitários para componentes genéricos
-

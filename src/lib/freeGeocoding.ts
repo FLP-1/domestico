@@ -98,8 +98,16 @@ export async function reverseGeocodeOpenCage(
       formattedAddress: formattedAddress + postalCode,
       components: {
         street: components.road,
-        number: components.house_number || components.housenumber || components.number || '',
-        house_number: components.house_number || components.housenumber || components.number || '',
+        number:
+          components.house_number ||
+          components.housenumber ||
+          components.number ||
+          '',
+        house_number:
+          components.house_number ||
+          components.housenumber ||
+          components.number ||
+          '',
         neighborhood: components.suburb || components.neighbourhood,
         city: components.city || components.town,
         state: components.state,
@@ -109,7 +117,8 @@ export async function reverseGeocodeOpenCage(
       source: 'opencage',
     };
   } catch (error: any) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    const errorMessage =
+      error instanceof Error ? error.message : 'Erro desconhecido';
     logger.error('❌ Erro OpenCage:', errorMessage, error);
     return { success: false, error: errorMessage };
   }
@@ -179,7 +188,8 @@ export async function reverseGeocodeBigDataCloud(
       source: 'bigdatacloud',
     };
   } catch (error: any) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    const errorMessage =
+      error instanceof Error ? error.message : 'Erro desconhecido';
     logger.error('❌ Erro BigDataCloud:', errorMessage, error);
     return { success: false, error: errorMessage };
   }
@@ -250,7 +260,8 @@ export async function reverseGeocodePositionstack(
       source: 'positionstack',
     };
   } catch (error: any) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    const errorMessage =
+      error instanceof Error ? error.message : 'Erro desconhecido';
     logger.error('❌ Erro Positionstack:', errorMessage, error);
     return { success: false, error: errorMessage };
   }
@@ -269,7 +280,9 @@ export async function reverseGeocodeNominatim(
 
     const { loadSystemConfig } = await import('../config/centralized-config');
     const config = await loadSystemConfig();
-    const nominatimBaseUrl = config.urls.geocoding.nominatim || 'https://nominatim.openstreetmap.org/reverse';
+    const nominatimBaseUrl =
+      config.urls.geocoding.nominatim ||
+      'https://nominatim.openstreetmap.org/reverse';
     const url = `${nominatimBaseUrl}?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1&accept-language=pt-BR`;
 
     const response = await fetch(url, {
@@ -313,7 +326,8 @@ export async function reverseGeocodeNominatim(
       source: 'nominatim',
     };
   } catch (error: any) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    const errorMessage =
+      error instanceof Error ? error.message : 'Erro desconhecido';
     logger.error('❌ Erro Nominatim:', errorMessage, error);
     return { success: false, error: errorMessage };
   }

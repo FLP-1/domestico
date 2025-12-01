@@ -9,6 +9,7 @@
 ## 💭 RACIOCÍNIO / 🤔 ANÁLISE CRÍTICA
 
 ### **ENTENDIMENTO:**
+
 Identificamos múltiplos erros de sintaxe no script PowerShell que impedem sua execução correta.
 
 ### **SUPOSIÇÕES QUESTIONADAS:**
@@ -32,17 +33,19 @@ Identificamos múltiplos erros de sintaxe no script PowerShell que impedem sua e
 ### **1. Caracteres Especiais Interpretados como Operadores**
 
 #### **Problema:**
+
 - `--` dentro de strings é interpretado como operador de decremento
 - `**` é interpretado como operador de exponenciação
 - `-` no início de linhas em here-strings é interpretado como operador unário
 
 #### **Exemplos de Erros:**
+
 ```powershell
 # ❌ ERRO
 Write-Info "Lint pulado (--SkipLint)" "Gray"
 # PowerShell interpreta -- como operador
 
-# ❌ ERRO  
+# ❌ ERRO
 $report = @"
 - Status: $statusText
 "@
@@ -50,6 +53,7 @@ $report = @"
 ```
 
 #### **Causa Raiz:**
+
 PowerShell faz parsing de strings antes de avaliá-las, especialmente em here-strings (`@"..."@`).
 
 ---
@@ -57,9 +61,11 @@ PowerShell faz parsing de strings antes de avaliá-las, especialmente em here-st
 ### **2. Here-Strings com Markdown**
 
 #### **Problema:**
+
 Here-strings passam pelo parser do PowerShell, então caracteres especiais são interpretados.
 
 #### **Exemplo:**
+
 ```powershell
 # ❌ ERRO
 $report = @"
@@ -70,6 +76,7 @@ $report = @"
 ```
 
 #### **Causa Raiz:**
+
 O parser do PowerShell tenta interpretar o conteúdo da here-string como código antes de tratá-lo como string literal.
 
 ---
@@ -77,9 +84,11 @@ O parser do PowerShell tenta interpretar o conteúdo da here-string como código
 ### **3. Encoding de Caracteres Especiais**
 
 #### **Problema:**
+
 Emojis e caracteres Unicode podem causar problemas de encoding, especialmente em diferentes versões do PowerShell ou sistemas.
 
 #### **Exemplo:**
+
 ```powershell
 # ⚠️ PODE CAUSAR PROBLEMAS
 Write-Host "✅ SUCESSO" -ForegroundColor Green
@@ -91,9 +100,11 @@ Write-Host "✅ SUCESSO" -ForegroundColor Green
 ### **4. Variáveis Não Inicializadas**
 
 #### **Problema:**
+
 Variáveis usadas antes de serem inicializadas aparecem como vazias ou causam erros.
 
 #### **Exemplo:**
+
 ```powershell
 # ❌ ERRO se $errorCount não foi inicializado
 Write-Info "Total: $errorCount"
@@ -106,6 +117,7 @@ Write-Info "Total: $errorCount"
 ### **SOLUÇÃO 1: Evitar Caracteres Problemáticos em Strings**
 
 #### **Abordagem:**
+
 Substituir caracteres problemáticos por alternativas seguras.
 
 ```powershell
@@ -119,11 +131,13 @@ Write-Host "[OK] Build concluido" -ForegroundColor Green
 ```
 
 #### **Vantagens:**
+
 - ✅ Funciona em todas as versões do PowerShell
 - ✅ Sem problemas de encoding
 - ✅ Mais legível em logs
 
 #### **Desvantagens:**
+
 - ⚠️ Menos "visual" (sem emojis)
 - ⚠️ Requer substituição manual
 
@@ -132,6 +146,7 @@ Write-Host "[OK] Build concluido" -ForegroundColor Green
 ### **SOLUÇÃO 2: Construir Strings Dinamicamente**
 
 #### **Abordagem:**
+
 Construir strings linha por linha usando concatenação.
 
 ```powershell
@@ -142,11 +157,13 @@ $report += "- Tempo: $tempoExecucao segundos"
 ```
 
 #### **Vantagens:**
+
 - ✅ Controle total sobre o conteúdo
 - ✅ Sem problemas de parsing
 - ✅ Fácil de depurar
 
 #### **Desvantagens:**
+
 - ⚠️ Mais verboso
 - ⚠️ Mais linhas de código
 
@@ -155,6 +172,7 @@ $report += "- Tempo: $tempoExecucao segundos"
 ### **SOLUÇÃO 3: Usar Single-Quoted Strings**
 
 #### **Abordagem:**
+
 Usar strings com aspas simples quando possível (não expandem variáveis).
 
 ```powershell
@@ -164,6 +182,7 @@ $text = 'Lint pulado (--SkipLint)'
 ```
 
 #### **Limitação:**
+
 Não funciona quando precisamos expandir variáveis.
 
 ---
@@ -171,6 +190,7 @@ Não funciona quando precisamos expandir variáveis.
 ### **SOLUÇÃO 4: Escapar Caracteres Especiais**
 
 #### **Abordagem:**
+
 Usar backtick para escapar caracteres especiais.
 
 ```powershell
@@ -180,10 +200,12 @@ $text = "Lint pulado (`--SkipLint)"
 ```
 
 #### **Vantagens:**
+
 - ✅ Mantém o texto original
 - ✅ Funciona para casos específicos
 
 #### **Desvantagens:**
+
 - ⚠️ Pode ser confuso
 - ⚠️ Não funciona em todos os contextos
 
@@ -192,6 +214,7 @@ $text = "Lint pulado (`--SkipLint)"
 ### **SOLUÇÃO 5: Usar Format-String**
 
 #### **Abordagem:**
+
 Usar `-f` operator para formatação segura.
 
 ```powershell
@@ -201,6 +224,7 @@ Write-Info $message "Gray"
 ```
 
 #### **Vantagens:**
+
 - ✅ Seguro para formatação
 - ✅ Evita problemas de parsing
 
@@ -231,6 +255,7 @@ Write-Info $message "Gray"
 ## 📋 CHECKLIST DE BOAS PRÁTICAS
 
 ### **✅ FAZER:**
+
 - ✅ Usar concatenação para strings complexas
 - ✅ Remover `--` e `**` de strings
 - ✅ Inicializar todas as variáveis
@@ -239,6 +264,7 @@ Write-Info $message "Gray"
 - ✅ Testar script em diferentes versões do PowerShell
 
 ### **❌ EVITAR:**
+
 - ❌ Here-strings com markdown complexo
 - ❌ Caracteres `--` e `**` em strings
 - ❌ Emojis em strings complexas (usar apenas em Write-Host direto)
@@ -250,4 +276,3 @@ Write-Info $message "Gray"
 ## 🔧 IMPLEMENTAÇÃO
 
 Vou criar uma versão corrigida e mais robusta do script aplicando todas essas práticas.
-

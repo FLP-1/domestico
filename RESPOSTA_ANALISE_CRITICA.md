@@ -19,6 +19,7 @@
 4. ❌ **Já tentamos resolver antes** - Indica problema mais profundo
 
 ### **Configurações já verificadas:**
+
 - ✅ `ServerStyleSheet` está configurado no `_document.tsx`
 - ✅ `export const dynamic = 'force-dynamic'` está na página
 - ⚠️ Mas o erro persiste
@@ -30,11 +31,13 @@
 ### **Auto-Fix + Refatoração é BOA, MAS:**
 
 **Para este erro específico:**
+
 - ⚠️ Pode não resolver - É erro estrutural, não de código
 - ⚠️ É mais lenta - Refatorar arquivo por arquivo leva tempo
 - ⚠️ Pode precisar voltar depois - Se for estrutural, vai reaparecer
 
 **Para qualidade geral:**
+
 - ✅ É excelente - Garante código limpo
 - ✅ É sistemática - Abordagem completa
 - ✅ É confiável - Zero rework
@@ -86,6 +89,7 @@
 ### **Opção A: Híbrida Focada (RECOMENDADA)** ⭐
 
 **Vantagens:**
+
 - ✅ Resolve erro estrutural primeiro (30-60 min)
 - ✅ Valida build antes de continuar
 - ✅ Depois continua Auto-Fix + Refatoração
@@ -96,10 +100,12 @@
 ### **Opção B: Auto-Fix + Refatoração Completa**
 
 **Vantagens:**
+
 - ✅ Abordagem sistemática
 - ✅ Garante qualidade completa
 
 **Desvantagens:**
+
 - ⚠️ Pode não resolver erro estrutural
 - ⚠️ Mais lenta
 - ⚠️ Pode precisar voltar depois
@@ -116,6 +122,7 @@
 4. ✅ Valida solução antes de continuar
 
 **Plano:**
+
 1. Resolver erro estrutural (30-60 min)
 2. Validar build
 3. Continuar Auto-Fix + Refatoração sistemática
@@ -123,4 +130,3 @@
 ---
 
 **Qual você prefere?**
-

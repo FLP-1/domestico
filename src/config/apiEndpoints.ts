@@ -1,6 +1,6 @@
 /**
  * 🔌 Endpoints de API Centralizados
- * 
+ *
  * Centraliza todas as URLs de API do sistema.
  * Facilita manutenção e evita URLs hardcoded.
  */
@@ -108,4 +108,3 @@ export function buildUrl(
 
   return `${baseUrl}?${searchParams.toString()}`;
 }
-

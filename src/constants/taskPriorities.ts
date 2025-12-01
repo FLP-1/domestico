@@ -1,6 +1,6 @@
 /**
  * 📋 Prioridades de Tarefas Centralizadas
- * 
+ *
  * Centraliza todas as prioridades possíveis para tarefas.
  */
 
@@ -10,7 +10,8 @@ export const TASK_PRIORITIES = {
   LOW: 'low',
 } as const;
 
-export type TaskPriority = typeof TASK_PRIORITIES[keyof typeof TASK_PRIORITIES];
+export type TaskPriority =
+  (typeof TASK_PRIORITIES)[keyof typeof TASK_PRIORITIES];
 
 /**
  * Obter label em português para uma prioridade
@@ -31,7 +32,9 @@ export function getTaskPriorityLabel(priority: TaskPriority): string {
 /**
  * Verificar se uma prioridade é válida
  */
-export function isValidTaskPriority(priority: string): priority is TaskPriority {
+export function isValidTaskPriority(
+  priority: string
+): priority is TaskPriority {
   return Object.values(TASK_PRIORITIES).includes(priority as TaskPriority);
 }
 
@@ -45,4 +48,3 @@ export function toTaskPriority(priority: string): TaskPriority {
   }
   return TASK_PRIORITIES.MEDIUM;
 }
-

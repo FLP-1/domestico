@@ -48,7 +48,7 @@ export default async function handler(
       .reduce((sum, l) => {
         const valorTotal = parseFloat(l.valor.toString());
         const parcelasRestantes = l.quantidadeParcelas - l.parcelasPagas;
-        return sum + (parseFloat(l.valorParcela.toString()) * parcelasRestantes);
+        return sum + parseFloat(l.valorParcela.toString()) * parcelasRestantes;
       }, 0);
 
     const totalPaid = loans
@@ -59,13 +59,14 @@ export default async function handler(
       .filter(l => l.status === 'APROVADO' || l.status === 'APROVADO')
       .reduce((sum, l) => {
         const parcelasRestantes = l.quantidadeParcelas - l.parcelasPagas;
-        return sum + (parseFloat(l.valorParcela.toString()) * parcelasRestantes);
+        return sum + parseFloat(l.valorParcela.toString()) * parcelasRestantes;
       }, 0);
 
     // Encontrar próximo pagamento
     const approvedLoans = loans.filter(
-      l => (l.status === 'APROVADO' || l.status === 'APROVADO') && 
-           l.parcelasPagas < l.quantidadeParcelas
+      l =>
+        (l.status === 'APROVADO' || l.status === 'APROVADO') &&
+        l.parcelasPagas < l.quantidadeParcelas
     );
 
     let nextPaymentDate: string | null = null;
@@ -73,10 +74,10 @@ export default async function handler(
 
     if (approvedLoans.length > 0) {
       // Ordenar por data de vencimento
-      approvedLoans.sort((a, b) => 
-        a.dataVencimento.getTime() - b.dataVencimento.getTime()
+      approvedLoans.sort(
+        (a, b) => a.dataVencimento.getTime() - b.dataVencimento.getTime()
       );
-      
+
       const nextLoan = approvedLoans[0];
       nextPaymentDate = nextLoan.dataVencimento.toISOString().split('T')[0];
       nextPaymentAmount = parseFloat(nextLoan.valorParcela.toString());
@@ -101,4 +102,3 @@ export default async function handler(
   }
   // Removido prisma.$disconnect() - não deve desconectar em cada request
 }
-

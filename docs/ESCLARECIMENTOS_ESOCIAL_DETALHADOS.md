@@ -9,6 +9,7 @@ Este documento responde detalhadamente aos 8 pontos levantados sobre a estratég
 ## 1️⃣ CAPTURA DA DAE VIA PORTAL OU APP
 
 ### **Problema Identificado:**
+
 - DAE não retorna na API SOAP
 - Necessário acessar portal/app manualmente
 - Como capturar dados sem scraping?
@@ -33,20 +34,21 @@ const daeCaptureFlow: DAECaptureFlow[] = [
   {
     step: 1,
     action: 'open_portal',
-    instructions: 'Clique no botão abaixo para abrir o portal eSocial em nova aba',
-    screenshot: '/screenshots/esocial-portal-home.png'
+    instructions:
+      'Clique no botão abaixo para abrir o portal eSocial em nova aba',
+    screenshot: '/screenshots/esocial-portal-home.png',
   },
   {
     step: 2,
     action: 'navigate',
     instructions: 'Após fazer login, vá em "Guias e Pagamentos" > "DAE"',
-    screenshot: '/screenshots/esocial-menu-dae.png'
+    screenshot: '/screenshots/esocial-menu-dae.png',
   },
   {
     step: 3,
     action: 'download',
     instructions: 'Clique em "Emitir DAE" e baixe o PDF',
-    screenshot: '/screenshots/esocial-emitir-dae.png'
+    screenshot: '/screenshots/esocial-emitir-dae.png',
   },
   {
     step: 4,
@@ -56,8 +58,8 @@ const daeCaptureFlow: DAECaptureFlow[] = [
     validation: () => {
       // Valida se PDF foi enviado
       return documentUploaded;
-    }
-  }
+    },
+  },
 ];
 ```
 
@@ -73,18 +75,18 @@ class DAECaptureService {
     // 1. Abre portal em nova aba
     const portalUrl = 'https://www.esocial.gov.br/portal';
     window.open(portalUrl, '_blank');
-    
+
     // 2. Inicia guia assistido no DOM
     await this.startGuide(usuarioId);
-    
+
     // 3. Monitora quando usuário volta (via postMessage)
-    window.addEventListener('message', (event) => {
+    window.addEventListener('message', event => {
       if (event.data.type === 'DAE_DOWNLOADED') {
         this.handleDAEDownloaded(event.data);
       }
     });
   }
-  
+
   /**
    * Processa PDF da DAE após upload
    */
@@ -97,13 +99,13 @@ class DAECaptureService {
       metadata: {
         tipo: 'DAE',
         origem: 'PORTAL_ESOCIAL',
-        dataUpload: new Date().toISOString()
-      }
+        dataUpload: new Date().toISOString(),
+      },
     });
-    
+
     // 2. Extração de dados do PDF (usando biblioteca como pdf-parse)
     const pdfData = await this.extractDAEData(file);
-    
+
     // 3. Armazenamento estruturado
     await this.storeDAEData({
       documentoId: uploadResult.documentId,
@@ -111,40 +113,43 @@ class DAECaptureService {
       vencimento: pdfData.vencimento,
       codigoBarras: pdfData.codigoBarras,
       mesReferencia: pdfData.mesReferencia,
-      anoReferencia: pdfData.anoReferencia
+      anoReferencia: pdfData.anoReferencia,
     });
-    
+
     return {
       success: true,
       daeId: uploadResult.documentId,
-      dados: pdfData
+      dados: pdfData,
     };
   }
-  
+
   /**
    * Extrai dados da DAE do PDF
    */
   private async extractDAEData(file: File): Promise<DAEData> {
     // Usa biblioteca pdf-parse ou similar
     const pdfText = await this.parsePDF(file);
-    
+
     // Regex para extrair valores
     const valores = {
       INSS: this.extractValue(pdfText, /INSS[:\s]+R\$\s*([\d,]+)/i),
       FGTS: this.extractValue(pdfText, /FGTS[:\s]+R\$\s*([\d,]+)/i),
       IRRF: this.extractValue(pdfText, /IRRF[:\s]+R\$\s*([\d,]+)/i),
-      total: this.extractValue(pdfText, /TOTAL[:\s]+R\$\s*([\d,]+)/i)
+      total: this.extractValue(pdfText, /TOTAL[:\s]+R\$\s*([\d,]+)/i),
     };
-    
-    const vencimento = this.extractDate(pdfText, /Vencimento[:\s]+(\d{2}\/\d{2}\/\d{4})/i);
+
+    const vencimento = this.extractDate(
+      pdfText,
+      /Vencimento[:\s]+(\d{2}\/\d{2}\/\d{4})/i
+    );
     const codigoBarras = this.extractBarcode(pdfText);
-    
+
     return {
       valores,
       vencimento,
       codigoBarras,
       mesReferencia: new Date().getMonth() + 1,
-      anoReferencia: new Date().getFullYear()
+      anoReferencia: new Date().getFullYear(),
     };
   }
 }
@@ -197,12 +202,14 @@ const DAEManualFormComponent = () => {
 ```
 
 **Vantagens:**
+
 - ✅ Zero scraping (usuário faz manualmente)
 - ✅ Zero responsabilidade legal (usuário baixa)
 - ✅ Dados estruturados (extração de PDF)
 - ✅ Integração com gestão de documentos
 
 **Desvantagens:**
+
 - ⚠️ Requer ação manual do usuário
 - ⚠️ Depende de qualidade do PDF
 
@@ -227,11 +234,11 @@ interface GuideStep {
   skipAllowed?: boolean;
 }
 
-type GuideAction = 
-  | 'fill_form' 
-  | 'click_button' 
-  | 'wait' 
-  | 'verify' 
+type GuideAction =
+  | 'fill_form'
+  | 'click_button'
+  | 'wait'
+  | 'verify'
   | 'navigate'
   | 'upload_file'
   | 'confirm';
@@ -241,10 +248,12 @@ const s2200GuideSteps: GuideStep[] = [
   {
     id: '1',
     title: 'Preparar Dados do Empregado',
-    description: 'Antes de começar, tenha em mãos: CPF, CTPS, endereço completo',
+    description:
+      'Antes de começar, tenha em mãos: CPF, CTPS, endereço completo',
     action: 'wait',
-    helpText: 'Se não tiver todos os dados, você pode salvar e continuar depois',
-    skipAllowed: false
+    helpText:
+      'Se não tiver todos os dados, você pode salvar e continuar depois',
+    skipAllowed: false,
   },
   {
     id: '2',
@@ -257,7 +266,7 @@ const s2200GuideSteps: GuideStep[] = [
       const cpf = document.querySelector('#cpf-empregado')?.value;
       return validarCPF(cpf);
     },
-    helpText: 'CPF deve ter 11 dígitos. Use apenas números.'
+    helpText: 'CPF deve ter 11 dígitos. Use apenas números.',
   },
   {
     id: '3',
@@ -270,7 +279,7 @@ const s2200GuideSteps: GuideStep[] = [
       const nome = document.querySelector('#nome-completo')?.value;
       return nome && nome.length >= 5;
     },
-    helpText: 'Use o nome exatamente como está na CTPS para evitar problemas'
+    helpText: 'Use o nome exatamente como está na CTPS para evitar problemas',
   },
   // ... mais passos
 ];
@@ -285,34 +294,34 @@ const GuideOverlay = ({ step, onNext, onSkip, onHelp }) => {
     <GuideContainer>
       {/* Highlight do elemento alvo */}
       <ElementHighlight target={step.target} />
-      
+
       {/* Card de instruções */}
       <InstructionCard>
         <StepIndicator>
           Passo {step.id} de {totalSteps}
         </StepIndicator>
-        
+
         <Title>{step.title}</Title>
         <Description>{step.description}</Description>
-        
+
         {step.screenshot && (
           <Screenshot src={step.screenshot} alt="Exemplo visual" />
         )}
-        
+
         {step.helpText && (
           <HelpButton onClick={onHelp}>
             💡 {step.helpText}
           </HelpButton>
         )}
-        
+
         <Actions>
           {step.skipAllowed && (
             <Button variant="secondary" onClick={onSkip}>
               Pular este passo
             </Button>
           )}
-          <Button 
-            variant="primary" 
+          <Button
+            variant="primary"
             onClick={onNext}
             disabled={!step.validation || !await step.validation()}
           >
@@ -332,14 +341,16 @@ const s1200GuideSteps: GuideStep[] = [
   {
     id: '1',
     title: 'Verificar Empregado Cadastrado',
-    description: 'Antes de enviar a folha, verifique se o empregado está cadastrado',
+    description:
+      'Antes de enviar a folha, verifique se o empregado está cadastrado',
     action: 'verify',
     validation: async () => {
       // Consulta API para verificar S-2200
       const status = await api.verificarEmpregadoCadastrado(empregadoId);
       return status === 'PROCESSADO';
     },
-    helpText: 'Se o empregado não estiver cadastrado, você precisa enviar o S-2200 primeiro'
+    helpText:
+      'Se o empregado não estiver cadastrado, você precisa enviar o S-2200 primeiro',
   },
   {
     id: '2',
@@ -352,9 +363,11 @@ const s1200GuideSteps: GuideStep[] = [
       const mesAno = document.querySelector('#mes-ano')?.value;
       const [mes, ano] = mesAno.split('/');
       const hoje = new Date();
-      return parseInt(ano) <= hoje.getFullYear() && 
-             parseInt(mes) <= hoje.getMonth() + 1;
-    }
+      return (
+        parseInt(ano) <= hoje.getFullYear() &&
+        parseInt(mes) <= hoje.getMonth() + 1
+      );
+    },
   },
   {
     id: '3',
@@ -364,10 +377,12 @@ const s1200GuideSteps: GuideStep[] = [
     target: '#salario-base',
     expectedResult: 'Valor maior que zero',
     validation: async () => {
-      const salario = parseFloat(document.querySelector('#salario-base')?.value);
+      const salario = parseFloat(
+        document.querySelector('#salario-base')?.value
+      );
       return salario > 0;
     },
-    helpText: 'Use o valor do salário contratual, sem descontos'
+    helpText: 'Use o valor do salário contratual, sem descontos',
   },
   // ... mais passos
 ];
@@ -379,7 +394,7 @@ const s1200GuideSteps: GuideStep[] = [
 // 1. Validação em tempo real
 const RealTimeValidation = ({ field, validator }) => {
   const [error, setError] = useState('');
-  
+
   useEffect(() => {
     const input = document.querySelector(field);
     input?.addEventListener('input', async () => {
@@ -387,7 +402,7 @@ const RealTimeValidation = ({ field, validator }) => {
       setError(isValid ? '' : 'Valor inválido');
     });
   }, [field, validator]);
-  
+
   return error && <ErrorMessage>{error}</ErrorMessage>;
 };
 
@@ -403,14 +418,14 @@ const SmartSuggestions = ({ field, context }) => {
     }
     return [];
   }, [field, context]);
-  
+
   return <Autocomplete suggestions={suggestions} />;
 };
 
 // 3. Progresso visual
 const GuideProgress = ({ currentStep, totalSteps }) => {
   const progress = (currentStep / totalSteps) * 100;
-  
+
   return (
     <ProgressBar>
       <ProgressFill width={`${progress}%`} />
@@ -429,6 +444,7 @@ const GuideProgress = ({ currentStep, totalSteps }) => {
 ### **Análise do Sistema Existente:**
 
 O projeto já tem:
+
 - ✅ Modelo `Alerta` no Prisma (com campos: tipo, prioridade, categoria, status)
 - ✅ Modelo `AlertaHistorico` para rastreamento
 - ✅ API `/api/alerts` funcional
@@ -463,14 +479,14 @@ class ESocialAlertIntegrationService {
           tipo: 'DAE_VENCIMENTO',
           daeId: daeData.id,
           valores: daeData.valores,
-          vencimento: daeData.vencimento
-        }
-      }
+          vencimento: daeData.vencimento,
+        },
+      },
     });
-    
+
     // 2. Agendar notificações progressivas
     await this.scheduleProgressiveNotifications(alerta.id, daeData.vencimento);
-    
+
     // 3. Disparar notificação imediata
     await notificationService.sendNotification({
       tipo: 'ALERTA',
@@ -481,42 +497,42 @@ class ESocialAlertIntegrationService {
       usuarioId,
       dados: {
         alertaId: alerta.id,
-        daeId: daeData.id
-      }
+        daeId: daeData.id,
+      },
     });
-    
+
     return alerta;
   }
-  
+
   /**
    * Agenda notificações progressivas (7 dias antes, 3 dias antes, 1 dia antes, no dia)
    */
   private async scheduleProgressiveNotifications(
-    alertaId: string, 
+    alertaId: string,
     vencimento: Date
   ) {
     const hoje = new Date();
     const diasRestantes = this.daysUntilDue(vencimento);
-    
+
     // 7 dias antes
     if (diasRestantes >= 7) {
       await this.scheduleNotification(alertaId, 7, 'alta');
     }
-    
+
     // 3 dias antes
     if (diasRestantes >= 3) {
       await this.scheduleNotification(alertaId, 3, 'alta');
     }
-    
+
     // 1 dia antes
     if (diasRestantes >= 1) {
       await this.scheduleNotification(alertaId, 1, 'urgente');
     }
-    
+
     // No dia do vencimento
     await this.scheduleNotification(alertaId, 0, 'urgente');
   }
-  
+
   /**
    * Cria alerta de folha pendente
    */
@@ -538,19 +554,19 @@ class ESocialAlertIntegrationService {
         condicoes: {
           tipo: 'FOLHA_PENDENTE',
           mes,
-          ano
-        }
-      }
+          ano,
+        },
+      },
     });
-    
+
     return alerta;
   }
-  
+
   /**
    * Cria alerta de evento rejeitado
    */
   async createEventoRejeitadoAlert(
-    usuarioId: string, 
+    usuarioId: string,
     evento: { tipo: string; protocolo: string; erros: string[] }
   ) {
     const alerta = await prisma.alerta.create({
@@ -571,27 +587,27 @@ class ESocialAlertIntegrationService {
           tipo: 'EVENTO_REJEITADO',
           eventoTipo: evento.tipo,
           protocolo: evento.protocolo,
-          erros: evento.erros
-        }
-      }
+          erros: evento.erros,
+        },
+      },
     });
-    
+
     return alerta;
   }
-  
+
   /**
    * Calcula prioridade baseada em dias até vencimento
    */
   private calculatePriority(vencimento: Date): string {
     const dias = this.daysUntilDue(vencimento);
-    
+
     if (dias < 0) return 'URGENTE'; // Vencido
     if (dias <= 1) return 'URGENTE';
     if (dias <= 3) return 'ALTA';
     if (dias <= 7) return 'MEDIA';
     return 'BAIXA';
   }
-  
+
   private daysUntilDue(vencimento: Date): number {
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
@@ -608,7 +624,7 @@ class ESocialAlertIntegrationService {
 // src/hooks/useESocialAlerts.ts
 export const useESocialAlerts = (usuarioId: string) => {
   const { showSuccess, showError, showWarning } = useAlertManager();
-  
+
   useEffect(() => {
     // Verifica alertas ativos do eSocial
     const checkAlerts = async () => {
@@ -616,10 +632,10 @@ export const useESocialAlerts = (usuarioId: string) => {
         params: {
           usuarioId,
           categoria: 'ESOCIAL',
-          status: 'ATIVO'
-        }
+          status: 'ATIVO',
+        },
       });
-      
+
       alertas.data.forEach((alerta: Alerta) => {
         // Dispara notificação baseada na prioridade
         switch (alerta.prioridade) {
@@ -634,11 +650,11 @@ export const useESocialAlerts = (usuarioId: string) => {
         }
       });
     };
-    
+
     // Verifica a cada 5 minutos
     const interval = setInterval(checkAlerts, 5 * 60 * 1000);
     checkAlerts(); // Verifica imediatamente
-    
+
     return () => clearInterval(interval);
   }, [usuarioId]);
 };
@@ -653,36 +669,36 @@ const ESOCIAL_ALERT_TYPES = {
     prioridade: 'ALTA',
     recorrente: false,
     notificarEmail: true,
-    notificarPush: true
+    notificarPush: true,
   },
   FOLHA_PENDENTE: {
     categoria: 'ESOCIAL',
     prioridade: 'MEDIA',
     recorrente: false,
     notificarEmail: true,
-    notificarPush: true
+    notificarPush: true,
   },
   EVENTO_REJEITADO: {
     categoria: 'ESOCIAL',
     prioridade: 'URGENTE',
     recorrente: false,
     notificarEmail: true,
-    notificarPush: true
+    notificarPush: true,
   },
   EVENTO_PROCESSADO: {
     categoria: 'ESOCIAL',
     prioridade: 'BAIXA',
     recorrente: false,
     notificarEmail: false,
-    notificarPush: true
+    notificarPush: true,
   },
   CERTIFICADO_VENCENDO: {
     categoria: 'ESOCIAL',
     prioridade: 'ALTA',
     recorrente: false,
     notificarEmail: true,
-    notificarPush: true
-  }
+    notificarPush: true,
+  },
 };
 ```
 
@@ -700,54 +716,54 @@ class ESocialSyncService {
    */
   async syncEmpregadorData(usuarioId: string, cpf: string) {
     // 1. Consulta dados no eSocial via API SOAP
-    const dadosESocial = await esocialService.consultarQualificacaoCadastral(cpf);
-    
+    const dadosESocial =
+      await esocialService.consultarQualificacaoCadastral(cpf);
+
     // 2. Busca dados atuais no PostgreSQL
     const dadosAtuais = await prisma.usuario.findUnique({
       where: { id: usuarioId },
       include: {
         perfis: {
-          where: { perfil: { codigo: 'EMPREGADOR' } }
-        }
-      }
+          where: { perfil: { codigo: 'EMPREGADOR' } },
+        },
+      },
     });
-    
+
     // 3. Compara e identifica diferenças
     const diferencas = this.compareData(dadosESocial, dadosAtuais);
-    
+
     // 4. Atualiza apenas campos diferentes
     if (diferencas.length > 0) {
       await this.updateUsuario(usuarioId, diferencas);
-      
+
       // 5. Registra sincronização
       await this.logSync(usuarioId, 'EMPREGADOR', diferencas);
     }
-    
+
     return {
       sincronizado: true,
       alteracoes: diferencas.length,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
-  
+
   /**
    * Sincroniza dados de empregados
    */
   async syncEmpregadosData(usuarioId: string) {
     // 1. Consulta empregados no eSocial
-    const empregadosESocial = await esocialService.consultarEmpregados(usuarioId);
-    
+    const empregadosESocial =
+      await esocialService.consultarEmpregados(usuarioId);
+
     // 2. Busca empregados no PostgreSQL
     const empregadosAtuais = await prisma.empregado.findMany({
-      where: { empregadorId: usuarioId }
+      where: { empregadorId: usuarioId },
     });
-    
+
     // 3. Sincroniza cada empregado
     for (const empESocial of empregadosESocial) {
-      const empAtual = empregadosAtuais.find(
-        e => e.cpf === empESocial.cpf
-      );
-      
+      const empAtual = empregadosAtuais.find(e => e.cpf === empESocial.cpf);
+
       if (empAtual) {
         // Atualiza existente
         await this.updateEmpregado(empAtual.id, empESocial);
@@ -756,18 +772,18 @@ class ESocialSyncService {
         await this.createEmpregado(usuarioId, empESocial);
       }
     }
-    
+
     // 4. Remove empregados que não existem mais no eSocial
     const cpfsESocial = empregadosESocial.map(e => e.cpf);
     const empregadosParaRemover = empregadosAtuais.filter(
       e => !cpfsESocial.includes(e.cpf)
     );
-    
+
     for (const emp of empregadosParaRemover) {
       await this.markEmpregadoAsInativo(emp.id);
     }
   }
-  
+
   /**
    * Sincroniza dados de folha
    */
@@ -776,18 +792,18 @@ class ESocialSyncService {
     const folhaESocial = await esocialService.consultarEvento('S-1200', {
       usuarioId,
       mes,
-      ano
+      ano,
     });
-    
+
     // 2. Busca folha no PostgreSQL
     const folhaAtual = await prisma.folhaPagamento.findFirst({
       where: {
         usuarioId,
         mes,
-        ano
-      }
+        ano,
+      },
     });
-    
+
     // 3. Atualiza ou cria
     if (folhaAtual) {
       await prisma.folhaPagamento.update({
@@ -798,8 +814,8 @@ class ESocialSyncService {
           descontos: folhaESocial.descontos,
           proventos: folhaESocial.proventos,
           status: this.mapStatus(folhaESocial.status),
-          atualizadoEm: new Date()
-        }
+          atualizadoEm: new Date(),
+        },
       });
     } else {
       await prisma.folhaPagamento.create({
@@ -813,12 +829,12 @@ class ESocialSyncService {
           descontos: folhaESocial.descontos,
           proventos: folhaESocial.proventos,
           status: this.mapStatus(folhaESocial.status),
-          criadoEm: new Date()
-        }
+          criadoEm: new Date(),
+        },
       });
     }
   }
-  
+
   /**
    * Modelo de dados para empregado no PostgreSQL
    */
@@ -838,8 +854,8 @@ class ESocialSyncService {
         esocialProtocolo: dados.protocolo,
         esocialStatus: dados.status,
         esocialUltimaSincronizacao: new Date(),
-        criadoEm: new Date()
-      }
+        criadoEm: new Date(),
+      },
     });
   }
 }
@@ -859,19 +875,19 @@ model Empregado {
   salario                   Decimal  @db.Decimal(10, 2)
   jornadaSemanal            Int
   ativo                     Boolean  @default(true)
-  
+
   // Campos de sincronização com eSocial
   esocialProtocolo          String?  @db.VarChar(50)
   esocialStatus             String?  @db.VarChar(50)
   esocialUltimaSincronizacao DateTime?
   esocialDadosCompletos     Json?
-  
+
   criadoEm                  DateTime @default(now())
   atualizadoEm              DateTime @updatedAt
-  
+
   empregador                Usuario  @relation(fields: [empregadorId], references: [id])
   folhasPagamento           FolhaPagamento[]
-  
+
   @@index([empregadorId])
   @@index([cpf])
   @@map("empregados")
@@ -887,7 +903,7 @@ model SincronizacaoESocial {
   erro              String?
   timestamp         DateTime @default(now())
   usuario           Usuario  @relation(fields: [usuarioId], references: [id])
-  
+
   @@index([usuarioId])
   @@index([tipo])
   @@index([timestamp])
@@ -909,13 +925,13 @@ class ESocialSyncScheduler {
       await esocialSyncService.syncEmpregadorData(usuarioId);
       await esocialSyncService.syncEmpregadosData(usuarioId);
     });
-    
+
     // Sincroniza folhas mensalmente (dia 1 de cada mês)
     cron.schedule('0 3 1 * *', async () => {
       const mesAnterior = getMesAnterior();
       await esocialSyncService.syncFolhaData(
-        usuarioId, 
-        mesAnterior.mes, 
+        usuarioId,
+        mesAnterior.mes,
         mesAnterior.ano
       );
     });
@@ -941,14 +957,14 @@ class ESocialDocumentIntegrationService {
   ) {
     // 1. Gera PDF do holerite a partir dos dados XML
     const pdfBuffer = await this.generateHoleritePDF(holeriteData);
-    
+
     // 2. Cria arquivo temporário
     const tempFile = new File(
-      [pdfBuffer], 
+      [pdfBuffer],
       `holerite_${holeriteData.mes}_${holeriteData.ano}.pdf`,
       { type: 'application/pdf' }
     );
-    
+
     // 3. Upload usando DocumentService existente
     const uploadResult = await documentService.upload({
       file: tempFile,
@@ -964,17 +980,22 @@ class ESocialDocumentIntegrationService {
         empregadoId: holeriteData.empregadoId,
         protocoloESocial: holeriteData.protocolo,
         dataVencimento: null, // Holerites não vencem
-        tags: ['holerite', 'folha-pagamento', 'esocial', `${holeriteData.mes}-${holeriteData.ano}`],
-        esocialPronto: true
-      }
+        tags: [
+          'holerite',
+          'folha-pagamento',
+          'esocial',
+          `${holeriteData.mes}-${holeriteData.ano}`,
+        ],
+        esocialPronto: true,
+      },
     });
-    
+
     // 4. Vincula holerite ao cálculo salarial
     await this.linkHoleriteToCalculo(
       uploadResult.documentId,
       holeriteData.calculoId
     );
-    
+
     // 5. Cria entrada na tabela HoleritePagamento
     await prisma.holeritePagamento.create({
       data: {
@@ -984,17 +1005,17 @@ class ESocialDocumentIntegrationService {
         hash: uploadResult.hash,
         enviado: true,
         enviadoEm: new Date(),
-        visualizado: false
-      }
+        visualizado: false,
+      },
     });
-    
+
     return {
       success: true,
       documentoId: uploadResult.documentId,
-      holeriteId: uploadResult.documentId
+      holeriteId: uploadResult.documentId,
     };
   }
-  
+
   /**
    * Importa guia DAE como documento
    */
@@ -1004,7 +1025,7 @@ class ESocialDocumentIntegrationService {
     pdfFile?: File
   ) {
     let uploadResult;
-    
+
     if (pdfFile) {
       // Upload do PDF fornecido
       uploadResult = await documentService.upload({
@@ -1019,10 +1040,15 @@ class ESocialDocumentIntegrationService {
           mesReferencia: daeData.mesReferencia,
           anoReferencia: daeData.anoReferencia,
           dataVencimento: new Date(daeData.vencimento),
-          tags: ['dae', 'impostos', 'esocial', `${daeData.mesReferencia}-${daeData.anoReferencia}`],
+          tags: [
+            'dae',
+            'impostos',
+            'esocial',
+            `${daeData.mesReferencia}-${daeData.anoReferencia}`,
+          ],
           esocialPronto: true,
-          alertaVencimento: true // Ativa alerta automático
-        }
+          alertaVencimento: true, // Ativa alerta automático
+        },
       });
     } else {
       // Gera PDF a partir dos dados
@@ -1032,7 +1058,7 @@ class ESocialDocumentIntegrationService {
         `dae_${daeData.mesReferencia}_${daeData.anoReferencia}.pdf`,
         { type: 'application/pdf' }
       );
-      
+
       uploadResult = await documentService.upload({
         file: tempFile,
         category: 'DAE',
@@ -1047,11 +1073,11 @@ class ESocialDocumentIntegrationService {
           dataVencimento: new Date(daeData.vencimento),
           tags: ['dae', 'impostos', 'esocial'],
           esocialPronto: true,
-          alertaVencimento: true
-        }
+          alertaVencimento: true,
+        },
       });
     }
-    
+
     // Cria entrada na tabela GuiaImposto
     await prisma.guiaImposto.create({
       data: {
@@ -1064,23 +1090,23 @@ class ESocialDocumentIntegrationService {
         status: 'PENDENTE',
         documentoId: uploadResult.documentId,
         codigoBarras: daeData.codigoBarras,
-        observacoes: `INSS: R$ ${daeData.valores.INSS}, FGTS: R$ ${daeData.valores.FGTS}, IRRF: R$ ${daeData.valores.IRRF}`
-      }
+        observacoes: `INSS: R$ ${daeData.valores.INSS}, FGTS: R$ ${daeData.valores.FGTS}, IRRF: R$ ${daeData.valores.IRRF}`,
+      },
     });
-    
+
     // Cria alerta de vencimento
     await esocialAlertService.createDAEAlert(usuarioId, {
       ...daeData,
-      id: uploadResult.documentId
+      id: uploadResult.documentId,
     });
-    
+
     return {
       success: true,
       documentoId: uploadResult.documentId,
-      guiaId: uploadResult.documentId
+      guiaId: uploadResult.documentId,
     };
   }
-  
+
   /**
    * Vincula documento ao cálculo salarial
    */
@@ -1090,9 +1116,9 @@ class ESocialDocumentIntegrationService {
       where: { id: documentoId },
       data: {
         tags: {
-          push: `calculo-${calculoId}`
-        }
-      }
+          push: `calculo-${calculoId}`,
+        },
+      },
     });
   }
 }
@@ -1103,14 +1129,14 @@ class ESocialDocumentIntegrationService {
 ```prisma
 model Documento {
   // ... campos existentes ...
-  
+
   // Campos específicos para eSocial
   esocialPronto     Boolean  @default(false)
   esocialProtocolo  String?  @db.VarChar(50)
   esocialTipo       String?  @db.VarChar(50) // HOLERITE, DAE, S2200, etc.
   esocialMes        Int?
   esocialAno        Int?
-  
+
   // Relacionamentos
   holerite          HoleritePagamento?
   guiaImposto       GuiaImposto?
@@ -1123,7 +1149,7 @@ model Documento {
 // src/pages/esocial-documents.tsx
 const ESocialDocumentsPage = () => {
   const [documentos, setDocumentos] = useState([]);
-  
+
   useEffect(() => {
     // Busca todos os documentos relacionados ao eSocial
     const fetchDocuments = async () => {
@@ -1135,10 +1161,10 @@ const ESocialDocumentsPage = () => {
       });
       setDocumentos(docs.data);
     };
-    
+
     fetchDocuments();
   }, []);
-  
+
   return (
     <DocumentGrid>
       {documentos.map(doc => (
@@ -1189,61 +1215,65 @@ class HoleriteFormatterService {
     return new Promise((resolve, reject) => {
       parseString(xmlString, (err, result) => {
         if (err) reject(err);
-        
+
         const evtRemun = result.eSocial.evtRemun[0];
-        
+
         const dados: HoleriteData = {
           protocolo: evtRemun.ideEvento[0].protocoloEnvio[0],
           status: evtRemun.ideEvento[0].status[0],
-          
+
           // Dados do empregador
           empregador: {
             cpf: evtRemun.ideEmpregador[0].cpfTrab[0],
-            nome: evtRemun.ideEmpregador[0].nmTrab?.[0] || 'N/A'
+            nome: evtRemun.ideEmpregador[0].nmTrab?.[0] || 'N/A',
           },
-          
+
           // Dados do empregado
           empregado: {
             cpf: evtRemun.ideTrabalhador[0].cpfTrab[0],
             nome: evtRemun.ideTrabalhador[0].nmTrab[0],
-            pis: evtRemun.ideTrabalhador[0].nis?.[0]
+            pis: evtRemun.ideTrabalhador[0].nis?.[0],
           },
-          
+
           // Período
-          mesReferencia: parseInt(evtRemun.idePeriodo[0].perApur[0].substring(4, 6)),
-          anoReferencia: parseInt(evtRemun.idePeriodo[0].perApur[0].substring(0, 4)),
-          
+          mesReferencia: parseInt(
+            evtRemun.idePeriodo[0].perApur[0].substring(4, 6)
+          ),
+          anoReferencia: parseInt(
+            evtRemun.idePeriodo[0].perApur[0].substring(0, 4)
+          ),
+
           // Proventos
           proventos: this.extractProventos(evtRemun.dmDev),
-          
+
           // Descontos
           descontos: this.extractDescontos(evtRemun.infoDescontos),
-          
+
           // Totais
           totais: {
             proventos: parseFloat(evtRemun.totApurMen[0].vrLiq[0]),
             descontos: this.calculateTotalDescontos(evtRemun.infoDescontos),
-            liquido: parseFloat(evtRemun.totApurMen[0].vrLiq[0])
+            liquido: parseFloat(evtRemun.totApurMen[0].vrLiq[0]),
           },
-          
+
           // FGTS
           fgts: {
             base: parseFloat(evtRemun.infoFGTS[0].baseFGTS[0]),
-            valor: parseFloat(evtRemun.infoFGTS[0].vrFGTS[0])
-          }
+            valor: parseFloat(evtRemun.infoFGTS[0].vrFGTS[0]),
+          },
         };
-        
+
         resolve(dados);
       });
     });
   }
-  
+
   /**
    * Extrai proventos do XML
    */
   private extractProventos(dmDev: any[]): Provento[] {
     const proventos: Provento[] = [];
-    
+
     dmDev.forEach(dev => {
       const infoPerApur = dev.infoPerApur?.[0];
       if (infoPerApur) {
@@ -1252,23 +1282,23 @@ class HoleriteFormatterService {
             codigo: rubr.codRubr[0],
             descricao: this.getRubricaDescription(rubr.codRubr[0]),
             referencia: rubr.ideTabRubr?.[0] || '',
-            valor: parseFloat(rubr.vrRubr[0])
+            valor: parseFloat(rubr.vrRubr[0]),
           });
         });
       }
     });
-    
+
     return proventos;
   }
-  
+
   /**
    * Extrai descontos do XML
    */
   private extractDescontos(infoDescontos: any): Desconto[] {
     const descontos: Desconto[] = [];
-    
+
     if (!infoDescontos || !infoDescontos[0]) return descontos;
-    
+
     const ideTrabalhador = infoDescontos[0].ideTrabalhador?.[0];
     if (ideTrabalhador) {
       // INSS
@@ -1281,12 +1311,12 @@ class HoleriteFormatterService {
               descricao: 'INSS - Instituto Nacional do Seguro Social',
               base: parseFloat(contr.vrBcContr[0]),
               aliquota: parseFloat(contr.pAliq[0]),
-              valor: parseFloat(contr.vrContr[0])
+              valor: parseFloat(contr.vrContr[0]),
             });
           });
         }
       }
-      
+
       // IRRF
       if (ideTrabalhador.infoIRRF) {
         const infoIRRF = ideTrabalhador.infoIRRF[0];
@@ -1295,14 +1325,14 @@ class HoleriteFormatterService {
           descricao: 'IRRF - Imposto de Renda Retido na Fonte',
           base: parseFloat(infoIRRF.vrBcIRRF[0]),
           aliquota: parseFloat(infoIRRF.aliqIRRF?.[0] || '0'),
-          valor: parseFloat(infoIRRF.vrIRRF[0])
+          valor: parseFloat(infoIRRF.vrIRRF[0]),
         });
       }
     }
-    
+
     return descontos;
   }
-  
+
   /**
    * Gera PDF do holerite
    */
@@ -1310,78 +1340,90 @@ class HoleriteFormatterService {
     return new Promise((resolve, reject) => {
       const doc = new PDFDocument({
         size: 'A4',
-        margins: { top: 50, bottom: 50, left: 50, right: 50 }
+        margins: { top: 50, bottom: 50, left: 50, right: 50 },
       });
-      
+
       const buffers: Buffer[] = [];
       doc.on('data', buffers.push.bind(buffers));
       doc.on('end', () => resolve(Buffer.concat(buffers)));
       doc.on('error', reject);
-      
+
       // Cabeçalho
       doc.fontSize(20).text('HOLERITE DE PAGAMENTO', { align: 'center' });
       doc.moveDown();
-      
+
       // Dados do empregador
       doc.fontSize(12).text('EMPREGADOR:', { continued: true });
       doc.text(`${dados.empregador.nome} - CPF: ${dados.empregador.cpf}`);
       doc.moveDown();
-      
+
       // Dados do empregado
       doc.text('EMPREGADO:', { continued: true });
       doc.text(`${dados.empregado.nome} - CPF: ${dados.empregado.cpf}`);
       doc.text(`PIS: ${dados.empregado.pis || 'N/A'}`);
       doc.moveDown();
-      
+
       // Período
-      doc.text(`PERÍODO DE REFERÊNCIA: ${dados.mesReferencia.toString().padStart(2, '0')}/${dados.anoReferencia}`);
+      doc.text(
+        `PERÍODO DE REFERÊNCIA: ${dados.mesReferencia.toString().padStart(2, '0')}/${dados.anoReferencia}`
+      );
       doc.moveDown();
-      
+
       // Proventos
       doc.fontSize(14).text('PROVENTOS', { underline: true });
       doc.moveDown(0.5);
       dados.proventos.forEach(provento => {
-        doc.fontSize(10)
-           .text(provento.descricao, { continued: true })
-           .text(`R$ ${provento.valor.toFixed(2)}`, { align: 'right' });
+        doc
+          .fontSize(10)
+          .text(provento.descricao, { continued: true })
+          .text(`R$ ${provento.valor.toFixed(2)}`, { align: 'right' });
       });
       doc.moveDown();
-      
+
       // Descontos
       doc.fontSize(14).text('DESCONTOS', { underline: true });
       doc.moveDown(0.5);
       dados.descontos.forEach(desconto => {
-        doc.fontSize(10)
-           .text(desconto.descricao, { continued: true })
-           .text(`R$ ${desconto.valor.toFixed(2)}`, { align: 'right' });
+        doc
+          .fontSize(10)
+          .text(desconto.descricao, { continued: true })
+          .text(`R$ ${desconto.valor.toFixed(2)}`, { align: 'right' });
       });
       doc.moveDown();
-      
+
       // Totais
-      doc.fontSize(12)
-         .text('TOTAL DE PROVENTOS:', { continued: true })
-         .text(`R$ ${dados.totais.proventos.toFixed(2)}`, { align: 'right' });
-      doc.text('TOTAL DE DESCONTOS:', { continued: true })
-         .text(`R$ ${dados.totais.descontos.toFixed(2)}`, { align: 'right' });
-      doc.fontSize(14)
-         .text('VALOR LÍQUIDO:', { continued: true })
-         .text(`R$ ${dados.totais.liquido.toFixed(2)}`, { align: 'right' });
+      doc
+        .fontSize(12)
+        .text('TOTAL DE PROVENTOS:', { continued: true })
+        .text(`R$ ${dados.totais.proventos.toFixed(2)}`, { align: 'right' });
+      doc
+        .text('TOTAL DE DESCONTOS:', { continued: true })
+        .text(`R$ ${dados.totais.descontos.toFixed(2)}`, { align: 'right' });
+      doc
+        .fontSize(14)
+        .text('VALOR LÍQUIDO:', { continued: true })
+        .text(`R$ ${dados.totais.liquido.toFixed(2)}`, { align: 'right' });
       doc.moveDown();
-      
+
       // FGTS
       doc.fontSize(12).text('FGTS:', { continued: true });
-      doc.text(`Base: R$ ${dados.fgts.base.toFixed(2)} - Valor: R$ ${dados.fgts.valor.toFixed(2)}`);
+      doc.text(
+        `Base: R$ ${dados.fgts.base.toFixed(2)} - Valor: R$ ${dados.fgts.valor.toFixed(2)}`
+      );
       doc.moveDown();
-      
+
       // Rodapé
-      doc.fontSize(8)
-         .text(`Protocolo eSocial: ${dados.protocolo}`, { align: 'center' })
-         .text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, { align: 'center' });
-      
+      doc
+        .fontSize(8)
+        .text(`Protocolo eSocial: ${dados.protocolo}`, { align: 'center' })
+        .text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, {
+          align: 'center',
+        });
+
       doc.end();
     });
   }
-  
+
   /**
    * Mapeia códigos de rubricas para descrições
    */
@@ -1394,7 +1436,7 @@ class HoleriteFormatterService {
       '1005': 'Comissões',
       // ... mais rubricas
     };
-    
+
     return rubricas[codigo] || `Rubrica ${codigo}`;
   }
 }
@@ -1441,12 +1483,16 @@ const generateHoleriteHTML = (dados: HoleriteData): string => {
       
       <div class="section">
         <h3>Proventos</h3>
-        ${dados.proventos.map(p => `
+        ${dados.proventos
+          .map(
+            p => `
           <div class="row">
             <span>${p.descricao}</span>
             <span>R$ ${p.valor.toFixed(2)}</span>
           </div>
-        `).join('')}
+        `
+          )
+          .join('')}
         <div class="row total">
           <span>Total de Proventos</span>
           <span>R$ ${dados.totais.proventos.toFixed(2)}</span>
@@ -1455,12 +1501,16 @@ const generateHoleriteHTML = (dados: HoleriteData): string => {
       
       <div class="section">
         <h3>Descontos</h3>
-        ${dados.descontos.map(d => `
+        ${dados.descontos
+          .map(
+            d => `
           <div class="row">
             <span>${d.descricao}</span>
             <span>R$ ${d.valor.toFixed(2)}</span>
           </div>
-        `).join('')}
+        `
+          )
+          .join('')}
         <div class="row total">
           <span>Total de Descontos</span>
           <span>R$ ${dados.totais.descontos.toFixed(2)}</span>
@@ -1492,6 +1542,7 @@ const generateHoleriteHTML = (dados: HoleriteData): string => {
 ## 7️⃣ GARANTIA DE LOGIN GOV.BR CORRETO
 
 ### **Problema:**
+
 - Como garantir que usuário fez login na conta correta?
 - Prevenir acesso a dados de outro CPF?
 
@@ -1509,12 +1560,12 @@ class GovBRValidationService {
   ): Promise<ValidationResult> {
     // 1. Valida token com gov.br
     const govbrUser = await this.verifyGovBRToken(govbrToken);
-    
+
     // 2. Busca usuário no DOM
     const domUser = await prisma.usuario.findUnique({
-      where: { id: usuarioId }
+      where: { id: usuarioId },
     });
-    
+
     // 3. Compara CPFs
     if (govbrUser.cpf !== domUser.cpf) {
       return {
@@ -1522,20 +1573,20 @@ class GovBRValidationService {
         error: 'CPF do gov.br não corresponde ao CPF cadastrado no DOM',
         details: {
           govbrCPF: govbrUser.cpf,
-          domCPF: domUser.cpf
-        }
+          domCPF: domUser.cpf,
+        },
       };
     }
-    
+
     // 4. Armazena associação
     await this.storeGovBRAssociation(usuarioId, govbrUser);
-    
+
     return {
       valid: true,
-      user: govbrUser
+      user: govbrUser,
     };
   }
-  
+
   /**
    * Verifica token gov.br
    */
@@ -1543,30 +1594,27 @@ class GovBRValidationService {
     // Chama API do gov.br para validar token
     const response = await fetch('https://sso.acesso.gov.br/userinfo', {
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
-    
+
     if (!response.ok) {
       throw new Error('Token gov.br inválido');
     }
-    
+
     const userInfo = await response.json();
-    
+
     return {
       cpf: userInfo.sub, // CPF vem no campo 'sub'
       nome: userInfo.name,
-      email: userInfo.email
+      email: userInfo.email,
     };
   }
-  
+
   /**
    * Armazena associação gov.br ↔ DOM
    */
-  private async storeGovBRAssociation(
-    usuarioId: string,
-    govbrUser: GovBRUser
-  ) {
+  private async storeGovBRAssociation(usuarioId: string, govbrUser: GovBRUser) {
     await prisma.usuario.update({
       where: { id: usuarioId },
       data: {
@@ -1574,11 +1622,11 @@ class GovBRValidationService {
         govbrNome: govbrUser.nome,
         govbrEmail: govbrUser.email,
         govbrValidadoEm: new Date(),
-        govbrValidado: true
-      }
+        govbrValidado: true,
+      },
     });
   }
-  
+
   /**
    * Valida antes de cada operação eSocial
    */
@@ -1587,23 +1635,27 @@ class GovBRValidationService {
     operation: string
   ): Promise<boolean> {
     const usuario = await prisma.usuario.findUnique({
-      where: { id: usuarioId }
+      where: { id: usuarioId },
     });
-    
+
     // Verifica se gov.br está validado
     if (!usuario.govbrValidado) {
-      throw new Error('Login gov.br não validado. Por favor, faça login novamente.');
+      throw new Error(
+        'Login gov.br não validado. Por favor, faça login novamente.'
+      );
     }
-    
+
     // Verifica se CPF ainda corresponde
     const govbrUser = await this.getCurrentGovBRUser(usuarioId);
     if (govbrUser.cpf !== usuario.cpf) {
-      throw new Error('CPF do gov.br não corresponde. Por favor, faça login novamente.');
+      throw new Error(
+        'CPF do gov.br não corresponde. Por favor, faça login novamente.'
+      );
     }
-    
+
     // Registra operação
     await this.logESocialOperation(usuarioId, operation);
-    
+
     return true;
   }
 }
@@ -1614,7 +1666,7 @@ class GovBRValidationService {
 ```prisma
 model Usuario {
   // ... campos existentes ...
-  
+
   // Validação gov.br
   govbrValidado     Boolean   @default(false)
   govbrCPF          String?   @db.VarChar(11)
@@ -1633,46 +1685,47 @@ model Usuario {
 const LoginGovBRPage = () => {
   const handleGovBRLogin = async () => {
     // 1. Redireciona para gov.br
-    const govbrUrl = 'https://sso.acesso.gov.br/authorize?' +
+    const govbrUrl =
+      'https://sso.acesso.gov.br/authorize?' +
       `client_id=${process.env.NEXT_PUBLIC_GOVBR_CLIENT_ID}&` +
       `redirect_uri=${process.env.NEXT_PUBLIC_GOVBR_REDIRECT_URI}&` +
       `response_type=code&` +
       `scope=openid profile email`;
-    
+
     window.location.href = govbrUrl;
   };
-  
+
   // 2. Callback do gov.br
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
-    
+
     if (code) {
       handleGovBRCallback(code);
     }
   }, []);
-  
+
   const handleGovBRCallback = async (code: string) => {
     // 1. Troca code por token
     const tokenResponse = await fetch('/api/auth/govbr/callback', {
       method: 'POST',
-      body: JSON.stringify({ code })
+      body: JSON.stringify({ code }),
     });
-    
+
     const { token, usuarioId } = await tokenResponse.json();
-    
+
     // 2. Valida associação
     const validation = await govbrValidationService.validateGovBRLogin(
       usuarioId,
       token
     );
-    
+
     if (!validation.valid) {
       // Mostra erro e pede para fazer login novamente
       showError(validation.error);
       return;
     }
-    
+
     // 3. Login bem-sucedido
     router.push('/dashboard');
   };
@@ -1689,11 +1742,11 @@ export const requireGovBRValidation = async (
   next: Function
 ) => {
   const usuarioId = req.headers['x-user-id'] as string;
-  
+
   if (!usuarioId) {
     return res.status(401).json({ error: 'Usuário não autenticado' });
   }
-  
+
   // Valida gov.br antes de permitir operação eSocial
   try {
     await govbrValidationService.validateBeforeESocialOperation(
@@ -1702,9 +1755,9 @@ export const requireGovBRValidation = async (
     );
     next();
   } catch (error) {
-    return res.status(403).json({ 
+    return res.status(403).json({
       error: error.message,
-      requiresReauth: true
+      requiresReauth: true,
     });
   }
 };
@@ -1717,11 +1770,13 @@ export const requireGovBRValidation = async (
 ### **Análise: O que requer certificado digital?**
 
 **Requer Certificado Digital:**
+
 - ✅ Envio de eventos (S-1000, S-2200, S-1200) via API SOAP
 - ✅ Consulta de dados via API SOAP
 - ✅ Acesso ao portal eSocial (login)
 
 **NÃO Requer Certificado Digital:**
+
 - ✅ Visualização de dados já sincronizados
 - ✅ Direcionamento assistido (guias, tutoriais)
 - ✅ Gestão de alertas e notificações
@@ -1739,7 +1794,7 @@ interface PlanFeatures {
   alertasNotificacoes: boolean;
   gestaoDocumentos: boolean;
   formulariosAssistidos: boolean;
-  
+
   // Funcionalidades avançadas (com certificado)
   envioEventosESocial: boolean;
   consultaAPIReal: boolean;
@@ -1758,9 +1813,9 @@ const PLAN_FEATURES: Record<string, PlanFeatures> = {
     envioEventosESocial: false,
     consultaAPIReal: false,
     sincronizacaoAutomatica: false,
-    acessoPortalESocial: false
+    acessoPortalESocial: false,
   },
-  
+
   BASICO: {
     // Todas do gratuito +
     visualizacaoDados: true,
@@ -1772,9 +1827,9 @@ const PLAN_FEATURES: Record<string, PlanFeatures> = {
     envioEventosESocial: true,
     consultaAPIReal: true,
     sincronizacaoAutomatica: false, // Manual
-    acessoPortalESocial: true
+    acessoPortalESocial: true,
   },
-  
+
   PREMIUM: {
     // Todas do básico +
     visualizacaoDados: true,
@@ -1785,8 +1840,8 @@ const PLAN_FEATURES: Record<string, PlanFeatures> = {
     envioEventosESocial: true,
     consultaAPIReal: true,
     sincronizacaoAutomatica: true, // Automática
-    acessoPortalESocial: true
-  }
+    acessoPortalESocial: true,
+  },
 };
 ```
 
@@ -1795,7 +1850,7 @@ const PLAN_FEATURES: Record<string, PlanFeatures> = {
 ```prisma
 model PlanoAssinatura {
   // ... campos existentes ...
-  
+
   // Features específicas
   requerCertificadoDigital Boolean @default(false)
   permiteEnvioEventos      Boolean @default(false)
@@ -1807,7 +1862,7 @@ model PlanoAssinatura {
 
 model Assinatura {
   // ... campos existentes ...
-  
+
   // Certificado digital
   certificadoConfigurado     Boolean @default(false)
   certificadoVencimento      DateTime?
@@ -1823,55 +1878,58 @@ class FeatureAccessService {
   /**
    * Verifica se usuário pode acessar funcionalidade
    */
-  async canAccessFeature(
-    usuarioId: string,
-    feature: string
-  ): Promise<boolean> {
+  async canAccessFeature(usuarioId: string, feature: string): Promise<boolean> {
     // 1. Busca plano do usuário
     const assinatura = await prisma.assinatura.findFirst({
       where: {
         usuarioId,
-        status: 'ATIVA'
+        status: 'ATIVA',
       },
       include: {
-        plano: true
-      }
+        plano: true,
+      },
     });
-    
+
     if (!assinatura) {
       return false; // Sem plano ativo
     }
-    
+
     // 2. Verifica se feature está no plano
     const planFeatures = PLAN_FEATURES[assinatura.plano.codigo];
     if (!planFeatures[feature]) {
       return false; // Feature não disponível no plano
     }
-    
+
     // 3. Se requer certificado, verifica se está configurado
     if (this.requiresCertificate(feature)) {
       if (!assinatura.certificadoConfigurado) {
-        throw new Error('Esta funcionalidade requer certificado digital. Configure seu certificado no plano Premium.');
+        throw new Error(
+          'Esta funcionalidade requer certificado digital. Configure seu certificado no plano Premium.'
+        );
       }
-      
+
       // Verifica se certificado não está vencido
-      if (assinatura.certificadoVencimento && 
-          new Date() > assinatura.certificadoVencimento) {
-        throw new Error('Seu certificado digital está vencido. Renove para continuar usando esta funcionalidade.');
+      if (
+        assinatura.certificadoVencimento &&
+        new Date() > assinatura.certificadoVencimento
+      ) {
+        throw new Error(
+          'Seu certificado digital está vencido. Renove para continuar usando esta funcionalidade.'
+        );
       }
     }
-    
+
     return true;
   }
-  
+
   private requiresCertificate(feature: string): boolean {
     const certFeatures = [
       'envioEventosESocial',
       'consultaAPIReal',
       'sincronizacaoAutomatica',
-      'acessoPortalESocial'
+      'acessoPortalESocial',
     ];
-    
+
     return certFeatures.includes(feature);
   }
 }
@@ -1884,63 +1942,63 @@ class FeatureAccessService {
 const CertificateConfigModal = ({ planoId, onClose }) => {
   const [certificado, setCertificado] = useState<File | null>(null);
   const [senha, setSenha] = useState('');
-  
+
   const handleUpload = async () => {
     if (!certificado) {
       showError('Selecione um arquivo de certificado');
       return;
     }
-    
+
     // 1. Valida formato (.pfx, .p12)
     if (!certificado.name.match(/\.(pfx|p12)$/i)) {
       showError('Certificado deve ser .pfx ou .p12');
       return;
     }
-    
+
     // 2. Valida certificado
     const validation = await validateCertificate(certificado, senha);
     if (!validation.valid) {
       showError(validation.error);
       return;
     }
-    
+
     // 3. Armazena certificado (criptografado)
     await storeCertificate(planoId, certificado, senha, validation.data);
-    
+
     // 4. Atualiza assinatura
     await updateAssinatura(planoId, {
       certificadoConfigurado: true,
       certificadoVencimento: validation.data.vencimento
     });
-    
+
     showSuccess('Certificado configurado com sucesso!');
     onClose();
   };
-  
+
   return (
     <Modal>
       <Title>Configurar Certificado Digital</Title>
       <Description>
         Para usar funcionalidades avançadas do eSocial, você precisa configurar seu certificado digital (eCPF A1 ou A3).
       </Description>
-      
+
       <FileUpload
         accept=".pfx,.p12"
         onChange={(file) => setCertificado(file)}
       />
-      
+
       <Input
         type="password"
         label="Senha do Certificado"
         value={senha}
         onChange={(e) => setSenha(e.target.value)}
       />
-      
+
       <HelpText>
         💡 O certificado é armazenado de forma criptografada e seguro.
         Você pode removê-lo a qualquer momento.
       </HelpText>
-      
+
       <Actions>
         <Button onClick={onClose}>Cancelar</Button>
         <Button onClick={handleUpload} variant="primary">
@@ -1954,21 +2012,21 @@ const CertificateConfigModal = ({ planoId, onClose }) => {
 
 **Comparação de Planos:**
 
-| Funcionalidade | Gratuito | Básico | Premium |
-|----------------|----------|--------|---------|
-| Visualização de dados | ✅ | ✅ | ✅ |
-| Direcionamento assistido | ✅ | ✅ | ✅ |
-| Alertas e notificações | ✅ | ✅ | ✅ |
-| Gestão de documentos | ✅ | ✅ | ✅ |
-| Formulários assistidos | ✅ | ✅ | ✅ |
-| **Envio de eventos** | ❌ | ✅* | ✅* |
-| **Consulta API real** | ❌ | ✅* | ✅* |
-| **Sincronização automática** | ❌ | ❌ | ✅* |
-| **Acesso portal eSocial** | ❌ | ✅* | ✅* |
-| **Certificado digital** | Não requer | Usuário fornece | Usuário fornece |
-| **Preço** | R$ 0 | R$ 29/mês | R$ 59/mês |
+| Funcionalidade               | Gratuito   | Básico          | Premium         |
+| ---------------------------- | ---------- | --------------- | --------------- |
+| Visualização de dados        | ✅         | ✅              | ✅              |
+| Direcionamento assistido     | ✅         | ✅              | ✅              |
+| Alertas e notificações       | ✅         | ✅              | ✅              |
+| Gestão de documentos         | ✅         | ✅              | ✅              |
+| Formulários assistidos       | ✅         | ✅              | ✅              |
+| **Envio de eventos**         | ❌         | ✅\*            | ✅\*            |
+| **Consulta API real**        | ❌         | ✅\*            | ✅\*            |
+| **Sincronização automática** | ❌         | ❌              | ✅\*            |
+| **Acesso portal eSocial**    | ❌         | ✅\*            | ✅\*            |
+| **Certificado digital**      | Não requer | Usuário fornece | Usuário fornece |
+| **Preço**                    | R$ 0       | R$ 29/mês       | R$ 59/mês       |
 
-*Requer certificado digital configurado
+\*Requer certificado digital configurado
 
 **Mensagens Contextuais:**
 
@@ -2017,9 +2075,9 @@ const FeatureLockedMessage = ({ feature, plano }) => {
 8. **Planos:** Diferenciação por certificado digital + features escalonadas
 
 ### **Resultado Final:**
+
 - ✅ Zero responsabilidade legal (eSocial calcula)
 - ✅ Zero custo para plano básico (certificado do usuário)
 - ✅ Massificação viável (plano gratuito funcional)
 - ✅ Diferenciação clara entre planos
 - ✅ Redução de amadorismo (guias assistidos)
-

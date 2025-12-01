@@ -11,7 +11,14 @@ export interface UnifiedBadgeProps {
   /**
    * Variante do badge (cor e estilo)
    */
-  variant?: 'success' | 'warning' | 'error' | 'info' | 'primary' | 'secondary' | 'neutral';
+  variant?:
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'info'
+    | 'primary'
+    | 'secondary'
+    | 'neutral';
   /**
    * Tamanho do badge
    */
@@ -91,7 +98,7 @@ const BadgeContainer = styled.span<{
   line-height: 1;
   white-space: nowrap;
   transition: all 0.2s ease;
-  
+
   ${props => {
     // Cor customizada tem prioridade
     if (props.$customColor) {
@@ -142,18 +149,53 @@ const BadgeContainer = styled.span<{
         border: props.$theme?.colors?.secondary || defaultColors.secondary,
       },
       neutral: {
-        bg: (props.$theme?.colors?.text && typeof props.$theme.colors.text === 'object' && props.$theme.colors.text.secondary) || defaultColors.text.secondary,
-        text: (typeof props.$theme?.colors?.surface === 'string' ? props.$theme.colors.surface : defaultColors.surface) || defaultColors.surface,
-        border: (typeof props.$theme?.colors?.border === 'string' ? props.$theme.colors.border : defaultColors.border) || defaultColors.border,
+        bg:
+          (props.$theme?.colors?.text &&
+            typeof props.$theme.colors.text === 'object' &&
+            props.$theme.colors.text.secondary) ||
+          defaultColors.text.secondary,
+        text:
+          (typeof props.$theme?.colors?.surface === 'string'
+            ? props.$theme.colors.surface
+            : defaultColors.surface) || defaultColors.surface,
+        border:
+          (typeof props.$theme?.colors?.border === 'string'
+            ? props.$theme.colors.border
+            : defaultColors.border) || defaultColors.border,
       },
     };
 
     const colors = variantColors[props.$variant || 'neutral'];
-    
+
     // Garantir que bg e border sejam sempre strings
-    const bgColor = typeof colors.bg === 'string' ? colors.bg : (typeof colors.bg === 'object' && colors.bg && 'primary' in colors.bg ? String((colors.bg as any).primary) : String(defaultColors.primary));
-    const borderColor = typeof colors.border === 'string' ? colors.border : (typeof colors.border === 'object' && colors.border && 'primary' in colors.border ? String((colors.border as any).primary) : String(defaultColors.border?.primary || defaultColors.border || '#E5E7EB'));
-    const textColor = typeof colors.text === 'string' ? colors.text : (typeof colors.text === 'object' && colors.text && 'primary' in colors.text ? String((colors.text as any).primary) : String(defaultColors.surface?.primary || defaultColors.surface || '#FFFFFF'));
+    const bgColor =
+      typeof colors.bg === 'string'
+        ? colors.bg
+        : typeof colors.bg === 'object' && colors.bg && 'primary' in colors.bg
+          ? String((colors.bg as any).primary)
+          : String(defaultColors.primary);
+    const borderColor =
+      typeof colors.border === 'string'
+        ? colors.border
+        : typeof colors.border === 'object' &&
+            colors.border &&
+            'primary' in colors.border
+          ? String((colors.border as any).primary)
+          : String(
+              defaultColors.border?.primary || defaultColors.border || '#E5E7EB'
+            );
+    const textColor =
+      typeof colors.text === 'string'
+        ? colors.text
+        : typeof colors.text === 'object' &&
+            colors.text &&
+            'primary' in colors.text
+          ? String((colors.text as any).primary)
+          : String(
+              defaultColors.surface?.primary ||
+                defaultColors.surface ||
+                '#FFFFFF'
+            );
 
     if (props.$outline) {
       return `
@@ -170,17 +212,24 @@ const BadgeContainer = styled.span<{
     `;
   }}
 
-  ${props => props.$clickable && `
+  ${props =>
+    props.$clickable &&
+    `
     cursor: pointer;
     user-select: none;
     
     &:hover {
       transform: translateY(-1px);
       box-shadow: ${(innerProps: { $theme?: Theme }) => {
-        const shadowColor = innerProps.$theme?.colors?.shadow ||
-                           (innerProps.$theme as any)?.shadow?.color ||
-                           (innerProps.$theme as any)?.shadow;
-        if (shadowColor && typeof shadowColor === 'string' && shadowColor.startsWith('#')) {
+        const shadowColor =
+          innerProps.$theme?.colors?.shadow ||
+          (innerProps.$theme as any)?.shadow?.color ||
+          (innerProps.$theme as any)?.shadow;
+        if (
+          shadowColor &&
+          typeof shadowColor === 'string' &&
+          shadowColor.startsWith('#')
+        ) {
           const r = parseInt(shadowColor.slice(1, 3), 16);
           const g = parseInt(shadowColor.slice(3, 5), 16);
           const b = parseInt(shadowColor.slice(5, 7), 16);
@@ -198,24 +247,24 @@ const BadgeContainer = styled.span<{
 
 /**
  * Componente genérico de Badge reutilizável
- * 
+ *
  * Substitui: StatusBadge, VersionBadge, PermissionBadge, DueDateBadge, CategoryBadge
- * 
+ *
  * @example
  * ```tsx
  * // Badge básico
  * <UnifiedBadge variant="success">Ativo</UnifiedBadge>
- * 
+ *
  * // Badge com ícone
  * <UnifiedBadge variant="warning" icon="⚠️" size="lg">
  *   Atenção
  * </UnifiedBadge>
- * 
+ *
  * // Badge outline
  * <UnifiedBadge variant="error" outline>
  *   Erro
  * </UnifiedBadge>
- * 
+ *
  * // Badge customizado
  * <UnifiedBadge customColor="#9b59b6" size="sm">
  *   Custom
@@ -251,4 +300,3 @@ export const UnifiedBadge: React.FC<UnifiedBadgeProps> = ({
     </BadgeContainer>
   );
 };
-

@@ -18,4 +18,3 @@ npm run build
 
 **Status:** ✅ Cache limpo  
 **Próximo:** Executar build limpo
-

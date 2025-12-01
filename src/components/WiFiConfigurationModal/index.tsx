@@ -25,14 +25,17 @@ const InfoBox = styled.div<{ $theme?: any }>`
     props.$theme?.background?.secondary ||
     props.$theme?.colors?.background?.primary ||
     'transparent'};
-  border: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.secondary) ||
-           props.$theme?.border?.secondary ||
-           (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.secondary) ||
+        props.$theme?.border?.secondary ||
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;

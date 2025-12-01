@@ -3,7 +3,13 @@
  * Integra Sentry, logging estruturado e métricas customizadas
  */
 
-import { captureException, captureMessage, setSentryUser, setSentryContext, setSentryTag } from './sentry';
+import {
+  captureException,
+  captureMessage,
+  setSentryUser,
+  setSentryContext,
+  setSentryTag,
+} from './sentry';
 
 export interface PerformanceMetric {
   name: string;
@@ -51,7 +57,10 @@ export function recordPerformanceMetric(metric: PerformanceMetric): void {
   // Log em desenvolvimento
   if (process.env.NODE_ENV === 'development') {
     // eslint-disable-next-line no-console
-    console.log(`[Performance] ${metric.name}: ${metric.value}${metric.unit}`, metric.tags);
+    console.log(
+      `[Performance] ${metric.name}: ${metric.value}${metric.unit}`,
+      metric.tags
+    );
   }
 }
 
@@ -268,8 +277,10 @@ export function getPerformanceStats(): {
   averageApiCallDuration: number;
   errorRate: number;
 } {
-  const apiCalls = performanceMetrics.filter((m) => m.name === 'api.call.duration');
-  const errors = performanceMetrics.filter((m) => m.tags?.status === 'error');
+  const apiCalls = performanceMetrics.filter(
+    m => m.name === 'api.call.duration'
+  );
+  const errors = performanceMetrics.filter(m => m.tags?.status === 'error');
 
   const averageApiCallDuration =
     apiCalls.length > 0
@@ -285,4 +296,3 @@ export function getPerformanceStats(): {
     errorRate,
   };
 }
-

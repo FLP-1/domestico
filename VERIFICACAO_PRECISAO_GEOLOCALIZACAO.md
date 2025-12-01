@@ -6,14 +6,14 @@ Execute o seguinte SQL no seu banco de dados PostgreSQL para verificar se todas 
 
 ```sql
 -- Verificar tipos de dados de latitude e longitude em todas as tabelas
-SELECT 
+SELECT
     table_name,
     column_name,
     data_type,
     numeric_precision,
     numeric_scale
 FROM information_schema.columns
-WHERE 
+WHERE
     table_schema = 'public'
     AND column_name IN ('latitude', 'longitude')
     AND table_name IN (
@@ -28,9 +28,9 @@ WHERE
 ORDER BY table_name, column_name;
 
 -- Verificação resumida
-SELECT 
-    CASE 
-        WHEN COUNT(*) = COUNT(CASE WHEN data_type = 'double precision' THEN 1 END) 
+SELECT
+    CASE
+        WHEN COUNT(*) = COUNT(CASE WHEN data_type = 'double precision' THEN 1 END)
         THEN '✅ TODAS as colunas estão como DOUBLE PRECISION'
         ELSE '❌ ALGUMAS colunas NÃO estão como DOUBLE PRECISION'
     END as status_verificacao,
@@ -38,7 +38,7 @@ SELECT
     COUNT(CASE WHEN data_type = 'double precision' THEN 1 END) as colunas_double_precision,
     COUNT(CASE WHEN data_type != 'double precision' THEN 1 END) as colunas_outro_tipo
 FROM information_schema.columns
-WHERE 
+WHERE
     table_schema = 'public'
     AND column_name IN ('latitude', 'longitude')
     AND table_name IN (
@@ -55,6 +55,7 @@ WHERE
 ## ✅ Resultado Esperado
 
 Todas as colunas `latitude` e `longitude` devem estar com:
+
 - **data_type**: `double precision`
 - **numeric_precision**: `53` (padrão do PostgreSQL para DOUBLE PRECISION)
 - **numeric_scale**: `0` (não aplicável para DOUBLE PRECISION)
@@ -72,6 +73,7 @@ Todas as colunas `latitude` e `longitude` devem estar com:
 ## 🎯 Precisão Alcançada
 
 Com `DOUBLE PRECISION`, as coordenadas geográficas agora têm:
+
 - **Até 15 dígitos significativos** (vs. ~6-7 do FLOAT anterior)
 - **Precisão de aproximadamente 1.1 milímetros** na linha do equador
 - **Suficiente para identificação precisa de localização**
@@ -80,4 +82,3 @@ Com `DOUBLE PRECISION`, as coordenadas geográficas agora têm:
 
 - A migração foi aplicada com sucesso se o resultado mostrar `✅ TODAS as colunas estão como DOUBLE PRECISION`
 - Se alguma coluna ainda estiver como `real` ou `numeric`, será necessário aplicar a migração novamente para aquela tabela específica
-

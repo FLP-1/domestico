@@ -44,25 +44,32 @@ const TaskList = styled.div<{ $theme?: any }>`
     align-items: center;
     gap: 1rem;
     padding: 0.75rem 0;
-    border-bottom: 1px solid ${props => {
-      const primaryColor = getThemeColor(props.$theme, 'colors.primary', 'transparent');
-      if (primaryColor) {
-        // Adiciona opacidade ao hex color
-        if (primaryColor.startsWith('#')) {
-          const r = parseInt(primaryColor.slice(1, 3), 16);
-          const g = parseInt(primaryColor.slice(3, 5), 16);
-          const b = parseInt(primaryColor.slice(5, 7), 16);
-          return `rgba(${r}, ${g}, ${b}, 0.1)`;
+    border-bottom: 1px solid
+      ${props => {
+        const primaryColor = getThemeColor(
+          props.$theme,
+          'colors.primary',
+          'transparent'
+        );
+        if (primaryColor) {
+          // Adiciona opacidade ao hex color
+          if (primaryColor.startsWith('#')) {
+            const r = parseInt(primaryColor.slice(1, 3), 16);
+            const g = parseInt(primaryColor.slice(3, 5), 16);
+            const b = parseInt(primaryColor.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, 0.1)`;
+          }
+          if (primaryColor.startsWith('rgb')) {
+            return primaryColor.replace(')', ', 0.1)').replace('rgb', 'rgba');
+          }
         }
-        if (primaryColor.startsWith('rgb')) {
-          return primaryColor.replace(')', ', 0.1)').replace('rgb', 'rgba');
-        }
-      }
-      const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) ||
-             props.$theme?.border?.light ||
-             'transparent';
-    }};
+        const border = props.$theme?.colors?.border;
+        return (
+          (typeof border === 'object' && border?.light) ||
+          props.$theme?.border?.light ||
+          'transparent'
+        );
+      }};
 
     &:last-child {
       border-bottom: none;
@@ -94,9 +101,10 @@ const TaskList = styled.div<{ $theme?: any }>`
 
       &.high {
         background: ${props => {
-          const errorColor = props.$theme?.colors?.status?.error?.background || 
-                            props.$theme?.status?.error?.background ||
-                            props.$theme?.colors?.error;
+          const errorColor =
+            props.$theme?.colors?.status?.error?.background ||
+            props.$theme?.status?.error?.background ||
+            props.$theme?.colors?.error;
           if (!errorColor) return 'transparent';
           if (errorColor.startsWith('#')) {
             const r = parseInt(errorColor.slice(1, 3), 16);
@@ -109,8 +117,8 @@ const TaskList = styled.div<{ $theme?: any }>`
           }
           return 'transparent';
         }};
-        color: ${props => 
-          props.$theme?.colors?.status?.error?.text || 
+        color: ${props =>
+          props.$theme?.colors?.status?.error?.text ||
           props.$theme?.status?.error?.text ||
           props.$theme?.colors?.error ||
           'inherit'};
@@ -118,9 +126,10 @@ const TaskList = styled.div<{ $theme?: any }>`
 
       &.medium {
         background: ${props => {
-          const warningColor = props.$theme?.colors?.status?.warning?.background || 
-                              props.$theme?.status?.warning?.background ||
-                              props.$theme?.colors?.warning;
+          const warningColor =
+            props.$theme?.colors?.status?.warning?.background ||
+            props.$theme?.status?.warning?.background ||
+            props.$theme?.colors?.warning;
           if (!warningColor) return 'transparent';
           if (warningColor.startsWith('#')) {
             const r = parseInt(warningColor.slice(1, 3), 16);
@@ -133,8 +142,8 @@ const TaskList = styled.div<{ $theme?: any }>`
           }
           return 'transparent';
         }};
-        color: ${props => 
-          props.$theme?.colors?.status?.warning?.text || 
+        color: ${props =>
+          props.$theme?.colors?.status?.warning?.text ||
           props.$theme?.status?.warning?.text ||
           props.$theme?.colors?.warning ||
           'inherit'};
@@ -142,10 +151,11 @@ const TaskList = styled.div<{ $theme?: any }>`
 
       &.low {
         background: ${props => {
-          const successColor = props.$theme?.colors?.status?.success?.background || 
-                              props.$theme?.status?.success?.background ||
-                              props.$theme?.colors?.secondary ||
-                              props.$theme?.colors?.success;
+          const successColor =
+            props.$theme?.colors?.status?.success?.background ||
+            props.$theme?.status?.success?.background ||
+            props.$theme?.colors?.secondary ||
+            props.$theme?.colors?.success;
           if (!successColor) return 'transparent';
           if (successColor.startsWith('#')) {
             const r = parseInt(successColor.slice(1, 3), 16);
@@ -158,8 +168,8 @@ const TaskList = styled.div<{ $theme?: any }>`
           }
           return 'transparent';
         }};
-        color: ${props => 
-          props.$theme?.colors?.status?.success?.text || 
+        color: ${props =>
+          props.$theme?.colors?.status?.success?.text ||
           props.$theme?.status?.success?.text ||
           props.$theme?.colors?.secondary ||
           props.$theme?.colors?.success ||
@@ -189,9 +199,9 @@ const PendingCardRow = styled.div`
 
 const PendingCardSubtitle = styled.p<{ $theme?: any }>`
   margin: 0;
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
-    props.$theme?.text?.secondary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
     props.$theme?.colors?.textSecondary ||
     props.$theme?.colors?.text ||
     'inherit'};
@@ -436,7 +446,9 @@ export default function Dashboard() {
       <PendingCardRow>
         <div>
           <PendingCardTitle>Registros Pendentes</PendingCardTitle>
-          <PendingCardSubtitle $theme={theme}>Aprovação necessária</PendingCardSubtitle>
+          <PendingCardSubtitle $theme={theme}>
+            Aprovação necessária
+          </PendingCardSubtitle>
         </div>
         <PendingCardCount>{pendingPunches}</PendingCardCount>
       </PendingCardRow>
@@ -510,7 +522,6 @@ export default function Dashboard() {
           ? getWidgetDetails(selectedWidget).content
           : 'Nenhum widget selecionado.'}
       </UnifiedModal>
-
     </PageContainer>
   );
 }

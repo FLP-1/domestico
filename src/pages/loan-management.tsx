@@ -5,7 +5,13 @@ import { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import { useAlertManager } from '../hooks/useAlertManager';
 import styled from 'styled-components';
-import { UnifiedButton, UnifiedBadge, UnifiedProgressBar, UnifiedCard, UnifiedModal } from '../components/unified';
+import {
+  UnifiedButton,
+  UnifiedBadge,
+  UnifiedProgressBar,
+  UnifiedCard,
+  UnifiedModal,
+} from '../components/unified';
 import FilterSection from '../components/FilterSection';
 import {
   Form,
@@ -21,7 +27,11 @@ import TopBar from '../components/TopBar';
 import WelcomeSection from '../components/WelcomeSection';
 import { useUserProfile } from '../contexts/UserProfileContext';
 import { useTheme } from '../hooks/useTheme';
-import { getThemeColor, getStatusColor, addOpacity } from '../utils/themeHelpers';
+import {
+  getThemeColor,
+  getStatusColor,
+  addOpacity,
+} from '../utils/themeHelpers';
 import type { Theme } from '../types/theme';
 import {
   OptimizedFormRow,
@@ -123,12 +133,20 @@ interface LoanSummary {
 const SummarySection = styled.section<{ $theme: Theme }>`
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    const surfaceColor = typeof surface === 'string' 
-      ? surface 
-      : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
-    return surfaceColor 
+    const surfaceColor =
+      typeof surface === 'string'
+        ? surface
+        : typeof surface === 'object' &&
+            surface !== null &&
+            'primary' in surface
+          ? surface.primary
+          : null;
+    return surfaceColor
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
+      : addOpacity(
+          getThemeColor(props.$theme, 'surface.primary', 'transparent'),
+          0.95
+        );
   }};
   backdrop-filter: blur(20px);
   border-radius: 20px;
@@ -167,27 +185,50 @@ const SummaryCard = styled.div<{
       case 'primary':
         return props.$theme?.colors?.primary
           ? addOpacity(props.$theme.colors.primary, 0.1)
-          : addOpacity(getThemeColor(props.$theme, 'primary', 'transparent'), 0.1);
+          : addOpacity(
+              getThemeColor(props.$theme, 'primary', 'transparent'),
+              0.1
+            );
       case 'success':
         return props.$theme?.colors?.success
           ? addOpacity(props.$theme.colors.success, 0.1)
-          : addOpacity(getStatusColor(props.$theme, 'success', 'background') || 'transparent', 0.1);
+          : addOpacity(
+              getStatusColor(props.$theme, 'success', 'background') ||
+                'transparent',
+              0.1
+            );
       case 'warning':
         return props.$theme?.colors?.warning
           ? addOpacity(props.$theme.colors.warning, 0.1)
-          : addOpacity(getStatusColor(props.$theme, 'warning', 'background') || 'transparent', 0.1);
+          : addOpacity(
+              getStatusColor(props.$theme, 'warning', 'background') ||
+                'transparent',
+              0.1
+            );
       case 'info':
         return props.$theme?.colors?.info
           ? addOpacity(props.$theme.colors.info, 0.1)
-          : addOpacity(getStatusColor(props.$theme, 'info', 'background') || 'transparent', 0.1);
+          : addOpacity(
+              getStatusColor(props.$theme, 'info', 'background') ||
+                'transparent',
+              0.1
+            );
       default: {
         const surface = props.$theme?.colors?.surface;
-        const surfaceColor = typeof surface === 'string' 
-          ? surface 
-          : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
-        return surfaceColor 
+        const surfaceColor =
+          typeof surface === 'string'
+            ? surface
+            : typeof surface === 'object' &&
+                surface !== null &&
+                'primary' in surface
+              ? surface.primary
+              : null;
+        return surfaceColor
           ? addOpacity(surfaceColor, 0.8)
-          : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.8);
+          : addOpacity(
+              getThemeColor(props.$theme, 'surface.primary', 'transparent'),
+              0.8
+            );
       }
     }
   }};
@@ -199,19 +240,34 @@ const SummaryCard = styled.div<{
         case 'primary':
           return props.$theme?.colors?.primary
             ? addOpacity(props.$theme.colors.primary, 0.3)
-            : addOpacity(getThemeColor(props.$theme, 'primary', 'transparent'), 0.3);
+            : addOpacity(
+                getThemeColor(props.$theme, 'primary', 'transparent'),
+                0.3
+              );
         case 'success':
           return props.$theme?.colors?.success
             ? addOpacity(props.$theme.colors.success, 0.3)
-            : addOpacity(getStatusColor(props.$theme, 'success', 'background') || 'transparent', 0.3);
+            : addOpacity(
+                getStatusColor(props.$theme, 'success', 'background') ||
+                  'transparent',
+                0.3
+              );
         case 'warning':
           return props.$theme?.colors?.warning
             ? addOpacity(props.$theme.colors.warning, 0.3)
-            : addOpacity(getStatusColor(props.$theme, 'warning', 'background') || 'transparent', 0.3);
+            : addOpacity(
+                getStatusColor(props.$theme, 'warning', 'background') ||
+                  'transparent',
+                0.3
+              );
         case 'info':
           return props.$theme?.colors?.info
             ? addOpacity(props.$theme.colors.info, 0.3)
-            : addOpacity(getStatusColor(props.$theme, 'info', 'background') || 'transparent', 0.3);
+            : addOpacity(
+                getStatusColor(props.$theme, 'info', 'background') ||
+                  'transparent',
+                0.3
+              );
         default:
           return getThemeColor(props.$theme, 'border.primary', 'transparent');
       }
@@ -279,13 +335,21 @@ const SummaryDetails = styled.div<{ $theme?: Theme }>`
 const ConditionsSection = styled.div<{ $theme?: Theme }>`
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    if (typeof surface === 'object' && surface !== null && 'secondary' in surface) {
+    if (
+      typeof surface === 'object' &&
+      surface !== null &&
+      'secondary' in surface
+    ) {
       return surface.secondary;
     }
     const background = props.$theme?.colors?.background;
     if (typeof background === 'string') {
       return background;
-    } else if (typeof background === 'object' && background !== null && 'secondary' in background) {
+    } else if (
+      typeof background === 'object' &&
+      background !== null &&
+      'secondary' in background
+    ) {
       return background.secondary;
     }
     return getThemeColor(props.$theme, 'surface.primary', 'transparent');
@@ -293,15 +357,20 @@ const ConditionsSection = styled.div<{ $theme?: Theme }>`
   border-radius: 12px;
   padding: 1.5rem;
   margin-top: 1.5rem;
-  border: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    if (typeof border === 'string') {
-      return border;
-    } else if (typeof border === 'object' && border !== null && 'primary' in border) {
-      return border.primary;
-    }
-    return getThemeColor(props.$theme, 'border.primary', 'transparent');
-  }};
+  border: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      if (typeof border === 'string') {
+        return border;
+      } else if (
+        typeof border === 'object' &&
+        border !== null &&
+        'primary' in border
+      ) {
+        return border.primary;
+      }
+      return getThemeColor(props.$theme, 'border.primary', 'transparent');
+    }};
 `;
 
 const ConditionsTitle = styled.h3<{ $theme?: Theme }>`
@@ -327,8 +396,8 @@ const ConditionRow = styled.div<{ $theme?: Theme }>`
   &:last-child {
     margin-bottom: 0;
     padding-top: 0.75rem;
-    border-top: 1px solid ${props =>
-      getThemeColor(props.$theme, 'border.primary', 'transparent')};
+    border-top: 1px solid
+      ${props => getThemeColor(props.$theme, 'border.primary', 'transparent')};
     font-weight: 600;
   }
 `;
@@ -357,12 +426,20 @@ const ConditionValue = styled.span<{ $theme?: Theme }>`
 const RequestsSection = styled.section<{ $theme: Theme }>`
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    const surfaceColor = typeof surface === 'string' 
-      ? surface 
-      : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
-    return surfaceColor 
+    const surfaceColor =
+      typeof surface === 'string'
+        ? surface
+        : typeof surface === 'object' &&
+            surface !== null &&
+            'primary' in surface
+          ? surface.primary
+          : null;
+    return surfaceColor
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
+      : addOpacity(
+          getThemeColor(props.$theme, 'surface.primary', 'transparent'),
+          0.95
+        );
   }};
   backdrop-filter: blur(20px);
   border-radius: 20px;
@@ -403,9 +480,11 @@ const RequestType = styled.div<{ $type: 'loan' | 'advance'; $theme?: Theme }>`
   padding: 0.5rem 1rem;
   border-radius: 20px;
   background: ${props => {
-    const color = props.$type === 'loan'
-      ? getStatusColor(props.$theme, 'info', 'background') || 'transparent'
-      : getStatusColor(props.$theme, 'success', 'background') || 'transparent';
+    const color =
+      props.$type === 'loan'
+        ? getStatusColor(props.$theme, 'info', 'background') || 'transparent'
+        : getStatusColor(props.$theme, 'success', 'background') ||
+          'transparent';
     return addOpacity(color, 0.2);
   }};
   color: ${props =>
@@ -427,11 +506,17 @@ const RequestStatus = styled.span<{
   background: ${props => {
     switch (props.$status) {
       case 'pending':
-        return getStatusColor(props.$theme, 'warning', 'background') || 'transparent';
+        return (
+          getStatusColor(props.$theme, 'warning', 'background') || 'transparent'
+        );
       case 'approved':
-        return getStatusColor(props.$theme, 'success', 'background') || 'transparent';
+        return (
+          getStatusColor(props.$theme, 'success', 'background') || 'transparent'
+        );
       case 'rejected':
-        return getStatusColor(props.$theme, 'error', 'background') || 'transparent';
+        return (
+          getStatusColor(props.$theme, 'error', 'background') || 'transparent'
+        );
       case 'paid': {
         const text = props.$theme?.colors?.text;
         if (typeof text === 'object' && text !== null && 'secondary' in text) {
@@ -511,12 +596,20 @@ const RequestActions = styled.div`
 const TermsSection = styled.section<{ $theme: Theme }>`
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    const surfaceColor = typeof surface === 'string' 
-      ? surface 
-      : (typeof surface === 'object' && surface !== null && 'primary' in surface ? surface.primary : null);
-    return surfaceColor 
+    const surfaceColor =
+      typeof surface === 'string'
+        ? surface
+        : typeof surface === 'object' &&
+            surface !== null &&
+            'primary' in surface
+          ? surface.primary
+          : null;
+    return surfaceColor
       ? addOpacity(surfaceColor, 0.95)
-      : addOpacity(getThemeColor(props.$theme, 'surface.primary', 'transparent'), 0.95);
+      : addOpacity(
+          getThemeColor(props.$theme, 'surface.primary', 'transparent'),
+          0.95
+        );
   }};
   backdrop-filter: blur(20px);
   border-radius: 20px;
@@ -624,7 +717,9 @@ export default function LoanManagement() {
         }
 
         // Carregar resumo
-        const summaryResponse = await fetch(`/api/loans/summary?usuarioId=${usuarioId}`);
+        const summaryResponse = await fetch(
+          `/api/loans/summary?usuarioId=${usuarioId}`
+        );
         const summaryResult = await summaryResponse.json();
 
         if (summaryResult.success && summaryResult.data) {
@@ -666,11 +761,13 @@ export default function LoanManagement() {
         newRequest.amount.replace(/[^\d,]/g, '').replace(',', '.')
       );
       const interestRate = newRequest.type === 'loan' ? 2.5 : 0;
-      
+
       // Calcular data de vencimento
       const dueDate = new Date(
         Date.now() + newRequest.installments * 30 * 24 * 60 * 60 * 1000
-      ).toISOString().split('T')[0];
+      )
+        .toISOString()
+        .split('T')[0];
 
       // Obter IDs necessários
       const usuarioId = currentProfile?.id || '';
@@ -710,7 +807,9 @@ export default function LoanManagement() {
         }
 
         // Recarregar resumo
-        const summaryResponse = await fetch(`/api/loans/summary?usuarioId=${usuarioId}`);
+        const summaryResponse = await fetch(
+          `/api/loans/summary?usuarioId=${usuarioId}`
+        );
         const summaryResult = await summaryResponse.json();
         if (summaryResult.success && summaryResult.data) {
           setLoanSummary(summaryResult.data);
@@ -747,17 +846,19 @@ export default function LoanManagement() {
 
       if (result.success) {
         setRequests(prev => prev.filter(req => req.id !== requestId));
-        
+
         // Recarregar resumo
         const usuarioId = currentProfile?.id || '';
         if (usuarioId) {
-          const summaryResponse = await fetch(`/api/loans/summary?usuarioId=${usuarioId}`);
+          const summaryResponse = await fetch(
+            `/api/loans/summary?usuarioId=${usuarioId}`
+          );
           const summaryResult = await summaryResponse.json();
           if (summaryResult.success && summaryResult.data) {
             setLoanSummary(summaryResult.data);
           }
         }
-        
+
         alertManager.showSuccess('Solicitação cancelada!');
       } else {
         alertManager.showError(result.error || 'Erro ao cancelar solicitação');
@@ -782,7 +883,7 @@ export default function LoanManagement() {
 
     try {
       const status = approvalAction === 'approve' ? 'APROVADO' : 'REJEITADO';
-      
+
       const response = await fetch(`/api/loans?id=${selectedRequest.id}`, {
         method: 'PUT',
         headers: {
@@ -791,7 +892,8 @@ export default function LoanManagement() {
         body: JSON.stringify({
           status,
           approvedBy: currentProfile?.name || 'Usuário',
-          rejectionReason: approvalAction === 'reject' ? approvalComment : undefined,
+          rejectionReason:
+            approvalAction === 'reject' ? approvalComment : undefined,
         }),
       });
 
@@ -801,14 +903,18 @@ export default function LoanManagement() {
         // Recarregar lista de empréstimos
         const usuarioId = currentProfile?.id || '';
         if (usuarioId) {
-          const loansResponse = await fetch(`/api/loans?usuarioId=${usuarioId}`);
+          const loansResponse = await fetch(
+            `/api/loans?usuarioId=${usuarioId}`
+          );
           const loansResult = await loansResponse.json();
           if (loansResult.success && loansResult.data) {
             setRequests(loansResult.data);
           }
 
           // Recarregar resumo
-          const summaryResponse = await fetch(`/api/loans/summary?usuarioId=${usuarioId}`);
+          const summaryResponse = await fetch(
+            `/api/loans/summary?usuarioId=${usuarioId}`
+          );
           const summaryResult = await summaryResponse.json();
           if (summaryResult.success && summaryResult.data) {
             setLoanSummary(summaryResult.data);
@@ -949,7 +1055,9 @@ export default function LoanManagement() {
             <SummaryValue $theme={theme}>
               {formatCurrency(loanSummary.totalPending)}
             </SummaryValue>
-            <SummaryDetails $theme={theme}>Solicitações aguardando aprovação</SummaryDetails>
+            <SummaryDetails $theme={theme}>
+              Solicitações aguardando aprovação
+            </SummaryDetails>
           </SummaryCard>
 
           <SummaryCard $theme={theme} $variant='success'>
@@ -1110,7 +1218,9 @@ export default function LoanManagement() {
       {/* Seção de Aprovação (apenas para empregadores) */}
       {currentProfile?.role === 'Empregador' && (
         <UnifiedCard theme={theme} variant='default' size='md'>
-          <OptimizedSectionTitle>Aprovação de Solicitações</OptimizedSectionTitle>
+          <OptimizedSectionTitle>
+            Aprovação de Solicitações
+          </OptimizedSectionTitle>
           <UnifiedCard theme={theme} variant='default' size='md'>
             <UnifiedButton $variant='secondary' $theme={theme}>
               <AccessibleEmoji emoji='📊' label='Dashboard' /> Exportar
@@ -1212,7 +1322,9 @@ export default function LoanManagement() {
                 </FlexRowBetween>
 
                 <RequestInfo>
-                  <RequestTitle $theme={theme}>{request.employeeName}</RequestTitle>
+                  <RequestTitle $theme={theme}>
+                    {request.employeeName}
+                  </RequestTitle>
                   <RequestDetails $theme={theme}>
                     Data:{' '}
                     {new Date(request.requestDate).toLocaleDateString('pt-BR')}
@@ -1387,7 +1499,9 @@ export default function LoanManagement() {
                 {selectedRequest.employeeName} -{' '}
                 {formatCurrency(selectedRequest.totalAmount)}
               </h3>
-              <SectionText $theme={theme}>{selectedRequest.justification}</SectionText>
+              <SectionText $theme={theme}>
+                {selectedRequest.justification}
+              </SectionText>
             </SectionWithMargin>
 
             <FormGroup>
@@ -1447,7 +1561,6 @@ export default function LoanManagement() {
           </div>
         )}
       </UnifiedModal>
-
     </PageContainer>
   );
 }

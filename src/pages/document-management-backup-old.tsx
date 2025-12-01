@@ -7,7 +7,13 @@ import { useAlertManager } from '../hooks/useAlertManager';
 import styled from 'styled-components';
 import FilterSection from '../components/FilterSection';
 import { FormGroup, Input, Label, Select } from '../components/FormComponents';
-import { UnifiedButton, UnifiedModal, UnifiedBadge, UnifiedMetaInfo, UnifiedProgressBar } from '../components/unified';
+import {
+  UnifiedButton,
+  UnifiedModal,
+  UnifiedBadge,
+  UnifiedMetaInfo,
+  UnifiedProgressBar,
+} from '../components/unified';
 import PageContainer from '../components/PageContainer';
 import PageHeader from '../components/PageHeader';
 import Sidebar from '../components/Sidebar';
@@ -57,7 +63,7 @@ interface DocumentCategory {
 // UploadSection removido - usar UnifiedCard com wrapper para drag & drop
 const UploadCardWrapper = styled.div<{ $theme: Theme; $isDragOver: boolean }>`
   margin-bottom: 2rem;
-  
+
   /* Sobrescrever estilos do UnifiedCard para drag & drop */
   > div {
     border: 2px dashed
@@ -66,7 +72,12 @@ const UploadCardWrapper = styled.div<{ $theme: Theme; $isDragOver: boolean }>`
           ? props.$theme?.colors?.primary || defaultColors.primary
           : (() => {
               const border = props.$theme?.colors?.border;
-              return (typeof border === 'object' && border && (border as any).primary) || (typeof border === 'string' ? border : defaultColors.border);
+              return (
+                (typeof border === 'object' &&
+                  border &&
+                  (border as any).primary) ||
+                (typeof border === 'string' ? border : defaultColors.border)
+              );
             })()} !important;
     text-align: center;
     cursor: pointer;
@@ -96,7 +107,10 @@ const UploadText = styled.div<{ $theme?: Theme }>`
     margin: 0 0 0.5rem 0;
     color: ${props => {
       const text = props.$theme?.colors?.text;
-      return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+      return (
+        (text && typeof text === 'object' && text.primary) ||
+        defaultColors.text.primary
+      );
     }};
     font-size: 1.25rem;
   }
@@ -105,7 +119,10 @@ const UploadText = styled.div<{ $theme?: Theme }>`
     margin: 0;
     color: ${props => {
       const text = props.$theme?.colors?.text;
-      return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+      return (
+        (text && typeof text === 'object' && text.secondary) ||
+        defaultColors.text.secondary
+      );
     }};
     font-size: 0.9rem;
   }
@@ -138,17 +155,25 @@ const DocumentForm = styled.form`
 // TextArea mantido - usar tokens para cores (sem hardcoded)
 const TextArea = styled.textarea<{ $theme: Theme }>`
   padding: 0.75rem;
-  border: 2px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border && (border as any).primary) || (typeof border === 'string' ? border : defaultColors.border);
-  }};
+  border: 2px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border && (border as any).primary) ||
+        (typeof border === 'string' ? border : defaultColors.border)
+      );
+    }};
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    const surfaceColor = (typeof surface === 'object' && surface && (surface as any).primary) || (typeof surface === 'string' ? surface : null);
-    return surfaceColor || props.$theme?.colors?.background || defaultColors.surface;
+    const surfaceColor =
+      (typeof surface === 'object' && surface && (surface as any).primary) ||
+      (typeof surface === 'string' ? surface : null);
+    return (
+      surfaceColor || props.$theme?.colors?.background || defaultColors.surface
+    );
   }};
   resize: vertical;
   min-height: 100px;
@@ -157,14 +182,20 @@ const TextArea = styled.textarea<{ $theme: Theme }>`
     outline: none;
     border-color: ${props => {
       const border = props.$theme?.colors?.border;
-      const borderFocus = (typeof border === 'object' && border && (border as any).focus) || null;
-      return props.$theme?.colors?.primary || borderFocus || defaultColors.primary;
+      const borderFocus =
+        (typeof border === 'object' && border && (border as any).focus) || null;
+      return (
+        props.$theme?.colors?.primary || borderFocus || defaultColors.primary
+      );
     }};
     box-shadow: 0 0 0 3px
       ${props => {
         const border = props.$theme?.colors?.border;
-        const borderFocus = (typeof border === 'object' && border && (border as any).focus) || null;
-        const color = props.$theme?.colors?.primary || borderFocus || defaultColors.primary;
+        const borderFocus =
+          (typeof border === 'object' && border && (border as any).focus) ||
+          null;
+        const color =
+          props.$theme?.colors?.primary || borderFocus || defaultColors.primary;
         // Converter para rgba com opacidade
         const hexMatch = color.match(/^#([A-Fa-f\d]{6})$/);
         if (hexMatch) {
@@ -197,7 +228,10 @@ const DocumentNameWrapper = styled.div<{ $theme?: Theme }>`
     font-size: 0.8rem;
     color: ${props => {
       const text = props.$theme?.colors?.text;
-      return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+      return (
+        (text && typeof text === 'object' && text.secondary) ||
+        defaultColors.text.secondary
+      );
     }};
     max-width: 280px;
   }
@@ -224,7 +258,10 @@ const DocumentTitle = styled.h3<{ $theme?: Theme }>`
   margin: 0 0 0.5rem 0;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+    return (
+      (text && typeof text === 'object' && text.primary) ||
+      defaultColors.text.primary
+    );
   }};
 `;
 
@@ -232,7 +269,10 @@ const DocumentSubtitle = styled.p<{ $theme?: Theme }>`
   margin: 0 0 1rem 0;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.secondary) || defaultColors.text.secondary;
+    return (
+      (text && typeof text === 'object' && text.secondary) ||
+      defaultColors.text.secondary
+    );
   }};
 `;
 
@@ -241,9 +281,13 @@ const DocumentInfoContainer = styled.div<{ $theme?: Theme }>`
   padding: 1rem;
   background: ${props => {
     const surface = props.$theme?.colors?.surface;
-    const surfaceColor = (typeof surface === 'object' && surface && (surface as any).secondary) || (typeof surface === 'string' ? surface : null);
+    const surfaceColor =
+      (typeof surface === 'object' && surface && (surface as any).secondary) ||
+      (typeof surface === 'string' ? surface : null);
     const bgColor = props.$theme?.colors?.background;
-    const bgColorStr = (typeof bgColor === 'object' && bgColor && (bgColor as any).primary) || (typeof bgColor === 'string' ? bgColor : null);
+    const bgColorStr =
+      (typeof bgColor === 'object' && bgColor && (bgColor as any).primary) ||
+      (typeof bgColor === 'string' ? bgColor : null);
     return surfaceColor || bgColorStr || defaultColors.surface;
   }};
   border-radius: 8px;
@@ -254,7 +298,10 @@ const DocumentInfoTitle = styled.h4<{ $theme?: Theme }>`
   margin: 0 0 0.5rem 0;
   color: ${props => {
     const text = props.$theme?.colors?.text;
-    return (text && typeof text === 'object' && text.primary) || defaultColors.text.primary;
+    return (
+      (text && typeof text === 'object' && text.primary) ||
+      defaultColors.text.primary
+    );
   }};
 `;
 
@@ -269,7 +316,9 @@ export default function DocumentManagement() {
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(
     null
   );
-  const [selectedDocumentIdForChat, setSelectedDocumentIdForChat] = useState<string | null>(null); // ✅ NOVO: Para comunicação contextual
+  const [selectedDocumentIdForChat, setSelectedDocumentIdForChat] = useState<
+    string | null
+  >(null); // ✅ NOVO: Para comunicação contextual
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -338,7 +387,11 @@ export default function DocumentManagement() {
       render: (item: DataListItem) => {
         const categoryInfo = getCategoryInfo(item.category);
         return (
-          <UnifiedBadge customColor={categoryInfo.color} size="sm" theme={theme}>
+          <UnifiedBadge
+            customColor={categoryInfo.color}
+            size='sm'
+            theme={theme}
+          >
             {item.category}
           </UnifiedBadge>
         );
@@ -351,11 +404,19 @@ export default function DocumentManagement() {
       render: (item: DataListItem) => (
         <UnifiedMetaInfo
           items={[
-            { label: 'Tamanho', value: item.fileSize, icon: <AccessibleEmoji emoji='📊' label='Tamanho' /> },
-            { label: 'Data', value: new Date(item.uploadDate).toLocaleDateString('pt-BR'), icon: <AccessibleEmoji emoji='📅' label='Data' /> },
+            {
+              label: 'Tamanho',
+              value: item.fileSize,
+              icon: <AccessibleEmoji emoji='📊' label='Tamanho' />,
+            },
+            {
+              label: 'Data',
+              value: new Date(item.uploadDate).toLocaleDateString('pt-BR'),
+              icon: <AccessibleEmoji emoji='📅' label='Data' />,
+            },
           ]}
-          variant="horizontal"
-          size="sm"
+          variant='horizontal'
+          size='sm'
           theme={theme}
         />
       ),
@@ -367,7 +428,12 @@ export default function DocumentManagement() {
       render: (item: DataListItem) => {
         if (!item.dueDate) return '-';
         return (
-          <UnifiedBadge variant="error" size="sm" theme={theme} icon={<AccessibleEmoji emoji='📅' label='Vencimento' />}>
+          <UnifiedBadge
+            variant='error'
+            size='sm'
+            theme={theme}
+            icon={<AccessibleEmoji emoji='📅' label='Vencimento' />}
+          >
             {new Date(item.dueDate).toLocaleDateString('pt-BR')}
           </UnifiedBadge>
         );
@@ -384,9 +450,12 @@ export default function DocumentManagement() {
           shared: 'warning' as const,
         };
         return (
-          <UnifiedBadge 
-            variant={variantMap[item.permissions as keyof typeof variantMap] || 'neutral'}
-            size="sm" 
+          <UnifiedBadge
+            variant={
+              variantMap[item.permissions as keyof typeof variantMap] ||
+              'neutral'
+            }
+            size='sm'
             theme={theme}
           >
             {item.permissions === 'public'
@@ -791,26 +860,57 @@ export default function DocumentManagement() {
               >
                 {getCategoryInfo(selectedDocument.category).icon}
               </DocumentIcon>
-              <DocumentTitle $theme={theme}>{selectedDocument.name}</DocumentTitle>
+              <DocumentTitle $theme={theme}>
+                {selectedDocument.name}
+              </DocumentTitle>
               <DocumentSubtitle $theme={theme}>
                 {selectedDocument.fileType} • {selectedDocument.fileSize}
               </DocumentSubtitle>
             </DocumentViewer>
 
             <DocumentInfoContainer $theme={theme}>
-              <DocumentInfoTitle $theme={theme}>Informações do Documento</DocumentInfoTitle>
+              <DocumentInfoTitle $theme={theme}>
+                Informações do Documento
+              </DocumentInfoTitle>
               <UnifiedMetaInfo
                 items={[
                   { label: 'Categoria', value: selectedDocument.category },
-                  ...(selectedDocument.description ? [{ label: 'Descrição', value: selectedDocument.description }] : []),
-                  ...(selectedDocument.dueDate ? [{ label: 'Data de Vencimento', value: new Date(selectedDocument.dueDate).toLocaleDateString('pt-BR') }] : []),
-                  { label: 'Data de Upload', value: new Date(selectedDocument.uploadDate).toLocaleDateString('pt-BR') },
-                  { 
-                    label: 'Permissões', 
+                  ...(selectedDocument.description
+                    ? [
+                        {
+                          label: 'Descrição',
+                          value: selectedDocument.description,
+                        },
+                      ]
+                    : []),
+                  ...(selectedDocument.dueDate
+                    ? [
+                        {
+                          label: 'Data de Vencimento',
+                          value: new Date(
+                            selectedDocument.dueDate
+                          ).toLocaleDateString('pt-BR'),
+                        },
+                      ]
+                    : []),
+                  {
+                    label: 'Data de Upload',
+                    value: new Date(
+                      selectedDocument.uploadDate
+                    ).toLocaleDateString('pt-BR'),
+                  },
+                  {
+                    label: 'Permissões',
                     value: (
-                      <UnifiedBadge 
-                        variant={selectedDocument.permissions === 'public' ? 'success' : selectedDocument.permissions === 'private' ? 'error' : 'warning'}
-                        size="sm" 
+                      <UnifiedBadge
+                        variant={
+                          selectedDocument.permissions === 'public'
+                            ? 'success'
+                            : selectedDocument.permissions === 'private'
+                              ? 'error'
+                              : 'warning'
+                        }
+                        size='sm'
                         theme={theme}
                       >
                         {selectedDocument.permissions === 'public'
@@ -819,10 +919,10 @@ export default function DocumentManagement() {
                             ? 'Privado'
                             : 'Compartilhado'}
                       </UnifiedBadge>
-                    )
+                    ),
                   },
                 ]}
-                variant="vertical"
+                variant='vertical'
                 theme={theme}
               />
             </DocumentInfoContainer>
@@ -935,9 +1035,9 @@ export default function DocumentManagement() {
             {modalType === 'upload' && uploadProgress < 100 && (
               <UploadProgressContainer>
                 <OptimizedLabel>Progresso do Upload</OptimizedLabel>
-                <UnifiedProgressBar 
-                  value={uploadProgress} 
-                  variant="primary" 
+                <UnifiedProgressBar
+                  value={uploadProgress}
+                  variant='primary'
                   theme={theme}
                   showLabel
                   label={`${uploadProgress}% concluído`}
@@ -972,10 +1072,10 @@ export default function DocumentManagement() {
           $theme={theme}
         >
           <ContextualChat
-            contextoTipo="DOCUMENTO"
+            contextoTipo='DOCUMENTO'
             contextoId={selectedDocumentIdForChat}
             titulo={`Comunicação sobre este Documento`}
-            altura="500px"
+            altura='500px'
             onMensagemEnviada={() => {
               // Recarregar documentos ou atualizar UI se necessário
               // loadDocuments(); // Se houver função de reload

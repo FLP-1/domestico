@@ -147,7 +147,9 @@ async function updateSystemConfig(req: NextApiRequest, res: NextApiResponse) {
     const { valor, descricao, editavel } = req.body;
 
     if (!id) {
-      return res.status(400).json({ success: false, error: 'ID é obrigatório' });
+      return res
+        .status(400)
+        .json({ success: false, error: 'ID é obrigatório' });
     }
 
     // Buscar configuração existente para manter o tipo
@@ -213,7 +215,9 @@ async function deleteSystemConfig(req: NextApiRequest, res: NextApiResponse) {
     const { id } = req.query;
 
     if (!id) {
-      return res.status(400).json({ success: false, error: 'ID é obrigatório' });
+      return res
+        .status(400)
+        .json({ success: false, error: 'ID é obrigatório' });
     }
 
     await prisma.configuracaoSistema.delete({

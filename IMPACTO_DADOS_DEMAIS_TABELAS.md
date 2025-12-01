@@ -8,6 +8,7 @@
 ## 🎯 CENÁRIOS IMPLEMENTADOS
 
 ### **Cenário 1: Empregado em múltiplos grupos**
+
 - **Usuário:** Ana Costa (empregado1)
 - **Perfil:** EMPREGADO
 - **Grupos:**
@@ -15,6 +16,7 @@
   - Casa de Verão (grupo2) - papel: MEMBRO
 
 ### **Cenário 2: Mesmo CPF com perfis diferentes**
+
 - **Usuário:** Francisco Silva (empregador1)
 - **Perfis:**
   - EMPREGADOR (principal) - Casa Principal (grupo1)
@@ -27,6 +29,7 @@
 ### **1. RegistroPonto** ⏰
 
 **Campos relacionados:**
+
 - `usuarioId` - ID do usuário
 - `grupoId` - ID do grupo (opcional)
 - `usuarioPerfilId` - ID do perfil do usuário (opcional)
@@ -54,6 +57,7 @@
 ```
 
 **Status atual no seed:** ✅ **CORRETO**
+
 - Registros de Ana Costa estão apenas no grupo1
 - **RECOMENDAÇÃO:** Adicionar registros de Ana Costa também no grupo2 para testar o cenário completo
 
@@ -84,6 +88,7 @@
 ```
 
 **Status atual no seed:** ⚠️ **PARCIAL**
+
 - Não há registros de ponto para empregador1 (normal, pois é empregador)
 - Se necessário testar, pode adicionar registros como FAMILIA no grupo2
 
@@ -92,6 +97,7 @@
 ### **2. SolicitacaoHoraExtra** ⏱️
 
 **Campos relacionados:**
+
 - `usuarioId` - ID do usuário
 - `grupoId` - ID do grupo (opcional)
 - `usuarioPerfilId` - ID do perfil do usuário (opcional)
@@ -123,6 +129,7 @@
 ```
 
 **Status atual no seed:** ⚠️ **PARCIAL**
+
 - Há solicitação de Ana Costa apenas no grupo1
 - **RECOMENDAÇÃO:** Adicionar solicitação também no grupo2
 
@@ -137,6 +144,7 @@
 ```
 
 **Status atual no seed:** ✅ **CORRETO**
+
 - Não há solicitações para empregador1 (normal)
 
 ---
@@ -144,6 +152,7 @@
 ### **3. LocalTrabalho** 📍
 
 **Campos relacionados:**
+
 - `grupoId` - ID do grupo (obrigatório)
 - `empregadorId` - ID do empregador
 - `criadoPor` - ID do usuário que criou
@@ -169,6 +178,7 @@
 ```
 
 **Status atual no seed:** ✅ **CORRETO**
+
 - Cada grupo tem seu próprio local de trabalho
 - Empregador correto associado a cada grupo
 
@@ -177,6 +187,7 @@
 ### **4. Tarefa** 📋
 
 **Campos relacionados:**
+
 - `atribuidoPara` - ID do usuário (pode estar em múltiplos grupos)
 - `criadoPor` - ID do usuário que criou
 - `grupoId` - ID do grupo (se aplicável)
@@ -206,6 +217,7 @@
 ```
 
 **Status atual no seed:** ⚠️ **VERIFICAR**
+
 - Verificar se há tarefas atribuídas a Ana Costa
 - Se houver, verificar se estão associadas ao grupo correto
 
@@ -214,6 +226,7 @@
 ### **5. Documento** 📄
 
 **Campos relacionados:**
+
 - `usuarioId` - ID do usuário que criou
 - `grupoId` - ID do grupo (se aplicável)
 - `compartilhamentos` - Via `DocumentoCompartilhamento`
@@ -239,6 +252,7 @@
 ```
 
 **Status atual no seed:** ⚠️ **VERIFICAR**
+
 - Verificar se há documentos associados aos grupos corretos
 
 ---
@@ -246,6 +260,7 @@
 ### **6. Mensagem/Conversa** 💬
 
 **Campos relacionados:**
+
 - `conversaId` - ID da conversa
 - `usuarioId` - ID do usuário que enviou
 - `grupoId` - ID do grupo (se conversa de grupo)
@@ -281,6 +296,7 @@
 ```
 
 **Status atual no seed:** ⚠️ **VERIFICAR**
+
 - Verificar se há conversas de grupo criadas
 - Verificar se participantes estão corretos
 
@@ -289,6 +305,7 @@
 ### **7. Emprestimo** 💰
 
 **Campos relacionados:**
+
 - `usuarioId` - ID do usuário que solicitou
 - `grupoId` - ID do grupo (se aplicável)
 
@@ -313,6 +330,7 @@
 ```
 
 **Status atual no seed:** ⚠️ **VERIFICAR**
+
 - Verificar se há empréstimos associados aos grupos corretos
 
 ---
@@ -320,6 +338,7 @@
 ### **8. Alerta** 🔔
 
 **Campos relacionados:**
+
 - `usuarioId` - ID do usuário (se alerta pessoal)
 - `grupoId` - ID do grupo (se alerta de grupo)
 
@@ -344,6 +363,7 @@
 ```
 
 **Status atual no seed:** ⚠️ **VERIFICAR**
+
 - Verificar se há alertas associados aos grupos corretos
 
 ---
@@ -391,6 +411,7 @@
 ### **Prioridade ALTA:**
 
 1. **Adicionar registros de ponto de Ana Costa no grupo2:**
+
    ```typescript
    {
      usuarioId: usuarios.empregado1.id,
@@ -444,4 +465,3 @@ A maioria dos dados está correta, mas alguns precisam ser ajustados para reflet
 ---
 
 **Documento gerado em:** 08/01/2025
-

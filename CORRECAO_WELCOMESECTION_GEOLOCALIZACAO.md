@@ -3,10 +3,12 @@
 ## 🚨 Problema Identificado
 
 **Sintoma:**
+
 - Teste de GPS na página de diagnóstico: ✅ **SUCESSO** (coordenadas corretas: `-23.6140339, -46.6334024`)
 - WelcomeSection: ❌ **ERRO** (coordenadas antigas: `-23.615898, -46.638694`)
 
 **Causa:**
+
 - O `useSmartGeolocation` tem atualizações automáticas **desabilitadas** (comentadas) para evitar violação de política de geolocalização
 - O WelcomeSection está usando `lastLocation` do contexto que pode conter dados antigos
 - Não há captura automática quando o componente monta
@@ -20,17 +22,29 @@
 ```typescript
 // ✅ Forçar captura quando componente monta se não há localização recente/precisa
 useEffect(() => {
-  if (isClient && canCapture && (!currentLocation || !isDataRecent || !isDataAccurate)) {
+  if (
+    isClient &&
+    canCapture &&
+    (!currentLocation || !isDataRecent || !isDataAccurate)
+  ) {
     // Aguardar um pouco para não interferir com outras capturas
     const timer = setTimeout(() => {
       captureLocation('welcomeSection-mount');
     }, 1000);
     return () => clearTimeout(timer);
   }
-}, [isClient, canCapture, currentLocation, isDataRecent, isDataAccurate, captureLocation]);
+}, [
+  isClient,
+  canCapture,
+  currentLocation,
+  isDataRecent,
+  isDataAccurate,
+  captureLocation,
+]);
 ```
 
 **Lógica:**
+
 - ✅ Só captura se não há localização (`!currentLocation`)
 - ✅ OU se a localização não é recente (`!isDataRecent`)
 - ✅ OU se a localização não é precisa (`!isDataAccurate`)
@@ -54,6 +68,7 @@ O `useSmartGeolocation` tem código comentado que causava violação de polític
 ### 2. Contexto com Dados Antigos
 
 O `GeolocationContext` pode manter dados antigos se não houver atualização:
+
 - Dados antigos: `-23.615898, -46.638694` (precisão ruim)
 - Dados novos: `-23.6140339, -46.6334024` (precisão excelente)
 
@@ -73,6 +88,7 @@ O WelcomeSection apenas mostrava `lastLocation` do contexto sem verificar se est
 ### 2. Lógica de Atualização no Contexto
 
 O `updateLastLocationIfBetter` já tem lógica para:
+
 - ✅ Sempre atualizar se não há localização anterior
 - ✅ Atualizar se a nova é mais recente
 - ✅ Atualizar se a nova é mais precisa
@@ -83,6 +99,7 @@ O `updateLastLocationIfBetter` já tem lógica para:
 ### 1. Testar WelcomeSection
 
 Após a correção:
+
 1. Recarregar a página
 2. Verificar se WelcomeSection mostra coordenadas corretas
 3. Verificar se não há mais "Imprecisa"
@@ -90,6 +107,7 @@ Após a correção:
 ### 2. Se Problema Persistir
 
 **Opção A: Limpar contexto manualmente**
+
 ```typescript
 // No console do navegador:
 localStorage.clear();
@@ -98,6 +116,7 @@ sessionStorage.clear();
 ```
 
 **Opção B: Verificar se há cache no servidor**
+
 - Verificar se `/api/time-clock/last` retorna dados antigos
 - Se sim, limpar dados antigos do banco
 
@@ -110,6 +129,7 @@ sessionStorage.clear();
 ## 🎯 Resultado Esperado
 
 Após a correção:
+
 - ✅ WelcomeSection deve mostrar coordenadas corretas (`-23.6140339, -46.6334024`)
 - ✅ Precisão deve ser < 50m (não deve mostrar "Imprecisa")
 - ✅ Coordenadas devem atualizar automaticamente quando necessário
@@ -119,4 +139,3 @@ Após a correção:
 - ✅ Correção aplicada no WelcomeSection
 - ✅ Lógica de captura condicional implementada
 - ⏳ Aguardando teste para confirmar funcionamento
-

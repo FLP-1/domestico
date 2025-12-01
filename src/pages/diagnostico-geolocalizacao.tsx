@@ -13,13 +13,13 @@ import PageHeader from '../components/PageHeader';
 import { UnifiedButton } from '../components/unified';
 
 const Section = styled.section.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: any }>`
-  background: ${props => 
-    props.$theme?.colors?.background?.primary || 
+  background: ${props =>
+    props.$theme?.colors?.background?.primary ||
     props.$theme?.background?.primary ||
     'transparent'};
   border-radius: 8px;
@@ -38,15 +38,13 @@ const Section = styled.section.withConfig({
 `;
 
 const SectionTitle = styled.h2.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: any }>`
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
-    'inherit'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
   margin-bottom: 1rem;
   font-size: 1.5rem;
 `;
@@ -54,63 +52,63 @@ const SectionTitle = styled.h2.withConfig({
 // Button removido - usando UnifiedButton
 
 const InfoBox = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: any }>`
-  background: ${props => 
-    props.$theme?.colors?.background?.secondary || 
+  background: ${props =>
+    props.$theme?.colors?.background?.secondary ||
     props.$theme?.background?.secondary ||
     'transparent'};
-  border-left: 4px solid ${props => 
-    getThemeColor(props.$theme, 'colors.primary', 'transparent')};
+  border-left: 4px solid
+    ${props => getThemeColor(props.$theme, 'colors.primary', 'transparent')};
   padding: 1rem;
   margin-bottom: 1rem;
   border-radius: 4px;
 `;
 
 const ErrorBox = styled(InfoBox)<{ $theme?: any }>`
-  border-left-color: ${props => 
+  border-left-color: ${props =>
     props.$theme?.colors?.status?.error?.border ||
     props.$theme?.status?.error?.border ||
     'transparent'};
-  background: ${props => 
+  background: ${props =>
     props.$theme?.colors?.status?.error?.background ||
     props.$theme?.status?.error?.background ||
     'transparent'};
 `;
 
 const SuccessBox = styled(InfoBox)<{ $theme?: any }>`
-  border-left-color: ${props => 
+  border-left-color: ${props =>
     props.$theme?.colors?.status?.success?.border ||
     props.$theme?.status?.success?.border ||
     'transparent'};
-  background: ${props => 
+  background: ${props =>
     props.$theme?.colors?.status?.success?.background ||
     props.$theme?.status?.success?.background ||
     'transparent'};
 `;
 
 const WarningBox = styled(InfoBox)<{ $theme?: any }>`
-  border-left-color: ${props => 
+  border-left-color: ${props =>
     props.$theme?.colors?.status?.warning?.border ||
     props.$theme?.status?.warning?.border ||
     'transparent'};
-  background: ${props => 
+  background: ${props =>
     props.$theme?.colors?.status?.warning?.background ||
     props.$theme?.status?.warning?.background ||
     'transparent'};
 `;
 
 const CodeBlock = styled.pre.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: any }>`
-  background: ${props => 
-    props.$theme?.colors?.background?.secondary || 
+  background: ${props =>
+    props.$theme?.colors?.background?.secondary ||
     props.$theme?.background?.secondary ||
     'transparent'};
   padding: 1rem;
@@ -128,62 +126,60 @@ const Grid = styled.div`
 `;
 
 const Card = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: any }>`
-  background: ${props => 
-    props.$theme?.colors?.background?.secondary || 
+  background: ${props =>
+    props.$theme?.colors?.background?.secondary ||
     props.$theme?.background?.secondary ||
     'transparent'};
   padding: 1rem;
   border-radius: 4px;
-  border: 1px solid ${props => 
-    props.$theme?.colors?.border?.light || 
-    props.$theme?.border?.light ||
-    'transparent'};
+  border: 1px solid
+    ${props =>
+      props.$theme?.colors?.border?.light ||
+      props.$theme?.border?.light ||
+      'transparent'};
 `;
 
 const Label = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: any }>`
   font-weight: bold;
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
     props.$theme?.text?.secondary ||
     'inherit'};
   margin-bottom: 0.5rem;
 `;
 
 const Value = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: any }>`
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark ||
-    'inherit'};
+  color: ${props =>
+    props.$theme?.colors?.text?.dark || props.$theme?.text?.dark || 'inherit'};
   font-size: 1.1rem;
   word-break: break-all;
 `;
 
 const Link = styled.a.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
 })<{ $theme?: any }>`
-  color: ${props => 
-    getThemeColor(props.$theme, 'colors.primary', 'inherit')};
+  color: ${props => getThemeColor(props.$theme, 'colors.primary', 'inherit')};
   text-decoration: underline;
   word-break: break-all;
-  
+
   &:hover {
     opacity: 0.9;
   }
@@ -197,7 +193,7 @@ const FlexContainer = styled.div`
 `;
 
 const StatusSpan = styled.span.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -279,10 +275,15 @@ export default function DiagnosticoGeolocalizacao() {
   const { currentProfile } = useUserProfile();
   const profileRole = currentProfile?.role?.toLowerCase() || 'empregado';
   const themeObject = useTheme(profileRole);
-  const theme: Theme = themeObject && themeObject.colors ? { colors: themeObject.colors } as Theme : { colors: {} } as Theme;
-  
+  const theme: Theme =
+    themeObject && themeObject.colors
+      ? ({ colors: themeObject.colors } as Theme)
+      : ({ colors: {} } as Theme);
+
   // Helper para acessar status.text de forma segura
-  const getStatusText = (statusType: 'success' | 'error' | 'warning' | 'info'): string => {
+  const getStatusText = (
+    statusType: 'success' | 'error' | 'warning' | 'info'
+  ): string => {
     const status = theme?.colors?.status?.[statusType];
     if (typeof status === 'object' && status && 'text' in status) {
       return String((status as any).text);
@@ -303,12 +304,12 @@ export default function DiagnosticoGeolocalizacao() {
   } | null>(null);
   const [userAgent, setUserAgent] = useState<string>('');
   const [isMounted, setIsMounted] = useState(false);
-  
+
   const { captureLocation } = useSmartGeolocation({
     enableLogging: true,
     minAccuracy: 30,
   });
-  
+
   const { lastLocation } = useGeolocationContext();
 
   // ✅ Prevenir erro de hidratação: só acessar navigator no cliente
@@ -320,25 +321,31 @@ export default function DiagnosticoGeolocalizacao() {
   }, []);
 
   // Coordenadas reais fornecidas pelo usuário
-  const REAL_COORDINATES = useMemo(() => ({
-    lat: -23.614260,
-    lon: -46.633498,
-  }), []);
+  const REAL_COORDINATES = useMemo(
+    () => ({
+      lat: -23.61426,
+      lon: -46.633498,
+    }),
+    []
+  );
 
-  const calculateDistance = useCallback((lat1: number, lon1: number, lat2: number, lon2: number): number => {
-    const R = 6371e3; // Raio da Terra em metros
-    const φ1 = lat1 * Math.PI / 180;
-    const φ2 = lat2 * Math.PI / 180;
-    const Δφ = (lat2 - lat1) * Math.PI / 180;
-    const Δλ = (lon2 - lon1) * Math.PI / 180;
+  const calculateDistance = useCallback(
+    (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+      const R = 6371e3; // Raio da Terra em metros
+      const φ1 = (lat1 * Math.PI) / 180;
+      const φ2 = (lat2 * Math.PI) / 180;
+      const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+      const Δλ = ((lon2 - lon1) * Math.PI) / 180;
 
-    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-              Math.cos(φ1) * Math.cos(φ2) *
-              Math.sin(Δλ/2) * Math.sin(Δλ/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      const a =
+        Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+        Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return R * c; // Distância em metros
-  }, []);
+      return R * c; // Distância em metros
+    },
+    []
+  );
 
   const testGPS = useCallback(async () => {
     setLoading(true);
@@ -348,94 +355,97 @@ export default function DiagnosticoGeolocalizacao() {
 
     try {
       console.log('🔄 Iniciando teste de GPS...');
-      
+
       // Capturar localização usando watchPosition diretamente para diagnóstico
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        let watchId: number | null = null;
-        let bestPos: GeolocationPosition | null = null;
-        let bestAccuracy = Infinity;
-        let positionsReceived = 0;
-        
-        if (typeof window === 'undefined' || !navigator.geolocation) {
-          reject(new Error('Geolocalização não disponível no servidor'));
-          return;
-        }
+      const position = await new Promise<GeolocationPosition>(
+        (resolve, reject) => {
+          let watchId: number | null = null;
+          let bestPos: GeolocationPosition | null = null;
+          let bestAccuracy = Infinity;
+          let positionsReceived = 0;
 
-        const timeout = setTimeout(() => {
-          if (watchId !== null) {
-            navigator.geolocation.clearWatch(watchId);
+          if (typeof window === 'undefined' || !navigator.geolocation) {
+            reject(new Error('Geolocalização não disponível no servidor'));
+            return;
           }
-          if (bestPos) {
-            resolve(bestPos);
-          } else {
-            reject(new Error('Timeout na captura de geolocalização'));
-          }
-        }, 30000);
 
-        watchId = navigator.geolocation.watchPosition(
-          (pos) => {
-            positionsReceived++;
-            console.log(`📍 Posição ${positionsReceived} recebida:`, {
-              accuracy: Math.round(pos.coords.accuracy),
-              lat: pos.coords.latitude,
-              lon: pos.coords.longitude,
-              altitude: pos.coords.altitude,
-              heading: pos.coords.heading,
-              speed: pos.coords.speed,
-            });
-
-            if (pos.coords.accuracy < bestAccuracy) {
-              bestPos = pos;
-              bestAccuracy = pos.coords.accuracy;
+          const timeout = setTimeout(() => {
+            if (watchId !== null) {
+              navigator.geolocation.clearWatch(watchId);
             }
+            if (bestPos) {
+              resolve(bestPos);
+            } else {
+              reject(new Error('Timeout na captura de geolocalização'));
+            }
+          }, 30000);
 
-            // ✅ Aceitar se accuracy < 30m OU após 5 posições OU após 3 posições com accuracy < 200m
-            if (
-              pos.coords.accuracy < 30 || 
-              positionsReceived >= 5 ||
-              (positionsReceived >= 3 && bestPos && bestAccuracy < 200)
-            ) {
+          watchId = navigator.geolocation.watchPosition(
+            pos => {
+              positionsReceived++;
+              console.log(`📍 Posição ${positionsReceived} recebida:`, {
+                accuracy: Math.round(pos.coords.accuracy),
+                lat: pos.coords.latitude,
+                lon: pos.coords.longitude,
+                altitude: pos.coords.altitude,
+                heading: pos.coords.heading,
+                speed: pos.coords.speed,
+              });
+
+              if (pos.coords.accuracy < bestAccuracy) {
+                bestPos = pos;
+                bestAccuracy = pos.coords.accuracy;
+              }
+
+              // ✅ Aceitar se accuracy < 30m OU após 5 posições OU após 3 posições com accuracy < 200m
+              if (
+                pos.coords.accuracy < 30 ||
+                positionsReceived >= 5 ||
+                (positionsReceived >= 3 && bestPos && bestAccuracy < 200)
+              ) {
+                clearTimeout(timeout);
+                if (watchId !== null) {
+                  navigator.geolocation.clearWatch(watchId);
+                }
+                // ✅ Sempre usar a melhor posição recebida, mesmo que não seja perfeita
+                resolve(bestPos!);
+              }
+            },
+            err => {
               clearTimeout(timeout);
               if (watchId !== null) {
                 navigator.geolocation.clearWatch(watchId);
               }
-              // ✅ Sempre usar a melhor posição recebida, mesmo que não seja perfeita
-              resolve(bestPos!);
+              reject(err);
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 30000,
+              maximumAge: 0,
             }
-          },
-          (err) => {
-            clearTimeout(timeout);
-            if (watchId !== null) {
-              navigator.geolocation.clearWatch(watchId);
-            }
-            reject(err);
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 30000,
-            maximumAge: 0,
-          }
-        );
-      });
+          );
+        }
+      );
 
       // ✅ GPS real: altitude/heading/speed OU alta precisão (< 50m)
       // Alta precisão indica GPS real mesmo sem altitude/heading/speed
       // Em desktop, mesmo com Windows Location Service, pode não ter altitude/heading/speed
       // Mas se accuracy melhorar ao longo do tempo (watchPosition), é GPS real
       const hasGPSIndicators = !!(
-        position.coords.altitude || 
-        position.coords.heading !== null || 
+        position.coords.altitude ||
+        position.coords.heading !== null ||
         position.coords.speed !== null
       );
-      
+
       // ✅ Em desktop, precisão < 100m com enableHighAccuracy geralmente indica GPS/WiFi triangulation
       // Precisão > 1000m geralmente indica localização por IP (não GPS)
       const isHighAccuracy = position.coords.accuracy < 100;
       const isVeryLowAccuracy = position.coords.accuracy > 1000;
-      
+
       // GPS real se tem indicadores OU se tem boa precisão (não é IP)
-      const isRealGPS = hasGPSIndicators || (isHighAccuracy && !isVeryLowAccuracy);
-      
+      const isRealGPS =
+        hasGPSIndicators || (isHighAccuracy && !isVeryLowAccuracy);
+
       const info: GPSInfo = {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
@@ -480,9 +490,13 @@ export default function DiagnosticoGeolocalizacao() {
     }
 
     try {
-      const result = await navigator.permissions.query({ name: 'geolocation' as PermissionName });
+      const result = await navigator.permissions.query({
+        name: 'geolocation' as PermissionName,
+      });
       console.log('Permissão de geolocalização:', result.state);
-      alert(`Status da permissão: ${result.state}\n\nVerifique o console para mais detalhes.`);
+      alert(
+        `Status da permissão: ${result.state}\n\nVerifique o console para mais detalhes.`
+      );
     } catch (err) {
       console.error('Erro ao verificar permissões:', err);
       alert('Erro ao verificar permissões. Verifique o console.');
@@ -492,31 +506,33 @@ export default function DiagnosticoGeolocalizacao() {
   return (
     <PageContainer
       $theme={theme}
-      variant="minimal"
-      background="transparent"
-      padding="lg"
-      maxWidth="1200px"
+      variant='minimal'
+      background='transparent'
+      padding='lg'
+      maxWidth='1200px'
       animation={true}
     >
       <PageHeader
         $theme={theme}
-        title="🔍 Diagnóstico de Geolocalização"
-        variant="default"
-        size="lg"
+        title='🔍 Diagnóstico de Geolocalização'
+        variant='default'
+        size='lg'
         animation={true}
       />
 
       <Section $theme={theme}>
-        <SectionTitle $theme={theme}>📍 Coordenadas Reais (Fornecidas)</SectionTitle>
+        <SectionTitle $theme={theme}>
+          📍 Coordenadas Reais (Fornecidas)
+        </SectionTitle>
         <CodeBlock $theme={theme}>
           Latitude: {REAL_COORDINATES.lat}
           Longitude: {REAL_COORDINATES.lon}
         </CodeBlock>
-        <Link 
+        <Link
           $theme={theme}
           href={`https://www.google.com/maps?q=${REAL_COORDINATES.lat},${REAL_COORDINATES.lon}`}
-          target="_blank"
-          rel="noopener noreferrer"
+          target='_blank'
+          rel='noopener noreferrer'
         >
           Abrir no Google Maps
         </Link>
@@ -529,16 +545,16 @@ export default function DiagnosticoGeolocalizacao() {
             $theme={theme}
             onClick={testGPS}
             $disabled={loading}
-            $variant="primary"
-            $size="medium"
+            $variant='primary'
+            $size='medium'
           >
             {loading ? '🔄 Testando GPS...' : '📍 Testar Captura GPS'}
           </UnifiedButton>
           <UnifiedButton
             $theme={theme}
             onClick={checkPermissions}
-            $variant="secondary"
-            $size="medium"
+            $variant='secondary'
+            $size='medium'
           >
             🔐 Verificar Permissões
           </UnifiedButton>
@@ -572,34 +588,52 @@ export default function DiagnosticoGeolocalizacao() {
                 <Label $theme={theme}>Tipo de GPS</Label>
                 <Value $theme={theme}>
                   {gpsInfo.isRealGPS ? (
-                    <StatusSpan $statusType="success" $theme={theme}>✅ GPS Real</StatusSpan>
+                    <StatusSpan $statusType='success' $theme={theme}>
+                      ✅ GPS Real
+                    </StatusSpan>
                   ) : (
-                    <StatusSpan $statusType="error" $theme={theme}>❌ Localização Aproximada</StatusSpan>
+                    <StatusSpan $statusType='error' $theme={theme}>
+                      ❌ Localização Aproximada
+                    </StatusSpan>
                   )}
                 </Value>
               </Card>
               <Card $theme={theme}>
                 <Label $theme={theme}>Altitude</Label>
-                <Value $theme={theme}>{gpsInfo.altitude !== null ? `${Math.round(gpsInfo.altitude)}m` : 'N/A'}</Value>
+                <Value $theme={theme}>
+                  {gpsInfo.altitude !== null
+                    ? `${Math.round(gpsInfo.altitude)}m`
+                    : 'N/A'}
+                </Value>
               </Card>
               <Card $theme={theme}>
                 <Label $theme={theme}>Heading</Label>
-                <Value $theme={theme}>{gpsInfo.heading !== null ? `${Math.round(gpsInfo.heading)}°` : 'N/A'}</Value>
+                <Value $theme={theme}>
+                  {gpsInfo.heading !== null
+                    ? `${Math.round(gpsInfo.heading)}°`
+                    : 'N/A'}
+                </Value>
               </Card>
               <Card $theme={theme}>
                 <Label $theme={theme}>Speed</Label>
-                <Value $theme={theme}>{gpsInfo.speed !== null ? `${Math.round(gpsInfo.speed * 3.6)} km/h` : 'N/A'}</Value>
+                <Value $theme={theme}>
+                  {gpsInfo.speed !== null
+                    ? `${Math.round(gpsInfo.speed * 3.6)} km/h`
+                    : 'N/A'}
+                </Value>
               </Card>
               <Card $theme={theme}>
                 <Label $theme={theme}>Timestamp</Label>
-                <Value $theme={theme}>{new Date(gpsInfo.timestamp).toLocaleString('pt-BR')}</Value>
+                <Value $theme={theme}>
+                  {new Date(gpsInfo.timestamp).toLocaleString('pt-BR')}
+                </Value>
               </Card>
             </Grid>
-            <LinkWithMargin 
+            <LinkWithMargin
               $theme={theme}
               href={`https://www.google.com/maps?q=${gpsInfo.latitude},${gpsInfo.longitude}`}
-              target="_blank"
-              rel="noopener noreferrer"
+              target='_blank'
+              rel='noopener noreferrer'
             >
               Abrir coordenadas capturadas no Google Maps
             </LinkWithMargin>
@@ -607,17 +641,25 @@ export default function DiagnosticoGeolocalizacao() {
 
           {comparison && (
             <Section $theme={theme}>
-              <SectionTitle $theme={theme}>📏 Comparação com Coordenadas Reais</SectionTitle>
+              <SectionTitle $theme={theme}>
+                📏 Comparação com Coordenadas Reais
+              </SectionTitle>
               <Grid>
                 <Card $theme={theme}>
                   <Label $theme={theme}>Distância</Label>
                   <Value $theme={theme}>
                     {comparison.distance < 50 ? (
-                      <StatusSpan $statusType="success" $theme={theme}>✅ {comparison.distance}m (Excelente)</StatusSpan>
+                      <StatusSpan $statusType='success' $theme={theme}>
+                        ✅ {comparison.distance}m (Excelente)
+                      </StatusSpan>
                     ) : comparison.distance < 200 ? (
-                      <StatusSpan $statusType="warning" $theme={theme}>⚠️ {comparison.distance}m (Aceitável)</StatusSpan>
+                      <StatusSpan $statusType='warning' $theme={theme}>
+                        ⚠️ {comparison.distance}m (Aceitável)
+                      </StatusSpan>
                     ) : (
-                      <StatusSpan $statusType="error" $theme={theme}>❌ {comparison.distance}m (Ruim)</StatusSpan>
+                      <StatusSpan $statusType='error' $theme={theme}>
+                        ❌ {comparison.distance}m (Ruim)
+                      </StatusSpan>
                     )}
                   </Value>
                 </Card>
@@ -637,11 +679,15 @@ export default function DiagnosticoGeolocalizacao() {
 
               {comparison.distance > 200 && (
                 <WarningBoxWithMargin $theme={theme}>
-                  <strong>⚠️ Atenção:</strong> A distância entre as coordenadas capturadas e reais é maior que 200m.
+                  <strong>⚠️ Atenção:</strong> A distância entre as coordenadas
+                  capturadas e reais é maior que 200m.
                   <br />
                   <strong>Possíveis causas:</strong>
                   <List>
-                    <li>GPS não está sendo usado (localização aproximada por IP/WiFi)</li>
+                    <li>
+                      GPS não está sendo usado (localização aproximada por
+                      IP/WiFi)
+                    </li>
                     <li>Permissões do navegador não permitem precisão alta</li>
                     <li>Windows Location Service desativado</li>
                     <li>Ambiente fechado sem sinal GPS</li>
@@ -651,15 +697,33 @@ export default function DiagnosticoGeolocalizacao() {
 
               {!gpsInfo.isRealGPS && (
                 <ErrorBoxWithMargin $theme={theme}>
-                  <strong>❌ Problema Identificado:</strong> O navegador não está usando GPS real.
+                  <strong>❌ Problema Identificado:</strong> O navegador não
+                  está usando GPS real.
                   <br />
                   <br />
                   <strong>📊 Análise do Problema:</strong>
                   <List>
-                    <li><strong>Precisão:</strong> {Math.round(gpsInfo.accuracy)}m</li>
-                    <li><strong>Altitude:</strong> {gpsInfo.altitude !== null ? `${Math.round(gpsInfo.altitude)}m` : 'N/A'}</li>
-                    <li><strong>Heading:</strong> {gpsInfo.heading !== null ? `${Math.round(gpsInfo.heading)}°` : 'N/A'}</li>
-                    <li><strong>Speed:</strong> {gpsInfo.speed !== null ? `${Math.round(gpsInfo.speed * 3.6)} km/h` : 'N/A'}</li>
+                    <li>
+                      <strong>Precisão:</strong> {Math.round(gpsInfo.accuracy)}m
+                    </li>
+                    <li>
+                      <strong>Altitude:</strong>{' '}
+                      {gpsInfo.altitude !== null
+                        ? `${Math.round(gpsInfo.altitude)}m`
+                        : 'N/A'}
+                    </li>
+                    <li>
+                      <strong>Heading:</strong>{' '}
+                      {gpsInfo.heading !== null
+                        ? `${Math.round(gpsInfo.heading)}°`
+                        : 'N/A'}
+                    </li>
+                    <li>
+                      <strong>Speed:</strong>{' '}
+                      {gpsInfo.speed !== null
+                        ? `${Math.round(gpsInfo.speed * 3.6)} km/h`
+                        : 'N/A'}
+                    </li>
                   </List>
                   <br />
                   <strong>🔧 Soluções Detalhadas:</strong>
@@ -667,57 +731,135 @@ export default function DiagnosticoGeolocalizacao() {
                     <li>
                       <strong>1. Ativar Windows Location Service:</strong>
                       <SubList>
-                        <li>Pressione <code>Win + I</code> para abrir Configurações</li>
-                        <li>Vá em <strong>Privacidade e segurança → Localização</strong></li>
-                        <li>Ative <strong>"Serviços de localização"</strong></li>
-                        <li>Ative <strong>"Permitir que aplicativos acessem sua localização"</strong></li>
-                        <li>Na lista de aplicativos, encontre <strong>Google Chrome</strong> ou <strong>Microsoft Edge</strong></li>
+                        <li>
+                          Pressione <code>Win + I</code> para abrir
+                          Configurações
+                        </li>
+                        <li>
+                          Vá em{' '}
+                          <strong>Privacidade e segurança → Localização</strong>
+                        </li>
+                        <li>
+                          Ative <strong>"Serviços de localização"</strong>
+                        </li>
+                        <li>
+                          Ative{' '}
+                          <strong>
+                            "Permitir que aplicativos acessem sua localização"
+                          </strong>
+                        </li>
+                        <li>
+                          Na lista de aplicativos, encontre{' '}
+                          <strong>Google Chrome</strong> ou{' '}
+                          <strong>Microsoft Edge</strong>
+                        </li>
                         <li>Ative o toggle para o navegador</li>
-                        <li><strong>Reinicie o navegador</strong> após alterar configurações</li>
+                        <li>
+                          <strong>Reinicie o navegador</strong> após alterar
+                          configurações
+                        </li>
                       </SubList>
                     </li>
                     <li>
                       <strong>2. Verificar Permissões do Navegador:</strong>
                       <SubList>
-                        <li>Chrome: <Link $theme={theme} href="chrome://settings/content/location" target="_blank">chrome://settings/content/location</Link></li>
-                        <li>Edge: <Link $theme={theme} href="edge://settings/content/location" target="_blank">edge://settings/content/location</Link></li>
-                        <li>Verifique se <strong>"Precisão alta"</strong> está ativada</li>
-                        <li>Verifique se <strong>localhost:3000</strong> está em <strong>"Permitir"</strong></li>
-                        <li>Se estiver em "Bloquear", remova e permita novamente</li>
+                        <li>
+                          Chrome:{' '}
+                          <Link
+                            $theme={theme}
+                            href='chrome://settings/content/location'
+                            target='_blank'
+                          >
+                            chrome://settings/content/location
+                          </Link>
+                        </li>
+                        <li>
+                          Edge:{' '}
+                          <Link
+                            $theme={theme}
+                            href='edge://settings/content/location'
+                            target='_blank'
+                          >
+                            edge://settings/content/location
+                          </Link>
+                        </li>
+                        <li>
+                          Verifique se <strong>"Precisão alta"</strong> está
+                          ativada
+                        </li>
+                        <li>
+                          Verifique se <strong>localhost:3000</strong> está em{' '}
+                          <strong>"Permitir"</strong>
+                        </li>
+                        <li>
+                          Se estiver em "Bloquear", remova e permita novamente
+                        </li>
                       </SubList>
                     </li>
                     <li>
                       <strong>3. Verificar Hardware:</strong>
                       <SubList>
-                        <li><strong>Desktop sem GPS:</strong> Precisão será sempre limitada (50-200m com WiFi, 500m-5km com IP)</li>
-                        <li><strong>Laptop com WiFi:</strong> Pode ter precisão melhor (50-200m) se Windows Location Service estiver ativo</li>
-                        <li><strong>Dispositivo móvel:</strong> Tem GPS real e pode ter precisão de 5-50m</li>
-                        <li>Se precisão &gt; 1000m, provavelmente está usando localização por IP (não GPS)</li>
+                        <li>
+                          <strong>Desktop sem GPS:</strong> Precisão será sempre
+                          limitada (50-200m com WiFi, 500m-5km com IP)
+                        </li>
+                        <li>
+                          <strong>Laptop com WiFi:</strong> Pode ter precisão
+                          melhor (50-200m) se Windows Location Service estiver
+                          ativo
+                        </li>
+                        <li>
+                          <strong>Dispositivo móvel:</strong> Tem GPS real e
+                          pode ter precisão de 5-50m
+                        </li>
+                        <li>
+                          Se precisão &gt; 1000m, provavelmente está usando
+                          localização por IP (não GPS)
+                        </li>
                       </SubList>
                     </li>
                     <li>
                       <strong>4. Testar em Ambiente Aberto:</strong>
                       <SubList>
-                        <li>Teste próximo a uma janela ou em ambiente aberto</li>
-                        <li>Evite edifícios altos ou estruturas metálicas que bloqueiam sinal</li>
+                        <li>
+                          Teste próximo a uma janela ou em ambiente aberto
+                        </li>
+                        <li>
+                          Evite edifícios altos ou estruturas metálicas que
+                          bloqueiam sinal
+                        </li>
                         <li>Aguarde até 30 segundos para GPS estabilizar</li>
                       </SubList>
                     </li>
                     <li>
                       <strong>5. Comparar com Google Maps:</strong>
                       <SubList>
-                        <li>Abra <Link $theme={theme} href="https://www.google.com/maps" target="_blank">Google Maps</Link></li>
+                        <li>
+                          Abra{' '}
+                          <Link
+                            $theme={theme}
+                            href='https://www.google.com/maps'
+                            target='_blank'
+                          >
+                            Google Maps
+                          </Link>
+                        </li>
                         <li>Clique no botão de localização (🎯)</li>
                         <li>Compare a precisão com a capturada aqui</li>
-                        <li>Se Google Maps tiver melhor precisão, o problema pode ser nas configurações do navegador</li>
+                        <li>
+                          Se Google Maps tiver melhor precisão, o problema pode
+                          ser nas configurações do navegador
+                        </li>
                       </SubList>
                     </li>
                   </OrderedList>
                   <br />
                   <strong>⚠️ Limitação Técnica:</strong>
                   <Paragraph>
-                    Em <strong>desktop sem GPS físico</strong>, a precisão máxima é limitada por WiFi triangulation (50-200m) 
-                    ou localização por IP (500m-5km). Para precisão melhor que 50m, é necessário um dispositivo móvel com GPS real.
+                    Em <strong>desktop sem GPS físico</strong>, a precisão
+                    máxima é limitada por WiFi triangulation (50-200m) ou
+                    localização por IP (500m-5km). Para precisão melhor que 50m,
+                    é necessário um dispositivo móvel com GPS real.
                   </Paragraph>
                 </ErrorBoxWithMargin>
               )}
@@ -738,7 +880,11 @@ export default function DiagnosticoGeolocalizacao() {
           <Card $theme={theme}>
             <Label $theme={theme}>Geolocalização Suportada</Label>
             <Value $theme={theme}>
-              {isMounted ? (typeof window !== 'undefined' && navigator.geolocation ? '✅ Sim' : '❌ Não') : 'Carregando...'}
+              {isMounted
+                ? typeof window !== 'undefined' && navigator.geolocation
+                  ? '✅ Sim'
+                  : '❌ Não'
+                : 'Carregando...'}
             </Value>
           </Card>
           <Card $theme={theme}>
@@ -771,14 +917,45 @@ export default function DiagnosticoGeolocalizacao() {
         <InfoBox $theme={theme}>
           <strong>2. Windows Location Service (CRÍTICO para Desktop):</strong>
           <List>
-            <li><strong>Pressione Win + I</strong> para abrir Configurações</li>
-            <li>Vá em <strong>Privacidade e segurança → Localização</strong></li>
-            <li><strong>"Serviços de localização"</strong> deve estar <StatusSpan $statusType="success" $theme={theme}>ATIVADO</StatusSpan></li>
-            <li><strong>"Permitir que aplicativos acessem sua localização"</strong> deve estar <StatusSpan $statusType="success" $theme={theme}>ATIVADO</StatusSpan></li>
-            <li>Na lista de aplicativos, encontre <strong>Google Chrome</strong> ou <strong>Microsoft Edge</strong></li>
-            <li>O toggle do navegador deve estar <StatusSpan $statusType="success" $theme={theme}>ATIVADO</StatusSpan></li>
-            <li><strong>⚠️ IMPORTANTE:</strong> Reinicie o navegador após alterar essas configurações</li>
-            <li><strong>💡 DICA:</strong> Se não aparecer na lista, feche e abra o navegador novamente</li>
+            <li>
+              <strong>Pressione Win + I</strong> para abrir Configurações
+            </li>
+            <li>
+              Vá em <strong>Privacidade e segurança → Localização</strong>
+            </li>
+            <li>
+              <strong>"Serviços de localização"</strong> deve estar{' '}
+              <StatusSpan $statusType='success' $theme={theme}>
+                ATIVADO
+              </StatusSpan>
+            </li>
+            <li>
+              <strong>
+                "Permitir que aplicativos acessem sua localização"
+              </strong>{' '}
+              deve estar{' '}
+              <StatusSpan $statusType='success' $theme={theme}>
+                ATIVADO
+              </StatusSpan>
+            </li>
+            <li>
+              Na lista de aplicativos, encontre <strong>Google Chrome</strong>{' '}
+              ou <strong>Microsoft Edge</strong>
+            </li>
+            <li>
+              O toggle do navegador deve estar{' '}
+              <StatusSpan $statusType='success' $theme={theme}>
+                ATIVADO
+              </StatusSpan>
+            </li>
+            <li>
+              <strong>⚠️ IMPORTANTE:</strong> Reinicie o navegador após alterar
+              essas configurações
+            </li>
+            <li>
+              <strong>💡 DICA:</strong> Se não aparecer na lista, feche e abra o
+              navegador novamente
+            </li>
           </List>
         </InfoBox>
         <InfoBox $theme={theme}>
@@ -801,4 +978,3 @@ export default function DiagnosticoGeolocalizacao() {
     </PageContainer>
   );
 }
-

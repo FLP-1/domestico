@@ -45,7 +45,7 @@ const mockTheme = {
 describe('UnifiedButton', () => {
   it('deve renderizar conteúdo básico', () => {
     render(
-      <UnifiedButton $theme={mockTheme} $variant="primary" $size="medium">
+      <UnifiedButton $theme={mockTheme} $variant='primary' $size='medium'>
         Clique aqui
       </UnifiedButton>
     );
@@ -59,7 +59,7 @@ describe('UnifiedButton', () => {
     render(
       <UnifiedButton
         $theme={mockTheme}
-        $variant="primary"
+        $variant='primary'
         onClick={handleClick}
       >
         Clique aqui
@@ -74,7 +74,7 @@ describe('UnifiedButton', () => {
 
   it('deve estar desabilitado quando $disabled é true', () => {
     render(
-      <UnifiedButton $theme={mockTheme} $variant="primary" $disabled={true}>
+      <UnifiedButton $theme={mockTheme} $variant='primary' $disabled={true}>
         Botão Desabilitado
       </UnifiedButton>
     );
@@ -85,7 +85,7 @@ describe('UnifiedButton', () => {
 
   it('deve estar desabilitado quando $loading é true', () => {
     render(
-      <UnifiedButton $theme={mockTheme} $variant="primary" $loading={true}>
+      <UnifiedButton $theme={mockTheme} $variant='primary' $loading={true}>
         Carregando
       </UnifiedButton>
     );
@@ -96,7 +96,7 @@ describe('UnifiedButton', () => {
 
   it('deve renderizar ícone quando fornecido', () => {
     render(
-      <UnifiedButton $theme={mockTheme} $variant="primary" icon="🚀">
+      <UnifiedButton $theme={mockTheme} $variant='primary' icon='🚀'>
         Com Ícone
       </UnifiedButton>
     );
@@ -109,7 +109,7 @@ describe('UnifiedButton', () => {
 
   it('deve aplicar variante corretamente', () => {
     const { rerender } = render(
-      <UnifiedButton $theme={mockTheme} $variant="primary">
+      <UnifiedButton $theme={mockTheme} $variant='primary'>
         Primary
       </UnifiedButton>
     );
@@ -117,7 +117,7 @@ describe('UnifiedButton', () => {
     expect(screen.getByText('Primary')).toBeInTheDocument();
 
     rerender(
-      <UnifiedButton $theme={mockTheme} $variant="success">
+      <UnifiedButton $theme={mockTheme} $variant='success'>
         Success
       </UnifiedButton>
     );
@@ -127,13 +127,13 @@ describe('UnifiedButton', () => {
 
   it('deve aplicar tamanho corretamente', () => {
     const { container: containerSm } = render(
-      <UnifiedButton $theme={mockTheme} $variant="primary" $size="sm">
+      <UnifiedButton $theme={mockTheme} $variant='primary' $size='sm'>
         Small
       </UnifiedButton>
     );
 
     const { container: containerLg } = render(
-      <UnifiedButton $theme={mockTheme} $variant="primary" $size="lg">
+      <UnifiedButton $theme={mockTheme} $variant='primary' $size='lg'>
         Large
       </UnifiedButton>
     );
@@ -144,11 +144,7 @@ describe('UnifiedButton', () => {
 
   it('deve ter largura total quando $fullWidth é true', () => {
     const { container } = render(
-      <UnifiedButton
-        $theme={mockTheme}
-        $variant="primary"
-        $fullWidth={true}
-      >
+      <UnifiedButton $theme={mockTheme} $variant='primary' $fullWidth={true}>
         Full Width
       </UnifiedButton>
     );
@@ -161,8 +157,8 @@ describe('UnifiedButton', () => {
     render(
       <UnifiedButton
         $theme={mockTheme}
-        $variant="primary"
-        aria-label="Botão de teste"
+        $variant='primary'
+        aria-label='Botão de teste'
       >
         Teste
       </UnifiedButton>
@@ -174,13 +170,13 @@ describe('UnifiedButton', () => {
 
   it('deve ter type correto', () => {
     const { container: containerButton } = render(
-      <UnifiedButton $theme={mockTheme} $variant="primary" type="button">
+      <UnifiedButton $theme={mockTheme} $variant='primary' type='button'>
         Button
       </UnifiedButton>
     );
 
     const { container: containerSubmit } = render(
-      <UnifiedButton $theme={mockTheme} $variant="primary" type="submit">
+      <UnifiedButton $theme={mockTheme} $variant='primary' type='submit'>
         Submit
       </UnifiedButton>
     );

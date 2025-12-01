@@ -33,84 +33,144 @@ const getVariantStyles = (variant: ActionIconProps['variant'], theme?: any) => {
 
   const variants = {
     approve: {
-      backgroundColor: getThemeColor(['colors', 'status', 'success', 'background'], 'transparent') ||
-                      getThemeColor(['colors', 'success'], 'transparent') ||
-                      'transparent',
-      hoverColor: getThemeColor(['colors', 'status', 'success', 'background'], 'transparent') ||
-                  getThemeColor(['colors', 'success'], 'transparent') ||
-                  'transparent',
+      backgroundColor:
+        getThemeColor(
+          ['colors', 'status', 'success', 'background'],
+          'transparent'
+        ) ||
+        getThemeColor(['colors', 'success'], 'transparent') ||
+        'transparent',
+      hoverColor:
+        getThemeColor(
+          ['colors', 'status', 'success', 'background'],
+          'transparent'
+        ) ||
+        getThemeColor(['colors', 'success'], 'transparent') ||
+        'transparent',
       icon: '✅',
     },
     reject: {
-      backgroundColor: getThemeColor(['colors', 'status', 'error', 'background'], 'transparent') ||
-                      getThemeColor(['colors', 'error'], 'transparent') ||
-                      'transparent',
-      hoverColor: getThemeColor(['colors', 'status', 'error', 'background'], 'transparent') ||
-                  getThemeColor(['colors', 'error'], 'transparent') ||
-                  'transparent',
+      backgroundColor:
+        getThemeColor(
+          ['colors', 'status', 'error', 'background'],
+          'transparent'
+        ) ||
+        getThemeColor(['colors', 'error'], 'transparent') ||
+        'transparent',
+      hoverColor:
+        getThemeColor(
+          ['colors', 'status', 'error', 'background'],
+          'transparent'
+        ) ||
+        getThemeColor(['colors', 'error'], 'transparent') ||
+        'transparent',
       icon: '❌',
     },
     edit: {
-      backgroundColor: getThemeColor(['colors', 'status', 'info', 'background'], 'transparent') ||
-                      getThemeColor(['colors', 'info'], 'transparent') ||
-                      'transparent',
-      hoverColor: getThemeColor(['colors', 'status', 'info', 'background'], 'transparent') ||
-                  getThemeColor(['colors', 'info'], 'transparent') ||
-                  'transparent',
+      backgroundColor:
+        getThemeColor(
+          ['colors', 'status', 'info', 'background'],
+          'transparent'
+        ) ||
+        getThemeColor(['colors', 'info'], 'transparent') ||
+        'transparent',
+      hoverColor:
+        getThemeColor(
+          ['colors', 'status', 'info', 'background'],
+          'transparent'
+        ) ||
+        getThemeColor(['colors', 'info'], 'transparent') ||
+        'transparent',
       icon: '✏️',
     },
     delete: {
-      backgroundColor: getThemeColor(['colors', 'status', 'error', 'background'], 'transparent') ||
-                      getThemeColor(['colors', 'error'], 'transparent') ||
-                      'transparent',
-      hoverColor: getThemeColor(['colors', 'status', 'error', 'background'], 'transparent') ||
-                  getThemeColor(['colors', 'error'], 'transparent') ||
-                  'transparent',
+      backgroundColor:
+        getThemeColor(
+          ['colors', 'status', 'error', 'background'],
+          'transparent'
+        ) ||
+        getThemeColor(['colors', 'error'], 'transparent') ||
+        'transparent',
+      hoverColor:
+        getThemeColor(
+          ['colors', 'status', 'error', 'background'],
+          'transparent'
+        ) ||
+        getThemeColor(['colors', 'error'], 'transparent') ||
+        'transparent',
       icon: '🗑️',
     },
     view: {
-      backgroundColor: getThemeColor(['colors', 'text', 'secondary'], 'transparent') ||
-                      getThemeColor(['colors', 'text'], 'transparent') ||
-                      'transparent',
-      hoverColor: getThemeColor(['colors', 'text', 'secondary'], 'transparent') ||
-                  getThemeColor(['colors', 'text'], 'transparent') ||
-                  'transparent',
+      backgroundColor:
+        getThemeColor(['colors', 'text', 'secondary'], 'transparent') ||
+        getThemeColor(['colors', 'text'], 'transparent') ||
+        'transparent',
+      hoverColor:
+        getThemeColor(['colors', 'text', 'secondary'], 'transparent') ||
+        getThemeColor(['colors', 'text'], 'transparent') ||
+        'transparent',
       icon: '👁️',
     },
     warning: {
-      backgroundColor: getThemeColor(['colors', 'status', 'warning', 'background'], 'transparent') ||
-                      getThemeColor(['colors', 'warning'], 'transparent') ||
-                      'transparent',
-      hoverColor: getThemeColor(['colors', 'status', 'warning', 'background'], 'transparent') ||
-                  getThemeColor(['colors', 'warning'], 'transparent') ||
-                  'transparent',
+      backgroundColor:
+        getThemeColor(
+          ['colors', 'status', 'warning', 'background'],
+          'transparent'
+        ) ||
+        getThemeColor(['colors', 'warning'], 'transparent') ||
+        'transparent',
+      hoverColor:
+        getThemeColor(
+          ['colors', 'status', 'warning', 'background'],
+          'transparent'
+        ) ||
+        getThemeColor(['colors', 'warning'], 'transparent') ||
+        'transparent',
       icon: '⚠️',
     },
     info: {
-      backgroundColor: getThemeColor(['colors', 'status', 'info', 'background'], 'transparent') ||
-                      getThemeColor(['colors', 'info'], 'transparent') ||
-                      'transparent',
-      hoverColor: getThemeColor(['colors', 'status', 'info', 'background'], 'transparent') ||
-                  getThemeColor(['colors', 'info'], 'transparent') ||
-                  'transparent',
+      backgroundColor:
+        getThemeColor(
+          ['colors', 'status', 'info', 'background'],
+          'transparent'
+        ) ||
+        getThemeColor(['colors', 'info'], 'transparent') ||
+        'transparent',
+      hoverColor:
+        getThemeColor(
+          ['colors', 'status', 'info', 'background'],
+          'transparent'
+        ) ||
+        getThemeColor(['colors', 'info'], 'transparent') ||
+        'transparent',
       icon: 'ℹ️',
     },
     success: {
-      backgroundColor: getThemeColor(['colors', 'status', 'success', 'background'], 'transparent') ||
-                      getThemeColor(['colors', 'success'], 'transparent') ||
-                      'transparent',
-      hoverColor: getThemeColor(['colors', 'status', 'success', 'background'], 'transparent') ||
-                  getThemeColor(['colors', 'success'], 'transparent') ||
-                  'transparent',
+      backgroundColor:
+        getThemeColor(
+          ['colors', 'status', 'success', 'background'],
+          'transparent'
+        ) ||
+        getThemeColor(['colors', 'success'], 'transparent') ||
+        'transparent',
+      hoverColor:
+        getThemeColor(
+          ['colors', 'status', 'success', 'background'],
+          'transparent'
+        ) ||
+        getThemeColor(['colors', 'success'], 'transparent') ||
+        'transparent',
       icon: '✅',
     },
     primary: {
-      backgroundColor: getThemeColor(['colors', 'primary'], 'transparent') ||
-                      getThemeColor(['accent'], 'transparent') ||
-                      'transparent',
-      hoverColor: getThemeColor(['colors', 'primary'], 'transparent') ||
-                  getThemeColor(['accent'], 'transparent') ||
-                  'transparent',
+      backgroundColor:
+        getThemeColor(['colors', 'primary'], 'transparent') ||
+        getThemeColor(['accent'], 'transparent') ||
+        'transparent',
+      hoverColor:
+        getThemeColor(['colors', 'primary'], 'transparent') ||
+        getThemeColor(['accent'], 'transparent') ||
+        'transparent',
       icon: '🔧',
     },
   };
@@ -153,8 +213,8 @@ const StyledActionIcon = styled.button<ActionIconProps>`
   font-size: ${props => getSizeStyles(props.size || 'medium').fontSize};
   position: relative;
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow ||
-                        props.$theme?.shadow?.color;
+    const shadowColor =
+      props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
     if (shadowColor && shadowColor.startsWith('#')) {
       const r = parseInt(shadowColor.slice(1, 3), 16);
       const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -164,7 +224,8 @@ const StyledActionIcon = styled.button<ActionIconProps>`
     return props.$theme?.shadows?.sm || 'none';
   }};
 
-  background-color: ${props => getVariantStyles(props.variant, props.$theme).backgroundColor};
+  background-color: ${props =>
+    getVariantStyles(props.variant, props.$theme).backgroundColor};
   color: ${props =>
     props.$theme?.colors?.text?.onPrimary ||
     props.$theme?.text?.onPrimary ||
@@ -179,8 +240,8 @@ const StyledActionIcon = styled.button<ActionIconProps>`
     transform: ${props => (props.disabled ? 'none' : 'scale(1.1)')};
     box-shadow: ${props => {
       if (props.disabled) {
-        const shadowColor = props.$theme?.colors?.shadow ||
-                            props.$theme?.shadow?.color;
+        const shadowColor =
+          props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
         if (shadowColor && shadowColor.startsWith('#')) {
           const r = parseInt(shadowColor.slice(1, 3), 16);
           const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -189,8 +250,8 @@ const StyledActionIcon = styled.button<ActionIconProps>`
         }
         return props.$theme?.shadows?.sm || 'none';
       }
-      const shadowColor = props.$theme?.colors?.shadow ||
-                          props.$theme?.shadow?.color;
+      const shadowColor =
+        props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
       if (shadowColor && shadowColor.startsWith('#')) {
         const r = parseInt(shadowColor.slice(1, 3), 16);
         const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -220,10 +281,12 @@ const StyledActionIcon = styled.button<ActionIconProps>`
       width: 16px;
       height: 16px;
       border: 2px solid transparent;
-      border-top: 2px solid ${props.$theme?.colors?.text?.onPrimary ||
-                            props.$theme?.text?.onPrimary ||
-                            props.$theme?.colors?.surface ||
-                            'inherit'};
+      border-top: 2px solid ${
+        props.$theme?.colors?.text?.onPrimary ||
+        props.$theme?.text?.onPrimary ||
+        props.$theme?.colors?.surface ||
+        'inherit'
+      };
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }

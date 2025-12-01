@@ -3,11 +3,7 @@
     "name": "minScore",
     "expected": 0.8,
     "actual": 0.61,
-    "values": [
-      0.57,
-      0.58,
-      0.61
-    ],
+    "values": [0.57, 0.58, 0.61],
     "operator": ">=",
     "passed": false,
     "auditProperty": "performance",
@@ -19,11 +15,7 @@
     "name": "maxNumericValue",
     "expected": 2000,
     "actual": 2502.1155000000003,
-    "values": [
-      2525.8926500000002,
-      2518.4572,
-      2502.1155000000003
-    ],
+    "values": [2525.8926500000002, 2518.4572, 2502.1155000000003],
     "operator": "<=",
     "passed": false,
     "auditId": "first-contentful-paint",
@@ -36,11 +28,7 @@
     "name": "maxNumericValue",
     "expected": 4000,
     "actual": 11427.851999999992,
-    "values": [
-      11556.102875000011,
-      11435.642399999995,
-      11427.851999999992
-    ],
+    "values": [11556.102875000011, 11435.642399999995, 11427.851999999992],
     "operator": "<=",
     "passed": false,
     "auditId": "largest-contentful-paint",
@@ -53,11 +41,7 @@
     "name": "maxNumericValue",
     "expected": 300,
     "actual": 419,
-    "values": [
-      468.00000000000045,
-      446,
-      419
-    ],
+    "values": [468.00000000000045, 446, 419],
     "operator": "<=",
     "passed": false,
     "auditId": "total-blocking-time",

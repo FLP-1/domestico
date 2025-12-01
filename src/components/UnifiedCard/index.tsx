@@ -36,7 +36,7 @@ const slideIn = keyframes`
 
 // Styled Components
 const CardContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     if (prop === 'className' || prop === 'children') return true;
     const propName = prop as string;
     return !propName.startsWith('$');
@@ -52,33 +52,41 @@ const CardContainer = styled.div.withConfig({
     const themedStyles = createThemedStyles(props.$theme);
     switch (props.$variant) {
       case 'elevated':
-        return props.$theme?.colors?.background?.primary || 
-               props.$theme?.background?.primary || 
-               themedStyles.background || 
-               'transparent';
+        return (
+          props.$theme?.colors?.background?.primary ||
+          props.$theme?.background?.primary ||
+          themedStyles.background ||
+          'transparent'
+        );
       case 'outlined':
         return 'transparent';
       case 'filled':
-        return props.$theme?.colors?.background?.secondary || 
-               props.$theme?.background?.secondary || 
-               themedStyles.surface || 
-               'transparent';
+        return (
+          props.$theme?.colors?.background?.secondary ||
+          props.$theme?.background?.secondary ||
+          themedStyles.surface ||
+          'transparent'
+        );
       case 'glass':
         return 'transparent'; // Glass effect será aplicado via backdrop-filter
       default:
-        return props.$theme?.colors?.background?.primary || 
-               props.$theme?.background?.primary || 
-               themedStyles.background || 
-               'transparent';
+        return (
+          props.$theme?.colors?.background?.primary ||
+          props.$theme?.background?.primary ||
+          themedStyles.background ||
+          'transparent'
+        );
     }
   }};
   border: ${props => {
     switch (props.$variant) {
       case 'outlined':
-        return `1px solid ${props.$theme?.colors?.border?.light || 
-                          props.$theme?.border?.light || 
-                          props.$theme?.colors?.border || 
-                          'transparent'}`;
+        return `1px solid ${
+          props.$theme?.colors?.border?.light ||
+          props.$theme?.border?.light ||
+          props.$theme?.colors?.border ||
+          'transparent'
+        }`;
       case 'glass':
         return '1px solid transparent'; // Glass effect será aplicado via backdrop-filter
       default:
@@ -110,8 +118,8 @@ const CardContainer = styled.div.withConfig({
       case 'elevated':
         return componentShadows.card;
       case 'glass':
-        const shadowColor = props.$theme?.colors?.shadow ||
-                            props.$theme?.shadow?.color;
+        const shadowColor =
+          props.$theme?.colors?.shadow || props.$theme?.shadow?.color;
         if (shadowColor && shadowColor.startsWith('#')) {
           const r = parseInt(shadowColor.slice(1, 3), 16);
           const g = parseInt(shadowColor.slice(3, 5), 16);
@@ -133,16 +141,18 @@ const CardContainer = styled.div.withConfig({
     const getStatusStyles = () => {
       if (!props.$status || props.$status === 'default') return '';
 
-      const statusColor = props.$theme?.colors?.status?.[props.$status]?.border ||
-                         props.$theme?.status?.[props.$status]?.border ||
-                         props.$theme?.colors?.status?.[props.$status] ||
-                         props.$theme?.status?.[props.$status] ||
-                         'transparent';
-      
-      const statusBg = props.$theme?.colors?.status?.[props.$status]?.background ||
-                       props.$theme?.status?.[props.$status]?.background ||
-                       'transparent';
-      
+      const statusColor =
+        props.$theme?.colors?.status?.[props.$status]?.border ||
+        props.$theme?.status?.[props.$status]?.border ||
+        props.$theme?.colors?.status?.[props.$status] ||
+        props.$theme?.status?.[props.$status] ||
+        'transparent';
+
+      const statusBg =
+        props.$theme?.colors?.status?.[props.$status]?.background ||
+        props.$theme?.status?.[props.$status]?.background ||
+        'transparent';
+
       return `
         border-left: 4px solid ${statusColor};
         background: linear-gradient(90deg, ${statusBg} 0%, transparent 100%);
@@ -171,7 +181,9 @@ const CardContainer = styled.div.withConfig({
   ${props =>
     props.$status === 'success'
       ? css`
-          animation: ${fadeIn} 0.6s ease-out, ${pulse} 2s infinite;
+          animation:
+            ${fadeIn} 0.6s ease-out,
+            ${pulse} 2s infinite;
         `
       : ''}
 
@@ -203,23 +215,25 @@ const CardIcon = styled.div<{ $theme?: any; $status?: string }>`
   border-radius: 12px;
   background: ${props => {
     if (props.$status && props.$status !== 'default') {
-      return props.$theme?.colors?.status?.[props.$status]?.background ||
-             props.$theme?.status?.[props.$status]?.background ||
-             'transparent';
+      return (
+        props.$theme?.colors?.status?.[props.$status]?.background ||
+        props.$theme?.status?.[props.$status]?.background ||
+        'transparent'
+      );
     }
-    return props.$theme?.colors?.primary ||
-           props.$theme?.accent ||
-           'transparent';
+    return (
+      props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'
+    );
   }};
   color: ${props => {
     if (props.$status && props.$status !== 'default') {
-      return props.$theme?.colors?.status?.[props.$status]?.text ||
-             props.$theme?.status?.[props.$status]?.text ||
-             'inherit';
+      return (
+        props.$theme?.colors?.status?.[props.$status]?.text ||
+        props.$theme?.status?.[props.$status]?.text ||
+        'inherit'
+      );
     }
-    return props.$theme?.colors?.primary ||
-           props.$theme?.accent ||
-           'inherit';
+    return props.$theme?.colors?.primary || props.$theme?.accent || 'inherit';
   }};
   font-size: 1.5rem;
   animation: ${slideIn} 0.6s ease-out;
@@ -237,12 +251,11 @@ const CardTitle = styled.h3<{ $size?: 'sm' | 'md' | 'lg'; $theme?: any }>`
     }
   }};
   font-weight: 600;
-  color: ${props => 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark || 
-    props.$theme?.colors?.text || 
-    'inherit'
-  };
+  color: ${props =>
+    props.$theme?.colors?.text?.dark ||
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   margin: 0;
   line-height: 1.4;
 `;
@@ -262,7 +275,11 @@ const CardFooter = styled.div<{ $centered?: boolean; $theme?: any }>`
 `;
 
 // Stats Card Components
-const StatValue = styled.div<{ $color?: string; $size?: 'sm' | 'md' | 'lg'; $theme?: any }>`
+const StatValue = styled.div<{
+  $color?: string;
+  $size?: 'sm' | 'md' | 'lg';
+  $theme?: any;
+}>`
   font-size: ${props => {
     switch (props.$size) {
       case 'sm':
@@ -274,13 +291,12 @@ const StatValue = styled.div<{ $color?: string; $size?: 'sm' | 'md' | 'lg'; $the
     }
   }};
   font-weight: 700;
-  color: ${props => 
-    props.$color || 
-    props.$theme?.colors?.text?.dark || 
-    props.$theme?.text?.dark || 
-    props.$theme?.colors?.text || 
-    'inherit'
-  };
+  color: ${props =>
+    props.$color ||
+    props.$theme?.colors?.text?.dark ||
+    props.$theme?.text?.dark ||
+    props.$theme?.colors?.text ||
+    'inherit'};
   line-height: 1.2;
   margin-bottom: 0.25rem;
 `;
@@ -296,17 +312,19 @@ const StatLabel = styled.div<{ $size?: 'sm' | 'md' | 'lg'; $theme?: any }>`
         return '0.875rem';
     }
   }};
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
-    props.$theme?.text?.secondary || 
-    'inherit'
-  };
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    'inherit'};
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 `;
 
-const StatDescription = styled.div<{ $size?: 'sm' | 'md' | 'lg'; $theme?: any }>`
+const StatDescription = styled.div<{
+  $size?: 'sm' | 'md' | 'lg';
+  $theme?: any;
+}>`
   font-size: ${props => {
     switch (props.$size) {
       case 'sm':
@@ -317,11 +335,10 @@ const StatDescription = styled.div<{ $size?: 'sm' | 'md' | 'lg'; $theme?: any }>
         return '0.8rem';
     }
   }};
-  color: ${props => 
-    props.$theme?.colors?.text?.secondary || 
-    props.$theme?.text?.secondary || 
-    'inherit'
-  };
+  color: ${props =>
+    props.$theme?.colors?.text?.secondary ||
+    props.$theme?.text?.secondary ||
+    'inherit'};
   margin-top: 0.5rem;
   line-height: 1.4;
 `;
@@ -340,17 +357,21 @@ const StatusIndicator = styled.div<{
   font-weight: 500;
   background: ${props => {
     if (props.$status) {
-      return props.$theme?.colors?.status?.[props.$status]?.background ||
-             props.$theme?.status?.[props.$status]?.background ||
-             'transparent';
+      return (
+        props.$theme?.colors?.status?.[props.$status]?.background ||
+        props.$theme?.status?.[props.$status]?.background ||
+        'transparent'
+      );
     }
     return 'transparent';
   }};
   color: ${props => {
     if (props.$status) {
-      return props.$theme?.colors?.status?.[props.$status]?.text ||
-             props.$theme?.status?.[props.$status]?.text ||
-             'inherit';
+      return (
+        props.$theme?.colors?.status?.[props.$status]?.text ||
+        props.$theme?.status?.[props.$status]?.text ||
+        'inherit'
+      );
     }
     return 'inherit';
   }};
@@ -418,9 +439,13 @@ export const UnifiedCard: React.FC<UnifiedCardProps> = ({
           <StatValue $color={statsColor} $size={size} $theme={theme}>
             {statsValue}
           </StatValue>
-          <StatLabel $size={size} $theme={theme}>{statsLabel}</StatLabel>
+          <StatLabel $size={size} $theme={theme}>
+            {statsLabel}
+          </StatLabel>
           {statsDescription && (
-            <StatDescription $size={size} $theme={theme}>{statsDescription}</StatDescription>
+            <StatDescription $size={size} $theme={theme}>
+              {statsDescription}
+            </StatDescription>
           )}
         </CardContent>
       </CardContainer>

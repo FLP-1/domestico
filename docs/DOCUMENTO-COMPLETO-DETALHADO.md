@@ -23,6 +23,7 @@
 ### 1.1 Contexto do Projeto
 
 O projeto DOM é uma aplicação Next.js completa para gestão de ponto eletrônico e recursos humanos, incluindo:
+
 - Registro de ponto (entrada/saída)
 - Geofencing (controle de localização)
 - Integração eSocial
@@ -33,6 +34,7 @@ O projeto DOM é uma aplicação Next.js completa para gestão de ponto eletrôn
 ### 1.2 Estado Inicial
 
 Quando iniciamos, o projeto apresentava:
+
 - **178 erros TypeScript** impedindo compilação
 - **24 URLs hardcoded** no código
 - **1,737 cores hardcoded** (não centralizadas)
@@ -45,6 +47,7 @@ Quando iniciamos, o projeto apresentava:
 ### 1.3 Estado Atual
 
 Após o trabalho realizado:
+
 - ✅ **175+ erros TypeScript corrigidos** (98%)
 - ✅ **URLs centralizadas** em configuração
 - ✅ **Dados mockados removidos** do código de produção
@@ -60,9 +63,11 @@ Após o trabalho realizado:
 ### 2.1 Correções TypeScript (175+ erros)
 
 #### 2.1.1 Erros TS7006 - Parâmetros Implícitos
+
 **Quantidade:** 59 erros → 52 restantes (7 corrigidos)
 
 **Exemplos:**
+
 ```typescript
 // ❌ ANTES
 .map(item => item.id)
@@ -74,6 +79,7 @@ Após o trabalho realizado:
 ```
 
 **Arquivos Corrigidos:**
+
 - `src/lib/freeGeocoding.ts`
 - `src/pages/api/alerts/index.ts`
 - `src/pages/api/antifraude/*.ts`
@@ -83,9 +89,11 @@ Após o trabalho realizado:
 - E mais 55+ arquivos
 
 #### 2.1.2 Erros TS2339 - Propriedades Inexistentes
+
 **Quantidade:** 38 erros → 21 restantes (17 corrigidos)
 
 **Exemplos:**
+
 ```typescript
 // ❌ ANTES
 interface GeolocationData {
@@ -98,21 +106,24 @@ interface GeolocationData {
 interface GeolocationData {
   latitude: number;
   longitude: number;
-  address?: string;        // ⭐ ADICIONADO
-  wifiName?: string;       // ⭐ ADICIONADO
-  networkInfo?: string;    // ⭐ ADICIONADO
+  address?: string; // ⭐ ADICIONADO
+  wifiName?: string; // ⭐ ADICIONADO
+  networkInfo?: string; // ⭐ ADICIONADO
 }
 ```
 
 **Interfaces Expandidas:**
+
 - `GeolocationData` - 5 propriedades adicionadas
 - `ConfigService` - 10 métodos adicionados
 - `SystemConfig` - Unificada (removida duplicação)
 
 #### 2.1.3 Erros TS2451/TS2300 - Redeclarações
+
 **Quantidade:** 40 erros → 0 restantes (100% corrigido)
 
 **Exemplos:**
+
 ```typescript
 // ❌ ANTES
 import { useTheme } from '@/hooks/useTheme';
@@ -129,12 +140,15 @@ const currentProfile = useUserProfile(); // ÚNICO
 ```
 
 **Script Criado:**
+
 - `fix-duplicates.py` - Remove imports e variáveis duplicadas automaticamente
 
 #### 2.1.4 Erros TS2304 - Nome Não Encontrado
+
 **Quantidade:** 10 erros → 5 restantes (5 corrigidos)
 
 **Exemplos:**
+
 ```typescript
 // ❌ ANTES
 export default async function handler(req, res) {
@@ -145,7 +159,7 @@ export default async function handler(req, res) {
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
-  req: NextApiRequest, 
+  req: NextApiRequest,
   res: NextApiResponse
 ) {
   // Tipos corretos
@@ -153,12 +167,14 @@ export default async function handler(
 ```
 
 **Arquivos Corrigidos:**
+
 - `src/pages/api/time-clock/overtime.ts`
 - `src/pages/api/time-clock/payroll.ts`
 - `src/pages/api/test-db.ts`
 - E mais 7+ arquivos
 
 #### 2.1.5 Erros de Schema Prisma
+
 **Problema:** Model `ConfiguracaoSistema` duplicado
 
 ```prisma
@@ -184,6 +200,7 @@ model ConfiguracaoSistema {
 ```
 
 **Comando Executado:**
+
 ```bash
 npx prisma generate
 ```
@@ -195,12 +212,14 @@ npx prisma generate
 #### 2.2.1 URLs Centralizadas
 
 **Arquivos Atualizados:**
+
 1. ✅ `src/pages/api/geofencing/locais.ts` - Nominatim centralizado
-2. ✅ `src/pages/api/geocoding/reverse.ts` - Nominatim centralizado  
+2. ✅ `src/pages/api/geocoding/reverse.ts` - Nominatim centralizado
 3. ✅ `src/pages/api/geocoding.ts` - Nominatim centralizado
 4. ✅ `src/lib/freeGeocoding.ts` - Nominatim centralizado
 
 **Implementação:**
+
 ```typescript
 // ✅ ANTES (hardcoded)
 const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}...`;
@@ -208,21 +227,26 @@ const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&
 // ✅ DEPOIS (centralizado)
 const { loadSystemConfig } = await import('../../config/centralized-config');
 const config = await loadSystemConfig();
-const nominatimBaseUrl = config.urls.geocoding.nominatim || 'https://nominatim.openstreetmap.org/reverse';
+const nominatimBaseUrl =
+  config.urls.geocoding.nominatim ||
+  'https://nominatim.openstreetmap.org/reverse';
 const url = `${nominatimBaseUrl}?format=json&lat=${lat}&lon=${lon}...`;
 ```
 
 **Configuração Disponível em:**
+
 - `src/config/centralized-config.ts` - Interface `SystemConfig` com `urls.geocoding.nominatim`
 - Valor padrão: `'https://nominatim.openstreetmap.org/reverse'`
 - Pode ser configurado via banco de dados através de `ConfiguracaoSistema`
 
 #### 2.2.2 Arquivo `.env.example` Criado (Proposto mas não implementado)
+
 **Localização:** `/home/ubuntu/DOM/.env.example`  
 **Linhas:** 35  
 **Propósito:** Template de configuração
 
 **Conteúdo:**
+
 ```env
 # Database
 DATABASE_URL="postgresql://user:password@localhost:5432/dom"
@@ -250,15 +274,17 @@ NODE_ENV="development"
 ```
 
 #### 2.2.2 Arquivo `api-urls.ts` Criado
+
 **Localização:** `/home/ubuntu/DOM/src/config/api-urls.ts`  
 **Linhas:** 85  
 **Propósito:** Centralizar todas as URLs da aplicação
 
 **Estrutura:**
+
 ```typescript
 /**
  * URLs centralizadas da aplicação
- * 
+ *
  * Este arquivo centraliza todas as URLs usadas no projeto,
  * facilitando manutenção e mudanças de ambiente.
  */
@@ -267,25 +293,27 @@ NODE_ENV="development"
 export const API_URLS = {
   // ViaCEP - Consulta de CEP
   viaCep: process.env.VIACEP_API_URL || 'https://viacep.com.br/ws',
-  
+
   // eSocial - Integração governo
   esocial: {
-    homologacao: process.env.ESOCIAL_HOMOLOGACAO_URL || 
+    homologacao:
+      process.env.ESOCIAL_HOMOLOGACAO_URL ||
       'https://webservices.producaorestrita.esocial.gov.br',
-    producao: process.env.ESOCIAL_PRODUCAO_URL || 
+    producao:
+      process.env.ESOCIAL_PRODUCAO_URL ||
       'https://webservices.producao.esocial.gov.br',
   },
-  
+
   // Serviços de Geocoding
   geocoding: {
-    nominatim: process.env.NOMINATIM_API_URL || 
-      'https://nominatim.openstreetmap.org',
-    openCage: process.env.OPENCAGE_API_URL || 
-      'https://api.opencagedata.com/geocode/v1',
-    locationIQ: process.env.LOCATIONIQ_API_URL || 
-      'https://us1.locationiq.com/v1',
-    positionStack: process.env.POSITIONSTACK_API_URL || 
-      'http://api.positionstack.com/v1',
+    nominatim:
+      process.env.NOMINATIM_API_URL || 'https://nominatim.openstreetmap.org',
+    openCage:
+      process.env.OPENCAGE_API_URL || 'https://api.opencagedata.com/geocode/v1',
+    locationIQ:
+      process.env.LOCATIONIQ_API_URL || 'https://us1.locationiq.com/v1',
+    positionStack:
+      process.env.POSITIONSTACK_API_URL || 'http://api.positionstack.com/v1',
   },
 };
 
@@ -312,46 +340,48 @@ export const INTERNAL_URLS = {
 #### 2.2.3 Componentes Atualizados
 
 **EmployeeModal.tsx:**
+
 ```typescript
 // ❌ ANTES
-const response = await fetch(
-  `https://viacep.com.br/ws/${cep}/json/`
-);
+const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
 
 // ✅ DEPOIS
 import { API_URLS } from '@/config/api-urls';
 
-const response = await fetch(
-  `${API_URLS.viaCep}/${cep}/json/`
-);
+const response = await fetch(`${API_URLS.viaCep}/${cep}/json/`);
 ```
 
 **EmployerModal.tsx:**
+
 ```typescript
 // ❌ ANTES
-fetch('https://viacep.com.br/ws/' + cep + '/json/')
+fetch('https://viacep.com.br/ws/' + cep + '/json/');
 
 // ✅ DEPOIS
 import { API_URLS } from '@/config/api-urls';
 
-fetch(`${API_URLS.viaCep}/${cep}/json/`)
+fetch(`${API_URLS.viaCep}/${cep}/json/`);
 ```
 
 ### 2.3 Remoção de Dados Mockados
 
 #### 2.3.1 Análise Realizada
+
 **Comando Executado:**
+
 ```bash
 cd /home/ubuntu/DOM/src
 grep -rE "(mock|Mock|MOCK)" --include="*.ts" --include="*.tsx"
 ```
 
 **Resultados:**
+
 - ✅ **97 ocorrências** encontradas
 - ✅ **Todas em `__tests__/`** (apropriado para testes)
 - ✅ **mockUserId removido** do código de produção
 
 #### 2.3.2 Correção em `locais.ts`
+
 ```typescript
 // ❌ ANTES
 const mockUserId = 'user-123-mock';
@@ -360,7 +390,7 @@ const userId = mockUserId; // Sempre usa mock!
 await prisma.geofencingLog.create({
   data: {
     usuarioId: userId, // Mock em produção!
-  }
+  },
 });
 
 // ✅ DEPOIS
@@ -374,34 +404,36 @@ if (!userId) {
 await prisma.geofencingLog.create({
   data: {
     usuarioId: userId, // Usuário real!
-  }
+  },
 });
 ```
 
 ### 2.4 BaseModal Reutilizável
 
 #### 2.4.1 Arquivo Criado
+
 **Localização:** `/home/ubuntu/DOM/src/components/BaseModal.tsx`  
 **Linhas:** 300+  
 **Propósito:** Modal base reutilizável para toda aplicação
 
 #### 2.4.2 Interface
+
 ```typescript
 interface BaseModalProps {
   // Controle de visibilidade
   isOpen: boolean;
   onClose: () => void;
-  
+
   // Conteúdo
   title: string;
   children: React.ReactNode;
-  
+
   // Configuração
   size?: 'small' | 'medium' | 'large' | 'fullscreen';
   showCloseButton?: boolean;
   closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
-  
+
   // Ações
   primaryAction?: {
     label: string;
@@ -413,10 +445,10 @@ interface BaseModalProps {
     label: string;
     onClick: () => void;
   };
-  
+
   // Footer customizado
   footer?: React.ReactNode;
-  
+
   // Estilo
   className?: string;
 }
@@ -425,6 +457,7 @@ interface BaseModalProps {
 #### 2.4.3 Recursos Implementados
 
 **1. Tamanhos Responsivos:**
+
 ```typescript
 const sizes = {
   small: { width: '400px', maxWidth: '90vw' },
@@ -435,6 +468,7 @@ const sizes = {
 ```
 
 **2. Animações:**
+
 ```typescript
 const fadeIn = keyframes`
   from { opacity: 0; }
@@ -454,6 +488,7 @@ const slideUp = keyframes`
 ```
 
 **3. Acessibilidade:**
+
 ```typescript
 <div
   role="dialog"
@@ -467,6 +502,7 @@ const slideUp = keyframes`
 ```
 
 **4. Prevenção de Scroll:**
+
 ```typescript
 useEffect(() => {
   if (isOpen) {
@@ -474,7 +510,7 @@ useEffect(() => {
   } else {
     document.body.style.overflow = 'unset';
   }
-  
+
   return () => {
     document.body.style.overflow = 'unset';
   };
@@ -482,6 +518,7 @@ useEffect(() => {
 ```
 
 **5. Fechamento por ESC:**
+
 ```typescript
 useEffect(() => {
   const handleEscape = (e: KeyboardEvent) => {
@@ -489,20 +526,21 @@ useEffect(() => {
       onClose();
     }
   };
-  
+
   document.addEventListener('keydown', handleEscape);
   return () => document.removeEventListener('keydown', handleEscape);
 }, [onClose, closeOnEscape]);
 ```
 
 #### 2.4.4 Exemplo de Uso
+
 ```typescript
 import BaseModal from '@/components/BaseModal';
 
 function MyComponent() {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   const handleSave = async () => {
     setLoading(true);
     try {
@@ -512,13 +550,13 @@ function MyComponent() {
       setLoading(false);
     }
   };
-  
+
   return (
     <>
       <button onClick={() => setIsOpen(true)}>
         Abrir Modal
       </button>
-      
+
       <BaseModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
@@ -544,6 +582,7 @@ function MyComponent() {
 ```
 
 #### 2.4.5 Modais que Podem Usar BaseModal
+
 **Total:** 18 modais (29% dos componentes)
 
 1. `EmployeeModal.tsx`
@@ -570,21 +609,23 @@ function MyComponent() {
 ### 2.5 Hook useResource Genérico
 
 #### 2.5.1 Arquivo Criado
+
 **Localização:** `/home/ubuntu/DOM/src/hooks/useResource.ts`  
 **Linhas:** 180+  
 **Propósito:** Hook genérico para operações CRUD
 
 #### 2.5.2 Interface
+
 ```typescript
 interface UseResourceOptions<T> {
   // Configuração
   endpoint: string;
   autoFetch?: boolean;
-  
+
   // Callbacks
   onSuccess?: (data: T) => void;
   onError?: (error: Error) => void;
-  
+
   // Transformação
   transform?: (data: any) => T;
 }
@@ -594,13 +635,13 @@ interface UseResourceReturn<T> {
   data: T | null;
   loading: boolean;
   error: Error | null;
-  
+
   // Métodos CRUD
   fetch: () => Promise<void>;
   create: (data: Partial<T>) => Promise<T>;
   update: (id: string, data: Partial<T>) => Promise<T>;
   remove: (id: string) => Promise<void>;
-  
+
   // Utilitários
   reset: () => void;
   refetch: () => Promise<void>;
@@ -608,42 +649,43 @@ interface UseResourceReturn<T> {
 ```
 
 #### 2.5.3 Implementação Completa
+
 ```typescript
 import { useState, useEffect, useCallback } from 'react';
 
 export function useResource<T = any>(
   options: UseResourceOptions<T>
 ): UseResourceReturn<T> {
-  const { 
-    endpoint, 
+  const {
+    endpoint,
     autoFetch = false,
     onSuccess,
     onError,
     transform,
   } = options;
-  
+
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  
+
   // Fetch data
   const fetch = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch(endpoint);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       let result = await response.json();
-      
+
       if (transform) {
         result = transform(result);
       }
-      
+
       setData(result);
       onSuccess?.(result);
     } catch (err) {
@@ -654,110 +696,117 @@ export function useResource<T = any>(
       setLoading(false);
     }
   }, [endpoint, transform, onSuccess, onError]);
-  
+
   // Create
-  const create = useCallback(async (newData: Partial<T>): Promise<T> => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newData),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+  const create = useCallback(
+    async (newData: Partial<T>): Promise<T> => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newData),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const result = await response.json();
+        onSuccess?.(result);
+        return result;
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error('Erro ao criar');
+        setError(error);
+        onError?.(error);
+        throw error;
+      } finally {
+        setLoading(false);
       }
-      
-      const result = await response.json();
-      onSuccess?.(result);
-      return result;
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Erro ao criar');
-      setError(error);
-      onError?.(error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [endpoint, onSuccess, onError]);
-  
+    },
+    [endpoint, onSuccess, onError]
+  );
+
   // Update
-  const update = useCallback(async (
-    id: string, 
-    updatedData: Partial<T>
-  ): Promise<T> => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const response = await fetch(`${endpoint}/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedData),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+  const update = useCallback(
+    async (id: string, updatedData: Partial<T>): Promise<T> => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(`${endpoint}/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedData),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const result = await response.json();
+        onSuccess?.(result);
+        return result;
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error('Erro ao atualizar');
+        setError(error);
+        onError?.(error);
+        throw error;
+      } finally {
+        setLoading(false);
       }
-      
-      const result = await response.json();
-      onSuccess?.(result);
-      return result;
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Erro ao atualizar');
-      setError(error);
-      onError?.(error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [endpoint, onSuccess, onError]);
-  
+    },
+    [endpoint, onSuccess, onError]
+  );
+
   // Delete
-  const remove = useCallback(async (id: string): Promise<void> => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const response = await fetch(`${endpoint}/${id}`, {
-        method: 'DELETE',
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+  const remove = useCallback(
+    async (id: string): Promise<void> => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(`${endpoint}/${id}`, {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        onSuccess?.(null as any);
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error('Erro ao deletar');
+        setError(error);
+        onError?.(error);
+        throw error;
+      } finally {
+        setLoading(false);
       }
-      
-      onSuccess?.(null as any);
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Erro ao deletar');
-      setError(error);
-      onError?.(error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [endpoint, onSuccess, onError]);
-  
+    },
+    [endpoint, onSuccess, onError]
+  );
+
   // Reset
   const reset = useCallback(() => {
     setData(null);
     setError(null);
     setLoading(false);
   }, []);
-  
+
   // Refetch
   const refetch = useCallback(() => fetch(), [fetch]);
-  
+
   // Auto-fetch on mount
   useEffect(() => {
     if (autoFetch) {
       fetch();
     }
   }, [autoFetch, fetch]);
-  
+
   return {
     data,
     loading,
@@ -775,16 +824,17 @@ export function useResource<T = any>(
 #### 2.5.4 Exemplos de Uso
 
 **Exemplo 1: Listagem Simples**
+
 ```typescript
 function EmployeeList() {
   const { data: employees, loading, error } = useResource<Employee[]>({
     endpoint: '/api/employees',
     autoFetch: true,
   });
-  
+
   if (loading) return <div>Carregando...</div>;
   if (error) return <div>Erro: {error.message}</div>;
-  
+
   return (
     <ul>
       {employees?.map(emp => (
@@ -796,6 +846,7 @@ function EmployeeList() {
 ```
 
 **Exemplo 2: CRUD Completo**
+
 ```typescript
 function EmployeeManager() {
   const {
@@ -815,30 +866,30 @@ function EmployeeManager() {
       toast.error(`Erro: ${error.message}`);
     },
   });
-  
+
   const handleCreate = async (data: Partial<Employee>) => {
     await create(data);
     refetch();
   };
-  
+
   const handleUpdate = async (id: string, data: Partial<Employee>) => {
     await update(id, data);
     refetch();
   };
-  
+
   const handleDelete = async (id: string) => {
     if (confirm('Tem certeza?')) {
       await remove(id);
       refetch();
     }
   };
-  
+
   return (
     <div>
       <button onClick={() => handleCreate({ name: 'Novo' })}>
         Adicionar
       </button>
-      
+
       {loading ? (
         <div>Carregando...</div>
       ) : (
@@ -864,11 +915,12 @@ function EmployeeManager() {
 ```
 
 **Exemplo 3: Com Transformação**
+
 ```typescript
 const { data } = useResource<Employee[]>({
   endpoint: '/api/employees',
   autoFetch: true,
-  transform: (rawData) => {
+  transform: rawData => {
     // Transformar dados da API
     return rawData.map((item: any) => ({
       id: item.id,
@@ -881,6 +933,7 @@ const { data } = useResource<Employee[]>({
 ```
 
 #### 2.5.5 Páginas que Podem Usar useResource
+
 **Total:** 15+ páginas
 
 1. `employees.tsx` - Listagem de funcionários
@@ -904,6 +957,7 @@ const { data } = useResource<Employee[]>({
 ### 2.6 Validadores Centralizados
 
 #### 2.6.1 Arquivo Criado
+
 **Localização:** `/home/ubuntu/DOM/src/utils/validators.ts`  
 **Linhas:** 200+  
 **Propósito:** Validadores brasileiros centralizados
@@ -911,6 +965,7 @@ const { data } = useResource<Employee[]>({
 #### 2.6.2 Validadores Implementados
 
 **1. CPF com Dígitos Verificadores**
+
 ```typescript
 /**
  * Valida CPF brasileiro
@@ -924,13 +979,13 @@ const { data } = useResource<Employee[]>({
 export function validateCPF(cpf: string): boolean {
   // Remove formatação
   const cleaned = cpf.replace(/\D/g, '');
-  
+
   // Verifica tamanho
   if (cleaned.length !== 11) return false;
-  
+
   // Verifica sequências (111.111.111-11, etc)
   if (/^(\d)\1{10}$/.test(cleaned)) return false;
-  
+
   // Calcula primeiro dígito verificador
   let sum = 0;
   for (let i = 0; i < 9; i++) {
@@ -938,10 +993,10 @@ export function validateCPF(cpf: string): boolean {
   }
   let digit1 = 11 - (sum % 11);
   if (digit1 > 9) digit1 = 0;
-  
+
   // Verifica primeiro dígito
   if (parseInt(cleaned[9]) !== digit1) return false;
-  
+
   // Calcula segundo dígito verificador
   sum = 0;
   for (let i = 0; i < 10; i++) {
@@ -949,13 +1004,14 @@ export function validateCPF(cpf: string): boolean {
   }
   let digit2 = 11 - (sum % 11);
   if (digit2 > 9) digit2 = 0;
-  
+
   // Verifica segundo dígito
   return parseInt(cleaned[10]) === digit2;
 }
 ```
 
 **2. CNPJ com Dígitos Verificadores**
+
 ```typescript
 /**
  * Valida CNPJ brasileiro
@@ -967,10 +1023,10 @@ export function validateCPF(cpf: string): boolean {
  */
 export function validateCNPJ(cnpj: string): boolean {
   const cleaned = cnpj.replace(/\D/g, '');
-  
+
   if (cleaned.length !== 14) return false;
   if (/^(\d)\1{13}$/.test(cleaned)) return false;
-  
+
   // Calcula primeiro dígito
   const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   let sum = 0;
@@ -978,9 +1034,9 @@ export function validateCNPJ(cnpj: string): boolean {
     sum += parseInt(cleaned[i]) * weights1[i];
   }
   let digit1 = sum % 11 < 2 ? 0 : 11 - (sum % 11);
-  
+
   if (parseInt(cleaned[12]) !== digit1) return false;
-  
+
   // Calcula segundo dígito
   const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   sum = 0;
@@ -988,12 +1044,13 @@ export function validateCNPJ(cnpj: string): boolean {
     sum += parseInt(cleaned[i]) * weights2[i];
   }
   let digit2 = sum % 11 < 2 ? 0 : 11 - (sum % 11);
-  
+
   return parseInt(cleaned[13]) === digit2;
 }
 ```
 
 **3. PIS/PASEP**
+
 ```typescript
 /**
  * Valida PIS/PASEP
@@ -1004,24 +1061,25 @@ export function validateCNPJ(cnpj: string): boolean {
  */
 export function validatePIS(pis: string): boolean {
   const cleaned = pis.replace(/\D/g, '');
-  
+
   if (cleaned.length !== 11) return false;
-  
+
   const weights = [3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   let sum = 0;
-  
+
   for (let i = 0; i < 10; i++) {
     sum += parseInt(cleaned[i]) * weights[i];
   }
-  
+
   let digit = 11 - (sum % 11);
   if (digit >= 10) digit = 0;
-  
+
   return parseInt(cleaned[10]) === digit;
 }
 ```
 
 **4. Email**
+
 ```typescript
 /**
  * Valida email
@@ -1035,6 +1093,7 @@ export function validateEmail(email: string): boolean {
 ```
 
 **5. Telefone Brasileiro**
+
 ```typescript
 /**
  * Valida telefone brasileiro (fixo ou celular)
@@ -1046,23 +1105,24 @@ export function validateEmail(email: string): boolean {
  */
 export function validatePhone(phone: string): boolean {
   const cleaned = phone.replace(/\D/g, '');
-  
+
   // Celular: 11 dígitos (com 9 na frente)
   // Fixo: 10 dígitos
   if (cleaned.length !== 10 && cleaned.length !== 11) return false;
-  
+
   // Verifica DDD válido (11-99)
   const ddd = parseInt(cleaned.substring(0, 2));
   if (ddd < 11 || ddd > 99) return false;
-  
+
   // Se for celular (11 dígitos), deve começar com 9
   if (cleaned.length === 11 && cleaned[2] !== '9') return false;
-  
+
   return true;
 }
 ```
 
 **6. CEP**
+
 ```typescript
 /**
  * Valida CEP brasileiro
@@ -1079,6 +1139,7 @@ export function validateCEP(cep: string): boolean {
 ```
 
 **7. Data (DD/MM/YYYY)**
+
 ```typescript
 /**
  * Valida data no formato DD/MM/YYYY
@@ -1088,29 +1149,30 @@ export function validateCEP(cep: string): boolean {
 export function validateDate(date: string): boolean {
   const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
   const match = date.match(regex);
-  
+
   if (!match) return false;
-  
+
   const day = parseInt(match[1]);
   const month = parseInt(match[2]);
   const year = parseInt(match[3]);
-  
+
   if (month < 1 || month > 12) return false;
   if (day < 1 || day > 31) return false;
-  
+
   // Verifica dias por mês
   const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  
+
   // Ano bissexto
   if (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)) {
     daysInMonth[1] = 29;
   }
-  
+
   return day <= daysInMonth[month - 1];
 }
 ```
 
 **8. Maior de Idade**
+
 ```typescript
 /**
  * Valida se é maior de 18 anos
@@ -1119,23 +1181,24 @@ export function validateDate(date: string): boolean {
  */
 export function validateAge18Plus(birthDate: string): boolean {
   if (!validateDate(birthDate)) return false;
-  
+
   const [day, month, year] = birthDate.split('/').map(Number);
   const birth = new Date(year, month - 1, day);
   const today = new Date();
-  
+
   let age = today.getFullYear() - birth.getFullYear();
   const monthDiff = today.getMonth() - birth.getMonth();
-  
+
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
     age--;
   }
-  
+
   return age >= 18;
 }
 ```
 
 **9. Valor Monetário**
+
 ```typescript
 /**
  * Valida valor monetário (positivo)
@@ -1148,6 +1211,7 @@ export function validateCurrency(value: number): boolean {
 ```
 
 **10. URL**
+
 ```typescript
 /**
  * Valida URL
@@ -1165,6 +1229,7 @@ export function validateURL(url: string): boolean {
 ```
 
 **11. Senha Forte**
+
 ```typescript
 /**
  * Valida senha forte
@@ -1174,23 +1239,24 @@ export function validateURL(url: string): boolean {
  * - Pelo menos 1 letra minúscula
  * - Pelo menos 1 número
  * - Pelo menos 1 caractere especial
- * 
+ *
  * @param password - Senha
  * @returns true se forte
  */
 export function validateStrongPassword(password: string): boolean {
   if (password.length < 8) return false;
-  
+
   const hasUpperCase = /[A-Z]/.test(password);
   const hasLowerCase = /[a-z]/.test(password);
   const hasNumber = /\d/.test(password);
   const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-  
+
   return hasUpperCase && hasLowerCase && hasNumber && hasSpecial;
 }
 ```
 
 #### 2.6.3 Exemplo de Uso
+
 ```typescript
 import {
   validateCPF,
@@ -1201,46 +1267,46 @@ import {
 
 function EmployeeForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
-  
+
   const handleSubmit = (data: any) => {
     const newErrors: Record<string, string> = {};
-    
+
     // Validar CPF
     if (!validateCPF(data.cpf)) {
       newErrors.cpf = 'CPF inválido';
     }
-    
+
     // Validar email
     if (!validateEmail(data.email)) {
       newErrors.email = 'Email inválido';
     }
-    
+
     // Validar telefone
     if (!validatePhone(data.phone)) {
       newErrors.phone = 'Telefone inválido';
     }
-    
+
     // Validar senha
     if (!validateStrongPassword(data.password)) {
       newErrors.password = 'Senha fraca (mín. 8 caracteres, maiúscula, minúscula, número e especial)';
     }
-    
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-    
+
     // Enviar dados...
   };
-  
+
   return (
     <form onSubmit={handleSubmit}>
       <input name="cpf" />
       {errors.cpf && <span className="error">{errors.cpf}</span>}
-      
+
       <input name="email" />
       {errors.email && <span className="error">{errors.email}</span>}
-      
+
       {/* ... */}
     </form>
   );
@@ -1250,6 +1316,7 @@ function EmployeeForm() {
 ### 2.7 Formatadores Centralizados
 
 #### 2.7.1 Arquivo Criado
+
 **Localização:** `/home/ubuntu/DOM/src/utils/formatters.ts`  
 **Linhas:** 250+  
 **Propósito:** Formatadores brasileiros centralizados
@@ -1257,6 +1324,7 @@ function EmployeeForm() {
 #### 2.7.2 Formatadores Implementados
 
 **1. CPF**
+
 ```typescript
 /**
  * Formata CPF para ###.###.###-##
@@ -1267,17 +1335,15 @@ function EmployeeForm() {
  */
 export function formatCPF(cpf: string): string {
   const cleaned = cpf.replace(/\D/g, '');
-  
+
   if (cleaned.length !== 11) return cpf;
-  
-  return cleaned.replace(
-    /(\d{3})(\d{3})(\d{3})(\d{2})/,
-    '$1.$2.$3-$4'
-  );
+
+  return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 }
 ```
 
 **2. CNPJ**
+
 ```typescript
 /**
  * Formata CNPJ para ##.###.###/####-##
@@ -1288,9 +1354,9 @@ export function formatCPF(cpf: string): string {
  */
 export function formatCNPJ(cnpj: string): string {
   const cleaned = cnpj.replace(/\D/g, '');
-  
+
   if (cleaned.length !== 14) return cnpj;
-  
+
   return cleaned.replace(
     /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,
     '$1.$2.$3/$4-$5'
@@ -1299,6 +1365,7 @@ export function formatCNPJ(cnpj: string): string {
 ```
 
 **3. PIS**
+
 ```typescript
 /**
  * Formata PIS para ###.#####.##-#
@@ -1309,17 +1376,15 @@ export function formatCNPJ(cnpj: string): string {
  */
 export function formatPIS(pis: string): string {
   const cleaned = pis.replace(/\D/g, '');
-  
+
   if (cleaned.length !== 11) return pis;
-  
-  return cleaned.replace(
-    /(\d{3})(\d{5})(\d{2})(\d{1})/,
-    '$1.$2.$3-$4'
-  );
+
+  return cleaned.replace(/(\d{3})(\d{5})(\d{2})(\d{1})/, '$1.$2.$3-$4');
 }
 ```
 
 **4. CEP**
+
 ```typescript
 /**
  * Formata CEP para #####-###
@@ -1330,14 +1395,15 @@ export function formatPIS(pis: string): string {
  */
 export function formatCEP(cep: string): string {
   const cleaned = cep.replace(/\D/g, '');
-  
+
   if (cleaned.length !== 8) return cep;
-  
+
   return cleaned.replace(/(\d{5})(\d{3})/, '$1-$2');
 }
 ```
 
 **5. Telefone**
+
 ```typescript
 /**
  * Formata telefone brasileiro
@@ -1349,7 +1415,7 @@ export function formatCEP(cep: string): string {
  */
 export function formatPhone(phone: string): string {
   const cleaned = phone.replace(/\D/g, '');
-  
+
   if (cleaned.length === 11) {
     // Celular: (##) #####-####
     return cleaned.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
@@ -1357,12 +1423,13 @@ export function formatPhone(phone: string): string {
     // Fixo: (##) ####-####
     return cleaned.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
   }
-  
+
   return phone;
 }
 ```
 
 **6. Moeda (R$)**
+
 ```typescript
 /**
  * Formata valor para moeda brasileira
@@ -1381,6 +1448,7 @@ export function formatCurrency(value: number): string {
 ```
 
 **7. Data (DD/MM/YYYY)**
+
 ```typescript
 /**
  * Formata Date para DD/MM/YYYY
@@ -1391,16 +1459,17 @@ export function formatCurrency(value: number): string {
  */
 export function formatDate(date: Date | string): string {
   const d = typeof date === 'string' ? new Date(date) : date;
-  
+
   const day = String(d.getDate()).padStart(2, '0');
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const year = d.getFullYear();
-  
+
   return `${day}/${month}/${year}`;
 }
 ```
 
 **8. Data/Hora (DD/MM/YYYY HH:MM)**
+
 ```typescript
 /**
  * Formata Date para DD/MM/YYYY HH:MM
@@ -1411,18 +1480,19 @@ export function formatDate(date: Date | string): string {
  */
 export function formatDateTime(date: Date | string): string {
   const d = typeof date === 'string' ? new Date(date) : date;
-  
+
   const day = String(d.getDate()).padStart(2, '0');
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const year = d.getFullYear();
   const hours = String(d.getHours()).padStart(2, '0');
   const minutes = String(d.getMinutes()).padStart(2, '0');
-  
+
   return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 ```
 
 **9. Data ISO (YYYY-MM-DD)**
+
 ```typescript
 /**
  * Formata Date para YYYY-MM-DD (ISO)
@@ -1435,12 +1505,13 @@ export function formatDateISO(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
-  
+
   return `${year}-${month}-${day}`;
 }
 ```
 
 **10. Número com Separadores**
+
 ```typescript
 /**
  * Formata número com separadores de milhar
@@ -1455,6 +1526,7 @@ export function formatNumber(value: number): string {
 ```
 
 **11. Porcentagem**
+
 ```typescript
 /**
  * Formata valor para porcentagem
@@ -1475,6 +1547,7 @@ export function formatPercentage(value: number, decimals: number = 2): string {
 ```
 
 **12. Tamanho de Arquivo**
+
 ```typescript
 /**
  * Formata tamanho de arquivo
@@ -1487,16 +1560,17 @@ export function formatPercentage(value: number, decimals: number = 2): string {
  */
 export function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 Bytes';
-  
+
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
+
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
 }
 ```
 
 **13. Duração (HH:MM:SS)**
+
 ```typescript
 /**
  * Formata duração em segundos para HH:MM:SS
@@ -1510,14 +1584,13 @@ export function formatDuration(seconds: number): string {
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = seconds % 60;
-  
-  return [h, m, s]
-    .map(v => String(v).padStart(2, '0'))
-    .join(':');
+
+  return [h, m, s].map(v => String(v).padStart(2, '0')).join(':');
 }
 ```
 
 **14. Capitalização**
+
 ```typescript
 /**
  * Capitaliza primeira letra de cada palavra
@@ -1536,6 +1609,7 @@ export function capitalize(text: string): string {
 ```
 
 **15. Truncate**
+
 ```typescript
 /**
  * Trunca texto com reticências
@@ -1552,6 +1626,7 @@ export function truncate(text: string, maxLength: number): string {
 ```
 
 **16. Slugify**
+
 ```typescript
 /**
  * Converte texto para slug (URL-friendly)
@@ -1574,6 +1649,7 @@ export function slugify(text: string): string {
 ```
 
 #### 2.7.3 Exemplo de Uso
+
 ```typescript
 import {
   formatCPF,
@@ -1586,19 +1662,19 @@ function EmployeeCard({ employee }: { employee: Employee }) {
   return (
     <div className="card">
       <h3>{employee.name}</h3>
-      
+
       <p>
         <strong>CPF:</strong> {formatCPF(employee.cpf)}
       </p>
-      
+
       <p>
         <strong>Telefone:</strong> {formatPhone(employee.phone)}
       </p>
-      
+
       <p>
         <strong>Salário:</strong> {formatCurrency(employee.salary)}
       </p>
-      
+
       <p>
         <strong>Admissão:</strong> {formatDate(employee.hireDate)}
       </p>
@@ -1610,11 +1686,13 @@ function EmployeeCard({ employee }: { employee: Employee }) {
 ### 2.8 API Client Centralizado
 
 #### 2.8.1 Arquivo Criado
+
 **Localização:** `/home/ubuntu/DOM/src/lib/api-client.ts`  
 **Linhas:** 300+  
 **Propósito:** Cliente HTTP centralizado
 
 #### 2.8.2 Interface
+
 ```typescript
 interface ApiClientConfig {
   baseURL?: string;
@@ -1635,35 +1713,40 @@ class ApiClient {
   private timeout: number;
   private headers: Record<string, string>;
   private authToken: string | null;
-  
+
   constructor(config?: ApiClientConfig);
-  
+
   // Configuração
   setAuthToken(token: string): void;
   clearAuthToken(): void;
   setHeader(key: string, value: string): void;
-  
+
   // Métodos HTTP
   get<T>(url: string, options?: RequestOptions): Promise<T>;
   post<T>(url: string, data: any, options?: RequestOptions): Promise<T>;
   put<T>(url: string, data: any, options?: RequestOptions): Promise<T>;
   patch<T>(url: string, data: any, options?: RequestOptions): Promise<T>;
   delete<T>(url: string, options?: RequestOptions): Promise<T>;
-  
+
   // Utilitários
   upload(url: string, file: File, options?: RequestOptions): Promise<any>;
-  download(url: string, filename: string, options?: RequestOptions): Promise<void>;
+  download(
+    url: string,
+    filename: string,
+    options?: RequestOptions
+  ): Promise<void>;
 }
 ```
 
 #### 2.8.3 Implementação Completa
+
 ```typescript
 class ApiClient {
   private baseURL: string;
   private timeout: number;
   private headers: Record<string, string>;
   private authToken: string | null = null;
-  
+
   constructor(config: ApiClientConfig = {}) {
     this.baseURL = config.baseURL || '';
     this.timeout = config.timeout || 30000; // 30 segundos
@@ -1672,57 +1755,62 @@ class ApiClient {
       ...config.headers,
     };
   }
-  
+
   /**
    * Define token de autenticação
    */
   setAuthToken(token: string): void {
     this.authToken = token;
   }
-  
+
   /**
    * Remove token de autenticação
    */
   clearAuthToken(): void {
     this.authToken = null;
   }
-  
+
   /**
    * Define header customizado
    */
   setHeader(key: string, value: string): void {
     this.headers[key] = value;
   }
-  
+
   /**
    * Monta URL completa
    */
   private buildURL(url: string, params?: Record<string, any>): string {
     const fullURL = url.startsWith('http') ? url : `${this.baseURL}${url}`;
-    
+
     if (!params) return fullURL;
-    
+
     const queryString = Object.entries(params)
       .filter(([_, value]) => value !== undefined && value !== null)
-      .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+      .map(
+        ([key, value]) =>
+          `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+      )
       .join('&');
-    
+
     return queryString ? `${fullURL}?${queryString}` : fullURL;
   }
-  
+
   /**
    * Monta headers da requisição
    */
-  private buildHeaders(customHeaders?: Record<string, string>): Record<string, string> {
+  private buildHeaders(
+    customHeaders?: Record<string, string>
+  ): Record<string, string> {
     const headers = { ...this.headers, ...customHeaders };
-    
+
     if (this.authToken) {
       headers['Authorization'] = `Bearer ${this.authToken}`;
     }
-    
+
     return headers;
   }
-  
+
   /**
    * Executa requisição HTTP
    */
@@ -1737,14 +1825,14 @@ class ApiClient {
       params,
       timeout = this.timeout,
     } = options;
-    
+
     const fullURL = this.buildURL(url, params);
     const headers = this.buildHeaders(customHeaders);
-    
+
     // Timeout controller
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
-    
+
     try {
       const response = await fetch(fullURL, {
         method,
@@ -1752,24 +1840,23 @@ class ApiClient {
         body: body ? JSON.stringify(body) : undefined,
         signal: controller.signal,
       });
-      
+
       clearTimeout(timeoutId);
-      
+
       // Verifica status
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
         throw new Error(
-          error.message || 
-          `HTTP ${response.status}: ${response.statusText}`
+          error.message || `HTTP ${response.status}: ${response.statusText}`
         );
       }
-      
+
       // Parse resposta
       const contentType = response.headers.get('content-type');
       if (contentType?.includes('application/json')) {
         return await response.json();
       } else {
-        return await response.text() as any;
+        return (await response.text()) as any;
       }
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
@@ -1780,42 +1867,42 @@ class ApiClient {
       clearTimeout(timeoutId);
     }
   }
-  
+
   /**
    * GET request
    */
   async get<T>(url: string, options?: RequestOptions): Promise<T> {
     return this.request<T>(url, { ...options, method: 'GET' });
   }
-  
+
   /**
    * POST request
    */
   async post<T>(url: string, data: any, options?: RequestOptions): Promise<T> {
     return this.request<T>(url, { ...options, method: 'POST', body: data });
   }
-  
+
   /**
    * PUT request
    */
   async put<T>(url: string, data: any, options?: RequestOptions): Promise<T> {
     return this.request<T>(url, { ...options, method: 'PUT', body: data });
   }
-  
+
   /**
    * PATCH request
    */
   async patch<T>(url: string, data: any, options?: RequestOptions): Promise<T> {
     return this.request<T>(url, { ...options, method: 'PATCH', body: data });
   }
-  
+
   /**
    * DELETE request
    */
   async delete<T>(url: string, options?: RequestOptions): Promise<T> {
     return this.request<T>(url, { ...options, method: 'DELETE' });
   }
-  
+
   /**
    * Upload de arquivo
    */
@@ -1826,16 +1913,16 @@ class ApiClient {
   ): Promise<any> {
     const formData = new FormData();
     formData.append('file', file);
-    
+
     const headers = this.buildHeaders(options?.headers);
     delete headers['Content-Type']; // Deixa o browser definir
-    
+
     const controller = new AbortController();
     const timeoutId = setTimeout(
       () => controller.abort(),
       options?.timeout || this.timeout
     );
-    
+
     try {
       const response = await fetch(this.buildURL(url), {
         method: 'POST',
@@ -1843,19 +1930,19 @@ class ApiClient {
         body: formData,
         signal: controller.signal,
       });
-      
+
       clearTimeout(timeoutId);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       return await response.json();
     } finally {
       clearTimeout(timeoutId);
     }
   }
-  
+
   /**
    * Download de arquivo
    */
@@ -1868,11 +1955,11 @@ class ApiClient {
       method: 'GET',
       headers: this.buildHeaders(options?.headers),
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-    
+
     const blob = await response.blob();
     const downloadUrl = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -1897,6 +1984,7 @@ export default apiClient;
 #### 2.8.4 Exemplos de Uso
 
 **Exemplo 1: GET Simples**
+
 ```typescript
 import apiClient from '@/lib/api-client';
 
@@ -1905,35 +1993,32 @@ const employees = await apiClient.get<Employee[]>('/api/employees');
 ```
 
 **Exemplo 2: POST com Dados**
+
 ```typescript
 // Criar novo funcionário
-const newEmployee = await apiClient.post<Employee>(
-  '/api/employees',
-  {
-    name: 'João Silva',
-    cpf: '123.456.789-09',
-    email: 'joao@example.com',
-  }
-);
+const newEmployee = await apiClient.post<Employee>('/api/employees', {
+  name: 'João Silva',
+  cpf: '123.456.789-09',
+  email: 'joao@example.com',
+});
 ```
 
 **Exemplo 3: Com Query Params**
+
 ```typescript
 // Buscar com filtros
-const filtered = await apiClient.get<Employee[]>(
-  '/api/employees',
-  {
-    params: {
-      department: 'TI',
-      active: true,
-      page: 1,
-      limit: 10,
-    },
-  }
-);
+const filtered = await apiClient.get<Employee[]>('/api/employees', {
+  params: {
+    department: 'TI',
+    active: true,
+    page: 1,
+    limit: 10,
+  },
+});
 ```
 
 **Exemplo 4: Com Autenticação**
+
 ```typescript
 // Login
 const { token } = await apiClient.post('/api/auth/login', {
@@ -1949,6 +2034,7 @@ const profile = await apiClient.get('/api/profile');
 ```
 
 **Exemplo 5: Upload de Arquivo**
+
 ```typescript
 const fileInput = document.querySelector('input[type="file"]');
 const file = fileInput.files[0];
@@ -1958,14 +2044,13 @@ console.log('Arquivo enviado:', result.url);
 ```
 
 **Exemplo 6: Download de Arquivo**
+
 ```typescript
-await apiClient.download(
-  '/api/reports/monthly',
-  'relatorio-mensal.pdf'
-);
+await apiClient.download('/api/reports/monthly', 'relatorio-mensal.pdf');
 ```
 
 **Exemplo 7: Com Timeout Customizado**
+
 ```typescript
 // Requisição com timeout de 5 segundos
 const data = await apiClient.get('/api/slow-endpoint', {
@@ -1974,6 +2059,7 @@ const data = await apiClient.get('/api/slow-endpoint', {
 ```
 
 **Exemplo 8: Com Headers Customizados**
+
 ```typescript
 const data = await apiClient.post(
   '/api/data',
@@ -1987,6 +2073,7 @@ const data = await apiClient.post(
 ```
 
 #### 2.8.5 Benefícios
+
 - ✅ **Centralização** - Todas as requisições HTTP em um lugar
 - ✅ **Timeout** - Evita requisições travadas
 - ✅ **Autenticação** - Token gerenciado automaticamente
@@ -1998,9 +2085,11 @@ const data = await apiClient.post(
 ### 2.9 Scripts de Automação Criados
 
 #### 2.9.1 Lista Completa
+
 **Total:** 16 scripts
 
 **Scripts Python (8):**
+
 1. `fix-ts7006-errors.py` - Corrige parâmetros implícitos
 2. `fix-duplicates.py` - Remove imports/variáveis duplicadas
 3. `fix-broken-imports.py` - Corrige imports quebrados
@@ -2011,6 +2100,7 @@ const data = await apiClient.post(
 8. `fix-typescript-100-percent.sh` - Correção completa
 
 **Scripts Shell (8):**
+
 1. `fix-remaining-errors.sh` - Correções gerais
 2. `fix-implicit-any.sh` - Corrige any implícito
 3. `fix-orphan-imports.sh` - Remove imports órfãos
@@ -2021,6 +2111,7 @@ const data = await apiClient.post(
 8. `collect-all-errors-iterative.sh` - Coleta iterativa
 
 #### 2.9.2 Exemplo: fix-ts7006-errors.py
+
 ```python
 #!/usr/bin/env python3
 """
@@ -2036,42 +2127,42 @@ def fix_implicit_any(file_path):
     """Corrige parâmetros implícitos em um arquivo"""
     with open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
-    
+
     original = content
-    
+
     # Padrões a corrigir
     patterns = [
         # .map(item => ...)
         (r'\.map\((\w+)\s*=>', r'.map((\1: any) =>'),
-        
+
         # .forEach(item => ...)
         (r'\.forEach\((\w+)\s*=>', r'.forEach((\1: any) =>'),
-        
+
         # .filter(item => ...)
         (r'\.filter\((\w+)\s*=>', r'.filter((\1: any) =>'),
-        
+
         # .find(item => ...)
         (r'\.find\((\w+)\s*=>', r'.find((\1: any) =>'),
-        
+
         # .reduce((acc, item) => ...)
         (r'\.reduce\(\((\w+),\s*(\w+)\)\s*=>', r'.reduce((\1: any, \2: any) =>'),
     ]
-    
+
     for pattern, replacement in patterns:
         content = re.sub(pattern, replacement, content)
-    
+
     if content != original:
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content)
         return True
-    
+
     return False
 
 def main():
     """Processa todos os arquivos TypeScript"""
     src_dir = '/home/ubuntu/DOM/src'
     fixed_count = 0
-    
+
     for root, dirs, files in os.walk(src_dir):
         for file in files:
             if file.endswith(('.ts', '.tsx')):
@@ -2079,7 +2170,7 @@ def main():
                 if fix_implicit_any(file_path):
                     fixed_count += 1
                     print(f'✅ Corrigido: {file_path}')
-    
+
     print(f'\n✅ Total de arquivos corrigidos: {fixed_count}')
 
 if __name__ == '__main__':
@@ -2089,6 +2180,7 @@ if __name__ == '__main__':
 ### 2.10 Documentação Gerada
 
 #### 2.10.1 Lista Completa
+
 **Total:** 9 documentos
 
 1. **RELATORIO-FINAL-MELHORIAS.md** (Este documento)
@@ -2136,96 +2228,120 @@ if __name__ == '__main__':
 ### 3.1 Motivações Técnicas
 
 #### 3.1.1 Correções TypeScript
+
 **Por quê?**
+
 - ❌ **Problema:** 178 erros impediam compilação
 - ❌ **Impacto:** Build falhando, deploy impossível
 - ❌ **Risco:** Bugs em produção não detectados
 
 **Benefícios:**
+
 - ✅ **Compilação:** Build funcional
 - ✅ **Segurança:** Tipos verificados
 - ✅ **Produtividade:** Autocomplete e IntelliSense
 - ✅ **Qualidade:** Menos bugs
 
 #### 3.1.2 Centralização de URLs
+
 **Por quê?**
+
 - ❌ **Problema:** 24 URLs espalhadas no código
 - ❌ **Impacto:** Difícil mudar ambiente (dev/prod)
 - ❌ **Risco:** Secrets expostos no código
 
 **Benefícios:**
+
 - ✅ **Segurança:** Secrets em .env
 - ✅ **Flexibilidade:** Fácil trocar ambiente
 - ✅ **Manutenção:** Um lugar para atualizar
 - ✅ **Deploy:** Configuração por ambiente
 
 #### 3.1.3 Remoção de Dados Mockados
+
 **Por quê?**
+
 - ❌ **Problema:** mockUserId em produção
 - ❌ **Impacto:** Dados incorretos salvos
 - ❌ **Risco:** Segurança comprometida
 
 **Benefícios:**
+
 - ✅ **Correção:** Dados reais salvos
 - ✅ **Segurança:** Autenticação real
 - ✅ **Auditoria:** Logs corretos
 - ✅ **Compliance:** Rastreabilidade
 
 #### 3.1.4 BaseModal Reutilizável
+
 **Por quê?**
+
 - ❌ **Problema:** 18 modais com código duplicado
 - ❌ **Impacto:** 40% de código repetido
 - ❌ **Risco:** Bugs em múltiplos lugares
 
 **Benefícios:**
+
 - ✅ **Redução:** 40% menos código
 - ✅ **Consistência:** UI padronizada
 - ✅ **Manutenção:** Corrigir em um lugar
 - ✅ **Produtividade:** Criar modais mais rápido
 
 #### 3.1.5 Hook useResource
+
 **Por quê?**
+
 - ❌ **Problema:** Lógica de API dispersa
 - ❌ **Impacto:** Código repetido em 15+ páginas
 - ❌ **Risco:** Inconsistência no error handling
 
 **Benefícios:**
+
 - ✅ **Redução:** 30% menos código
 - ✅ **Padronização:** CRUD consistente
 - ✅ **Manutenção:** Lógica centralizada
 - ✅ **Produtividade:** Implementar páginas mais rápido
 
 #### 3.1.6 Validadores
+
 **Por quê?**
+
 - ❌ **Problema:** Validações duplicadas e inconsistentes
 - ❌ **Impacto:** CPF aceito em um lugar, rejeitado em outro
 - ❌ **Risco:** Dados inválidos no banco
 
 **Benefícios:**
+
 - ✅ **Consistência:** Mesma regra em todo lugar
 - ✅ **Qualidade:** Dados sempre válidos
 - ✅ **Segurança:** Validação robusta
 - ✅ **Compliance:** Regras de negócio centralizadas
 
 #### 3.1.7 Formatadores
+
 **Por quê?**
+
 - ❌ **Problema:** Formatações duplicadas e inconsistentes
 - ❌ **Impacto:** CPF exibido diferente em cada tela
 - ❌ **Risco:** Confusão do usuário
 
 **Benefícios:**
+
 - ✅ **Consistência:** Formato padrão pt-BR
 - ✅ **UX:** Interface profissional
 - ✅ **Manutenção:** Mudar formato em um lugar
 - ✅ **Acessibilidade:** Leitura facilitada
 
 #### 3.1.8 API Client
+
 **Por quê?**
+
 - ❌ **Problema:** fetch() espalhado em 50+ arquivos
 - ❌ **Impacto:** Sem timeout, sem retry, sem auth
 - ❌ **Risco:** Requisições travadas
 
 **Benefícios:**
+
 - ✅ **Robustez:** Timeout automático
 - ✅ **Segurança:** Auth centralizada
 - ✅ **Produtividade:** Menos código
@@ -2234,16 +2350,19 @@ if __name__ == '__main__':
 ### 3.2 Motivações de Negócio
 
 #### 3.2.1 Redução de Custos
+
 - **Desenvolvimento:** 30-35% menos código = menos tempo
 - **Manutenção:** Bugs corrigidos em um lugar
 - **Onboarding:** Novos devs entendem mais rápido
 
 #### 3.2.2 Aumento de Qualidade
+
 - **Menos Bugs:** Validação e tipagem
 - **Mais Confiável:** Error handling robusto
 - **Melhor UX:** Interface consistente
 
 #### 3.2.3 Escalabilidade
+
 - **Fácil Adicionar:** Novos modais, páginas, APIs
 - **Fácil Mudar:** Trocar provider, API, formato
 - **Fácil Testar:** Código modular
@@ -2255,24 +2374,28 @@ if __name__ == '__main__':
 ### 4.1 Metodologia
 
 #### 4.1.1 Análise Inicial
+
 1. **Executar build** e capturar erros
 2. **Catalogar problemas** (178 erros)
 3. **Identificar padrões** (tipos de erro)
 4. **Priorizar** (crítico → importante → nice-to-have)
 
 #### 4.1.2 Correção Sistemática
+
 1. **Criar scripts** de automação
 2. **Corrigir em lote** (erros similares)
 3. **Validar** após cada correção
 4. **Iterar** até sucesso
 
 #### 4.1.3 Refatoração
+
 1. **Identificar duplicação** (modais, APIs, validações)
 2. **Extrair padrões** (BaseModal, useResource)
 3. **Criar abstrações** (validators, formatters)
 4. **Documentar** uso e exemplos
 
 #### 4.1.4 Documentação
+
 1. **Gerar relatórios** de progresso
 2. **Criar guias** de uso
 3. **Escrever exemplos** de código
@@ -2281,28 +2404,34 @@ if __name__ == '__main__':
 ### 4.2 Ferramentas Utilizadas
 
 #### 4.2.1 TypeScript Compiler
+
 ```bash
 npx tsc --noEmit
 ```
+
 - Análise de todos os erros
 - Validação de tipos
 - Geração de relatórios
 
 #### 4.2.2 Prisma CLI
+
 ```bash
 npx prisma validate
 npx prisma generate
 ```
+
 - Validação de schema
 - Geração de tipos
 - Correção de duplicatas
 
 #### 4.2.3 Scripts Python
+
 - Regex para correções em massa
 - Análise de padrões
 - Geração de relatórios
 
 #### 4.2.4 Scripts Shell
+
 - Automação de tarefas
 - Loops de correção
 - Integração com git
@@ -2310,25 +2439,31 @@ npx prisma generate
 ### 4.3 Desafios Enfrentados
 
 #### 4.3.1 Imports Duplicados
+
 **Problema:** Script removeu imports necessários junto com duplicados
 
-**Solução:** 
+**Solução:**
+
 - Reverter com git
 - Criar script mais inteligente
 - Validar após cada mudança
 
 #### 4.3.2 Tipos do Prisma
+
 **Problema:** Tipos gerados não correspondiam ao schema
 
 **Solução:**
+
 - Corrigir schema (remover duplicatas)
 - Regenerar tipos
 - Atualizar código
 
 #### 4.3.3 Styled Components
+
 **Problema:** Props `$theme` obrigatórias mas não passadas
 
 **Solução:**
+
 - Tornar props opcionais
 - Adicionar valores padrão
 - Documentar uso
@@ -2340,14 +2475,17 @@ npx prisma generate
 ### 5.1 Correções Pendentes (✅ TODAS CONCLUÍDAS - 31/10/2025)
 
 #### 5.1.1 ✅ Erro 1: communication.tsx (RESOLVIDO)
+
 **Arquivo:** `src/pages/communication.tsx`  
 **Status:** ✅ Não há mais duplicação de `currentProfile` - Erro já estava corrigido
 
 #### 5.1.2 ✅ Erro 2: Prisma JSON Fields (CORRIGIDO)
+
 **Arquivo:** `src/pages/api/geofencing/locais.ts`  
 **Status:** ✅ Corrigido - Importado `Prisma` e alterado `undefined` para `Prisma.JsonNull`
 
 **Correção Aplicada:**
+
 ```typescript
 // ✅ CORRETO (Implementado)
 import { Prisma } from '@prisma/client';
@@ -2359,10 +2497,12 @@ dadosNovos: dadosNovos ? JSON.stringify(dadosNovos) : Prisma.JsonNull,
 ```
 
 #### 5.1.3 ✅ Erro 3: React Hooks Warning (CORRIGIDO)
+
 **Arquivo:** `src/pages/geofencing/auditoria.tsx`  
 **Status:** ✅ Corrigido - Removido `filters` das dependências do `useEffect`
 
 **Correção Aplicada:**
+
 ```typescript
 // ✅ CORRETO (Implementado)
 useEffect(() => {
@@ -2375,11 +2515,13 @@ useEffect(() => {
 ### 5.2 Refatorações Recomendadas
 
 #### 5.2.1 Migrar Modais para BaseModal
+
 **Prioridade:** Alta  
 **Esforço:** 2-4 horas  
 **Impacto:** Redução de 40% de código
 
 **Modais a Migrar (18):**
+
 1. EmployeeModal.tsx
 2. EmployeeModalMigrated.tsx
 3. EmployerModal.tsx
@@ -2400,20 +2542,21 @@ useEffect(() => {
 18. ReportModal.tsx
 
 **Exemplo de Migração:**
+
 ```typescript
 // ❌ ANTES (200+ linhas)
 function EmployeeModal({ isOpen, onClose, employee }) {
   const [loading, setLoading] = useState(false);
-  
+
   // ... 50 linhas de styled components ...
-  
+
   const handleSave = async () => {
     setLoading(true);
     // ... salvar ...
     setLoading(false);
     onClose();
   };
-  
+
   return (
     <Overlay onClick={onClose}>
       <ModalContainer onClick={e => e.stopPropagation()}>
@@ -2442,14 +2585,14 @@ import BaseModal from '@/components/BaseModal';
 
 function EmployeeModal({ isOpen, onClose, employee }) {
   const [loading, setLoading] = useState(false);
-  
+
   const handleSave = async () => {
     setLoading(true);
     // ... salvar ...
     setLoading(false);
     onClose();
   };
-  
+
   return (
     <BaseModal
       isOpen={isOpen}
@@ -2473,16 +2616,19 @@ function EmployeeModal({ isOpen, onClose, employee }) {
 ```
 
 **Benefícios:**
+
 - 📉 75% menos código por modal
 - 🎯 UI consistente
 - 🚀 Manutenção centralizada
 
 #### 5.2.2 Usar useResource em Páginas
+
 **Prioridade:** Alta  
 **Esforço:** 3-6 horas  
 **Impacto:** Redução de 30% de código
 
 **Páginas a Refatorar (15+):**
+
 1. employees.tsx
 2. employers.tsx
 3. time-clock.tsx
@@ -2500,28 +2646,29 @@ function EmployeeModal({ isOpen, onClose, employee }) {
 15. reports.tsx
 
 **Exemplo de Migração:**
+
 ```typescript
 // ❌ ANTES (100+ linhas)
 function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   useEffect(() => {
     fetchEmployees();
   }, []);
-  
+
   const fetchEmployees = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch('/api/employees');
-      
+
       if (!response.ok) {
         throw new Error('Erro ao buscar funcionários');
       }
-      
+
       const data = await response.json();
       setEmployees(data);
     } catch (err) {
@@ -2530,21 +2677,21 @@ function EmployeesPage() {
       setLoading(false);
     }
   };
-  
+
   const handleCreate = async (data: Partial<Employee>) => {
     setLoading(true);
-    
+
     try {
       const response = await fetch('/api/employees', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      
+
       if (!response.ok) {
         throw new Error('Erro ao criar funcionário');
       }
-      
+
       await fetchEmployees();
       toast.success('Funcionário criado!');
     } catch (err) {
@@ -2553,18 +2700,18 @@ function EmployeesPage() {
       setLoading(false);
     }
   };
-  
+
   const handleUpdate = async (id: string, data: Partial<Employee>) => {
     // ... similar ao create (mais 30 linhas) ...
   };
-  
+
   const handleDelete = async (id: string) => {
     // ... similar ao create (mais 30 linhas) ...
   };
-  
+
   if (loading) return <div>Carregando...</div>;
   if (error) return <div>Erro: {error}</div>;
-  
+
   return (
     <div>
       {/* UI */}
@@ -2590,25 +2737,25 @@ function EmployeesPage() {
     onSuccess: () => toast.success('Operação realizada!'),
     onError: (err) => toast.error(err.message),
   });
-  
+
   const handleCreate = async (data: Partial<Employee>) => {
     await create(data);
     refetch();
   };
-  
+
   const handleUpdate = async (id: string, data: Partial<Employee>) => {
     await update(id, data);
     refetch();
   };
-  
+
   const handleDelete = async (id: string) => {
     await remove(id);
     refetch();
   };
-  
+
   if (loading) return <div>Carregando...</div>;
   if (error) return <div>Erro: {error.message}</div>;
-  
+
   return (
     <div>
       {/* UI (mesmo código) */}
@@ -2618,16 +2765,19 @@ function EmployeesPage() {
 ```
 
 **Benefícios:**
+
 - 📉 70% menos código por página
 - 🎯 Lógica consistente
 - 🚀 Implementação mais rápida
 
 #### 5.2.3 Aplicar Validators em Formulários
+
 **Prioridade:** Média  
 **Esforço:** 2-3 horas  
 **Impacto:** Qualidade de dados
 
 **Formulários a Atualizar (10+):**
+
 1. EmployeeForm
 2. EmployerForm
 3. UserForm
@@ -2640,6 +2790,7 @@ function EmployeesPage() {
 10. ContactForm
 
 **Exemplo de Aplicação:**
+
 ```typescript
 // ❌ ANTES
 const handleSubmit = (data: any) => {
@@ -2648,7 +2799,7 @@ const handleSubmit = (data: any) => {
     setError('CPF inválido');
     return;
   }
-  
+
   // ... salvar ...
 };
 
@@ -2662,43 +2813,46 @@ import {
 
 const handleSubmit = (data: any) => {
   const errors: Record<string, string> = {};
-  
+
   if (!validateCPF(data.cpf)) {
     errors.cpf = 'CPF inválido';
   }
-  
+
   if (!validateEmail(data.email)) {
     errors.email = 'Email inválido';
   }
-  
+
   if (!validatePhone(data.phone)) {
     errors.phone = 'Telefone inválido';
   }
-  
+
   if (!validateStrongPassword(data.password)) {
     errors.password = 'Senha fraca';
   }
-  
+
   if (Object.keys(errors).length > 0) {
     setErrors(errors);
     return;
   }
-  
+
   // ... salvar ...
 };
 ```
 
 **Benefícios:**
+
 - ✅ Dados sempre válidos
 - ✅ Mensagens consistentes
 - ✅ Menos bugs
 
 #### 5.2.4 Usar Formatters em Exibições
+
 **Prioridade:** Média  
 **Esforço:** 1-2 horas  
 **Impacto:** UX consistente
 
 **Componentes a Atualizar (20+):**
+
 1. EmployeeCard
 2. EmployeeList
 3. EmployerCard
@@ -2711,6 +2865,7 @@ const handleSubmit = (data: any) => {
 10. ... (todos que exibem dados)
 
 **Exemplo de Aplicação:**
+
 ```typescript
 // ❌ ANTES
 <div>
@@ -2737,26 +2892,30 @@ import {
 ```
 
 **Benefícios:**
+
 - ✅ Formato consistente pt-BR
 - ✅ UX profissional
 - ✅ Fácil mudar formato
 
 #### 5.2.5 Substituir fetch por apiClient
+
 **Prioridade:** Média  
 **Esforço:** 3-4 horas  
 **Impacto:** Robustez e manutenibilidade
 
 **Arquivos a Atualizar (50+):**
+
 - Todos os componentes e páginas que usam `fetch()`
 
 **Exemplo de Substituição:**
+
 ```typescript
 // ❌ ANTES
 const response = await fetch('/api/employees', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`,
+    Authorization: `Bearer ${token}`,
   },
   body: JSON.stringify(data),
 });
@@ -2775,6 +2934,7 @@ const result = await apiClient.post('/api/employees', data);
 ```
 
 **Benefícios:**
+
 - ✅ Timeout automático
 - ✅ Auth centralizada
 - ✅ Error handling consistente
@@ -2783,11 +2943,13 @@ const result = await apiClient.post('/api/employees', data);
 ### 5.3 Melhorias Futuras
 
 #### 5.3.1 Testes Automatizados
+
 **Prioridade:** Alta  
 **Esforço:** 1-2 semanas  
 **Impacto:** Qualidade e confiança
 
 **O Que Testar:**
+
 1. **Validators** - Todos os 11 validadores
 2. **Formatters** - Todos os 16 formatadores
 3. **useResource** - CRUD completo
@@ -2797,11 +2959,13 @@ const result = await apiClient.post('/api/employees', data);
 7. **APIs** - Endpoints e respostas
 
 **Ferramentas:**
+
 - Jest - Test runner
 - React Testing Library - Componentes
 - MSW - Mock de APIs
 
 **Exemplo:**
+
 ```typescript
 // validators.test.ts
 import { validateCPF } from '@/utils/validators';
@@ -2810,11 +2974,11 @@ describe('validateCPF', () => {
   it('deve validar CPF correto', () => {
     expect(validateCPF('123.456.789-09')).toBe(true);
   });
-  
+
   it('deve rejeitar CPF com dígitos inválidos', () => {
     expect(validateCPF('123.456.789-00')).toBe(false);
   });
-  
+
   it('deve rejeitar sequência', () => {
     expect(validateCPF('111.111.111-11')).toBe(false);
   });
@@ -2822,27 +2986,32 @@ describe('validateCPF', () => {
 ```
 
 #### 5.3.2 Storybook
+
 **Prioridade:** Média  
 **Esforço:** 1 semana  
 **Impacto:** Documentação visual
 
 **Componentes a Documentar:**
+
 - BaseModal
 - Todos os componentes reutilizáveis
 - Design system (botões, inputs, etc.)
 
 **Benefícios:**
+
 - 📚 Documentação visual
 - 🎨 Catálogo de componentes
 - 🧪 Testes visuais
 - 👥 Facilita colaboração
 
 #### 5.3.3 CI/CD Pipeline
+
 **Prioridade:** Alta  
 **Esforço:** 2-3 dias  
 **Impacto:** Qualidade e deploy
 
 **Etapas:**
+
 1. **Lint** - ESLint
 2. **Type Check** - TypeScript
 3. **Tests** - Jest
@@ -2850,30 +3019,36 @@ describe('validateCPF', () => {
 5. **Deploy** - Vercel/AWS
 
 **Ferramentas:**
+
 - GitHub Actions
 - Vercel
 - Docker
 
 #### 5.3.4 Internacionalização (i18n)
+
 **Prioridade:** Baixa  
 **Esforço:** 1-2 semanas  
 **Impacto:** Alcance global
 
 **Idiomas:**
+
 - Português (pt-BR) - Atual
 - Inglês (en-US) - Adicionar
 - Espanhol (es-ES) - Adicionar
 
 **Ferramentas:**
+
 - next-i18next
 - react-intl
 
 #### 5.3.5 Performance
+
 **Prioridade:** Média  
 **Esforço:** 1 semana  
 **Impacto:** UX
 
 **Otimizações:**
+
 1. **Code Splitting** - Lazy loading
 2. **Image Optimization** - Next/Image
 3. **Caching** - React Query
@@ -2887,6 +3062,7 @@ describe('validateCPF', () => {
 ### 6.1 Corrigir 3 Erros Restantes
 
 #### Passo 1: Erro em communication.tsx
+
 ```bash
 # 1. Abrir arquivo
 code src/pages/communication.tsx
@@ -2905,6 +3081,7 @@ code src/pages/communication.tsx
 ```
 
 #### Passo 2: Erro em locais.ts
+
 ```bash
 # 1. Abrir arquivo
 code src/pages/api/geofencing/locais.ts
@@ -2923,6 +3100,7 @@ dadosNovos: dadosNovos ? JSON.stringify(dadosNovos) : undefined,
 ```
 
 #### Passo 3: Warning em auditoria.tsx
+
 ```bash
 # 1. Abrir arquivo
 code src/pages/geofencing/auditoria.tsx
@@ -2947,6 +3125,7 @@ useEffect(() => {
 ```
 
 #### Passo 4: Validar
+
 ```bash
 cd /home/ubuntu/DOM
 npm run build
@@ -2957,13 +3136,14 @@ npm run build
 #### Exemplo: EmployeeModal
 
 **Passo 1: Identificar Estrutura**
+
 ```typescript
 // Atual
 function EmployeeModal({ isOpen, onClose, employee }) {
   // Estados
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState(employee);
-  
+
   // Handlers
   const handleSave = async () => {
     setLoading(true);
@@ -2971,7 +3151,7 @@ function EmployeeModal({ isOpen, onClose, employee }) {
     setLoading(false);
     onClose();
   };
-  
+
   // Render
   return (
     <Overlay>
@@ -2994,6 +3174,7 @@ function EmployeeModal({ isOpen, onClose, employee }) {
 ```
 
 **Passo 2: Extrair Lógica**
+
 ```typescript
 // Manter
 const [loading, setLoading] = useState(false);
@@ -3008,20 +3189,21 @@ const handleSave = async () => {
 ```
 
 **Passo 3: Usar BaseModal**
+
 ```typescript
 import BaseModal from '@/components/BaseModal';
 
 function EmployeeModal({ isOpen, onClose, employee }) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState(employee);
-  
+
   const handleSave = async () => {
     setLoading(true);
     // ... salvar ...
     setLoading(false);
     onClose();
   };
-  
+
   return (
     <BaseModal
       isOpen={isOpen}
@@ -3048,6 +3230,7 @@ function EmployeeModal({ isOpen, onClose, employee }) {
 ```
 
 **Passo 4: Remover Styled Components**
+
 ```typescript
 // REMOVER:
 const Overlay = styled.div`...`;
@@ -3061,6 +3244,7 @@ const SecondaryButton = styled.button`...`;
 ```
 
 **Passo 5: Testar**
+
 ```bash
 npm run dev
 # Abrir modal e testar funcionalidade
@@ -3071,6 +3255,7 @@ npm run dev
 #### Exemplo: EmployeesPage
 
 **Passo 1: Identificar Lógica Atual**
+
 ```typescript
 // Atual
 const [employees, setEmployees] = useState<Employee[]>([]);
@@ -3108,6 +3293,7 @@ const handleDelete = async (id: string) => {
 ```
 
 **Passo 2: Substituir por useResource**
+
 ```typescript
 import useResource from '@/hooks/useResource';
 
@@ -3123,7 +3309,7 @@ const {
   endpoint: '/api/employees',
   autoFetch: true,
   onSuccess: () => toast.success('Sucesso!'),
-  onError: (err) => toast.error(err.message),
+  onError: err => toast.error(err.message),
 });
 
 const handleCreate = async (data: Partial<Employee>) => {
@@ -3145,6 +3331,7 @@ const handleDelete = async (id: string) => {
 ```
 
 **Passo 3: Remover Código Antigo**
+
 ```typescript
 // REMOVER:
 const [employees, setEmployees] = useState<Employee[]>([]);
@@ -3161,6 +3348,7 @@ const fetchEmployees = async () => {
 ```
 
 **Passo 4: Testar**
+
 ```bash
 npm run dev
 # Testar CRUD completo
@@ -3171,6 +3359,7 @@ npm run dev
 #### Exemplo: EmployeeForm
 
 **Passo 1: Importar Validators**
+
 ```typescript
 import {
   validateCPF,
@@ -3182,47 +3371,49 @@ import {
 ```
 
 **Passo 2: Criar Função de Validação**
+
 ```typescript
 const validateForm = (data: any): Record<string, string> => {
   const errors: Record<string, string> = {};
-  
+
   // CPF
   if (!validateCPF(data.cpf)) {
     errors.cpf = 'CPF inválido';
   }
-  
+
   // Email
   if (!validateEmail(data.email)) {
     errors.email = 'Email inválido';
   }
-  
+
   // Telefone
   if (!validatePhone(data.phone)) {
     errors.phone = 'Telefone inválido (formato: (11) 98765-4321)';
   }
-  
+
   // Data de nascimento
   if (!validateDate(data.birthDate)) {
     errors.birthDate = 'Data inválida (formato: DD/MM/YYYY)';
   } else if (!validateAge18Plus(data.birthDate)) {
     errors.birthDate = 'Funcionário deve ser maior de 18 anos';
   }
-  
+
   return errors;
 };
 ```
 
 **Passo 3: Usar no Submit**
+
 ```typescript
 const handleSubmit = async (data: any) => {
   // Validar
   const errors = validateForm(data);
-  
+
   if (Object.keys(errors).length > 0) {
     setErrors(errors);
     return;
   }
-  
+
   // Salvar
   try {
     await saveEmployee(data);
@@ -3234,6 +3425,7 @@ const handleSubmit = async (data: any) => {
 ```
 
 **Passo 4: Exibir Erros**
+
 ```typescript
 <form onSubmit={handleSubmit}>
   <div>
@@ -3241,13 +3433,13 @@ const handleSubmit = async (data: any) => {
     <input name="cpf" />
     {errors.cpf && <span className="error">{errors.cpf}</span>}
   </div>
-  
+
   <div>
     <label>Email</label>
     <input name="email" />
     {errors.email && <span className="error">{errors.email}</span>}
   </div>
-  
+
   {/* ... */}
 </form>
 ```
@@ -3257,6 +3449,7 @@ const handleSubmit = async (data: any) => {
 #### Exemplo: EmployeeCard
 
 **Passo 1: Importar Formatters**
+
 ```typescript
 import {
   formatCPF,
@@ -3267,28 +3460,29 @@ import {
 ```
 
 **Passo 2: Aplicar em Render**
+
 ```typescript
 function EmployeeCard({ employee }: { employee: Employee }) {
   return (
     <div className="card">
       <h3>{employee.name}</h3>
-      
+
       <div className="info">
         <div className="row">
           <strong>CPF:</strong>
           <span>{formatCPF(employee.cpf)}</span>
         </div>
-        
+
         <div className="row">
           <strong>Telefone:</strong>
           <span>{formatPhone(employee.phone)}</span>
         </div>
-        
+
         <div className="row">
           <strong>Salário:</strong>
           <span>{formatCurrency(employee.salary)}</span>
         </div>
-        
+
         <div className="row">
           <strong>Admissão:</strong>
           <span>{formatDate(employee.hireDate)}</span>
@@ -3300,6 +3494,7 @@ function EmployeeCard({ employee }: { employee: Employee }) {
 ```
 
 **Resultado:**
+
 ```
 Nome: João Silva
 CPF: 123.456.789-09
@@ -3313,11 +3508,13 @@ Admissão: 15/01/2023
 #### Exemplo: Substituir fetch
 
 **Passo 1: Importar apiClient**
+
 ```typescript
 import apiClient from '@/lib/api-client';
 ```
 
 **Passo 2: Configurar Auth (se necessário)**
+
 ```typescript
 // No login
 const { token } = await apiClient.post('/api/auth/login', {
@@ -3329,13 +3526,14 @@ apiClient.setAuthToken(token);
 ```
 
 **Passo 3: Substituir fetch por apiClient**
+
 ```typescript
 // ❌ ANTES
 const response = await fetch('/api/employees', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`,
+    Authorization: `Bearer ${token}`,
   },
   body: JSON.stringify(data),
 });
@@ -3351,6 +3549,7 @@ const result = await apiClient.post('/api/employees', data);
 ```
 
 **Passo 4: Com Query Params**
+
 ```typescript
 // ❌ ANTES
 const url = `/api/employees?department=${dept}&active=true`;
@@ -3366,6 +3565,7 @@ const result = await apiClient.get('/api/employees', {
 ```
 
 **Passo 5: Upload**
+
 ```typescript
 // ❌ ANTES
 const formData = new FormData();
@@ -3387,34 +3587,41 @@ const result = await apiClient.upload('/api/upload', file);
 ### 7.1 Documentação
 
 #### TypeScript
+
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 - [TypeScript Deep Dive](https://basarat.gitbook.io/typescript/)
 
 #### Next.js
+
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Next.js Learn](https://nextjs.org/learn)
 
 #### Prisma
+
 - [Prisma Documentation](https://www.prisma.io/docs)
 - [Prisma Best Practices](https://www.prisma.io/docs/guides/performance-and-optimization)
 
 #### React
+
 - [React Documentation](https://react.dev/)
 - [React Hooks](https://react.dev/reference/react)
 
 ### 7.2 Ferramentas
 
 #### Desenvolvimento
+
 - [VS Code](https://code.visualstudio.com/)
 - [ESLint](https://eslint.org/)
 - [Prettier](https://prettier.io/)
 
 #### Testes
+
 - [Jest](https://jestjs.io/)
 - [React Testing Library](https://testing-library.com/react)
 - [MSW](https://mswjs.io/)
 
 #### Deploy
+
 - [Vercel](https://vercel.com/)
 - [Docker](https://www.docker.com/)
 - [GitHub Actions](https://github.com/features/actions)
@@ -3422,14 +3629,17 @@ const result = await apiClient.upload('/api/upload', file);
 ### 7.3 Padrões e Boas Práticas
 
 #### Clean Code
+
 - [Clean Code JavaScript](https://github.com/ryanmcdermott/clean-code-javascript)
 - [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript)
 
 #### React Patterns
+
 - [React Patterns](https://reactpatterns.com/)
 - [Kent C. Dodds Blog](https://kentcdodds.com/blog)
 
 #### TypeScript Patterns
+
 - [TypeScript Patterns](https://github.com/typescript-cheatsheets/react)
 
 ---
@@ -3437,6 +3647,7 @@ const result = await apiClient.upload('/api/upload', file);
 ## 📊 Resumo Final (Atualizado - Estado Real)
 
 ### Trabalho Realizado (Atualização Final - 31/10/2025)
+
 - ✅ **45 erros TypeScript corrigidos** (45 → 0, **100% de redução**)
 - ✅ **15+ arquivos** corrigidos sistematicamente
 - ✅ **4 URLs hardcoded centralizadas** (Nominatim em 4 arquivos)
@@ -3447,6 +3658,7 @@ const result = await apiClient.upload('/api/upload', file);
 ### Melhorias Implementadas Nesta Sessão
 
 #### 1. Correções TypeScript (45 erros corrigidos - 100%)
+
 - ✅ Parâmetros implícitos tipados (`NextApiRequest`, `NextApiResponse`)
 - ✅ Imports duplicados removidos
 - ✅ Type guards em catch blocks (`unknown` → `Error`)
@@ -3459,6 +3671,7 @@ const result = await apiClient.upload('/api/upload', file);
 - ✅ Incompatibilidades de tipos resolvidas
 
 #### 2. Centralização de URLs (4 ocorrências)
+
 - ✅ `src/pages/api/geofencing/locais.ts` - Nominatim centralizado
 - ✅ `src/pages/api/geocoding/reverse.ts` - Nominatim centralizado
 - ✅ `src/pages/api/geocoding.ts` - Nominatim centralizado
@@ -3467,6 +3680,7 @@ const result = await apiClient.upload('/api/upload', file);
 **Implementação:** URLs agora carregam de `config.urls.geocoding.nominatim` com fallback.
 
 ### Melhorias Realmente Implementadas no Projeto
+
 - ✅ **Design System** parcial com componentes unified
 - ✅ **Configuração centralizada** de sistema em `configService.ts`
 - ✅ **Validador CPF** centralizado
@@ -3475,7 +3689,9 @@ const result = await apiClient.upload('/api/upload', file);
 - ✅ **URLs de geocoding centralizadas** (4 arquivos atualizados)
 
 ### Divergências Identificadas
+
 ⚠️ **Importante:** O relatório original propunha arquivos que não foram implementados:
+
 - ❌ `BaseModal.tsx` - Não existe (existe `UnifiedModal`)
 - ❌ `useResource.ts` - Não existe
 - ❌ `api-client.ts` - Não existe
@@ -3483,9 +3699,11 @@ const result = await apiClient.upload('/api/upload', file);
 - ❌ `formatters.ts` - Não existe (funções inline)
 
 ### Erros Restantes
+
 - ✅ **0 erros TypeScript restantes!** Build 100% limpo!
 
 ### Status Final Real
+
 - **Código:** ✅ **100% dos erros corrigidos** (45 de 45)
 - **Build:** ✅ **0 erros TypeScript** - Build limpo e funcional
 - **URLs:** ✅ **4 centralizadas** com sucesso
@@ -3496,9 +3714,9 @@ const result = await apiClient.upload('/api/upload', file);
 
 **Projeto DOM - 100% Completo e Funcional! 🎉**
 
-*Atualizado em: 31/10/2025*  
-*Versão: 2.1 - Conclusão Final*  
-*Autor: Correções Sistemáticas Aplicadas*
+_Atualizado em: 31/10/2025_  
+_Versão: 2.1 - Conclusão Final_  
+_Autor: Correções Sistemáticas Aplicadas_
 
 ---
 
@@ -3510,7 +3728,7 @@ const result = await apiClient.upload('/api/upload', file);
 ✅ **4 URLs hardcoded centralizadas**  
 ✅ **3 correções pendentes do item 5 implementadas**  
 ✅ **0 erros no build TypeScript**  
-✅ **Build limpo e funcional**  
+✅ **Build limpo e funcional**
 
 ### 📊 Resultados Finais
 
@@ -3536,11 +3754,11 @@ Este relatório foi **atualizado para refletir o estado real** do código após 
 ### ✅ Última Atualização: 31/10/2025
 
 **Correções do Item 5 Implementadas:**
+
 1. ✅ **Prisma JSON Fields** - `locais.ts` corrigido com `Prisma.JsonNull`
 2. ✅ **React Hooks Warning** - `auditoria.tsx` corrigido removendo dependência desnecessária
 3. ✅ **communication.tsx** - Verificado, sem erros (já estava correto)
 
-**Melhorias Adicionais Implementadas:**
-4. ✅ **URLs ViaCEP Centralizadas** - `EmployeeModal.tsx` e `EmployerModal.tsx` agora usam `EXTERNAL_API_CONSTANTS`
+**Melhorias Adicionais Implementadas:** 4. ✅ **URLs ViaCEP Centralizadas** - `EmployeeModal.tsx` e `EmployerModal.tsx` agora usam `EXTERNAL_API_CONSTANTS`
 
 **Status:** ✅ **Todas as correções pendentes do item 5 concluídas + melhorias adicionais!**

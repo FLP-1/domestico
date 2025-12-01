@@ -111,7 +111,7 @@ const ProgressFill = styled.div<{
   border-radius: 9999px;
   transition: width 0.3s ease;
   ${props => props.$animated && `animation: ${pulse} 2s infinite;`}
-  
+
   ${props => {
     // Cor customizada tem prioridade
     if (props.$customColor) {
@@ -126,21 +126,42 @@ const ProgressFill = styled.div<{
 
     // Variantes baseadas em status
     const variantColors = {
-      primary: props.$theme?.colors?.primary ||
-               (props.$theme as any)?.accent ||
-               'transparent',
-      success: props.$theme?.colors?.success ||
-               (typeof props.$theme?.colors?.status?.success === 'object' && props.$theme?.colors?.status?.success && 'background' in props.$theme.colors.status.success ? String((props.$theme.colors.status.success as any).background) : null) ||
-               'transparent',
-      warning: props.$theme?.colors?.warning ||
-               (typeof props.$theme?.colors?.status?.warning === 'object' && props.$theme?.colors?.status?.warning && 'background' in props.$theme.colors.status.warning ? String((props.$theme.colors.status.warning as any).background) : null) ||
-               'transparent',
-      error: props.$theme?.colors?.error ||
-             (typeof props.$theme?.colors?.status?.error === 'object' && props.$theme?.colors?.status?.error && 'background' in props.$theme.colors.status.error ? String((props.$theme.colors.status.error as any).background) : null) ||
-             'transparent',
-      info: props.$theme?.colors?.info ||
-            (typeof props.$theme?.colors?.status?.info === 'object' && props.$theme?.colors?.status?.info && 'background' in props.$theme.colors.status.info ? String((props.$theme.colors.status.info as any).background) : null) ||
-            'transparent',
+      primary:
+        props.$theme?.colors?.primary ||
+        (props.$theme as any)?.accent ||
+        'transparent',
+      success:
+        props.$theme?.colors?.success ||
+        (typeof props.$theme?.colors?.status?.success === 'object' &&
+        props.$theme?.colors?.status?.success &&
+        'background' in props.$theme.colors.status.success
+          ? String((props.$theme.colors.status.success as any).background)
+          : null) ||
+        'transparent',
+      warning:
+        props.$theme?.colors?.warning ||
+        (typeof props.$theme?.colors?.status?.warning === 'object' &&
+        props.$theme?.colors?.status?.warning &&
+        'background' in props.$theme.colors.status.warning
+          ? String((props.$theme.colors.status.warning as any).background)
+          : null) ||
+        'transparent',
+      error:
+        props.$theme?.colors?.error ||
+        (typeof props.$theme?.colors?.status?.error === 'object' &&
+        props.$theme?.colors?.status?.error &&
+        'background' in props.$theme.colors.status.error
+          ? String((props.$theme.colors.status.error as any).background)
+          : null) ||
+        'transparent',
+      info:
+        props.$theme?.colors?.info ||
+        (typeof props.$theme?.colors?.status?.info === 'object' &&
+        props.$theme?.colors?.status?.info &&
+        'background' in props.$theme.colors.status.info
+          ? String((props.$theme.colors.status.info as any).background)
+          : null) ||
+        'transparent',
     };
 
     const color = variantColors[props.$variant || 'primary'];
@@ -175,9 +196,15 @@ const ProgressLabel = styled.div<{
     if (text && typeof text === 'object' && 'secondary' in text) {
       return (text as any).secondary;
     }
-    return (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'secondary' in (props.$theme as any).text ? String((props.$theme as any).text.secondary) : null) ||
-           props.$theme?.colors?.text ||
-           'inherit';
+    return (
+      (typeof (props.$theme as any)?.text === 'object' &&
+      (props.$theme as any)?.text &&
+      'secondary' in (props.$theme as any).text
+        ? String((props.$theme as any).text.secondary)
+        : null) ||
+      props.$theme?.colors?.text ||
+      'inherit'
+    );
   }};
   text-align: right;
   font-weight: 500;
@@ -185,26 +212,26 @@ const ProgressLabel = styled.div<{
 
 /**
  * Componente genérico de Progress Bar reutilizável
- * 
+ *
  * Substitui: ProgressBar, ProgressFill duplicados em vários arquivos
- * 
+ *
  * @example
  * ```tsx
  * // Progress bar básico
  * <UnifiedProgressBar value={75} />
- * 
+ *
  * // Com variante e label
- * <UnifiedProgressBar 
- *   value={60} 
- *   variant="success" 
- *   showLabel 
+ * <UnifiedProgressBar
+ *   value={60}
+ *   variant="success"
+ *   showLabel
  *   size="lg"
  * />
- * 
+ *
  * // Com animação e cor customizada
- * <UnifiedProgressBar 
- *   value={45} 
- *   customColor="#9b59b6" 
+ * <UnifiedProgressBar
+ *   value={45}
+ *   customColor="#9b59b6"
  *   animated
  *   label="Carregando..."
  * />
@@ -244,4 +271,3 @@ export const UnifiedProgressBar: React.FC<UnifiedProgressBarProps> = ({
     </div>
   );
 };
-

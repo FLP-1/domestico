@@ -143,7 +143,8 @@ export async function reverseGeocodeGoogle(
       address: formattedAddress,
     };
   } catch (error: any) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    const errorMessage =
+      error instanceof Error ? error.message : 'Erro desconhecido';
     logger.error('❌ Erro ao usar Google Geocoding API:', errorMessage, error);
     return {
       success: false,

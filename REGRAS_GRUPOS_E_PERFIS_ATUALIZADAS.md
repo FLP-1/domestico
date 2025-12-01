@@ -10,10 +10,12 @@
 ### **REGRA 1: Empregado pode participar de múltiplos grupos**
 
 ✅ **Permitido:**
+
 - Um empregado pode participar de **múltiplos grupos** com o **mesmo perfil EMPREGADO**
 - Exemplo: Ana Costa trabalha na Casa Principal E na Casa de Verão (ambas como empregada)
 
 **Implementação:**
+
 - Validação atualizada em `validateUserGroupAssignment()` para permitir empregados em múltiplos grupos
 - Validação atualizada em `validateUniqueCPFInGroup()` para considerar perfil EMPREGADO como exceção
 
@@ -22,14 +24,17 @@
 ### **REGRA 2: Mesmo CPF pode participar de múltiplos grupos com perfis diferentes**
 
 ✅ **Permitido:**
+
 - Um CPF pode participar de múltiplos grupos desde que **não seja o mesmo perfil** (exceto empregado)
 - Exemplo: Francisco Silva é **EMPREGADOR** na Casa Principal e **FAMILIA** na Casa de Verão
 
 **Restrições:**
+
 - ❌ Não pode ter o mesmo perfil em múltiplos grupos (exceto EMPREGADO)
 - ✅ Pode ter perfis diferentes em grupos diferentes
 
 **Implementação:**
+
 - Validação verifica se o usuário já está no grupo
 - Se já está, verifica se o perfil é diferente
 - Se perfil é diferente, permite (com aviso)
@@ -49,7 +54,7 @@ model UsuarioGrupo {
   papel     String   @db.VarChar(50)  // ADMIN, MEMBRO, etc.
   ativo     Boolean  @default(true)
   criadoEm  DateTime @default(now())
-  
+
   @@unique([usuarioId, grupoId])  // Usuário só pode estar uma vez por grupo
   @@index([usuarioId])
   @@index([grupoId])
@@ -61,12 +66,13 @@ model UsuarioPerfil {
   perfilId  String
   principal Boolean  @default(false)
   ativo     Boolean  @default(true)
-  
+
   @@unique([usuarioId, perfilId])  // Usuário pode ter múltiplos perfis
 }
 ```
 
 **Observação Importante:**
+
 - `UsuarioGrupo` não armazena o perfil diretamente
 - O perfil é determinado pela relação `UsuarioPerfil`
 - Um usuário pode ter múltiplos perfis (`UsuarioPerfil`)
@@ -80,22 +86,27 @@ model UsuarioPerfil {
 #### **1. `validateUserGroupAssignment()`**
 
 **Lógica:**
+
 ```typescript
 if (membership && membership.ativo) {
   if (perfilCodigo === 'EMPREGADO') {
     // Permitir empregado em múltiplos grupos
-    warnings.push('Usuário já está no grupo, mas empregados podem participar de múltiplos grupos');
+    warnings.push(
+      'Usuário já está no grupo, mas empregados podem participar de múltiplos grupos'
+    );
   } else {
     // Verificar se já tem o mesmo perfil no grupo
     const temMesmoPerfil = usuarioPerfis.some(
-      (up) => up.perfil.codigo?.toUpperCase() === perfilCodigo
+      up => up.perfil.codigo?.toUpperCase() === perfilCodigo
     );
-    
+
     if (temMesmoPerfil) {
       errors.push('Usuário já está associado ao grupo com o mesmo perfil');
     } else {
       // Permitir adicionar com perfil diferente
-      warnings.push('Usuário já está no grupo. Será associado com o novo perfil selecionado.');
+      warnings.push(
+        'Usuário já está no grupo. Será associado com o novo perfil selecionado.'
+      );
     }
   }
 }
@@ -104,6 +115,7 @@ if (membership && membership.ativo) {
 #### **2. `validateUniqueCPFInGroup()`**
 
 **Lógica:**
+
 ```typescript
 if (membership && membership.ativo) {
   if (perfilCodigo === 'EMPREGADO') {
@@ -123,6 +135,7 @@ if (membership && membership.ativo) {
 ### **Cenário 1: Empregado em múltiplos grupos**
 
 **Dados:**
+
 - **Usuário:** Ana Costa (empregado1)
 - **Perfil:** EMPREGADO
 - **Grupos:**
@@ -136,6 +149,7 @@ if (membership && membership.ativo) {
 ### **Cenário 2: Mesmo CPF com perfis diferentes em grupos diferentes**
 
 **Dados:**
+
 - **Usuário:** Francisco Silva (empregador1)
 - **CPF:** Único no sistema
 - **Perfis:**
@@ -152,6 +166,7 @@ if (membership && membership.ativo) {
 ### **Cenário 3: Tentativa de mesmo perfil em múltiplos grupos (exceto empregado)**
 
 **Dados:**
+
 - **Usuário:** Francisco Silva (empregador1)
 - **Tentativa:** Adicionar como EMPREGADOR em grupo2
 - **Status:** Já é EMPREGADOR em grupo1
@@ -163,18 +178,22 @@ if (membership && membership.ativo) {
 ## 🚨 VALIDAÇÕES QUE PERMANECEM
 
 ### **1. CPF Único no Sistema**
+
 - ✅ Um CPF só pode existir uma vez na tabela `usuarios`
 - ✅ Constraint: `@unique` no campo `cpf`
 
 ### **2. Apenas 1 Empregador por Grupo**
+
 - ✅ Um grupo só pode ter um empregador ativo
 - ✅ Validação: `validateSingleEmployerPerGroup()`
 
 ### **3. Usuário + Grupo = Único**
+
 - ✅ Um usuário só pode estar uma vez em cada grupo
 - ✅ Constraint: `@@unique([usuarioId, grupoId])`
 
 ### **4. Usuário + Perfil = Único**
+
 - ✅ Um usuário só pode ter cada perfil uma vez
 - ✅ Constraint: `@@unique([usuarioId, perfilId])`
 
@@ -231,4 +250,3 @@ if (membership && membership.ativo) {
 ---
 
 **Status:** ✅ Implementado e pronto para testes
-

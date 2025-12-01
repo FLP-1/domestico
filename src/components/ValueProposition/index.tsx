@@ -87,9 +87,7 @@ const DifferentialItem = styled.li<{ $theme?: any }>`
   border-radius: 8px;
   border-left: 4px solid
     ${props =>
-      props.$theme?.colors?.primary ||
-      props.$theme?.accent ||
-      'transparent'};
+      props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'};
 
   @media (min-width: 768px) {
     flex: 1;
@@ -207,4 +205,3 @@ export const ValueProposition: React.FC<ValuePropositionProps> = ({
 };
 
 export default ValueProposition;
-

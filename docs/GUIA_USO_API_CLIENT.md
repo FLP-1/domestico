@@ -38,6 +38,7 @@ const response = await apiClient.alerts.delete('123');
 ### **Endpoints Disponíveis**
 
 #### **Alertas**
+
 - `apiClient.alerts.getAll()`
 - `apiClient.alerts.getById(id)`
 - `apiClient.alerts.create(data)`
@@ -46,6 +47,7 @@ const response = await apiClient.alerts.delete('123');
 - `apiClient.alerts.toggleStatus(id, status)`
 
 #### **Usuários**
+
 - `apiClient.users.getAll()`
 - `apiClient.users.getById(id)`
 - `apiClient.users.getCurrent()`
@@ -54,6 +56,7 @@ const response = await apiClient.alerts.delete('123');
 - `apiClient.users.delete(id)`
 
 #### **Time Clock**
+
 - `apiClient.timeClock.getRecords()`
 - `apiClient.timeClock.getSummary()`
 - `apiClient.timeClock.getOvertime()`
@@ -65,13 +68,16 @@ const response = await apiClient.alerts.delete('123');
 - `apiClient.timeClock.overtimeRequests.update(id, data)`
 
 #### **Configurações**
+
 - `apiClient.config.getSystem()`
 
 #### **Autenticação**
+
 - `apiClient.auth.login(credentials)`
 - `apiClient.auth.logout()`
 
 #### **Validação**
+
 - `apiClient.validation.validateUser(type, data)`
 
 ---
@@ -129,7 +135,7 @@ import { useAsyncOperation } from '@/hooks/useAsyncOperation';
 ```typescript
 const { execute, loading, error } = useAsyncOperation({
   onSuccess: () => showSuccess(keys.SUCCESS.REGISTRO_CRIADO),
-  onError: (err) => showError(keys.ERROR.ERRO_SALVAR),
+  onError: err => showError(keys.ERROR.ERRO_SALVAR),
 });
 
 const handleSave = execute(async () => {
@@ -158,7 +164,11 @@ const handleSave = execute(async () => {
 ### **Tipos de Alertas**
 
 ```typescript
-import { ALERT_TYPES, getAlertTypeById, getAlertTypesByCategory } from '@/constants/alertTypes';
+import {
+  ALERT_TYPES,
+  getAlertTypeById,
+  getAlertTypesByCategory,
+} from '@/constants/alertTypes';
 
 // Usar constante
 const alertTypes = ALERT_TYPES;
@@ -173,7 +183,10 @@ const documentTypes = getAlertTypesByCategory('Documentos');
 ### **Categorias de Compras**
 
 ```typescript
-import { SHOPPING_CATEGORIES, getShoppingCategoryById } from '@/constants/shoppingCategories';
+import {
+  SHOPPING_CATEGORIES,
+  getShoppingCategoryById,
+} from '@/constants/shoppingCategories';
 
 // Usar constante
 const categories = SHOPPING_CATEGORIES;
@@ -212,12 +225,14 @@ useEffect(() => {
 }, []);
 
 // ✅ DEPOIS
-const { data: alerts, loading, error, refetch } = useDataFetch(
-  () => apiClient.alerts.getAll(),
-  {
-    onError: () => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
-  }
-);
+const {
+  data: alerts,
+  loading,
+  error,
+  refetch,
+} = useDataFetch(() => apiClient.alerts.getAll(), {
+  onError: () => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
+});
 ```
 
 ### **Exemplo 2: Criar Alerta**
@@ -263,4 +278,3 @@ const handleCreate = execute(async () => {
 3. **Consistência**: Tratamento de erros padronizado
 4. **Manutenibilidade**: URLs centralizadas, fácil atualizar
 5. **Testabilidade**: Fácil mockar para testes
-

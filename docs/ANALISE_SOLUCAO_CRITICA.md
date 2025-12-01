@@ -29,11 +29,13 @@
 ### **Problema 2: ServerStyleSheet Resolve Hidratação, Não Prerendering**
 
 A Opção 2 (ServerStyleSheet no `_document.tsx`) resolve:
+
 - ✅ Problemas de hidratação (estilos diferentes entre servidor e cliente)
 - ✅ Nomes de classe inconsistentes
 - ✅ FOUC (Flash of Unstyled Content)
 
 A Opção 2 **NÃO resolve diretamente**:
+
 - ❌ Erros de prerendering durante o build
 - ❌ Duplicação de `withConfig` em componentes
 
@@ -47,6 +49,7 @@ Encontrei 4 componentes que estendem `UnifiedCard`/`UnifiedButton` e adicionam `
 4. `src/pages/shopping-management.tsx:123` - `FiltroButton` estende `UnifiedButton`
 
 **Observação importante:**
+
 - `UnifiedCard` e `UnifiedButton` **NÃO têm** `withConfig` configurado
 - Quando estendemos e adicionamos `withConfig`, pode estar criando duplicação
 
@@ -57,12 +60,14 @@ Encontrei 4 componentes que estendem `UnifiedCard`/`UnifiedButton` e adicionam `
 ### **Abordagem em 3 Etapas:**
 
 #### **ETAPA 1: Configurar ServerStyleSheet (Opção 2)**
+
 - ✅ Configuração global e perene
 - ✅ Resolve problemas de hidratação
 - ✅ Facilita manutenção futura
 - ⚠️ Mas pode não resolver o prerendering sozinha
 
 #### **ETAPA 2: Resolver Duplicação de `withConfig`**
+
 - ✅ Remove a causa raiz do erro
 - ✅ Melhora estrutura do código
 - ⚠️ Requer revisão de componentes
@@ -70,31 +75,46 @@ Encontrei 4 componentes que estendem `UnifiedCard`/`UnifiedButton` e adicionam `
 **Duas abordagens possíveis:**
 
 **Abordagem A:** Adicionar `withConfig` nos componentes base (`UnifiedCard`, `UnifiedButton`)
+
 ```typescript
 // UnifiedCard/index.tsx
 const CardContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     if (prop === 'className' || prop === 'children') return true;
     const propName = prop as string;
     return !propName.startsWith('$');
   },
-})<{ /* props */ }>`
+})<{
+  /* props */
+}>`
   /* estilos */
 `;
 ```
 
 **Abordagem B:** Remover `withConfig` dos componentes que estendem
+
 ```typescript
 // communication.tsx - ANTES
 const ContextoCard = styled(UnifiedCard).withConfig({
-  shouldForwardProp: (prop) => { /* ... */ },
-})<{ /* props */ }>` /* ... */ `;
+  shouldForwardProp: prop => {
+    /* ... */
+  },
+})<{
+  /* props */
+}>`
+  /* ... */
+`;
 
 // communication.tsx - DEPOIS
-const ContextoCard = styled(UnifiedCard)<{ /* props */ }>` /* ... */ `;
+const ContextoCard = styled(UnifiedCard)<{
+  /* props */
+}>`
+  /* ... */
+`;
 ```
 
 #### **ETAPA 3: (Opcional) Adicionar `getServerSideProps` nas páginas problemáticas**
+
 - ✅ Garante SSR dinâmico
 - ✅ Evita prerendering completamente
 - ⚠️ Requer editar cada página
@@ -118,11 +138,13 @@ const ContextoCard = styled(UnifiedCard)<{ /* props */ }>` /* ... */ `;
 ### **Recomendação Final:**
 
 **Implementar ETAPA 1 + ETAPA 2 juntas:**
+
 1. Configurar `ServerStyleSheet` no `_document.tsx` (Opção 2)
 2. Adicionar `withConfig` nos componentes base (`UnifiedCard`, `UnifiedButton`)
 3. Remover `withConfig` duplicado dos componentes que estendem
 
 **Por quê?**
+
 - ✅ Resolve problemas de hidratação (Opção 2)
 - ✅ Resolve duplicação de `withConfig` (causa raiz)
 - ✅ Configuração global e perene

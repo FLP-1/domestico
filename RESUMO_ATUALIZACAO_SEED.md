@@ -8,6 +8,7 @@
 ## 🎯 CENÁRIOS IMPLEMENTADOS
 
 ### **Cenário 1: Empregado em múltiplos grupos**
+
 - **Usuário:** Ana Costa (empregado1)
 - **Perfil:** EMPREGADO
 - **Grupos:**
@@ -15,6 +16,7 @@
   - Casa de Verão (grupo2) - papel: MEMBRO
 
 ### **Cenário 2: Mesmo CPF com perfis diferentes**
+
 - **Usuário:** Francisco Silva (empregador1)
 - **Perfis:**
   - EMPREGADOR (principal) - Casa Principal (grupo1)
@@ -27,6 +29,7 @@
 ### **1. RegistroPonto** ⏰
 
 **Adicionado:**
+
 - 4 novos registros de ponto de Ana Costa no grupo2 (Casa de Verão)
   - ENTRADA (3 dias atrás)
   - SAIDA_ALMOCO (3 dias atrás)
@@ -34,6 +37,7 @@
   - SAIDA (3 dias atrás)
 
 **Detalhes:**
+
 - Coordenadas: Latitude: -23.9931, Longitude: -46.2562 (Casa de Verão)
 - Endereço: Avenida Beira Mar, 456
 - WiFi: Casa_Verao_WiFi
@@ -47,6 +51,7 @@
 ### **2. SolicitacaoHoraExtra** ⏱️
 
 **Adicionado:**
+
 - 1 nova solicitação de hora extra de Ana Costa no grupo2
   - Data: 3 dias atrás
   - Início: 19:00
@@ -62,6 +67,7 @@
 ### **3. Tarefa** 📋
 
 **Adicionado:**
+
 - 1 nova tarefa para Ana Costa no grupo2
   - Título: "Preparação da casa de verão"
   - Descrição: "Organizar e preparar a casa para a temporada"
@@ -73,6 +79,7 @@
   - Tempo estimado: 180 minutos
 
 **Comentário adicionado:**
+
 - Ana Costa: "Vou começar pela limpeza dos quartos"
 
 **Total de tarefas:** 3 → **4** (+1)
@@ -82,18 +89,21 @@
 ### **4. Conversa/Mensagem** 💬
 
 **Adicionado:**
+
 - 1 nova conversa de grupo para grupo2 (Casa de Verão)
   - Tipo: GRUPO
   - Nome: "Casa de Verão"
   - Descrição: "Conversa do grupo da casa de verão"
 
 **Participantes adicionados:**
+
 - empregador2 (Maria Santos) - ADMIN
 - empregado3 (Beatriz Lima) - MEMBRO
 - empregado1 (Ana Costa) - MEMBRO ✅ **Novo**
 - empregador1 (Francisco Silva) - MEMBRO ✅ **Novo (como FAMILIA)**
 
 **Mensagens adicionadas:**
+
 - empregador2: "Bem-vindos à casa de verão! Vamos organizar tudo para a temporada."
 - empregado1: "Olá! Estou aqui para ajudar na preparação."
 - empregador1: "Olá pessoal! Estou aqui como família também."
@@ -105,13 +115,13 @@
 
 ## 📊 RESUMO ESTATÍSTICO
 
-| Item | Antes | Depois | Diferença |
-|------|-------|--------|-----------|
-| **Registros de ponto** | 6 | 10 | +4 |
-| **Solicitações hora extra** | 3 | 4 | +1 |
-| **Tarefas** | 3 | 4 | +1 |
-| **Conversas** | 2 | 3 | +1 |
-| **Mensagens** | 4 | 7 | +3 |
+| Item                        | Antes | Depois | Diferença |
+| --------------------------- | ----- | ------ | --------- |
+| **Registros de ponto**      | 6     | 10     | +4        |
+| **Solicitações hora extra** | 3     | 4      | +1        |
+| **Tarefas**                 | 3     | 4      | +1        |
+| **Conversas**               | 2     | 3      | +1        |
+| **Mensagens**               | 4     | 7      | +3        |
 
 ---
 
@@ -120,6 +130,7 @@
 ### **Cenário 1: Empregado em múltiplos grupos** ✅
 
 **Ana Costa (empregado1) agora tem:**
+
 - ✅ Registros de ponto em grupo1 e grupo2
 - ✅ Solicitação de hora extra em grupo1 e grupo2
 - ✅ Tarefas atribuídas em grupo1 e grupo2
@@ -128,6 +139,7 @@
 ### **Cenário 2: Mesmo CPF com perfis diferentes** ✅
 
 **Francisco Silva (empregador1) agora tem:**
+
 - ✅ Perfil EMPREGADOR em grupo1
 - ✅ Perfil FAMILIA em grupo2
 - ✅ Participação em conversa de grupo2 como FAMILIA
@@ -154,4 +166,3 @@ npm run db:seed:completo
 ---
 
 **Documento gerado em:** 08/01/2025
-

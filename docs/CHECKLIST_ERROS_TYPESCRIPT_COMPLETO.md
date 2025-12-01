@@ -34,6 +34,7 @@ O build do Next.js para no primeiro erro de TypeScript. Portanto, vamos corrigir
 ## 🔄 Erros Atuais (Em Correção)
 
 ### 1. `UserManagementForm/index.tsx:113:22`
+
 **Erro:** `Property '$theme' does not exist on type 'ThemedStyledProps<...SelectHTMLAttributes...>'`
 **Status:** ⏳ Pendente
 **Ação:** Adicionar prop `$theme` ao tipo do styled component
@@ -43,20 +44,28 @@ O build do Next.js para no primeiro erro de TypeScript. Portanto, vamos corrigir
 ## 📝 Padrões de Correção Identificados
 
 ### Tipo 1: Props `$theme` faltantes em styled components
+
 **Solução:** Adicionar `$theme?: any` ao tipo do styled component
 
 ### Tipo 2: Acesso a propriedades que podem ser string ou objeto
+
 **Solução:** Usar type guards:
+
 ```typescript
-const value = typeof theme?.colors?.property === 'object' && theme?.colors?.property && 'key' in theme.colors.property 
-  ? String((theme.colors.property as any).key) 
-  : null;
+const value =
+  typeof theme?.colors?.property === 'object' &&
+  theme?.colors?.property &&
+  'key' in theme.colors.property
+    ? String((theme.colors.property as any).key)
+    : null;
 ```
 
 ### Tipo 3: Props de componentes unified incorretas
+
 **Solução:** Usar props sem `$` (ex: `variant` em vez de `$variant`, `theme` em vez de `$theme`)
 
 ### Tipo 4: Imports faltantes ou incorretos
+
 **Solução:** Verificar exports e corrigir imports
 
 ---
@@ -75,4 +84,3 @@ const value = typeof theme?.colors?.property === 'object' && theme?.colors?.prop
 - **Total de erros corrigidos:** 18+
 - **Erros restantes:** 1 (em correção)
 - **Taxa de sucesso:** ~95%
-

@@ -54,7 +54,9 @@ async function handleGet(
   );
 
   if (!result.success) {
-    return res.status(500).json({ error: result.error || 'Erro ao buscar checklist' });
+    return res
+      .status(500)
+      .json({ error: result.error || 'Erro ao buscar checklist' });
   }
 
   return res.status(200).json(result.checklist || null);
@@ -84,7 +86,9 @@ async function handlePost(
   });
 
   if (!result.success) {
-    return res.status(500).json({ error: result.error || 'Erro ao criar checklist' });
+    return res
+      .status(500)
+      .json({ error: result.error || 'Erro ao criar checklist' });
   }
 
   return res.status(201).json({ checklistId: result.checklistId });
@@ -113,9 +117,10 @@ async function handlePut(
   });
 
   if (!result.success) {
-    return res.status(500).json({ error: result.error || 'Erro ao atualizar checklist' });
+    return res
+      .status(500)
+      .json({ error: result.error || 'Erro ao atualizar checklist' });
   }
 
   return res.status(200).json({ checklistId: result.checklistId });
 }
-

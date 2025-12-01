@@ -30,12 +30,12 @@ O projeto DOM possui uma suíte completa de testes automatizados cobrindo:
 
 ### Cobertura Atual
 
-| Categoria | Cobertura | Status |
-|-----------|-----------|--------|
-| Componentes | 80%+ | ✅ |
-| Serviços | 80%+ | ✅ |
-| Integração | 70%+ | ✅ |
-| E2E | Fluxos críticos | ✅ |
+| Categoria   | Cobertura       | Status |
+| ----------- | --------------- | ------ |
+| Componentes | 80%+            | ✅     |
+| Serviços    | 80%+            | ✅     |
+| Integração  | 70%+            | ✅     |
+| E2E         | Fluxos críticos | ✅     |
 
 ---
 
@@ -127,6 +127,7 @@ npm test -- --verbose
 **Localização:** `src/__tests__/components/`
 
 **Exemplo:**
+
 ```typescript
 import { render, screen, fireEvent } from '@testing-library/react';
 import { UnifiedButton } from '@/components/UnifiedButton';
@@ -140,6 +141,7 @@ describe('UnifiedButton', () => {
 ```
 
 **Componentes Testados:**
+
 - ✅ UnifiedButton
 - ✅ UnifiedCard
 - ✅ UnifiedModal
@@ -150,6 +152,7 @@ describe('UnifiedButton', () => {
 **Localização:** `src/__tests__/services/`
 
 **Exemplo:**
+
 ```typescript
 import { DAEValidationService } from '@/services/validationService';
 
@@ -164,6 +167,7 @@ describe('DAEValidationService', () => {
 ```
 
 **Serviços Testados:**
+
 - ✅ ValidationService
 - ✅ ConfigService
 - ✅ AuditService
@@ -174,6 +178,7 @@ describe('DAEValidationService', () => {
 **Localização:** `src/__tests__/integration/`
 
 **Exemplo:**
+
 ```typescript
 import { createMocks } from 'node-mocks-http';
 import handler from '@/pages/api/auth/login';
@@ -184,7 +189,7 @@ describe('Fluxo de Login', () => {
       method: 'POST',
       body: { cpf: '12345678901', senha: 'senha123' },
     });
-    
+
     await handler(req, res);
     expect(res._getStatusCode()).toBe(200);
   });
@@ -192,6 +197,7 @@ describe('Fluxo de Login', () => {
 ```
 
 **Fluxos Testados:**
+
 - ✅ Autenticação completa
 - ✅ Registro de ponto
 - ✅ CRUD de tarefas
@@ -202,6 +208,7 @@ describe('Fluxo de Login', () => {
 **Localização:** `tests/e2e/`
 
 **Exemplo:**
+
 ```typescript
 import { test, expect } from '@playwright/test';
 
@@ -216,6 +223,7 @@ test('deve fazer login com sucesso', async ({ page }) => {
 ```
 
 **Fluxos E2E:**
+
 - ✅ Login completo
 - ✅ Dashboard e navegação
 - ✅ Registro de ponto
@@ -231,17 +239,18 @@ npm run test:coverage
 ```
 
 O relatório será gerado em:
+
 - `coverage/lcov-report/index.html` (HTML)
 - `coverage/lcov.info` (LCOV)
 
 ### Metas de Cobertura
 
-| Métrica | Meta | Atual |
-|---------|------|-------|
-| Statements | 80% | ✅ |
-| Branches | 75% | ✅ |
-| Functions | 80% | ✅ |
-| Lines | 80% | ✅ |
+| Métrica    | Meta | Atual |
+| ---------- | ---- | ----- |
+| Statements | 80%  | ✅    |
+| Branches   | 75%  | ✅    |
+| Functions  | 80%  | ✅    |
+| Lines      | 80%  | ✅    |
 
 ### Visualizar Cobertura
 
@@ -262,6 +271,7 @@ start coverage/lcov-report/index.html
 O projeto possui workflow de CI configurado em `.github/workflows/ci.yml`:
 
 **Jobs:**
+
 1. **lint** - ESLint e TypeScript
 2. **test-unit** - Testes unitários
 3. **test-integration** - Testes de integração
@@ -272,6 +282,7 @@ O projeto possui workflow de CI configurado em `.github/workflows/ci.yml`:
 ### Execução Automática
 
 Os testes são executados automaticamente em:
+
 - ✅ Push para `main` ou `develop`
 - ✅ Pull Requests para `main` ou `develop`
 
@@ -325,6 +336,7 @@ describe('ComponentName', () => {
 #### 1. Testes falhando com "Cannot find module"
 
 **Solução:**
+
 ```bash
 # Limpar cache
 rm -rf node_modules .next
@@ -339,6 +351,7 @@ Verificar se `jest.setup.js` está configurado corretamente.
 #### 3. Testes E2E não encontram elementos
 
 **Solução:**
+
 - Aguardar carregamento: `await page.waitForTimeout(2000)`
 - Usar seletores mais específicos
 - Verificar se a aplicação está rodando
@@ -346,6 +359,7 @@ Verificar se `jest.setup.js` está configurado corretamente.
 #### 4. Cobertura baixa
 
 **Solução:**
+
 - Adicionar testes para branches não cobertos
 - Verificar arquivos excluídos em `jest.config.js`
 
@@ -396,7 +410,7 @@ describe('My Flow', () => {
       method: 'POST',
       body: { data: 'value' },
     });
-    
+
     await handler(req, res);
     expect(res._getStatusCode()).toBe(200);
   });
@@ -442,4 +456,3 @@ Antes de fazer commit, verifique:
 
 **Última atualização:** Janeiro 2025  
 **Mantido por:** Equipe DOM
-

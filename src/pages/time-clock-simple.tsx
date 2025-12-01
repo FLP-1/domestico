@@ -102,12 +102,15 @@ const Row = styled.div<{ $theme?: any }>`
   display: flex;
   justify-content: space-between;
   padding: 0.5rem 0;
-  border-bottom: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border-bottom: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
 `;
 
 const Bold = styled.span`
@@ -117,10 +120,12 @@ const Bold = styled.span`
 const InfoBox = styled.div<{ $theme?: any }>`
   background-color: ${props => {
     const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           props.$theme?.colors?.background?.secondary ||
-           'transparent';
+    return (
+      (typeof border === 'object' && border?.light) ||
+      props.$theme?.border?.light ||
+      props.$theme?.colors?.background?.secondary ||
+      'transparent'
+    );
   }};
   padding: 1rem;
   border-radius: 8px;
@@ -240,17 +245,17 @@ export default function TimeClock() {
   return (
     <PageContainer
       $theme={theme}
-      variant="minimal"
-      background="transparent"
-      padding="lg"
-      maxWidth="1200px"
+      variant='minimal'
+      background='transparent'
+      padding='lg'
+      maxWidth='1200px'
       animation={true}
     >
       <PageHeader
         $theme={theme}
-        title="Controle de Ponto"
-        variant="centered"
-        size="lg"
+        title='Controle de Ponto'
+        variant='centered'
+        size='lg'
         animation={true}
       />
 
@@ -275,28 +280,44 @@ export default function TimeClock() {
 
       {/* Botões de Registro */}
       <GridButtons>
-        <Btn $bg={theme?.colors?.success || 'transparent'} $theme={theme} onClick={() => handleTimeRecord('entrada')}>
+        <Btn
+          $bg={theme?.colors?.success || 'transparent'}
+          $theme={theme}
+          onClick={() => handleTimeRecord('entrada')}
+        >
           <span role='img' aria-label='Entrada'>
             🕐
           </span>{' '}
           Entrada
         </Btn>
 
-        <Btn $bg={theme?.colors?.info || theme?.colors?.primary || 'transparent'} $theme={theme} onClick={() => handleTimeRecord('saida_almoco')}>
+        <Btn
+          $bg={theme?.colors?.info || theme?.colors?.primary || 'transparent'}
+          $theme={theme}
+          onClick={() => handleTimeRecord('saida_almoco')}
+        >
           <span role='img' aria-label='Saída Almoço'>
             🍽️
           </span>{' '}
           Saída Almoço
         </Btn>
 
-        <Btn $bg={theme?.colors?.info || theme?.colors?.primary || 'transparent'} $theme={theme} onClick={() => handleTimeRecord('retorno_almoco')}>
+        <Btn
+          $bg={theme?.colors?.info || theme?.colors?.primary || 'transparent'}
+          $theme={theme}
+          onClick={() => handleTimeRecord('retorno_almoco')}
+        >
           <span role='img' aria-label='Retorno Almoço'>
             🔄
           </span>{' '}
           Retorno Almoço
         </Btn>
 
-        <Btn $bg={theme?.colors?.error || 'transparent'} $theme={theme} onClick={() => handleTimeRecord('saida')}>
+        <Btn
+          $bg={theme?.colors?.error || 'transparent'}
+          $theme={theme}
+          onClick={() => handleTimeRecord('saida')}
+        >
           <span role='img' aria-label='Saída'>
             🏠
           </span>{' '}

@@ -5,7 +5,10 @@ import configService from '../../../lib/configService';
 import { logger } from '../../../utils/logger';
 import timeClockNotificationService from '../../../services/timeClockNotificationService';
 import crypto from 'crypto';
-import { ALLOWED_FILE_TYPES, isValidTimeClockRecordType } from '../../../constants/allowedFileTypes';
+import {
+  ALLOWED_FILE_TYPES,
+  isValidTimeClockRecordType,
+} from '../../../constants/allowedFileTypes';
 
 export default async function handler(
   req: NextApiRequest,
@@ -148,20 +151,16 @@ export default async function handler(
 
           // Validar se encontrou os dados obrigatórios
           if (!usuarioGrupoId) {
-            return res
-              .status(400)
-              .json({
-                success: false,
-                error: 'Usuário não está associado a nenhum grupo',
-              });
+            return res.status(400).json({
+              success: false,
+              error: 'Usuário não está associado a nenhum grupo',
+            });
           }
           if (!usuarioPerfilIdFinal) {
-            return res
-              .status(400)
-              .json({
-                success: false,
-                error: 'Usuário não possui perfil ativo',
-              });
+            return res.status(400).json({
+              success: false,
+              error: 'Usuário não possui perfil ativo',
+            });
           }
 
           logger.log('✅ Dados do usuário encontrados automaticamente:', {
@@ -170,7 +169,8 @@ export default async function handler(
             usuarioPerfilIdFinal,
           });
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+          const errorMessage =
+            error instanceof Error ? error.message : 'Erro desconhecido';
           logger.error('Erro ao buscar dados do usuário:', errorMessage, error);
           return res
             .status(500)
@@ -179,7 +179,11 @@ export default async function handler(
       }
 
       // Validações básicas de entrada
-      if (!tipo || typeof tipo !== 'string' || (!isValidTimeClockRecordType(tipo) && tipo !== 'fim_extra')) {
+      if (
+        !tipo ||
+        typeof tipo !== 'string' ||
+        (!isValidTimeClockRecordType(tipo) && tipo !== 'fim_extra')
+      ) {
         return res
           .status(400)
           .json({ success: false, error: 'Tipo de registro inválido' });
@@ -187,38 +191,30 @@ export default async function handler(
 
       // ✅ Validação opcional para grupoId e usuarioPerfilId
       if (grupoId && typeof grupoId !== 'string') {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            error: 'grupoId deve ser uma string válida',
-          });
+        return res.status(400).json({
+          success: false,
+          error: 'grupoId deve ser uma string válida',
+        });
       }
       if (usuarioPerfilId && typeof usuarioPerfilId !== 'string') {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            error: 'usuarioPerfilId deve ser uma string válida',
-          });
+        return res.status(400).json({
+          success: false,
+          error: 'usuarioPerfilId deve ser uma string válida',
+        });
       }
 
       // ✅ Validação opcional para grupoId e usuarioPerfilId
       if (grupoId && typeof grupoId !== 'string') {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            error: 'grupoId deve ser uma string válida',
-          });
+        return res.status(400).json({
+          success: false,
+          error: 'grupoId deve ser uma string válida',
+        });
       }
       if (usuarioPerfilId && typeof usuarioPerfilId !== 'string') {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            error: 'usuarioPerfilId deve ser uma string válida',
-          });
+        return res.status(400).json({
+          success: false,
+          error: 'usuarioPerfilId deve ser uma string válida',
+        });
       }
 
       // ✅ Localização é opcional - permitir registros mesmo sem geolocalização
@@ -227,13 +223,10 @@ export default async function handler(
         longitude !== undefined &&
         (typeof latitude !== 'number' || typeof longitude !== 'number')
       ) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            error:
-              'Localização inválida (latitude/longitude devem ser números)',
-          });
+        return res.status(400).json({
+          success: false,
+          error: 'Localização inválida (latitude/longitude devem ser números)',
+        });
       }
       const precise = typeof precisao === 'number' ? precisao : null;
 
@@ -278,7 +271,9 @@ export default async function handler(
           dataHora: { gte: inicioDia, lt: fimDia },
           // ✅ Usar os valores corretos obtidos do banco (não os do request que podem ser null)
           ...(usuarioGrupoId ? { grupoId: usuarioGrupoId } : {}),
-          ...(usuarioPerfilIdFinal ? { usuarioPerfilId: usuarioPerfilIdFinal } : {}),
+          ...(usuarioPerfilIdFinal
+            ? { usuarioPerfilId: usuarioPerfilIdFinal }
+            : {}),
         },
       });
       if (existenteMesmoTipo) {
@@ -293,12 +288,10 @@ export default async function handler(
           existenteGrupoId: existenteMesmoTipo.grupoId,
           existenteUsuarioPerfilId: existenteMesmoTipo.usuarioPerfilId,
         });
-        return res
-          .status(409)
-          .json({
-            success: false,
-            error: `Já existe um registro de ${tipo} para hoje neste grupo/perfil`,
-          });
+        return res.status(409).json({
+          success: false,
+          error: `Já existe um registro de ${tipo} para hoje neste grupo/perfil`,
+        });
       }
 
       // Validar sequência lógica básica (sem horas extras)
@@ -337,12 +330,10 @@ export default async function handler(
                   dataFim: fimDia,
                 }
               );
-              return res
-                .status(422)
-                .json({
-                  success: false,
-                  error: `Primeiro registro do dia deve ser 'entrada'`,
-                });
+              return res.status(422).json({
+                success: false,
+                error: `Primeiro registro do dia deve ser 'entrada'`,
+              });
             }
           } else {
             // Se há registros, verificar sequência
@@ -361,12 +352,10 @@ export default async function handler(
                 dataInicio: inicioDia,
                 dataFim: fimDia,
               });
-              return res
-                .status(422)
-                .json({
-                  success: false,
-                  error: `É necessário registrar ${tipoAnterior} primeiro`,
-                });
+              return res.status(422).json({
+                success: false,
+                error: `É necessário registrar ${tipoAnterior} primeiro`,
+              });
             }
           }
         }

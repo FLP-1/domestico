@@ -1,7 +1,7 @@
 /**
  * Hook: useErrorHandler
  * Sistema DOM - Tratamento Padronizado de Erros
- * 
+ *
  * Hook para padronizar o tratamento de erros em todas as páginas.
  * Fornece funções consistentes para lidar com diferentes tipos de erros.
  */
@@ -22,20 +22,27 @@ export interface ErrorHandlerReturn {
   /** Trata erros de requisições HTTP/API */
   handleApiError: (error: unknown, options?: ErrorHandlerOptions) => void;
   /** Trata erros de validação */
-  handleValidationError: (error: unknown, options?: ErrorHandlerOptions) => void;
+  handleValidationError: (
+    error: unknown,
+    options?: ErrorHandlerOptions
+  ) => void;
   /** Trata erros genéricos */
   handleError: (error: unknown, options?: ErrorHandlerOptions) => void;
   /** Trata erros de operações assíncronas */
-  handleAsyncError: (error: unknown, context?: string, options?: ErrorHandlerOptions) => void;
+  handleAsyncError: (
+    error: unknown,
+    context?: string,
+    options?: ErrorHandlerOptions
+  ) => void;
 }
 
 /**
  * Hook para tratamento padronizado de erros
- * 
+ *
  * @example
  * ```tsx
  * const { handleApiError, handleValidationError } = useErrorHandler();
- * 
+ *
  * try {
  *   await api.post('/endpoint', data);
  * } catch (error) {
@@ -65,12 +72,18 @@ export function useErrorHandler(): ErrorHandlerReturn {
 
       if (error instanceof Error) {
         // Se for erro de rede
-        if (error.message.includes('fetch') || error.message.includes('network')) {
-          message = userMessage || 'Erro de conexão. Verifique sua internet e tente novamente.';
+        if (
+          error.message.includes('fetch') ||
+          error.message.includes('network')
+        ) {
+          message =
+            userMessage ||
+            'Erro de conexão. Verifique sua internet e tente novamente.';
         }
         // Se for erro de timeout
         else if (error.message.includes('timeout')) {
-          message = userMessage || 'A requisição demorou muito. Tente novamente.';
+          message =
+            userMessage || 'A requisição demorou muito. Tente novamente.';
         }
         // Outros erros
         else if (!userMessage) {
@@ -78,7 +91,11 @@ export function useErrorHandler(): ErrorHandlerReturn {
         }
       } else if (typeof error === 'object' && error !== null) {
         // Tentar extrair mensagem de resposta de API
-        const apiError = error as { message?: string; error?: string; data?: { message?: string } };
+        const apiError = error as {
+          message?: string;
+          error?: string;
+          data?: { message?: string };
+        };
         if (apiError.message) {
           message = apiError.message;
         } else if (apiError.error) {
@@ -108,17 +125,25 @@ export function useErrorHandler(): ErrorHandlerReturn {
         console.warn('Validation Error:', error);
       }
 
-      let message = userMessage || 'Dados inválidos. Verifique os campos e tente novamente.';
+      let message =
+        userMessage ||
+        'Dados inválidos. Verifique os campos e tente novamente.';
 
       if (error instanceof Error) {
         if (!userMessage) {
           message = error.message || message;
         }
       } else if (typeof error === 'object' && error !== null) {
-        const validationError = error as { message?: string; errors?: string[] };
+        const validationError = error as {
+          message?: string;
+          errors?: string[];
+        };
         if (validationError.message) {
           message = validationError.message;
-        } else if (validationError.errors && validationError.errors.length > 0) {
+        } else if (
+          validationError.errors &&
+          validationError.errors.length > 0
+        ) {
           message = validationError.errors.join(', ');
         }
       }
@@ -145,7 +170,9 @@ export function useErrorHandler(): ErrorHandlerReturn {
 
       const message =
         userMessage ||
-        (error instanceof Error ? error.message : 'Ocorreu um erro inesperado. Tente novamente.');
+        (error instanceof Error
+          ? error.message
+          : 'Ocorreu um erro inesperado. Tente novamente.');
 
       alertManager.showError(message);
 
@@ -189,4 +216,3 @@ export function useErrorHandler(): ErrorHandlerReturn {
     handleAsyncError,
   };
 }
-

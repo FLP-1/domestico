@@ -67,9 +67,11 @@ const ErrorDetails = styled.details<{ $theme?: any }>`
   border: 1px solid
     ${props => {
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) ||
-             props.$theme?.border?.light ||
-             'transparent';
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
     }};
   border-radius: 8px;
   text-align: left;
@@ -131,28 +133,30 @@ class ErrorBoundaryClass extends Component<Props, State> {
     // Report to Sentry if available
     if (typeof window !== 'undefined') {
       // Importar helper do Sentry dinamicamente
-      import('../../lib/sentry').then(({ captureException }) => {
-        captureException(error, {
-          tags: {
-            errorBoundary: 'true',
-            component: errorInfo.componentStack?.split('\n')[1] || 'unknown',
-          },
-          extra: {
-            componentStack: errorInfo.componentStack,
-          },
-        });
-      }).catch(() => {
-        // Sentry helper não disponível, tentar diretamente
-        if ((window as any).Sentry) {
-          (window as any).Sentry.captureException(error, {
-            contexts: {
-              react: {
-                componentStack: errorInfo.componentStack,
-              },
+      import('../../lib/sentry')
+        .then(({ captureException }) => {
+          captureException(error, {
+            tags: {
+              errorBoundary: 'true',
+              component: errorInfo.componentStack?.split('\n')[1] || 'unknown',
+            },
+            extra: {
+              componentStack: errorInfo.componentStack,
             },
           });
-        }
-      });
+        })
+        .catch(() => {
+          // Sentry helper não disponível, tentar diretamente
+          if ((window as any).Sentry) {
+            (window as any).Sentry.captureException(error, {
+              contexts: {
+                react: {
+                  componentStack: errorInfo.componentStack,
+                },
+              },
+            });
+          }
+        });
     }
 
     this.setState({
@@ -205,7 +209,10 @@ function ErrorBoundaryFallback({
   return (
     <ErrorContainer $theme={theme}>
       <ErrorTitle $theme={theme}>
-        <span role="img" aria-label="Aviso">⚠️</span> Ops! Algo deu errado
+        <span role='img' aria-label='Aviso'>
+          ⚠️
+        </span>{' '}
+        Ops! Algo deu errado
       </ErrorTitle>
       <ErrorMessage $theme={theme}>
         Ocorreu um erro inesperado. Nossa equipe foi notificada e está
@@ -215,8 +222,8 @@ function ErrorBoundaryFallback({
       <UnifiedButton
         $theme={theme}
         onClick={onReset}
-        $variant="primary"
-        $size="medium"
+        $variant='primary'
+        $size='medium'
       >
         Tentar Novamente
       </UnifiedButton>
@@ -255,4 +262,3 @@ export default ErrorBoundaryClass;
 
 // Export as named export for convenience
 export { ErrorBoundaryClass as ErrorBoundary };
-

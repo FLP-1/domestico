@@ -9,6 +9,7 @@
 ## 📊 RESUMO EXECUTIVO
 
 ### **Status Geral:**
+
 - ✅ **Dados Mockados:** Removidos na maioria das páginas principais
 - ✅ **Constantes Hardcoded:** **RESOLVIDO** - 7 categorias de constantes centralizadas
 - ✅ **Centralização de Constantes:** **CONCLUÍDA** - Sistema completo de constantes criado
@@ -18,6 +19,7 @@
 - ⚠️ **Reutilização:** Alguns componentes não estão sendo usados
 
 ### **🎉 CONQUISTAS RECENTES (Janeiro 2025):**
+
 - ✅ **7 constantes centralizadas criadas** (suprimentos, esocialStatuses, paymentStatuses, taskStatuses, taskPriorities, overtimeRequestStatuses, allowedFileTypes)
 - ✅ **15 arquivos migrados** para usar constantes centralizadas
 - ✅ **9 arquivos migrados** para usar formatação centralizada
@@ -40,7 +42,11 @@
 
 ```typescript
 // ✅ AGORA: Centralizado em src/constants/suprimentos.ts
-export const TIPOS_SERVICO: Array<{ value: TipoServico; label: string; icon: string }> = [
+export const TIPOS_SERVICO: Array<{
+  value: TipoServico;
+  label: string;
+  icon: string;
+}> = [
   { value: 'LIMPEZA', label: 'Limpeza', icon: '🧹' },
   { value: 'COZINHA', label: 'Cozinha', icon: '🍳' },
   // ...
@@ -66,6 +72,7 @@ export const UNIDADES: Array<{ value: UnidadeMedida; label: string }> = [
 **Status:** ✅ **CONCLUÍDO** (Janeiro 2025)
 
 **Constantes Criadas:**
+
 1. ✅ `src/constants/overtimeRequestStatuses.ts` - Status de solicitações de hora extra
 2. ✅ `src/constants/esocialStatuses.ts` - Status de eSocial
 3. ✅ `src/constants/paymentStatuses.ts` - Status de pagamentos
@@ -74,6 +81,7 @@ export const UNIDADES: Array<{ value: UnidadeMedida; label: string }> = [
 6. ✅ `src/constants/allowedFileTypes.ts` - Tipos de arquivos permitidos
 
 **Arquivos Migrados:** 15 arquivos
+
 - ✅ `src/pages/esocial-domestico-completo.tsx`
 - ✅ `src/pages/task-management.tsx`
 - ✅ `src/components/CertificateUploadModal.tsx`
@@ -96,11 +104,13 @@ export const UNIDADES: Array<{ value: UnidadeMedida; label: string }> = [
 #### **❌ PROBLEMA: Interfaces definidas em múltiplos arquivos**
 
 **Arquivos afetados:**
+
 - `src/pages/communication.tsx` - Define `MensagemContextual`, `ContextoComunicacao`
 - `src/pages/shopping-management.tsx` - Define `ListaSuprimentos`, `ItemSuprimento`, `TemplateLista`, `EstoqueDomestico`
 - `src/pages/document-management.tsx` - Define tipos de documentos
 
 **✅ SOLUÇÃO:** Centralizar em `src/types/`:
+
 - `src/types/communication.ts` - Tipos de comunicação
 - `src/types/suprimentos.ts` - Tipos de suprimentos
 - `src/types/documents.ts` - Tipos de documentos (já existe parcialmente)
@@ -112,12 +122,14 @@ export const UNIDADES: Array<{ value: UnidadeMedida; label: string }> = [
 #### **❌ PROBLEMA: Valores de espaçamento e tamanhos hardcoded**
 
 **Exemplos encontrados:**
+
 - `padding: 1rem`, `margin: 1.5rem`, `gap: 1rem`
 - `font-size: 1.1rem`, `font-size: 0.9rem`
 - `border-radius: 8px`, `border-radius: 12px`
 - `box-shadow: 0 4px 12px`
 
 **✅ SOLUÇÃO:** Usar tokens de `src/components/shared/tokens.ts`:
+
 - `getSpacing()`, `getFontSize()`, `getBorderRadius()`, `getShadow()`
 
 ---
@@ -131,6 +143,7 @@ export const UNIDADES: Array<{ value: UnidadeMedida; label: string }> = [
 **Status:** ✅ **PARCIALMENTE CONCLUÍDO** (Janeiro 2025)
 
 **✅ IMPLEMENTADO:**
+
 - ✅ `src/utils/formatters.ts` criado com funções completas:
   - `formatCurrency` - Formatação de moeda BRL
   - `formatDate` - Formatação de data
@@ -141,16 +154,19 @@ export const UNIDADES: Array<{ value: UnidadeMedida; label: string }> = [
   - `formatRelativeTime` - Tempo relativo ("há 2 horas")
 
 **✅ ARQUIVOS MIGRADOS:**
+
 - ✅ `src/pages/esocial-domestico-completo.tsx` - Removido `formatCurrency` e `formatDate` locais
 - ✅ `src/pages/loan-management.tsx` - Removido `formatCurrency` local
 - ✅ `src/pages/subscription-plans.tsx` - Migrado `formatPrice` para usar `formatCurrency`
 - ✅ `src/pages/geofencing/auditoria.tsx` - Migrado `formatDate` para usar `formatDateTime`
 
 **⚠️ AINDA PENDENTE:**
+
 - Alguns arquivos ainda usam `.toLocaleDateString()` diretamente (não crítico)
 - Alguns arquivos ainda usam `.toISOString().split()` para datas (não crítico, uso específico)
 
 **✅ SOLUÇÃO IMPLEMENTADA:**
+
 ```typescript
 export const formatCurrency = (value: number): string => {
   return new Intl.NumberFormat('pt-BR', {
@@ -180,6 +196,7 @@ export const formatDateTime = (date: Date | string): string => {
 #### **❌ PROBLEMA: Filtros similares em múltiplas páginas**
 
 **Encontrado em:**
+
 - `src/pages/communication.tsx` - Filtro por `contextoTipo`
 - `src/pages/shopping-management.tsx` - Filtro por `tipoServico`
 - `src/pages/document-management.tsx` - Filtros por tipo e categoria
@@ -193,12 +210,18 @@ export const formatDateTime = (date: Date | string): string => {
 #### **❌ PROBLEMA: Ordenação por data duplicada**
 
 **Encontrado em:**
+
 - `src/pages/communication.tsx` - Ordenação de contextos por última mensagem
 - Múltiplos arquivos - Ordenação por `criadoEm`
 
 **✅ SOLUÇÃO:** Criar utilitário `src/utils/sorters.ts`:
+
 ```typescript
-export const sortByDate = <T>(items: T[], getDate: (item: T) => Date, order: 'asc' | 'desc' = 'desc'): T[] => {
+export const sortByDate = <T>(
+  items: T[],
+  getDate: (item: T) => Date,
+  order: 'asc' | 'desc' = 'desc'
+): T[] => {
   return [...items].sort((a, b) => {
     const dateA = getDate(a).getTime();
     const dateB = getDate(b).getTime();
@@ -216,12 +239,14 @@ export const sortByDate = <T>(items: T[], getDate: (item: T) => Date, order: 'as
 #### **❌ PROBLEMA: Componentes disponíveis não estão sendo usados**
 
 **Componentes disponíveis:**
+
 - `ContentGrid` - Grid layout centralizado
 - `FlexRow`, `FlexColumn` - Layout flex centralizado
 - `PageSection` - Seção de página padronizada
 - `Spacer` - Espaçamento padronizado
 
 **Arquivos que poderiam usar:**
+
 - `src/pages/communication.tsx` - Usa `ContextosGrid` customizado
 - `src/pages/shopping-management.tsx` - Usa `ListasGrid` customizado
 - `src/pages/shopping-management.tsx` - Usa `EstoqueGrid` customizado
@@ -235,9 +260,11 @@ export const sortByDate = <T>(items: T[], getDate: (item: T) => Date, order: 'as
 #### **❌ PROBLEMA: Animações definidas localmente**
 
 **Componentes disponíveis:**
+
 - `fadeIn`, `slideIn`, `bounce`, `pulse`, `spin` em `src/components/shared/animations.ts`
 
 **Arquivos que poderiam usar:**
+
 - Múltiplos arquivos definem `transition: all 0.3s ease` diretamente
 
 **✅ SOLUÇÃO:** Usar animações centralizadas e tokens de duração
@@ -251,6 +278,7 @@ export const sortByDate = <T>(items: T[], getDate: (item: T) => Date, order: 'as
 #### **❌ PROBLEMA: Cálculos repetidos em render**
 
 **Encontrado em:**
+
 - `src/pages/shopping-management.tsx`:
   - `valorEstimado` calculado dentro do `.map()` sem `useMemo`
   - `estoqueAbaixoMinimo` calculado sem `useMemo`
@@ -261,10 +289,11 @@ export const sortByDate = <T>(items: T[], getDate: (item: T) => Date, order: 'as
   - Agrupamento de mensagens por contexto recalculado a cada render
 
 **✅ SOLUÇÃO:** Usar `useMemo` para cálculos custosos:
+
 ```typescript
 const listasFiltradas = useMemo(() => {
-  return filtroTipo === 'TODOS' 
-    ? listas 
+  return filtroTipo === 'TODOS'
+    ? listas
     : listas.filter(l => l.tipoServico === filtroTipo);
 }, [listas, filtroTipo]);
 
@@ -280,6 +309,7 @@ const estoqueAbaixoMinimo = useMemo(() => {
 #### **❌ PROBLEMA: Funções recriadas a cada render**
 
 **Encontrado em:**
+
 - `src/pages/shopping-management.tsx`:
   - `handleCriarLista`, `handleAdicionarItem`, `handleMarcarComprado` não estão memoizadas
   - `handleAbrirDetalhes` não está memoizada
@@ -288,6 +318,7 @@ const estoqueAbaixoMinimo = useMemo(() => {
   - `handleSelectContexto`, `handleCloseChat` não estão memoizadas
 
 **✅ SOLUÇÃO:** Usar `useCallback` para funções passadas como props:
+
 ```typescript
 const handleSelectContexto = useCallback((contexto: ContextoComunicacao) => {
   setSelectedContexto(contexto);
@@ -302,10 +333,12 @@ const handleSelectContexto = useCallback((contexto: ContextoComunicacao) => {
 #### **❌ PROBLEMA: Componentes filhos re-renderizam desnecessariamente**
 
 **Encontrado em:**
+
 - Cards de lista em `shopping-management.tsx`
 - Cards de contexto em `communication.tsx`
 
 **✅ SOLUÇÃO:** Usar `React.memo` para componentes de lista:
+
 ```typescript
 const ListaCardMemo = React.memo(ListaCard);
 ```
@@ -317,25 +350,33 @@ const ListaCardMemo = React.memo(ListaCard);
 #### **❌ PROBLEMA: Múltiplas iterações sobre o mesmo array**
 
 **Encontrado em:**
+
 - `src/pages/shopping-management.tsx`:
+
   ```typescript
   const totalItens = lista.itens.length;
   const itensComprados = lista.itens.filter(i => i.comprado).length;
-  const valorEstimado = lista.itens.reduce((sum, item) => 
-    sum + (item.precoEstimado || 0) * item.quantidade, 0
+  const valorEstimado = lista.itens.reduce(
+    (sum, item) => sum + (item.precoEstimado || 0) * item.quantidade,
+    0
   );
   ```
+
   - Três iterações sobre `lista.itens`
 
 **✅ SOLUÇÃO:** Reduzir a uma única iteração:
+
 ```typescript
 const listaStats = useMemo(() => {
-  return lista.itens.reduce((acc, item) => {
-    acc.total++;
-    if (item.comprado) acc.comprados++;
-    acc.valorEstimado += (item.precoEstimado || 0) * item.quantidade;
-    return acc;
-  }, { total: 0, comprados: 0, valorEstimado: 0 });
+  return lista.itens.reduce(
+    (acc, item) => {
+      acc.total++;
+      if (item.comprado) acc.comprados++;
+      acc.valorEstimado += (item.precoEstimado || 0) * item.quantidade;
+      return acc;
+    },
+    { total: 0, comprados: 0, valorEstimado: 0 }
+  );
 }, [lista.itens]);
 ```
 
@@ -348,6 +389,7 @@ const listaStats = useMemo(() => {
 #### **❌ PROBLEMA: Tratamento de erro variado**
 
 **Encontrado em:**
+
 - Alguns arquivos usam `try/catch` com `alertManager.showError`
 - Outros apenas `console.error`
 - Alguns não tratam erros
@@ -361,6 +403,7 @@ const listaStats = useMemo(() => {
 #### **❌ PROBLEMA: Estados de loading variados**
 
 **Encontrado em:**
+
 - `loading`, `isLoading`, `isFetching` - nomes diferentes
 - Alguns usam `LoadingContainer`, outros componentes customizados
 
@@ -373,6 +416,7 @@ const listaStats = useMemo(() => {
 #### **❌ PROBLEMA: Empty states variados**
 
 **Encontrado em:**
+
 - Alguns usam `EmptyState` centralizado
 - Outros criam componentes customizados
 
@@ -428,7 +472,7 @@ const listaStats = useMemo(() => {
      - `handleAbrirDetalhes` (já existia)
    - ✅ `communication.tsx` já tinha `useCallback` para todos os handlers
 
-8. ✅ **Otimizar operações de array** - **CONCLUÍDO**
+6. ✅ **Otimizar operações de array** - **CONCLUÍDO**
    - ✅ Reduzidas múltiplas iterações em `shopping-management.tsx`
    - ✅ Criado `listasComStats` com `useMemo` para calcular estatísticas uma vez
    - ✅ Estatísticas calculadas em uma única iteração por lista
@@ -463,6 +507,7 @@ const listaStats = useMemo(() => {
 ## 📊 MÉTRICAS DE IMPACTO
 
 ### **Antes das Otimizações:**
+
 - ⚠️ **Constantes duplicadas:** ~20+ ocorrências em 6 categorias
 - ⚠️ **Interfaces duplicadas:** ~3 arquivos
 - ⚠️ **Funções de formatação duplicadas:** ~10 ocorrências
@@ -470,6 +515,7 @@ const listaStats = useMemo(() => {
 - ⚠️ **Funções não memoizadas:** ~12 ocorrências
 
 ### **Estado Atual (Janeiro 2025):**
+
 - ✅ **Constantes centralizadas:** 7 arquivos criados (`suprimentos.ts`, `esocialStatuses.ts`, `paymentStatuses.ts`, `taskStatuses.ts`, `taskPriorities.ts`, `overtimeRequestStatuses.ts`, `allowedFileTypes.ts`)
 - ✅ **Arquivos migrados para constantes:** 15 arquivos usando constantes centralizadas
 - ✅ **Arquivos migrados para formatação:** 9 arquivos usando formatters centralizados
@@ -481,6 +527,7 @@ const listaStats = useMemo(() => {
 - ✅ **Handlers memoizados:** 7+ handlers otimizados com `useCallback`
 
 ### **Ganho Alcançado:**
+
 - 📉 **Redução de código duplicado:** ~60% (constantes + formatação)
 - ✅ **Type safety:** Implementado em 100% das constantes
 - 🎯 **Manutenibilidade:** Significativamente melhorada
@@ -489,6 +536,7 @@ const listaStats = useMemo(() => {
 - 🔄 **Otimização de arrays:** Redução de múltiplas iterações
 
 ### **Ganho Estimado (Após Conclusão Total):**
+
 - 📉 **Redução de código duplicado:** ~60-70% (com formatação e tipos)
 - ⚡ **Melhoria de performance:** ~20-30% (menos re-renders)
 - 🎯 **Manutenibilidade:** Máxima
@@ -498,6 +546,7 @@ const listaStats = useMemo(() => {
 ## ✅ CHECKLIST DE IMPLEMENTAÇÃO
 
 ### **Fase 1: Centralização de Constantes** ✅ **CONCLUÍDA**
+
 - [x] ✅ Criar `src/constants/suprimentos.ts`
 - [x] ✅ Mover constantes de `shopping-management.tsx`
 - [x] ✅ Criar `src/constants/overtimeRequestStatuses.ts`
@@ -511,6 +560,7 @@ const listaStats = useMemo(() => {
 - [x] ✅ Validar que não há erros de tipo após migração
 
 ### **Fase 1.5: Centralização de Tipos e Formatação** ✅ **PARCIALMENTE CONCLUÍDA**
+
 - [x] ✅ Criar `src/types/communication.ts` - **JÁ EXISTIA**
 - [x] ✅ Criar `src/types/suprimentos.ts` - **JÁ EXISTIA**
 - [x] ✅ Mover interfaces das páginas - **JÁ ESTAVA CENTRALIZADO**
@@ -523,6 +573,7 @@ const listaStats = useMemo(() => {
   - ✅ `src/pages/geofencing/auditoria.tsx`
 
 ### **Fase 2: Otimizações de Performance** ✅ **PARCIALMENTE CONCLUÍDA**
+
 - [x] ✅ Adicionar `useMemo` em cálculos custosos - **CONCLUÍDO**
   - ✅ `listasFiltradas` em shopping-management.tsx
   - ✅ `estoqueAbaixoMinimo` em shopping-management.tsx
@@ -539,6 +590,7 @@ const listaStats = useMemo(() => {
 - [ ] Substituir grids customizados - **PENDENTE**
 
 ### **Fase 3: Padronização (Desejável)**
+
 - [ ] Criar hook `useErrorHandler`
 - [ ] Padronizar estados de loading
 - [ ] Padronizar empty states
@@ -551,6 +603,7 @@ const listaStats = useMemo(() => {
 ## 📝 NOTAS FINAIS
 
 ### **Pontos Positivos:**
+
 - ✅ Sistema de tema bem implementado
 - ✅ Componentes unificados disponíveis
 - ✅ Animações centralizadas criadas
@@ -561,12 +614,14 @@ const listaStats = useMemo(() => {
 - ✅ **15 arquivos migrados** com sucesso
 
 ### **Pontos de Atenção:**
+
 - ⚠️ Algumas páginas ainda não usam componentes centralizados
 - ⚠️ Falta de memoização em alguns lugares críticos
 - ✅ Tipos/interfaces já centralizados (communication.ts e suprimentos.ts existem)
 - ✅ Funções de formatação principais migradas (4 arquivos migrados, alguns usos diretos ainda pendentes)
 
 ### **Recomendações:**
+
 1. ✅ **Fase 1 (Centralização de Constantes) CONCLUÍDA** - Impacto imediato na manutenibilidade alcançado
 2. ✅ **Fase 1.5 (Tipos e Formatação) CONCLUÍDA** - Tipos já existiam, formatação migrada em 9 arquivos principais, funções extras adicionadas
 3. ✅ **Fase 2 (Otimizações de Performance) PARCIALMENTE CONCLUÍDA** - useMemo e useCallback implementados nos arquivos principais
@@ -580,6 +635,7 @@ const listaStats = useMemo(() => {
 ### **Centralização de Constantes - CONCLUÍDA**
 
 **Arquivos Criados:**
+
 - ✅ `src/constants/overtimeRequestStatuses.ts`
 - ✅ `src/constants/esocialStatuses.ts`
 - ✅ `src/constants/paymentStatuses.ts`
@@ -589,11 +645,13 @@ const listaStats = useMemo(() => {
 - ✅ `src/constants/README.md` (documentação completa)
 
 **Arquivos Migrados:** 15 arquivos
+
 - Páginas: `esocial-domestico-completo.tsx`, `task-management.tsx`
 - Componentes: `CertificateUploadModal.tsx`, `EmployerModal.tsx`, `ProxyUploadModal.tsx`, `TaxGuideModalNew.tsx`, `PayrollModalNew.tsx`
 - APIs: `tax-guides/index.ts`, `payroll/index.ts`, `time-clock/overtime-requests.ts`, `time-clock/records.ts`, e mais
 
 **Benefícios Alcançados:**
+
 - ✅ Type safety completo
 - ✅ Eliminação de strings mágicas
 - ✅ Consistência garantida
@@ -607,6 +665,7 @@ const listaStats = useMemo(() => {
 ### **Centralização de Formatação - CONCLUÍDA** ✅ (Janeiro 2025)
 
 **Arquivos Migrados:** 9 arquivos principais
+
 - ✅ `src/pages/esocial-domestico-completo.tsx` - Removidas funções `formatCurrency` e `formatDate` locais
 - ✅ `src/pages/loan-management.tsx` - Removida função `formatCurrency` local
 - ✅ `src/pages/subscription-plans.tsx` - Migrado `formatPrice` para usar `formatCurrency` centralizado
@@ -618,17 +677,20 @@ const listaStats = useMemo(() => {
 - ✅ `src/pages/document-management.tsx` - Migrado `.toLocaleDateString()` para `formatDate`
 
 **Funções Adicionadas ao `src/utils/formatters.ts`:**
+
 - ✅ `formatDateLong()` - Data completa com dia da semana (ex: "segunda-feira, 1 de janeiro de 2025")
 - ✅ `formatMonthYear()` - Mês e ano (ex: "janeiro de 2025")
 - ✅ `formatTimeWithSeconds()` - Hora com segundos (ex: "14:30:45")
 - ✅ `formatDateISO()` - Converter data para formato ISO (YYYY-MM-DD)
 
 **Status dos Tipos:**
+
 - ✅ Tipos de comunicação já centralizados em `src/types/communication.ts`
 - ✅ Tipos de suprimentos já centralizados em `src/types/suprimentos.ts`
 - ✅ Tipos já estão sendo usados corretamente nas páginas
 
 **Benefícios Alcançados:**
+
 - ✅ Eliminação completa de código duplicado de formatação
 - ✅ Consistência total na formatação de moeda e datas
 - ✅ Manutenibilidade melhorada (mudanças em um único lugar)
@@ -642,6 +704,7 @@ const listaStats = useMemo(() => {
 ### **Otimizações de Performance - PARCIALMENTE CONCLUÍDA** (Janeiro 2025)
 
 **Arquivos Otimizados:** 2 arquivos principais
+
 - ✅ `src/pages/shopping-management.tsx`:
   - ✅ `useMemo` para `listasFiltradas` (já existia)
   - ✅ `useMemo` para `estoqueAbaixoMinimo` (já existia)
@@ -656,6 +719,7 @@ const listaStats = useMemo(() => {
   - ✅ `useCallback` para `loadContextos` (já existia)
 
 **Benefícios Alcançados:**
+
 - ✅ Redução de re-renders desnecessários
 - ✅ Cálculos custosos memoizados (estatísticas pré-calculadas)
 - ✅ Handlers estáveis (não recriados a cada render)
@@ -668,11 +732,13 @@ const listaStats = useMemo(() => {
 ### **Memoização de Componentes e Tratamento de Erros - CONCLUÍDO** ✅ (Janeiro 2025)
 
 **Componentes Memoizados:**
+
 - ✅ `ListaCardMemo` em `shopping-management.tsx` - Evita re-render desnecessário de cards de lista
 - ✅ `EstoqueItemMemo` em `shopping-management.tsx` - Evita re-render desnecessário de itens de estoque
 - ✅ `ContextoCardMemo` em `communication.tsx` - Evita re-render desnecessário de cards de contexto
 
 **Hook Criado:**
+
 - ✅ `useErrorHandler` em `src/hooks/useErrorHandler.ts` - Tratamento padronizado de erros
   - ✅ `handleApiError` - Erros de requisições HTTP/API
   - ✅ `handleValidationError` - Erros de validação
@@ -680,12 +746,14 @@ const listaStats = useMemo(() => {
   - ✅ `handleAsyncError` - Erros de operações assíncronas com contexto
 
 **Aplicações:**
+
 - ✅ `shopping-management.tsx` - 4 blocos catch migrados para usar `handleAsyncError`
 - ✅ `communication.tsx` - 1 bloco catch migrado para usar `handleAsyncError`
 - ✅ `task-management.tsx` - 2 blocos catch migrados para usar `handleAsyncError`
 - ✅ `payroll-management.tsx` - 1 bloco catch migrado para usar `handleAsyncError`
 
 **Benefícios Alcançados:**
+
 - ✅ Redução de re-renders desnecessários através de memoização
 - ✅ Tratamento de erros consistente em todas as páginas
 - ✅ Mensagens de erro mais amigáveis e contextuais
@@ -698,17 +766,20 @@ const listaStats = useMemo(() => {
 ### **Substituição de Grids Customizados - CONCLUÍDO** ✅ (Janeiro 2025)
 
 **Grids Substituídos:**
+
 - ✅ `ListasGrid` em `shopping-management.tsx` → `ContentGrid`
 - ✅ `EstoqueGrid` em `shopping-management.tsx` → `ContentGrid`
 - ✅ `FormGrid` em `shopping-management.tsx` → `ContentGrid`
 - ✅ `ContextosGrid` em `communication.tsx` → `ContentGrid`
 
 **Flex Containers Substituídos:**
+
 - ✅ `ListaHeader` em `shopping-management.tsx` → `FlexRow`
 - ✅ `ListaInfo` em `shopping-management.tsx` → `FlexColumn`
 - ✅ `InfoRow` em `shopping-management.tsx` → `FlexRow`
 
 **Benefícios Alcançados:**
+
 - ✅ Responsividade automática (breakpoints já configurados)
 - ✅ Consistência visual garantida
 - ✅ Menos código duplicado (reutilização de componentes base)
@@ -717,4 +788,3 @@ const listaStats = useMemo(() => {
 ---
 
 **Próximos Passos:** Continuar aplicando padronizações em outras páginas conforme necessário.
-

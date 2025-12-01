@@ -54,4 +54,3 @@
 ## ✅ **PRÓXIMO PASSO**
 
 **Iniciar refatoração de `alert-management.tsx` (17 estilos inline)**
-

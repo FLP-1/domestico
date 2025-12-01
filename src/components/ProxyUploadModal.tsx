@@ -9,7 +9,10 @@ import {
   OptimizedErrorMessage,
   OptimizedHelpText,
 } from '../components/shared/optimized-styles';
-import { ALLOWED_FILE_TYPES, isAllowedDocumentType } from '../constants/allowedFileTypes';
+import {
+  ALLOWED_FILE_TYPES,
+  isAllowedDocumentType,
+} from '../constants/allowedFileTypes';
 
 const StyledComponent1 = styled.div<{ $theme?: any }>`
   marginbottom: 0.5rem;
@@ -31,22 +34,23 @@ const pulse = keyframes`
 const UploadArea = styled.div<{ $isDragOver: boolean; $theme?: any }>`
   border: 2px dashed
     ${props => {
-      const primaryColor = props.$theme?.colors?.primary ||
-                          props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
       if (props.$isDragOver) {
         return primaryColor || 'transparent';
       }
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) ||
-             props.$theme?.border?.light ||
-             'transparent';
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
     }};
   border-radius: 12px;
   padding: 3rem 2rem;
   text-align: center;
   background: ${props => {
-    const primaryColor = props.$theme?.colors?.primary ||
-                        props.$theme?.accent;
+    const primaryColor = props.$theme?.colors?.primary || props.$theme?.accent;
     if (props.$isDragOver && primaryColor) {
       if (primaryColor.startsWith('#')) {
         const r = parseInt(primaryColor.slice(1, 3), 16);
@@ -58,10 +62,12 @@ const UploadArea = styled.div<{ $isDragOver: boolean; $theme?: any }>`
         return primaryColor.replace(')', ', 0.05)').replace('rgb', 'rgba');
       }
     }
-    return props.$theme?.colors?.background?.primary ||
-           props.$theme?.background?.primary ||
-           props.$theme?.colors?.surface ||
-           'transparent';
+    return (
+      props.$theme?.colors?.background?.primary ||
+      props.$theme?.background?.primary ||
+      props.$theme?.colors?.surface ||
+      'transparent'
+    );
   }};
   transition: all 0.3s ease;
   cursor: pointer;
@@ -69,12 +75,10 @@ const UploadArea = styled.div<{ $isDragOver: boolean; $theme?: any }>`
 
   &:hover {
     border-color: ${props =>
-      props.$theme?.colors?.primary ||
-      props.$theme?.accent ||
-      'transparent'};
+      props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'};
     background: ${props => {
-      const primaryColor = props.$theme?.colors?.primary ||
-                          props.$theme?.accent;
+      const primaryColor =
+        props.$theme?.colors?.primary || props.$theme?.accent;
       if (primaryColor) {
         if (primaryColor.startsWith('#')) {
           const r = parseInt(primaryColor.slice(1, 3), 16);
@@ -86,9 +90,11 @@ const UploadArea = styled.div<{ $isDragOver: boolean; $theme?: any }>`
           return primaryColor.replace(')', ', 0.05)').replace('rgb', 'rgba');
         }
       }
-      return props.$theme?.colors?.background?.primary ||
-             props.$theme?.background?.primary ||
-             'transparent';
+      return (
+        props.$theme?.colors?.background?.primary ||
+        props.$theme?.background?.primary ||
+        'transparent'
+      );
     }};
   }
 `;
@@ -97,9 +103,7 @@ const UploadIcon = styled.div<{ $theme?: any }>`
   font-size: 3rem;
   margin-bottom: 1rem;
   color: ${props =>
-    props.$theme?.colors?.primary ||
-    props.$theme?.accent ||
-    'inherit'};
+    props.$theme?.colors?.primary || props.$theme?.accent || 'inherit'};
 `;
 
 const UploadText = styled.div<{ $theme?: any }>`
@@ -134,12 +138,15 @@ const FileInfo = styled.div<{ $theme?: any }>`
     props.$theme?.background?.primary ||
     props.$theme?.colors?.surface ||
     'transparent'};
-  border: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   border-radius: 8px;
   padding: 1rem;
   margin-top: 1rem;
@@ -183,9 +190,7 @@ const ProxyInfo = styled.div<{ $theme?: any }>`
     }
     return 'transparent';
   }};
-  border: 1px solid ${props =>
-    props.$theme?.colors?.success ||
-    'transparent'};
+  border: 1px solid ${props => props.$theme?.colors?.success || 'transparent'};
   border-radius: 8px;
   padding: 1.5rem;
   margin-top: 1rem;
@@ -194,9 +199,7 @@ const ProxyInfo = styled.div<{ $theme?: any }>`
 const InfoTitle = styled.div<{ $theme?: any }>`
   font-weight: 700;
   color: ${props =>
-    props.$theme?.colors?.primary ||
-    props.$theme?.accent ||
-    'inherit'};
+    props.$theme?.colors?.primary || props.$theme?.accent || 'inherit'};
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
@@ -281,16 +284,18 @@ const PermissionItem = styled.div<{ $theme?: any }>`
 const LoadingSpinner = styled.div<{ $theme?: any }>`
   width: 20px;
   height: 20px;
-  border: 2px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
-  border-top: 2px solid ${props =>
-    props.$theme?.colors?.primary ||
-    props.$theme?.accent ||
-    'transparent'};
+  border: 2px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
+  border-top: 2px solid
+    ${props =>
+      props.$theme?.colors?.primary || props.$theme?.accent || 'transparent'};
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-right: 0.5rem;
@@ -314,8 +319,9 @@ const ErrorMessage = styled.div<{ $theme?: any }>`
   margin-top: 0.5rem;
   padding: 0.5rem;
   background: ${props => {
-    const errorColor = props.$theme?.colors?.error ||
-                       props.$theme?.colors?.status?.error?.background;
+    const errorColor =
+      props.$theme?.colors?.error ||
+      props.$theme?.colors?.status?.error?.background;
     if (errorColor && errorColor.startsWith('#')) {
       const r = parseInt(errorColor.slice(1, 3), 16);
       const g = parseInt(errorColor.slice(3, 5), 16);
@@ -325,10 +331,11 @@ const ErrorMessage = styled.div<{ $theme?: any }>`
     return 'transparent';
   }};
   border-radius: 4px;
-  border-left: 3px solid ${props =>
-    props.$theme?.colors?.error ||
-    props.$theme?.colors?.status?.error?.background ||
-    'transparent'};
+  border-left: 3px solid
+    ${props =>
+      props.$theme?.colors?.error ||
+      props.$theme?.colors?.status?.error?.background ||
+      'transparent'};
 `;
 
 const HelpSection = styled.div<{ $theme?: any }>`
@@ -337,12 +344,15 @@ const HelpSection = styled.div<{ $theme?: any }>`
     props.$theme?.background?.primary ||
     props.$theme?.colors?.surface ||
     'transparent'};
-  border: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   border-radius: 8px;
   padding: 1rem;
   margin-top: 1rem;
@@ -351,9 +361,7 @@ const HelpSection = styled.div<{ $theme?: any }>`
 const HelpTitle = styled.div<{ $theme?: any }>`
   font-weight: 600;
   color: ${props =>
-    props.$theme?.colors?.primary ||
-    props.$theme?.accent ||
-    'inherit'};
+    props.$theme?.colors?.primary || props.$theme?.accent || 'inherit'};
   margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
@@ -417,7 +425,9 @@ const ProxyUploadModal: React.FC<ProxyUploadModalProps> = ({
   const handleFileSelect = (file: File) => {
     // Validar tipo de arquivo
     if (!isAllowedDocumentType(file.name)) {
-      setError(`Tipo de arquivo não suportado. Use ${ALLOWED_FILE_TYPES.DOCUMENTS.join(', ')}`);
+      setError(
+        `Tipo de arquivo não suportado. Use ${ALLOWED_FILE_TYPES.DOCUMENTS.join(', ')}`
+      );
       return;
     }
 

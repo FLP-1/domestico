@@ -192,6 +192,7 @@ docker logs -f dom-app
 ### Problema: Build falha
 
 **Solução:**
+
 ```bash
 # Limpar cache
 rm -rf .next node_modules
@@ -202,6 +203,7 @@ npm run build
 ### Problema: Banco de dados não conecta
 
 **Solução:**
+
 1. Verificar `DATABASE_URL`
 2. Verificar firewall
 3. Testar conexão: `npx prisma db pull`
@@ -209,6 +211,7 @@ npm run build
 ### Problema: Erro 500 em produção
 
 **Solução:**
+
 1. Verificar logs: `vercel logs`
 2. Verificar variáveis de ambiente
 3. Verificar migrations: `npx prisma migrate status`
@@ -229,4 +232,3 @@ Antes de fazer deploy:
 ---
 
 **Última atualização:** Janeiro 2025
-

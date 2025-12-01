@@ -28,6 +28,7 @@ alertManager.showSuccess('Solicitação de hora extra enviada para aprovação!'
 ### **1. Sistema Unificado de Mensagens**
 
 Criado `src/config/messages.ts` com:
+
 - **MESSAGE_KEYS**: Chaves organizadas por categoria
 - **TEMP_MESSAGES**: Mensagens temporárias para migração gradual
 - **Helpers**: Funções para obter mensagens traduzidas
@@ -35,6 +36,7 @@ Criado `src/config/messages.ts` com:
 ### **2. Hook `useMessages`**
 
 Criado `src/hooks/useMessages.ts` que:
+
 - Integra `useAlertManager` + `useI18n`
 - Fornece API unificada: `showSuccess`, `showError`, `showWarning`, `showInfo`
 - Suporta parâmetros dinâmicos
@@ -43,6 +45,7 @@ Criado `src/hooks/useMessages.ts` que:
 ### **3. Expansão do Sistema i18n**
 
 Expandido `src/lib/i18n.ts` com:
+
 - Todas as mensagens de sucesso, erro, aviso e info
 - Placeholders e estados vazios
 - Suporte completo pt-BR e en-US
@@ -122,16 +125,19 @@ MESSAGE_KEYS = {
 ## 🔄 **PLANO DE MIGRAÇÃO**
 
 ### **Fase 1: Preparação** ✅
+
 - [x] Criar `src/config/messages.ts`
 - [x] Criar `src/hooks/useMessages.ts`
 - [x] Expandir `src/lib/i18n.ts`
 
 ### **Fase 2: Migração Gradual** 🔄
+
 - [ ] Migrar páginas principais (dashboard, time-clock, etc.)
 - [ ] Migrar componentes críticos
 - [ ] Migrar páginas secundárias
 
 ### **Fase 3: Limpeza** 📋
+
 - [ ] Remover `TEMP_MESSAGES` após migração completa
 - [ ] Remover `TEXT_CONSTANTS` e `SYSTEM_MESSAGES` antigos
 - [ ] Documentar padrões de uso
@@ -155,4 +161,3 @@ MESSAGE_KEYS = {
 2. Adicionar mais mensagens ao sistema i18n conforme necessário
 3. Remover mensagens hardcoded gradualmente
 4. Documentar padrões de uso para a equipe
-

@@ -10,13 +10,13 @@
 
 ### **PROBLEMAS IDENTIFICADOS**
 
-| Tipo | Quantidade | Arquivos Afetados | Prioridade |
-|------|-----------|-------------------|------------|
-| **Cores Hexadecimais** | ~982 ocorrências | 78 arquivos | 🔴 CRÍTICA |
-| **Cores RGBA/RGB** | ~71 ocorrências | 71 arquivos | 🔴 CRÍTICA |
-| **Cores Textuais** | ~212 ocorrências | 56 arquivos | 🟡 MÉDIA |
-| **Dados Mockados** | ~30 arquivos | 30 arquivos | 🔴 CRÍTICA |
-| **Fallbacks Hardcoded** | ~100+ ocorrências | Múltiplos | 🟡 MÉDIA |
+| Tipo                    | Quantidade        | Arquivos Afetados | Prioridade |
+| ----------------------- | ----------------- | ----------------- | ---------- |
+| **Cores Hexadecimais**  | ~982 ocorrências  | 78 arquivos       | 🔴 CRÍTICA |
+| **Cores RGBA/RGB**      | ~71 ocorrências   | 71 arquivos       | 🔴 CRÍTICA |
+| **Cores Textuais**      | ~212 ocorrências  | 56 arquivos       | 🟡 MÉDIA   |
+| **Dados Mockados**      | ~30 arquivos      | 30 arquivos       | 🔴 CRÍTICA |
+| **Fallbacks Hardcoded** | ~100+ ocorrências | Múltiplos         | 🟡 MÉDIA   |
 
 **TOTAL ESTIMADO:** ~1.400+ problemas identificados
 
@@ -38,44 +38,44 @@
 
 #### **🔴 PRIORIDADE CRÍTICA - Componentes Principais**
 
-| Arquivo | Tipo | Quantidade | Problema Específico |
-|---------|------|------------|---------------------|
-| `GeofencingModal.tsx` | Hex + Fallbacks | 42 | Fallbacks hardcoded em `defaultColors` |
-| `UnifiedCard/index.tsx` | Hex + RGBA | 32 | Cores de status hardcoded |
-| `shared/styles.ts` | Hex + Fallbacks | 68 | Fallbacks em todos os componentes |
-| `UnifiedButton/index.tsx` | Hex | 15 | Cores de variantes hardcoded |
-| `TimeRecordCard/index.tsx` | Hex | 14 | Cores de status hardcoded |
-| `Sidebar/index.tsx` | Hex | 14 | Cores de navegação hardcoded |
-| `ProfileSelectionModal.tsx` | Hex | 14 | Cores de seleção hardcoded |
-| `TermsAcceptanceModal.tsx` | Hex | 29 | Cores de texto e fundo hardcoded |
-| `EmployerModal.tsx` | Hex | 21 | Cores de formulário hardcoded |
-| `PayrollModalNew.tsx` | Hex | 15 | Cores de tabela hardcoded |
+| Arquivo                     | Tipo            | Quantidade | Problema Específico                    |
+| --------------------------- | --------------- | ---------- | -------------------------------------- |
+| `GeofencingModal.tsx`       | Hex + Fallbacks | 42         | Fallbacks hardcoded em `defaultColors` |
+| `UnifiedCard/index.tsx`     | Hex + RGBA      | 32         | Cores de status hardcoded              |
+| `shared/styles.ts`          | Hex + Fallbacks | 68         | Fallbacks em todos os componentes      |
+| `UnifiedButton/index.tsx`   | Hex             | 15         | Cores de variantes hardcoded           |
+| `TimeRecordCard/index.tsx`  | Hex             | 14         | Cores de status hardcoded              |
+| `Sidebar/index.tsx`         | Hex             | 14         | Cores de navegação hardcoded           |
+| `ProfileSelectionModal.tsx` | Hex             | 14         | Cores de seleção hardcoded             |
+| `TermsAcceptanceModal.tsx`  | Hex             | 29         | Cores de texto e fundo hardcoded       |
+| `EmployerModal.tsx`         | Hex             | 21         | Cores de formulário hardcoded          |
+| `PayrollModalNew.tsx`       | Hex             | 15         | Cores de tabela hardcoded              |
 
 **TOTAL CRÍTICO:** ~264 ocorrências em componentes principais
 
 #### **🟡 PRIORIDADE MÉDIA - Páginas**
 
-| Arquivo | Tipo | Quantidade | Problema Específico |
-|---------|------|------------|---------------------|
-| `esocial-integration.tsx` | Hex | 50 | Cores de status e cards |
-| `diagnostico-geolocalizacao.tsx` | Hex | 29 | Cores de mapas e indicadores |
-| `monitoring-dashboard.tsx` | Hex | 27 | Cores de métricas e gráficos |
-| `task-management.tsx` | Hex | 26 | Cores de tarefas e status |
-| `terms-management.tsx` | Hex | 25 | Cores de documentos |
-| `admin/antifraude.tsx` | Hex | 22 | Cores de alertas e indicadores |
-| `time-clock.tsx` | Hex | 16 | Cores de botões e cards |
-| `welcome-tutorial.tsx` | Hex | 17 | Cores de tutorial |
+| Arquivo                          | Tipo | Quantidade | Problema Específico            |
+| -------------------------------- | ---- | ---------- | ------------------------------ |
+| `esocial-integration.tsx`        | Hex  | 50         | Cores de status e cards        |
+| `diagnostico-geolocalizacao.tsx` | Hex  | 29         | Cores de mapas e indicadores   |
+| `monitoring-dashboard.tsx`       | Hex  | 27         | Cores de métricas e gráficos   |
+| `task-management.tsx`            | Hex  | 26         | Cores de tarefas e status      |
+| `terms-management.tsx`           | Hex  | 25         | Cores de documentos            |
+| `admin/antifraude.tsx`           | Hex  | 22         | Cores de alertas e indicadores |
+| `time-clock.tsx`                 | Hex  | 16         | Cores de botões e cards        |
+| `welcome-tutorial.tsx`           | Hex  | 17         | Cores de tutorial              |
 
 **TOTAL MÉDIO:** ~212 ocorrências em páginas
 
 #### **🟢 PRIORIDADE BAIXA - Utilitários e Configurações**
 
-| Arquivo | Tipo | Quantidade | Observação |
-|---------|------|------------|------------|
-| `config/default-colors.ts` | Hex | Múltiplos | ✅ **LEGÍTIMO** - Arquivo de configuração |
-| `design-system/tokens/colors.ts` | Hex | Múltiplos | ✅ **LEGÍTIMO** - Tokens do design system |
-| `design-system/tokens/geofencing-colors.ts` | Hex | Múltiplos | ✅ **LEGÍTIMO** - Tokens específicos |
-| `hooks/useTheme.ts` | Hex | Múltiplos | ✅ **LEGÍTIMO** - Temas predefinidos |
+| Arquivo                                     | Tipo | Quantidade | Observação                                |
+| ------------------------------------------- | ---- | ---------- | ----------------------------------------- |
+| `config/default-colors.ts`                  | Hex  | Múltiplos  | ✅ **LEGÍTIMO** - Arquivo de configuração |
+| `design-system/tokens/colors.ts`            | Hex  | Múltiplos  | ✅ **LEGÍTIMO** - Tokens do design system |
+| `design-system/tokens/geofencing-colors.ts` | Hex  | Múltiplos  | ✅ **LEGÍTIMO** - Tokens específicos      |
+| `hooks/useTheme.ts`                         | Hex  | Múltiplos  | ✅ **LEGÍTIMO** - Temas predefinidos      |
 
 **OBSERVAÇÃO:** Arquivos de tokens e configuração são **legítimos** e devem manter cores hardcoded como valores padrão.
 
@@ -85,21 +85,21 @@
 
 #### **🔴 PRIORIDADE CRÍTICA - Dados de Produção**
 
-| Arquivo | Tipo | Problema | Solução |
-|---------|------|----------|---------|
-| `data/centralized.ts` | Constantes MOCK_* | Dados mockados marcados como DEPRECATED | ✅ Já tem funções async, remover constantes |
-| `esocial-domestico-completo.tsx` | Arrays hardcoded | Folha de pagamento e guias simulados | Buscar da API `/api/payroll` e `/api/tax-guides` |
-| `monitoring-dashboard.tsx` | Math.random() | Métricas simuladas | ✅ Já usa API `/api/monitoring/metrics` |
-| `esocial-integration.tsx` | Objetos hardcoded | Dados de empregador simulados | Buscar da API `/api/employers` |
-| `payroll-management.tsx` | Arrays hardcoded | Funcionários e documentos mockados | Buscar da API `/api/employees` e `/api/documents` |
-| `communication.tsx` | Arrays hardcoded | Contatos e mensagens mockados | Buscar da API `/api/communications` |
+| Arquivo                          | Tipo                | Problema                                | Solução                                           |
+| -------------------------------- | ------------------- | --------------------------------------- | ------------------------------------------------- |
+| `data/centralized.ts`            | Constantes MOCK\_\* | Dados mockados marcados como DEPRECATED | ✅ Já tem funções async, remover constantes       |
+| `esocial-domestico-completo.tsx` | Arrays hardcoded    | Folha de pagamento e guias simulados    | Buscar da API `/api/payroll` e `/api/tax-guides`  |
+| `monitoring-dashboard.tsx`       | Math.random()       | Métricas simuladas                      | ✅ Já usa API `/api/monitoring/metrics`           |
+| `esocial-integration.tsx`        | Objetos hardcoded   | Dados de empregador simulados           | Buscar da API `/api/employers`                    |
+| `payroll-management.tsx`         | Arrays hardcoded    | Funcionários e documentos mockados      | Buscar da API `/api/employees` e `/api/documents` |
+| `communication.tsx`              | Arrays hardcoded    | Contatos e mensagens mockados           | Buscar da API `/api/communications`               |
 
 #### **🟡 PRIORIDADE MÉDIA - Dados de Teste**
 
-| Arquivo | Tipo | Problema | Solução |
-|---------|------|----------|---------|
-| Arquivos `__tests__/` | Dados mock | ✅ **LEGÍTIMO** - Dados de teste | Manter para testes |
-| `test-*.tsx` | Dados simulados | ✅ **LEGÍTIMO** - Páginas de teste | Manter para desenvolvimento |
+| Arquivo               | Tipo            | Problema                           | Solução                     |
+| --------------------- | --------------- | ---------------------------------- | --------------------------- |
+| Arquivos `__tests__/` | Dados mock      | ✅ **LEGÍTIMO** - Dados de teste   | Manter para testes          |
+| `test-*.tsx`          | Dados simulados | ✅ **LEGÍTIMO** - Páginas de teste | Manter para desenvolvimento |
 
 ---
 
@@ -112,6 +112,7 @@
 **Quando usar:** Componentes que já recebem `$theme` como prop
 
 **Padrão ANTES:**
+
 ```tsx
 border-bottom: 1px solid #e5e7eb;
 color: #111827;
@@ -119,25 +120,27 @@ background: #ffffff;
 ```
 
 **Padrão DEPOIS:**
+
 ```tsx
-border-bottom: 1px solid ${props => 
-  props.$theme?.colors?.border?.light || 
-  props.$theme?.border?.light || 
+border-bottom: 1px solid ${props =>
+  props.$theme?.colors?.border?.light ||
+  props.$theme?.border?.light ||
   'transparent' // Apenas transparent como fallback absoluto
 };
-color: ${props => 
-  props.$theme?.colors?.text?.dark || 
-  props.$theme?.text?.dark || 
+color: ${props =>
+  props.$theme?.colors?.text?.dark ||
+  props.$theme?.text?.dark ||
   'inherit' // Apenas inherit como fallback absoluto
 };
-background: ${props => 
-  props.$theme?.colors?.background?.primary || 
-  props.$theme?.background?.primary || 
+background: ${props =>
+  props.$theme?.colors?.background?.primary ||
+  props.$theme?.background?.primary ||
   'transparent'
 };
 ```
 
-**⚠️ REGRA CRÍTICA:** 
+**⚠️ REGRA CRÍTICA:**
+
 - **NUNCA** usar cores hexadecimais como fallback
 - **NUNCA** usar cores textuais (`white`, `black`) como fallback
 - **APENAS** usar `transparent`, `inherit`, `currentColor` como fallbacks absolutos
@@ -148,6 +151,7 @@ background: ${props =>
 **Quando usar:** Componentes que precisam de múltiplos níveis de fallback
 
 **Padrão:**
+
 ```tsx
 const getColor = (props: any, path: string[], fallback: 'transparent' | 'inherit' | 'currentColor' = 'transparent') => {
   // Tentar caminho completo primeiro
@@ -156,9 +160,9 @@ const getColor = (props: any, path: string[], fallback: 'transparent' | 'inherit
     value = value?.[key];
     if (!value) break;
   }
-  
+
   if (value) return value;
-  
+
   // Tentar caminho alternativo (sem colors)
   value = props.$theme;
   const altPath = path.filter(k => k !== 'colors');
@@ -166,7 +170,7 @@ const getColor = (props: any, path: string[], fallback: 'transparent' | 'inherit
     value = value?.[key];
     if (!value) break;
   }
-  
+
   return value || fallback;
 };
 
@@ -184,8 +188,10 @@ import { useUserProfile } from '../contexts/UserProfileContext';
 
 export const useSafeTheme = () => {
   const { currentProfile } = useUserProfile();
-  const { colors } = useTheme(currentProfile?.role?.toLowerCase() || 'empregado');
-  
+  const { colors } = useTheme(
+    currentProfile?.role?.toLowerCase() || 'empregado'
+  );
+
   // Garantir estrutura completa
   const safeTheme = {
     colors: {
@@ -196,12 +202,15 @@ export const useSafeTheme = () => {
       },
       text: {
         dark: colors?.text?.dark || colors?.text || 'inherit',
-        secondary: colors?.text?.secondary || colors?.textSecondary || 'inherit',
+        secondary:
+          colors?.text?.secondary || colors?.textSecondary || 'inherit',
         primary: colors?.text?.primary || colors?.text || 'inherit',
       },
       background: {
-        primary: colors?.background?.primary || colors?.background || 'transparent',
-        secondary: colors?.background?.secondary || colors?.surface || 'transparent',
+        primary:
+          colors?.background?.primary || colors?.background || 'transparent',
+        secondary:
+          colors?.background?.secondary || colors?.surface || 'transparent',
       },
       status: {
         warning: {
@@ -222,7 +231,7 @@ export const useSafeTheme = () => {
       },
     },
   };
-  
+
   return { theme: safeTheme, colors: safeTheme.colors };
 };
 ```
@@ -231,17 +240,19 @@ export const useSafeTheme = () => {
 
 ### **2.2 CORREÇÃO DE DADOS MOCKADOS**
 
-#### **ESTRATÉGIA 1: Remover Constantes MOCK_***
+#### **ESTRATÉGIA 1: Remover Constantes MOCK\_\***
 
 **Arquivo:** `src/data/centralized.ts`
 
 **Ação:**
+
 1. ✅ Verificar se todas as funções async (`loadTermos`, `loadPoliticas`, etc.) estão funcionando
 2. ✅ Buscar por imports de `MOCK_*` em todo o código
 3. ✅ Substituir imports por chamadas às funções async
 4. ✅ Remover constantes `MOCK_*` após confirmação de que não há mais dependências
 
 **Comando de verificação:**
+
 ```bash
 grep -r "MOCK_" src/ --exclude-dir=node_modules --exclude-dir=.next
 ```
@@ -249,6 +260,7 @@ grep -r "MOCK_" src/ --exclude-dir=node_modules --exclude-dir=.next
 #### **ESTRATÉGIA 2: Substituir Arrays Hardcoded por APIs**
 
 **Padrão ANTES:**
+
 ```tsx
 const [employees, setEmployees] = useState([
   { id: '1', name: 'Maria Santos', ... },
@@ -257,6 +269,7 @@ const [employees, setEmployees] = useState([
 ```
 
 **Padrão DEPOIS:**
+
 ```tsx
 const [employees, setEmployees] = useState([]);
 const [isLoading, setIsLoading] = useState(true);
@@ -282,6 +295,7 @@ useEffect(() => {
 #### **ESTRATÉGIA 3: Remover Math.random() e setTimeout Simulados**
 
 **Padrão ANTES:**
+
 ```tsx
 setMetrics({
   eventosEnviados: Math.floor(Math.random() * 1000) + 500,
@@ -290,6 +304,7 @@ setMetrics({
 ```
 
 **Padrão DEPOIS:**
+
 ```tsx
 const loadMetrics = async () => {
   try {
@@ -455,6 +470,7 @@ const loadMetrics = async () => {
 ### **⚠️ DADOS DE TESTE**
 
 **MANTER** dados mockados em:
+
 - Arquivos de teste (`__tests__/`)
 - Páginas de teste (`test-*.tsx`)
 - Serviços de mock para desenvolvimento
@@ -486,4 +502,3 @@ Este plano fornece uma estratégia sistemática para eliminar **TODAS** as cores
 **Estimativa Total:** 15-20 dias de trabalho focado
 
 **Prioridade:** 🔴 CRÍTICA - Afeta consistência visual e confiabilidade dos dados
-

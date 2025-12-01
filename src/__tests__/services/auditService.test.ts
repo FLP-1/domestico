@@ -124,13 +124,7 @@ describe('AuditService', () => {
     });
 
     it('deve salvar log crítico separadamente', async () => {
-      await service.logAction(
-        'user-id',
-        'delete',
-        'Documento',
-        {},
-        'sucesso'
-      );
+      await service.logAction('user-id', 'delete', 'Documento', {}, 'sucesso');
 
       const criticalLogs = localStorageMock.getItem('critical_audit_logs');
       expect(criticalLogs).not.toBeNull();
@@ -189,7 +183,9 @@ describe('AuditService', () => {
     });
 
     it('deve filtrar por data', () => {
-      const dataInicio = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const dataInicio = new Date(
+        Date.now() - 24 * 60 * 60 * 1000
+      ).toISOString();
       const filter: AuditFilter = { dataInicio };
       const logs = service.searchLogs(filter);
 
@@ -378,4 +374,3 @@ describe('AuditService', () => {
     });
   });
 });
-

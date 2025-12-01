@@ -59,10 +59,7 @@ async function getLoans(req: NextApiRequest, res: NextApiResponse) {
           },
         },
       },
-      orderBy: [
-        { dataSolicitacao: 'desc' },
-        { dataVencimento: 'asc' },
-      ],
+      orderBy: [{ dataSolicitacao: 'desc' }, { dataVencimento: 'asc' }],
     });
 
     // Mapear para formato esperado pelo frontend
@@ -81,8 +78,11 @@ async function getLoans(req: NextApiRequest, res: NextApiResponse) {
       approvedBy: loan.aprovadoPor || '',
       monthlyPayment: parseFloat(loan.valorParcela.toString()),
       interestRate: parseFloat(loan.taxaJuros.toString()),
-      totalAmount: parseFloat(loan.valor.toString()) + 
-        (parseFloat(loan.taxaJuros.toString()) / 100 * parseFloat(loan.valor.toString()) * loan.quantidadeParcelas),
+      totalAmount:
+        parseFloat(loan.valor.toString()) +
+        (parseFloat(loan.taxaJuros.toString()) / 100) *
+          parseFloat(loan.valor.toString()) *
+          loan.quantidadeParcelas,
       parcelsPaid: loan.parcelasPagas,
       parcelsTotal: loan.quantidadeParcelas,
       observation: loan.observacao || '',
@@ -112,10 +112,18 @@ async function createLoan(req: NextApiRequest, res: NextApiResponse) {
       interestRate = 0,
     } = req.body;
 
-    if (!usuarioId || !empregadoId || !tipo || !amount || !installments || !dueDate) {
+    if (
+      !usuarioId ||
+      !empregadoId ||
+      !tipo ||
+      !amount ||
+      !installments ||
+      !dueDate
+    ) {
       return res.status(400).json({
         success: false,
-        error: 'Campos obrigatórios: usuarioId, empregadoId, tipo, amount, installments, dueDate',
+        error:
+          'Campos obrigatórios: usuarioId, empregadoId, tipo, amount, installments, dueDate',
       });
     }
 
@@ -131,9 +139,10 @@ async function createLoan(req: NextApiRequest, res: NextApiResponse) {
     const valorTotal = parseFloat(amount);
     const quantidadeParcelas = parseInt(installments);
     const taxaJuros = parseFloat(interestRate) || 0;
-    
+
     // Calcular valor com juros
-    const valorComJuros = valorTotal * (1 + (taxaJuros / 100) * quantidadeParcelas);
+    const valorComJuros =
+      valorTotal * (1 + (taxaJuros / 100) * quantidadeParcelas);
     const valorParcela = valorComJuros / quantidadeParcelas;
 
     const loan = await prisma.emprestimo.create({
@@ -187,7 +196,9 @@ async function updateLoan(req: NextApiRequest, res: NextApiResponse) {
     const updateData = req.body;
 
     if (!id) {
-      return res.status(400).json({ success: false, error: 'ID é obrigatório' });
+      return res
+        .status(400)
+        .json({ success: false, error: 'ID é obrigatório' });
     }
 
     // Preparar dados para atualização
@@ -197,17 +208,23 @@ async function updateLoan(req: NextApiRequest, res: NextApiResponse) {
 
     if (updateData.status) {
       dataToUpdate.status = updateData.status.toUpperCase();
-      
+
       // Se aprovado, atualizar data de aprovação
-      if (updateData.status.toLowerCase() === 'approved' || updateData.status.toLowerCase() === 'aprovado') {
+      if (
+        updateData.status.toLowerCase() === 'approved' ||
+        updateData.status.toLowerCase() === 'aprovado'
+      ) {
         dataToUpdate.dataAprovacao = new Date();
         if (updateData.approvedBy) {
           dataToUpdate.aprovadoPor = updateData.approvedBy;
         }
       }
-      
+
       // Se rejeitado, atualizar motivo
-      if (updateData.status.toLowerCase() === 'rejected' || updateData.status.toLowerCase() === 'rejeitado') {
+      if (
+        updateData.status.toLowerCase() === 'rejected' ||
+        updateData.status.toLowerCase() === 'rejeitado'
+      ) {
         if (updateData.rejectionReason) {
           dataToUpdate.motivoRejeicao = updateData.rejectionReason;
         }
@@ -260,7 +277,9 @@ async function deleteLoan(req: NextApiRequest, res: NextApiResponse) {
     const { id } = req.query;
 
     if (!id) {
-      return res.status(400).json({ success: false, error: 'ID é obrigatório' });
+      return res
+        .status(400)
+        .json({ success: false, error: 'ID é obrigatório' });
     }
 
     await prisma.emprestimo.delete({

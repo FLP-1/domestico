@@ -57,7 +57,9 @@ async function handleGet(
   );
 
   if (!result.success) {
-    return res.status(500).json({ error: result.error || 'Erro ao buscar documentos' });
+    return res
+      .status(500)
+      .json({ error: result.error || 'Erro ao buscar documentos' });
   }
 
   return res.status(200).json(result.documentos);
@@ -103,7 +105,9 @@ async function handlePost(
   });
 
   if (!result.success) {
-    return res.status(500).json({ error: result.error || 'Erro ao criar documento' });
+    return res
+      .status(500)
+      .json({ error: result.error || 'Erro ao criar documento' });
   }
 
   return res.status(201).json({ documentoId: result.documentoId });
@@ -131,7 +135,9 @@ async function handlePut(
   const result = await service.atualizarDocumento(id, updateData);
 
   if (!result.success) {
-    return res.status(500).json({ error: result.error || 'Erro ao atualizar documento' });
+    return res
+      .status(500)
+      .json({ error: result.error || 'Erro ao atualizar documento' });
   }
 
   return res.status(200).json(result.documento);
@@ -155,4 +161,3 @@ async function handleDelete(
   // Por enquanto, retornar erro
   return res.status(501).json({ error: 'Exclusão ainda não implementada' });
 }
-

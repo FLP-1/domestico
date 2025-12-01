@@ -9,6 +9,7 @@ Refatorar arquivos com estilos inline, priorizando por quantidade de erros.
 ## 📋 **ARQUIVOS IDENTIFICADOS**
 
 ### **Páginas (12 arquivos):**
+
 1. `document-management.tsx`
 2. `welcome-tutorial.tsx`
 3. `time-clock.tsx`
@@ -23,6 +24,7 @@ Refatorar arquivos com estilos inline, priorizando por quantidade de erros.
 12. `document-management-backup-old.tsx` (backup - pode ignorar)
 
 ### **Componentes (6 arquivos):**
+
 1. `ContextualChat/index.tsx`
 2. `TutorialComponent.tsx`
 3. `ESocialTemplatesGuide/index.tsx`
@@ -46,4 +48,3 @@ Refatorar arquivos com estilos inline, priorizando por quantidade de erros.
 - ⏳ Contando estilos inline por arquivo...
 - ⏳ Criando lista priorizada...
 - ⏳ Iniciando refatoração...
-

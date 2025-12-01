@@ -43,7 +43,8 @@ export const PageSection = styled.section<{ $theme?: Theme }>`
   }};
   border-radius: ${getBorderRadius('lg')};
   box-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
+    const shadowColor =
+      props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -52,11 +53,20 @@ export const PageSection = styled.section<{ $theme?: Theme }>`
     }
     return getShadow('md');
   }};
-  border: 1px solid ${props =>
-    (typeof props.$theme?.colors?.border === 'object' && props.$theme?.colors?.border && 'light' in props.$theme.colors.border ? String((props.$theme.colors.border as any).light) : null) ||
-    (typeof (props.$theme as any)?.border === 'object' && (props.$theme as any)?.border && 'light' in (props.$theme as any).border ? String((props.$theme as any).border.light) : null) ||
-    props.$theme?.colors?.border ||
-    'transparent'};
+  border: 1px solid
+    ${props =>
+      (typeof props.$theme?.colors?.border === 'object' &&
+      props.$theme?.colors?.border &&
+      'light' in props.$theme.colors.border
+        ? String((props.$theme.colors.border as any).light)
+        : null) ||
+      (typeof (props.$theme as any)?.border === 'object' &&
+      (props.$theme as any)?.border &&
+      'light' in (props.$theme as any).border
+        ? String((props.$theme as any).border.light)
+        : null) ||
+      props.$theme?.colors?.border ||
+      'transparent'};
   animation: ${fadeIn} 0.3s ease-out;
 `;
 
@@ -88,7 +98,7 @@ export const ContentGrid = styled.div<{
  * Uso: Agrupar elementos horizontalmente com espaçamento consistente
  */
 export const FlexRow = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     if (prop === 'className' || prop === 'children') return true;
     const propName = prop as string;
     return !propName.startsWith('$');
@@ -111,7 +121,7 @@ export const FlexRow = styled.div.withConfig({
  * Uso: Agrupar elementos verticalmente com espaçamento consistente
  */
 export const FlexColumn = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     if (prop === 'className' || prop === 'children') return true;
     const propName = prop as string;
     return !propName.startsWith('$');
@@ -134,7 +144,10 @@ export const FlexColumn = styled.div.withConfig({
  * PageTitle - Título principal de página
  * Uso: Títulos principais (H1) padronizados
  */
-export const PageTitle = styled.h1<{ $theme?: Theme; $size?: 'md' | 'lg' | 'xl' }>`
+export const PageTitle = styled.h1<{
+  $theme?: Theme;
+  $size?: 'md' | 'lg' | 'xl';
+}>`
   font-family: 'Montserrat', sans-serif;
   font-size: ${props => {
     switch (props.$size) {
@@ -150,13 +163,22 @@ export const PageTitle = styled.h1<{ $theme?: Theme; $size?: 'md' | 'lg' | 'xl' 
   }};
   font-weight: 700;
   color: ${props =>
-    (typeof props.$theme?.colors?.text === 'object' && props.$theme?.colors?.text && 'dark' in props.$theme.colors.text ? String((props.$theme.colors.text as any).dark) : null) ||
-    (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'dark' in (props.$theme as any).text ? String((props.$theme as any).text.dark) : null) ||
+    (typeof props.$theme?.colors?.text === 'object' &&
+    props.$theme?.colors?.text &&
+    'dark' in props.$theme.colors.text
+      ? String((props.$theme.colors.text as any).dark)
+      : null) ||
+    (typeof (props.$theme as any)?.text === 'object' &&
+    (props.$theme as any)?.text &&
+    'dark' in (props.$theme as any).text
+      ? String((props.$theme as any).text.dark)
+      : null) ||
     props.$theme?.colors?.primary ||
     'inherit'};
   margin: 0 0 ${getSpacing('sm')} 0;
   text-shadow: ${props => {
-    const shadowColor = props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
+    const shadowColor =
+      props.$theme?.colors?.shadow || (props.$theme as any)?.shadow;
     if (shadowColor && shadowColor.startsWith('rgba')) {
       const match = shadowColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
@@ -174,8 +196,16 @@ export const PageTitle = styled.h1<{ $theme?: Theme; $size?: 'md' | 'lg' | 'xl' 
 export const PageSubtitle = styled.p<{ $theme?: Theme }>`
   font-size: ${getFontSize('lg')};
   color: ${props =>
-    (typeof props.$theme?.colors?.text === 'object' && props.$theme?.colors?.text && 'secondary' in props.$theme.colors.text ? String((props.$theme.colors.text as any).secondary) : null) ||
-    (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'secondary' in (props.$theme as any).text ? String((props.$theme as any).text.secondary) : null) ||
+    (typeof props.$theme?.colors?.text === 'object' &&
+    props.$theme?.colors?.text &&
+    'secondary' in props.$theme.colors.text
+      ? String((props.$theme.colors.text as any).secondary)
+      : null) ||
+    (typeof (props.$theme as any)?.text === 'object' &&
+    (props.$theme as any)?.text &&
+    'secondary' in (props.$theme as any).text
+      ? String((props.$theme as any).text.secondary)
+      : null) ||
     'inherit'};
   margin: 0 0 ${getSpacing('xl')} 0;
   font-weight: 500;
@@ -186,7 +216,10 @@ export const PageSubtitle = styled.p<{ $theme?: Theme }>`
  * SectionTitle - Título de seção
  * Uso: Títulos de seções dentro de páginas (H2/H3)
  */
-export const SectionTitle = styled.h2<{ $theme?: Theme; $size?: 'sm' | 'md' | 'lg' }>`
+export const SectionTitle = styled.h2<{
+  $theme?: Theme;
+  $size?: 'sm' | 'md' | 'lg';
+}>`
   font-family: 'Montserrat', sans-serif;
   font-size: ${props => {
     switch (props.$size) {
@@ -202,36 +235,72 @@ export const SectionTitle = styled.h2<{ $theme?: Theme; $size?: 'sm' | 'md' | 'l
   }};
   font-weight: 600;
   color: ${props =>
-    (typeof props.$theme?.colors?.text === 'object' && props.$theme?.colors?.text && 'dark' in props.$theme.colors.text ? String((props.$theme.colors.text as any).dark) : null) ||
-    (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'dark' in (props.$theme as any).text ? String((props.$theme as any).text.dark) : null) ||
+    (typeof props.$theme?.colors?.text === 'object' &&
+    props.$theme?.colors?.text &&
+    'dark' in props.$theme.colors.text
+      ? String((props.$theme.colors.text as any).dark)
+      : null) ||
+    (typeof (props.$theme as any)?.text === 'object' &&
+    (props.$theme as any)?.text &&
+    'dark' in (props.$theme as any).text
+      ? String((props.$theme as any).text.dark)
+      : null) ||
     'inherit'};
   margin: 0 0 ${getSpacing('md')} 0;
   display: flex;
   align-items: center;
   gap: ${getSpacing('sm')};
   padding-bottom: ${getSpacing('sm')};
-  border-bottom: 1px solid ${props =>
-    (typeof props.$theme?.colors?.border === 'object' && props.$theme?.colors?.border && 'light' in props.$theme.colors.border ? String((props.$theme.colors.border as any).light) : null) ||
-    (typeof (props.$theme as any)?.border === 'object' && (props.$theme as any)?.border && 'light' in (props.$theme as any).border ? String((props.$theme as any).border.light) : null) ||
-    'transparent'};
+  border-bottom: 1px solid
+    ${props =>
+      (typeof props.$theme?.colors?.border === 'object' &&
+      props.$theme?.colors?.border &&
+      'light' in props.$theme.colors.border
+        ? String((props.$theme.colors.border as any).light)
+        : null) ||
+      (typeof (props.$theme as any)?.border === 'object' &&
+      (props.$theme as any)?.border &&
+      'light' in (props.$theme as any).border
+        ? String((props.$theme as any).border.light)
+        : null) ||
+      'transparent'};
 `;
 
 /**
  * BodyText - Texto de corpo padronizado
  * Uso: Parágrafos e textos de corpo
  */
-export const BodyText = styled.p<{ $theme?: Theme; $variant?: 'primary' | 'secondary' }>`
+export const BodyText = styled.p<{
+  $theme?: Theme;
+  $variant?: 'primary' | 'secondary';
+}>`
   font-size: ${getFontSize('md')};
   color: ${props => {
     const text = props.$theme?.colors?.text;
     if (props.$variant === 'secondary') {
-      return (typeof text === 'object' && text && 'secondary' in text ? String((text as any).secondary) : null) ||
-             (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'secondary' in (props.$theme as any).text ? String((props.$theme as any).text.secondary) : null) ||
-             'inherit';
+      return (
+        (typeof text === 'object' && text && 'secondary' in text
+          ? String((text as any).secondary)
+          : null) ||
+        (typeof (props.$theme as any)?.text === 'object' &&
+        (props.$theme as any)?.text &&
+        'secondary' in (props.$theme as any).text
+          ? String((props.$theme as any).text.secondary)
+          : null) ||
+        'inherit'
+      );
     }
-    return (typeof text === 'object' && text && 'dark' in text ? String((text as any).dark) : null) ||
-           (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'dark' in (props.$theme as any).text ? String((props.$theme as any).text.dark) : null) ||
-           'inherit';
+    return (
+      (typeof text === 'object' && text && 'dark' in text
+        ? String((text as any).dark)
+        : null) ||
+      (typeof (props.$theme as any)?.text === 'object' &&
+      (props.$theme as any)?.text &&
+      'dark' in (props.$theme as any).text
+        ? String((props.$theme as any).text.dark)
+        : null) ||
+      'inherit'
+    );
   }};
   margin: 0 0 ${getSpacing('md')} 0;
   line-height: 1.6;
@@ -292,8 +361,16 @@ export const CardContainer = styled.div<{
   border: ${props => {
     if (props.$variant === 'outlined') {
       return `1px solid ${
-        (typeof props.$theme?.colors?.border === 'object' && props.$theme?.colors?.border && 'light' in props.$theme.colors.border ? String((props.$theme.colors.border as any).light) : null) ||
-        (typeof (props.$theme as any)?.border === 'object' && (props.$theme as any)?.border && 'light' in (props.$theme as any).border ? String((props.$theme as any).border.light) : null) ||
+        (typeof props.$theme?.colors?.border === 'object' &&
+        props.$theme?.colors?.border &&
+        'light' in props.$theme.colors.border
+          ? String((props.$theme.colors.border as any).light)
+          : null) ||
+        (typeof (props.$theme as any)?.border === 'object' &&
+        (props.$theme as any)?.border &&
+        'light' in (props.$theme as any).border
+          ? String((props.$theme as any).border.light)
+          : null) ||
         'transparent'
       }`;
     }
@@ -312,43 +389,56 @@ export const InfoBox = styled.div<{
 }>`
   padding: ${getSpacing('md')};
   border-radius: ${getBorderRadius('md')};
-  border-left: 4px solid ${props => {
-    const getStatusBorder = (statusType: 'success' | 'warning' | 'error' | 'info') => {
-      const status = props.$theme?.colors?.status?.[statusType];
-      if (typeof status === 'object' && status && 'border' in status) {
-        return String((status as any).border);
+  border-left: 4px solid
+    ${props => {
+      const getStatusBorder = (
+        statusType: 'success' | 'warning' | 'error' | 'info'
+      ) => {
+        const status = props.$theme?.colors?.status?.[statusType];
+        if (typeof status === 'object' && status && 'border' in status) {
+          return String((status as any).border);
+        }
+        const altStatus = (props.$theme as any)?.status?.[statusType];
+        if (
+          typeof altStatus === 'object' &&
+          altStatus &&
+          'border' in altStatus
+        ) {
+          return String((altStatus as any).border);
+        }
+        return 'transparent';
+      };
+
+      switch (props.$variant) {
+        case 'success':
+          return getStatusBorder('success');
+        case 'warning':
+          return getStatusBorder('warning');
+        case 'error':
+          return getStatusBorder('error');
+        default:
+          return getStatusBorder('info');
       }
-      const altStatus = (props.$theme as any)?.status?.[statusType];
-      if (typeof altStatus === 'object' && altStatus && 'border' in altStatus) {
-        return String((altStatus as any).border);
-      }
-      return 'transparent';
-    };
-    
-    switch (props.$variant) {
-      case 'success':
-        return getStatusBorder('success');
-      case 'warning':
-        return getStatusBorder('warning');
-      case 'error':
-        return getStatusBorder('error');
-      default:
-        return getStatusBorder('info');
-    }
-  }};
+    }};
   background: ${props => {
-    const getStatusBackground = (statusType: 'success' | 'warning' | 'error' | 'info') => {
+    const getStatusBackground = (
+      statusType: 'success' | 'warning' | 'error' | 'info'
+    ) => {
       const status = props.$theme?.colors?.status?.[statusType];
       if (typeof status === 'object' && status && 'background' in status) {
         return String((status as any).background);
       }
       const altStatus = (props.$theme as any)?.status?.[statusType];
-      if (typeof altStatus === 'object' && altStatus && 'background' in altStatus) {
+      if (
+        typeof altStatus === 'object' &&
+        altStatus &&
+        'background' in altStatus
+      ) {
         return String((altStatus as any).background);
       }
       return 'transparent';
     };
-    
+
     switch (props.$variant) {
       case 'success':
         return getStatusBackground('success');
@@ -361,7 +451,9 @@ export const InfoBox = styled.div<{
     }
   }};
   color: ${props => {
-    const getStatusText = (statusType: 'success' | 'warning' | 'error' | 'info') => {
+    const getStatusText = (
+      statusType: 'success' | 'warning' | 'error' | 'info'
+    ) => {
       const status = props.$theme?.colors?.status?.[statusType];
       if (typeof status === 'object' && status && 'text' in status) {
         return String((status as any).text);
@@ -372,7 +464,7 @@ export const InfoBox = styled.div<{
       }
       return 'inherit';
     };
-    
+
     switch (props.$variant) {
       case 'success':
         return getStatusText('success');
@@ -395,12 +487,23 @@ export const InfoBox = styled.div<{
  * Divider - Linha divisória
  * Uso: Separar seções visualmente
  */
-export const Divider = styled.hr<{ $theme?: Theme; $variant?: 'solid' | 'dashed' }>`
+export const Divider = styled.hr<{
+  $theme?: Theme;
+  $variant?: 'solid' | 'dashed';
+}>`
   border: none;
   border-top: 1px ${props => props.$variant || 'solid'}
     ${props =>
-      (typeof props.$theme?.colors?.border === 'object' && props.$theme?.colors?.border && 'light' in props.$theme.colors.border ? String((props.$theme.colors.border as any).light) : null) ||
-      (typeof (props.$theme as any)?.border === 'object' && (props.$theme as any)?.border && 'light' in (props.$theme as any).border ? String((props.$theme as any).border.light) : null) ||
+      (typeof props.$theme?.colors?.border === 'object' &&
+      props.$theme?.colors?.border &&
+      'light' in props.$theme.colors.border
+        ? String((props.$theme.colors.border as any).light)
+        : null) ||
+      (typeof (props.$theme as any)?.border === 'object' &&
+      (props.$theme as any)?.border &&
+      'light' in (props.$theme as any).border
+        ? String((props.$theme as any).border.light)
+        : null) ||
       'transparent'};
   margin: ${getSpacing('xl')} 0;
 `;
@@ -428,8 +531,16 @@ export const LoadingContainer = styled.div<{ $theme?: Theme }>`
   justify-content: center;
   min-height: 400px;
   color: ${props =>
-    (typeof props.$theme?.colors?.text === 'object' && props.$theme?.colors?.text && 'secondary' in props.$theme.colors.text ? String((props.$theme.colors.text as any).secondary) : null) ||
-    (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'secondary' in (props.$theme as any).text ? String((props.$theme as any).text.secondary) : null) ||
+    (typeof props.$theme?.colors?.text === 'object' &&
+    props.$theme?.colors?.text &&
+    'secondary' in props.$theme.colors.text
+      ? String((props.$theme.colors.text as any).secondary)
+      : null) ||
+    (typeof (props.$theme as any)?.text === 'object' &&
+    (props.$theme as any)?.text &&
+    'secondary' in (props.$theme as any).text
+      ? String((props.$theme as any).text.secondary)
+      : null) ||
     'inherit'};
 `;
 
@@ -441,8 +552,15 @@ export const EmptyState = styled.div<{ $theme?: Theme }>`
   text-align: center;
   padding: ${getSpacing('2xl')};
   color: ${props =>
-    (typeof props.$theme?.colors?.text === 'object' && props.$theme?.colors?.text && 'secondary' in props.$theme.colors.text ? String((props.$theme.colors.text as any).secondary) : null) ||
-    (typeof (props.$theme as any)?.text === 'object' && (props.$theme as any)?.text && 'secondary' in (props.$theme as any).text ? String((props.$theme as any).text.secondary) : null) ||
+    (typeof props.$theme?.colors?.text === 'object' &&
+    props.$theme?.colors?.text &&
+    'secondary' in props.$theme.colors.text
+      ? String((props.$theme.colors.text as any).secondary)
+      : null) ||
+    (typeof (props.$theme as any)?.text === 'object' &&
+    (props.$theme as any)?.text &&
+    'secondary' in (props.$theme as any).text
+      ? String((props.$theme as any).text.secondary)
+      : null) ||
     'inherit'};
 `;
-

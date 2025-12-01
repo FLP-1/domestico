@@ -7,7 +7,7 @@ import { useUserProfile } from '../contexts/UserProfileContext';
 import styled from 'styled-components';
 
 const DocsContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -18,7 +18,7 @@ const DocsContainer = styled.div.withConfig({
 `;
 
 const SwaggerFrame = styled.iframe.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -28,9 +28,11 @@ const SwaggerFrame = styled.iframe.withConfig({
   border: 1px solid
     ${props => {
       const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.light) ||
-             props.$theme?.border?.light ||
-             'transparent';
+      return (
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
     }};
   border-radius: 8px;
 `;
@@ -74,17 +76,17 @@ export default function ApiDocs() {
 
       <PageContainer
         $theme={theme}
-        variant="minimal"
-        background="transparent"
-        padding="lg"
-        maxWidth="1400px"
+        variant='minimal'
+        background='transparent'
+        padding='lg'
+        maxWidth='1400px'
         animation={true}
       >
         <PageHeader
           $theme={theme}
-          title="Documentação da API"
-          subtitle="Documentação completa da API REST do Sistema DOM"
-          variant="default"
+          title='Documentação da API'
+          subtitle='Documentação completa da API REST do Sistema DOM'
+          variant='default'
           animation={true}
         />
 
@@ -93,7 +95,7 @@ export default function ApiDocs() {
             <SwaggerFrame
               $theme={theme}
               src={swaggerUrl}
-              title="Swagger UI - Documentação da API"
+              title='Swagger UI - Documentação da API'
             />
           ) : (
             <div>Carregando documentação...</div>
@@ -103,4 +105,3 @@ export default function ApiDocs() {
     </>
   );
 }
-

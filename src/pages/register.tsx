@@ -194,14 +194,17 @@ const ButtonContainer = styled.div`
   animation: ${fadeInUp} 1s ease-out 1s both;
 `;
 
-const RegisterButton = styled(UnifiedButton)<{ $theme?: Theme;
+const RegisterButton = styled(UnifiedButton)<{
+  $theme?: Theme;
   $canSubmit?: boolean;
 }>`
   flex: 1;
   background: ${props =>
     props.$canSubmit
       ? `linear-gradient(135deg, ${publicColors.secondary} 0%, ${publicColors.tertiary} 100%)`
-      : (typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border)};
+      : typeof publicColors.border === 'object'
+        ? publicColors.border.light
+        : publicColors.border};
   color: ${publicColors.surface};
   font-weight: 600;
   padding: 1.2rem 2rem;
@@ -232,8 +235,9 @@ const RegisterButton = styled(UnifiedButton)<{ $theme?: Theme;
       90deg,
       transparent,
       ${props => {
-        const bgColor = props.$theme?.colors?.background?.primary ||
-                        props.$theme?.background?.primary;
+        const bgColor =
+          props.$theme?.colors?.background?.primary ||
+          props.$theme?.background?.primary;
         if (bgColor && bgColor.startsWith('#')) {
           const r = parseInt(bgColor.slice(1, 3), 16);
           const g = parseInt(bgColor.slice(3, 5), 16);
@@ -265,7 +269,10 @@ const LoginLink = styled.a`
   font-weight: 600;
   font-size: 1.1rem;
   transition: all 0.3s ease;
-  border: 2px solid ${typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border};
+  border: 2px solid
+    ${typeof publicColors.border === 'object'
+      ? publicColors.border.light
+      : publicColors.border};
 
   &:hover {
     background: ${addOpacity(publicColors.surface, 0.2)};
@@ -275,7 +282,7 @@ const LoginLink = styled.a`
 `;
 
 const LoadingSpinner = styled.div.withConfig({
-  shouldForwardProp: (prop) => {
+  shouldForwardProp: prop => {
     const propName = prop as string;
     return !propName.startsWith('$');
   },
@@ -283,18 +290,20 @@ const LoadingSpinner = styled.div.withConfig({
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 3px solid ${props => {
-    const textColor = props.$theme?.colors?.text?.primary ||
-                      props.$theme?.text?.primary ||
-                      props.$theme?.colors?.text;
-    if (textColor && textColor.startsWith('#')) {
-      const r = parseInt(textColor.slice(1, 3), 16);
-      const g = parseInt(textColor.slice(3, 5), 16);
-      const b = parseInt(textColor.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.3)`;
-    }
-    return 'transparent';
-  }};
+  border: 3px solid
+    ${props => {
+      const textColor =
+        props.$theme?.colors?.text?.primary ||
+        props.$theme?.text?.primary ||
+        props.$theme?.colors?.text;
+      if (textColor && textColor.startsWith('#')) {
+        const r = parseInt(textColor.slice(1, 3), 16);
+        const g = parseInt(textColor.slice(3, 5), 16);
+        const b = parseInt(textColor.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, 0.3)`;
+      }
+      return 'transparent';
+    }};
   border-radius: 50%;
   border-top-color: ${props =>
     props.$theme?.colors?.text?.primary ||
@@ -353,7 +362,10 @@ const Register: React.FC = () => {
       primary: publicColors.primary || 'transparent',
       success: 'transparent',
       text: publicColors.text?.primary || 'inherit',
-      border: typeof publicColors.border === 'object' ? publicColors.border.light : publicColors.border,
+      border:
+        typeof publicColors.border === 'object'
+          ? publicColors.border.light
+          : publicColors.border,
     },
   };
 
@@ -651,7 +663,6 @@ const Register: React.FC = () => {
           </ButtonContainer>
         </RegisterForm>
       </RegisterCard>
-
     </PageContainer>
   );
 };

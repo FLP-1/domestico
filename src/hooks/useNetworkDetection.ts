@@ -17,7 +17,11 @@ interface NetworkInfo {
 interface SSIDCache {
   data: { ssid: string; platform: string; error?: string } | null;
   timestamp: number;
-  pendingPromise: Promise<{ ssid: string; platform: string; error?: string }> | null;
+  pendingPromise: Promise<{
+    ssid: string;
+    platform: string;
+    error?: string;
+  }> | null;
 }
 
 const SSID_CACHE: SSIDCache = {
@@ -271,12 +275,12 @@ export const useNetworkDetection = (
     error?: string;
   }> => {
     const now = Date.now();
-    
+
     // ✅ Verificar cache válido
-    if (SSID_CACHE.data && (now - SSID_CACHE.timestamp) < CACHE_DURATION) {
+    if (SSID_CACHE.data && now - SSID_CACHE.timestamp < CACHE_DURATION) {
       return SSID_CACHE.data;
     }
-    
+
     // ✅ Se já há uma requisição pendente, aguardar ela
     if (SSID_CACHE.pendingPromise) {
       try {
@@ -285,12 +289,12 @@ export const useNetworkDetection = (
         // Se a requisição pendente falhar, continuar para fazer nova
       }
     }
-    
+
     // ✅ Criar nova requisição
     const fetchPromise = (async () => {
       try {
         const response = await fetch('/api/wifi/ssid');
-        
+
         // ✅ Tratar erro 429 (Too Many Requests) silenciosamente
         if (response.status === 429) {
           // Se há cache antigo, usar ele mesmo que expirado
@@ -304,7 +308,7 @@ export const useNetworkDetection = (
             error: 'Rate limit atingido',
           };
         }
-        
+
         const data = await response.json();
 
         if (data.success) {
@@ -340,10 +344,10 @@ export const useNetworkDetection = (
         SSID_CACHE.pendingPromise = null;
       }
     })();
-    
+
     // ✅ Armazenar promise pendente
     SSID_CACHE.pendingPromise = fetchPromise;
-    
+
     return await fetchPromise;
   }, []);
 

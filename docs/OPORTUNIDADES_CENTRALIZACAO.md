@@ -11,12 +11,14 @@ Após análise do código, identifiquei várias oportunidades de centralização
 ### **1. 🔌 API ENDPOINTS E CLIENT HTTP**
 
 **Problema:**
+
 - URLs de API hardcoded em múltiplas páginas (`/api/alerts`, `/api/users`, `/api/time-clock/...`)
 - Headers repetidos (`Content-Type: application/json`)
 - Lógica de fetch duplicada
 - Tratamento de erros inconsistente
 
 **Exemplos encontrados:**
+
 ```typescript
 // ❌ ANTES: Espalhado em várias páginas
 fetch('/api/alerts')
@@ -30,20 +32,22 @@ fetch('/api/time-clock/overtime-requests', {
 ```
 
 **Solução proposta:**
+
 ```typescript
 // ✅ DEPOIS: Cliente HTTP centralizado
 import { apiClient } from '@/lib/apiClient';
 
-apiClient.alerts.getAll()
-apiClient.alerts.create(data)
-apiClient.alerts.update(id, data)
-apiClient.alerts.delete(id)
-apiClient.users.getAll()
-apiClient.timeClock.getRecords()
-apiClient.timeClock.createOvertimeRequest(data)
+apiClient.alerts.getAll();
+apiClient.alerts.create(data);
+apiClient.alerts.update(id, data);
+apiClient.alerts.delete(id);
+apiClient.users.getAll();
+apiClient.timeClock.getRecords();
+apiClient.timeClock.createOvertimeRequest(data);
 ```
 
 **Benefícios:**
+
 - ✅ URLs centralizadas e fáceis de atualizar
 - ✅ Headers automáticos (auth, content-type)
 - ✅ Tratamento de erros consistente
@@ -57,11 +61,13 @@ apiClient.timeClock.createOvertimeRequest(data)
 ### **2. ⏳ ESTADOS DE LOADING**
 
 **Problema:**
+
 - Padrão repetido de `useState` para loading em várias páginas
 - Lógica de setLoading(true/false) duplicada
 - Não há feedback visual consistente
 
 **Exemplos encontrados:**
+
 ```typescript
 // ❌ ANTES: Repetido em várias páginas
 const [loadingAlerts, setLoadingAlerts] = useState(true);
@@ -77,6 +83,7 @@ try {
 ```
 
 **Solução proposta:**
+
 ```typescript
 // ✅ DEPOIS: Hook customizado
 import { useAsyncOperation } from '@/hooks/useAsyncOperation';
@@ -90,6 +97,7 @@ const loadAlerts = execute(async () => {
 ```
 
 **Benefícios:**
+
 - ✅ Reduz código boilerplate
 - ✅ Tratamento de erro automático
 - ✅ Estados de loading consistentes
@@ -102,11 +110,13 @@ const loadAlerts = execute(async () => {
 ### **3. 📋 CONSTANTES DE DADOS (TIPOS, CATEGORIAS, STATUS)**
 
 **Problema:**
+
 - Arrays de tipos/categorias hardcoded em várias páginas
 - Dados duplicados (ex: `alertTypes`, `categories` em shopping)
 - Difícil manter consistência
 
 **Exemplos encontrados:**
+
 ```typescript
 // ❌ ANTES: Em alert-management.tsx
 const alertTypes: AlertType[] = [
@@ -124,6 +134,7 @@ const categories: ShoppingCategory[] = [
 ```
 
 **Solução proposta:**
+
 ```typescript
 // ✅ DEPOIS: Constantes centralizadas
 import { ALERT_TYPES } from '@/constants/alertTypes';
@@ -133,6 +144,7 @@ import { TASK_STATUSES } from '@/constants/taskStatuses';
 ```
 
 **Benefícios:**
+
 - ✅ Fonte única de verdade
 - ✅ Fácil atualizar em um lugar
 - ✅ Reutilização entre componentes
@@ -145,11 +157,13 @@ import { TASK_STATUSES } from '@/constants/taskStatuses';
 ### **4. 🔄 PADRÕES DE DATA FETCHING**
 
 **Problema:**
+
 - Lógica de fetch + loading + error handling repetida
 - Mapeamento de dados da API duplicado
 - `useEffect` com dependências similares
 
 **Exemplos encontrados:**
+
 ```typescript
 // ❌ ANTES: Padrão repetido em várias páginas
 useEffect(() => {
@@ -176,6 +190,7 @@ useEffect(() => {
 ```
 
 **Solução proposta:**
+
 ```typescript
 // ✅ DEPOIS: Hook customizado
 import { useDataFetch } from '@/hooks/useDataFetch';
@@ -183,13 +198,14 @@ import { useDataFetch } from '@/hooks/useDataFetch';
 const { data, loading, error, refetch } = useDataFetch(
   () => apiClient.alerts.getAll(),
   {
-    mapper: (apiData) => apiData.map(/* transformação */),
-    onError: (error) => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
+    mapper: apiData => apiData.map(/* transformação */),
+    onError: error => showError(keys.ERROR.ERRO_CARREGAR_ALERTAS),
   }
 );
 ```
 
 **Benefícios:**
+
 - ✅ Reduz código repetitivo
 - ✅ Tratamento de erro consistente
 - ✅ Cache automático (opcional)
@@ -202,11 +218,13 @@ const { data, loading, error, refetch } = useDataFetch(
 ### **5. ✅ VALIDAÇÕES DE FORMULÁRIOS**
 
 **Problema:**
+
 - Validações espalhadas em componentes
 - Regras de validação duplicadas
 - Mensagens de erro hardcoded
 
 **Exemplos encontrados:**
+
 ```typescript
 // ❌ ANTES: Validações em vários lugares
 const validateForm = () => {
@@ -223,6 +241,7 @@ const validateForm = () => {
 ```
 
 **Solução proposta:**
+
 ```typescript
 // ✅ DEPOIS: Schema de validação centralizado
 import { z } from 'zod';
@@ -238,6 +257,7 @@ const { validate, errors } = useFormValidation(registerSchema);
 ```
 
 **Benefícios:**
+
 - ✅ Validações declarativas
 - ✅ Mensagens centralizadas
 - ✅ Type safety
@@ -250,11 +270,13 @@ const { validate, errors } = useFormValidation(registerSchema);
 ### **6. 🎨 ESTILOS COMPARTILHADOS**
 
 **Problema:**
+
 - Styled Components similares em várias páginas
 - Padrões de estilo repetidos
 - Difícil manter consistência visual
 
 **Exemplos encontrados:**
+
 ```typescript
 // ❌ ANTES: Estilos similares em várias páginas
 const StatCard = styled.div<{ $theme?: Theme }>`
@@ -271,15 +293,21 @@ const SectionText = styled.p<{ $theme?: Theme }>`
 ```
 
 **Solução proposta:**
+
 ```typescript
 // ✅ DEPOIS: Componentes de estilo compartilhados
-import { StatCard, SectionText, CardContainer } from '@/components/shared/styled';
+import {
+  StatCard,
+  SectionText,
+  CardContainer,
+} from '@/components/shared/styled';
 
 // Ou mixins reutilizáveis
 import { cardMixin, textMixin } from '@/components/shared/mixins';
 ```
 
 **Benefícios:**
+
 - ✅ Consistência visual
 - ✅ Menos código duplicado
 - ✅ Fácil manutenção
@@ -291,20 +319,23 @@ import { cardMixin, textMixin } from '@/components/shared/mixins';
 ### **7. 🔐 AUTENTICAÇÃO E HEADERS**
 
 **Problema:**
+
 - Lógica de autenticação repetida
 - Headers de autenticação duplicados
 - Token management espalhado
 
 **Exemplos encontrados:**
+
 ```typescript
 // ❌ ANTES: Headers repetidos
 const headers = {
   'Content-Type': 'application/json',
-  'Authorization': `Bearer ${token}`,
+  Authorization: `Bearer ${token}`,
 };
 ```
 
 **Solução proposta:**
+
 ```typescript
 // ✅ DEPOIS: Cliente HTTP já resolve isso
 // Headers automáticos no apiClient
@@ -317,11 +348,13 @@ const headers = {
 ### **8. 📅 FORMATAÇÃO DE DATAS E VALORES**
 
 **Status:** ✅ **JÁ CENTRALIZADO**
+
 - `src/utils/formatters.ts` já existe
 - Funções: `formatDate`, `formatTime`, `formatCurrency`, `formatNumber`
 - Mas pode ter uso inconsistente
 
 **Recomendação:**
+
 - Garantir uso consistente em todas as páginas
 - Adicionar mais formatações se necessário
 
@@ -368,6 +401,7 @@ const headers = {
 **Começar pela Fase 1: API Client Centralizado**
 
 Este é o item com maior impacto e resolve múltiplos problemas:
+
 - ✅ Centraliza endpoints
 - ✅ Headers automáticos
 - ✅ Tratamento de erros
@@ -384,4 +418,3 @@ Depois disso, seguir com Fase 2 para melhorar DX.
 2. Migrar páginas principais para usar o cliente
 3. Criar hooks customizados para data fetching
 4. Centralizar constantes de dados
-

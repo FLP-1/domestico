@@ -16,12 +16,14 @@ O erro ocorre porque `navigator.userAgent` estava sendo acessado durante o **Ser
 ### Mudanças Realizadas:
 
 1. **Adicionado estado para controlar montagem:**
+
    ```typescript
    const [userAgent, setUserAgent] = useState<string>('');
    const [isMounted, setIsMounted] = useState(false);
    ```
 
 2. **Adicionado `useEffect` para acessar `navigator` apenas no cliente:**
+
    ```typescript
    useEffect(() => {
      setIsMounted(true);
@@ -32,6 +34,7 @@ O erro ocorre porque `navigator.userAgent` estava sendo acessado durante o **Ser
    ```
 
 3. **Atualizado render para usar estado:**
+
    ```typescript
    // ANTES (causava erro de hidratação):
    <Value>{navigator.userAgent}</Value>
@@ -65,7 +68,7 @@ O erro ocorre porque `navigator.userAgent` estava sendo acessado durante o **Ser
 ## 🎯 Resultado Esperado
 
 Após a correção:
+
 - ✅ Não deve mais aparecer erro de hidratação no console
 - ✅ Página deve carregar normalmente
 - ✅ User agent deve ser exibido corretamente após montagem
-

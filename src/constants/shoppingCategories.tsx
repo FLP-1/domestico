@@ -1,6 +1,6 @@
 /**
  * 🛍️ Categorias de Compras Centralizadas
- * 
+ *
  * Centraliza todas as categorias de compras disponíveis no sistema.
  */
 
@@ -22,7 +22,7 @@ export const SHOPPING_CATEGORIES: ShoppingCategory[] = [
     id: '1',
     name: 'Supermercado',
     color: '#3498db',
-    icon: <AccessibleEmoji emoji="🛍" label="Carrinho" />,
+    icon: <AccessibleEmoji emoji='🛍' label='Carrinho' />,
   },
   {
     id: '2',
@@ -53,16 +53,19 @@ export const SHOPPING_CATEGORIES: ShoppingCategory[] = [
 /**
  * Obter categoria por ID
  */
-export function getShoppingCategoryById(id: string): ShoppingCategory | undefined {
+export function getShoppingCategoryById(
+  id: string
+): ShoppingCategory | undefined {
   return SHOPPING_CATEGORIES.find(category => category.id === id);
 }
 
 /**
  * Obter categoria por nome
  */
-export function getShoppingCategoryByName(name: string): ShoppingCategory | undefined {
+export function getShoppingCategoryByName(
+  name: string
+): ShoppingCategory | undefined {
   return SHOPPING_CATEGORIES.find(
     category => category.name.toLowerCase() === name.toLowerCase()
   );
 }
-

@@ -19,14 +19,17 @@ const DebugContainer = styled.div<{ $theme?: any }>`
     props.$theme?.background?.secondary ||
     props.$theme?.colors?.background?.primary ||
     'transparent'};
-  border: 1px solid ${props => {
-    const border = props.$theme?.colors?.border;
-    return (typeof border === 'object' && border?.secondary) ||
-           props.$theme?.border?.secondary ||
-           (typeof border === 'object' && border?.light) ||
-           props.$theme?.border?.light ||
-           'transparent';
-  }};
+  border: 1px solid
+    ${props => {
+      const border = props.$theme?.colors?.border;
+      return (
+        (typeof border === 'object' && border?.secondary) ||
+        props.$theme?.border?.secondary ||
+        (typeof border === 'object' && border?.light) ||
+        props.$theme?.border?.light ||
+        'transparent'
+      );
+    }};
   border-radius: 8px;
   padding: 1rem;
   margin: 1rem 0;
@@ -53,14 +56,17 @@ const DebugSection = styled.div<{ $theme?: any }>`
       props.$theme?.background?.primary ||
       props.$theme?.colors?.surface ||
       'transparent'};
-    border: 1px solid ${props => {
-      const border = props.$theme?.colors?.border;
-      return (typeof border === 'object' && border?.primary) ||
-             props.$theme?.border?.primary ||
-             (typeof border === 'object' && border?.light) ||
-             props.$theme?.border?.light ||
-             'transparent';
-    }};
+    border: 1px solid
+      ${props => {
+        const border = props.$theme?.colors?.border;
+        return (
+          (typeof border === 'object' && border?.primary) ||
+          props.$theme?.border?.primary ||
+          (typeof border === 'object' && border?.light) ||
+          props.$theme?.border?.light ||
+          'transparent'
+        );
+      }};
     border-radius: 4px;
     padding: 0.5rem;
     margin: 0;
@@ -160,7 +166,7 @@ const NetworkDebugInfo: React.FC = () => {
     const timeoutId = setTimeout(() => {
       collectDebugInfo();
     }, 1000); // Aguardar 1 segundo antes de coletar
-    
+
     return () => clearTimeout(timeoutId);
   }, [collectDebugInfo]);
 
@@ -190,7 +196,11 @@ const NetworkDebugInfo: React.FC = () => {
         Dados de Rede Capturados Automaticamente
       </h3>
 
-      <RefreshButton $theme={theme} onClick={collectDebugInfo} disabled={loading}>
+      <RefreshButton
+        $theme={theme}
+        onClick={collectDebugInfo}
+        disabled={loading}
+      >
         {loading ? (
           'Coletando...'
         ) : (

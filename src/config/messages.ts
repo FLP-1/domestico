@@ -1,14 +1,14 @@
 /**
  * 🎯 SISTEMA UNIFICADO DE MENSAGENS
- * 
+ *
  * Centraliza todas as mensagens do sistema em um único local.
  * Integra com o sistema i18n existente para suporte a múltiplos idiomas.
- * 
+ *
  * USO:
  * ```typescript
  * import { messages } from '@/config/messages';
  * import { useI18n } from '@/hooks/useI18n';
- * 
+ *
  * const { t } = useI18n();
  * alertManager.showSuccess(t(messages.success.REGISTRO_CRIADO));
  * ```
@@ -162,7 +162,8 @@ export const TEMP_MESSAGES = {
     FUNCIONALIDADE_DESENVOLVIMENTO: 'Funcionalidade em desenvolvimento',
     DETALHES_DESENVOLVIMENTO: 'Detalhes em desenvolvimento',
     EDICAO_DESENVOLVIMENTO: 'Funcionalidade de edição em desenvolvimento',
-    DETALHES_REGISTRO_DESENVOLVIMENTO: 'Detalhes do registro em desenvolvimento',
+    DETALHES_REGISTRO_DESENVOLVIMENTO:
+      'Detalhes do registro em desenvolvimento',
   },
   ERROR: {
     SESSAO_EXPIRADA: 'Sessão expirada. Faça login novamente.',
@@ -173,7 +174,8 @@ export const TEMP_MESSAGES = {
   },
   SUCCESS_EXTENDED: {
     SOLICITACAO_HORA_EXTRA: 'Solicitação de hora extra enviada para aprovação!',
-    TRANSFERENCIA_FOLHA: 'Dados transferidos para folha de pagamento com sucesso!',
+    TRANSFERENCIA_FOLHA:
+      'Dados transferidos para folha de pagamento com sucesso!',
     CADASTRO_SUCESSO: 'Cadastro realizado com sucesso!',
     PAGAMENTO_PROCESSANDO: 'Processando pagamento...',
   },
@@ -227,4 +229,3 @@ export function getMessageWithParams(
     return fallback || key;
   }
 }
-

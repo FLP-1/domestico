@@ -9,7 +9,9 @@ export const sanitizeDetailObject = (input: unknown, depth = 0): unknown => {
 
   if (Array.isArray(input)) {
     if (input.length > 20) {
-      const preview = input.slice(0, 5).map(item => sanitizeDetailObject(item, depth + 1));
+      const preview = input
+        .slice(0, 5)
+        .map(item => sanitizeDetailObject(item, depth + 1));
       preview.push(`...(${input.length - 5} more)`);
       return preview;
     }
@@ -39,4 +41,3 @@ export const sanitizeDetailObject = (input: unknown, depth = 0): unknown => {
   }
   return sanitized;
 };
-
